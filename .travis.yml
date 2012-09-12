@@ -7,7 +7,7 @@ before_install:
     - android list targets
     - sudo android update sdk --filter 1,2,3 --no-ui --force
     - sudo android list
-    - android update project --path ./SoomlaAndroidStore --target "HTC OpenSense SDK, Android API 15, revision 2"
+    - android update project --path ./SoomlaAndroidStore --target "android-15"
 #script: "sudo ./buildstuff.sh"
 
 
