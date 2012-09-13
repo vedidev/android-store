@@ -1,21 +1,21 @@
 Welcome to The SOOMLA Project
 ---
-The SOOMLA Project is a series of open-source projects that aims to help game developers get better in-app purchasing stores for their games. The open-source platform-specific projects include everything a game developer needs, from storage of virtual items to purchasing mechanisms with the various devices' native app-stores. As an optional (and currently EXPERIMENTAL) part of our open-source projects you can also get the store's layout which you can customize with your own game's assets. To use our Storefront, refer to [Get your own Storefront](https://github.com/Soomla/AndroidStore/wiki/Get-your-own-Storefront-%5BEXPERIMENTAL%5D).
+The SOOMLA Project is a series of open-source projects that aims to help game developers get better in-app purchasing stores for their games. The open-source platform-specific projects include everything a game developer needs, from storage of virtual items to purchasing mechanisms with the various devices' native app-stores. As an optional (and currently EXPERIMENTAL) part of our open-source projects you can also get the store's layout which you can customize with your own game's assets. To use our Storefront, refer to [Get your own Storefront](https://github.com/soomla/android-store/wiki/Get-your-own-Storefront-%5BEXPERIMENTAL%5D).
 
-AndroidStore
+android-store
 ---
-The Android store is a Java project that works seamlessly with Google Play's in-app purchasing API.
+The android-store is a Java project that works seamlessly with Google Play's in-app purchasing API.
 
 
-Check out our [Wiki] (https://github.com/Soomla/AndroidStore/wiki) for more information about the project and how to use it better.
+Check out our [Wiki] (https://github.com/soomla/android-store/wiki) for more information about the project and how to use it better.
 
 Getting Started
 ---
 * Before doing anything, SOOMLA recommends that you go through [Android In-app Billing](http://developer.android.com/guide/google/play/billing/index.html).
 
-1. Clone AndroidStore. Copy all files from AndroidStore's subfolders to their equivallent folders in your Android project:
+1. Clone android-store. Copy all files from android-store's subfolders to their equivallent folders in your Android project:
 
- `git clone git@github.com:Soomla/AndroidStore.git`
+ `git clone git@github.com:soomla/android-store.git`
 
 2. Make the folowing changes to your AndroidManifest.xml:
 
