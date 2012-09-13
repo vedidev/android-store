@@ -1,6 +1,6 @@
 Welcome to The SOOMLA Project
 ---
-The SOOMLA Project is a series of open-source projects that aims to help game developers get better in-app purchasing stores for their games. The open-source platform-specific projects include everything a game developer needs, from storage of virtual items to purchasing mechanisms with the various devices' native app-stores. As an optional (and currently EXPERIMENTAL) part of our open-source projects you can also get the store's layout which you can customize with your own game's assets. To use our Storefront, refer to [Get your own Storefront](https://github.com/soomla/android-store/wiki/Get-your-own-Storefront-%5BEXPERIMENTAL%5D).
+The SOOMLA Project is a series of open-source projects that aims to help game developers get better in-app purchasing stores for their games. The open-source platform-specific projects include everything a game developer needs, from storage of virtual items to purchasing mechanisms with the various devices' native app-stores. As an optional (and currently EXPERIMENTAL) part of our open-source projects you can also get the store's layout which you can customize with your own game's assets. To use our storefront, refer to [Get your own Storefront](https://github.com/soomla/android-store/wiki/Get-your-own-Storefront-%5BEXPERIMENTAL%5D).
 
 android-store
 ---
