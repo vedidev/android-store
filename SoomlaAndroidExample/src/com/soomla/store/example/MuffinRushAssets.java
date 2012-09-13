@@ -35,7 +35,7 @@ public class MuffinRushAssets implements IStoreAssets {
 
     /** Static Final members **/
 
-    public static final String MUFFIN_CURRENCT_ITEM_ID      = "currency_muffin";
+    public static final String MUFFIN_CURRENCY_ITEM_ID      = "currency_muffin";
     public static final String TENMUFF_PACK_PRODUCT_ID      = "android.test.refunded";
     public static final String FIFTYMUFF_PACK_PRODUCT_ID    = "android.test.canceled";
     public static final String FORTYMUFF_PACK_PRODUCT_ID    = "android.test.purchased";
@@ -46,14 +46,14 @@ public class MuffinRushAssets implements IStoreAssets {
             "Muffins",
             "",
             "themes/muffinRush/img/muffin.png",
-            MUFFIN_CURRENCT_ITEM_ID
+            MUFFIN_CURRENCY_ITEM_ID
     );
 
     /** Virtual Goods **/
     private static final HashMap<String, Integer> MUFFINCAKE_PRICE =
             new HashMap<String, Integer>();
     static {
-        MUFFINCAKE_PRICE.put(MUFFIN_CURRENCT_ITEM_ID, 225);
+        MUFFINCAKE_PRICE.put(MUFFIN_CURRENCY_ITEM_ID, 225);
     }
     public static final VirtualGood MUFFINCAKE_GOOD = new VirtualGood(
             "Fruit Cake",                                   // name
@@ -66,7 +66,7 @@ public class MuffinRushAssets implements IStoreAssets {
     private static final HashMap<String, Integer> PAVLOVA_PRICE =
             new HashMap<String, Integer>();
     static {
-        PAVLOVA_PRICE.put(MUFFIN_CURRENCT_ITEM_ID, 175);
+        PAVLOVA_PRICE.put(MUFFIN_CURRENCY_ITEM_ID, 175);
     }
     public static final VirtualGood PAVLOVA_GOOD = new VirtualGood(
             "Pavlova",                                      // name
@@ -79,7 +79,7 @@ public class MuffinRushAssets implements IStoreAssets {
     private static final HashMap<String, Integer> CHOCLATECAKE_PRICE =
             new HashMap<String, Integer>();
     static {
-        CHOCLATECAKE_PRICE.put(MUFFIN_CURRENCT_ITEM_ID, 250);
+        CHOCLATECAKE_PRICE.put(MUFFIN_CURRENCY_ITEM_ID, 250);
     }
     public static final VirtualGood CHOCLATECAKE_GOOD = new VirtualGood(
             "Chocolate Cake",                               // name
@@ -92,7 +92,7 @@ public class MuffinRushAssets implements IStoreAssets {
     private static final HashMap<String, Integer> CREAMCUP_PRICE =
             new HashMap<String, Integer>();
     static {
-        CREAMCUP_PRICE.put(MUFFIN_CURRENCT_ITEM_ID, 50);
+        CREAMCUP_PRICE.put(MUFFIN_CURRENCY_ITEM_ID, 50);
     }
     public static final VirtualGood CREAMCUP_GOOD = new VirtualGood(
             "Cream Cup",                                    // name
