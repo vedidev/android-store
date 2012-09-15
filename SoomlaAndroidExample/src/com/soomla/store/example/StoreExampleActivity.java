@@ -27,7 +27,7 @@ public class StoreExampleActivity extends Activity {
 
         mRobotView = (ImageView) findViewById(R.id.drag_img);
         mRobotView.setOnTouchListener(new MyTouchListener());
-        findViewById(R.id.topright).setOnDragListener(new MyDragListener());
+        findViewById(R.id.rightbox).setOnDragListener(new MyDragListener());
 
         Typeface font = Typeface.createFromAsset(getAssets(), "GoodDog.otf");
         ((TextView) findViewById(R.id.title_text)).setTypeface(font);
@@ -66,8 +66,8 @@ public class StoreExampleActivity extends Activity {
         mHandler.post(new Runnable() {
             @Override
             public void run() {
-                ViewGroup left = (ViewGroup)findViewById(R.id.topleft);
-                ViewGroup right = (ViewGroup)findViewById(R.id.topright);
+                ViewGroup left = (ViewGroup)findViewById(R.id.leftbox);
+                ViewGroup right = (ViewGroup)findViewById(R.id.rightbox);
 
                 if (mRobotView.getParent() != left){
                     right.removeView(mRobotView);
@@ -114,8 +114,8 @@ public class StoreExampleActivity extends Activity {
                 case DragEvent.ACTION_DROP:
                     // Dropped, reassign View to ViewGroup
 
-                    ViewGroup left = (ViewGroup)findViewById(R.id.topleft);
-                    ViewGroup right = (ViewGroup)findViewById(R.id.topright);
+                    ViewGroup left = (ViewGroup)findViewById(R.id.leftbox);
+                    ViewGroup right = (ViewGroup)findViewById(R.id.rightbox);
 
                     if (right == v){
                         left.removeView(view);

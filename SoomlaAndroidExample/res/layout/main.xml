@@ -25,8 +25,8 @@
              android:textSize="30sp"
              />
 
-    <GridLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                android:id="@+id/grid"
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:id="@+id/botdrag"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:columnCount="2"
@@ -37,39 +37,36 @@
                 android:layout_marginTop="100sp"
                 android:layout_below="@id/ygh_text">
         <LinearLayout
-                android:id="@+id/topleft"
+                android:id="@+id/leftbox"
                 android:layout_width="100dp"
                 android:layout_height="100dp"
-                android:layout_column="0"
                 android:layout_gravity="fill_horizontal"
-                android:layout_marginLeft="50sp"
-                android:layout_row="0" >
+                android:layout_marginLeft="30sp"
+                android:layout_marginRight="80sp" >
 
             <ImageView
                     android:id="@+id/drag_img"
                     android:layout_width="100sp"
                     android:layout_height="100sp"
                     android:contentDescription="@string/drag_text"
-                    android:src="@drawable/soomla_logo_new" />
+                    android:src="@drawable/soomla_icon" />
         </LinearLayout>
         <LinearLayout
-                android:id="@+id/topright"
+                android:id="@+id/rightbox"
                 android:layout_width="100dp"
                 android:layout_height="100dp"
-                android:layout_column="1"
-                android:layout_row="0"
                 android:layout_marginRight="50sp"
                 android:background="@drawable/shape" >
 
         </LinearLayout>
-    </GridLayout>
+    </LinearLayout>
 
 
     <TextView
             android:id="@+id/main_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@id/grid"
+            android:layout_below="@id/botdrag"
             android:layout_centerHorizontal="true"
             android:text="@string/drag_text"
             android:textSize="20sp"
