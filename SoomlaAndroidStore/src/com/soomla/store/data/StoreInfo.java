@@ -21,6 +21,7 @@ import android.util.Log;
 import com.soomla.billing.util.AESObfuscator;
 import com.soomla.store.IStoreAssets;
 import com.soomla.store.StoreConfig;
+import com.soomla.store.domain.data.VirtualCategory;
 import com.soomla.store.domain.data.VirtualCurrency;
 import com.soomla.store.domain.data.VirtualCurrencyPack;
 import com.soomla.store.domain.data.VirtualGood;
@@ -38,6 +39,7 @@ import java.util.List;
  * - Virtual Currencies definitions
  * - Virtual Currency Packs definitions
  * - Virtual Goods definitions
+ * - Virtual Categories definitions
  */
 public class StoreInfo {
 
@@ -66,6 +68,7 @@ public class StoreInfo {
         if (!initializeFromDB()){
             /// fall-back here if the json parsing fails or doesn't exist, we load the store from the given
             // {@link IStoreAssets}.
+            mVirtualCategories    = Arrays.asList(storeAssets.getVirtualCategories());
             mVirtualCurrencies    = Arrays.asList(storeAssets.getVirtualCurrencies());
             mVirtualCurrencyPacks = Arrays.asList(storeAssets.getVirtualCurrencyPacks());
             mVirtualGoods         = Arrays.asList(storeAssets.getVirtualGoods());
@@ -187,6 +190,28 @@ public class StoreInfo {
     }
 
     /**
+     * Use this function if you need to know the definition of a specific virtual category.
+     * @param id is the requested category's id.
+     * @return the definition of the requested category.
+     * @throws VirtualItemNotFoundException
+     */
+    public VirtualCategory getVirtualCategoryById(int id) throws VirtualItemNotFoundException {
+        VirtualCategory category = null;
+        for(VirtualCategory c : mVirtualCategories){
+            if (c.getmId() == id){
+                category = c;
+                break;
+            }
+        }
+
+        if (category == null){
+            throw new VirtualItemNotFoundException("id", "" + id);
+        }
+
+        return category;
+    }
+
+    /**
      * Use this function if you need to know the definition of a specific virtual currency.
      * @param itemId is the requested currency's item id.
      * @return the definition of the virtual currency requested.
@@ -228,6 +253,14 @@ public class StoreInfo {
 
     private void fromJSONObject(JSONObject jsonObject){
         try {
+
+            JSONArray virtualCategories = jsonObject.getJSONArray(JSONConsts.STORE_VIRTUALCATEGORIES);
+            mVirtualCategories = new LinkedList<VirtualCategory>();
+            for(int i=0; i<virtualCategories.length(); i++){
+                JSONObject o = virtualCategories.getJSONObject(i);
+                mVirtualCategories.add(new VirtualCategory(o));
+            }
+
             JSONArray virtualCurrencies = jsonObject.getJSONArray(JSONConsts.STORE_VIRTUALCURRENCIES);
             mVirtualCurrencies = new LinkedList<VirtualCurrency>();
             for (int i=0; i<virtualCurrencies.length(); i++){
@@ -261,6 +294,11 @@ public class StoreInfo {
      */
     public JSONObject toJSONObject(){
 
+        JSONArray virtualCategories = new JSONArray();
+        for (VirtualCategory cat : mVirtualCategories){
+            virtualCategories.put(cat.toJSONObject());
+        }
+
         JSONArray virtualCurrencies = new JSONArray();
         for(VirtualCurrency c : mVirtualCurrencies){
             virtualCurrencies.put(c.toJSONObject());
@@ -278,6 +316,7 @@ public class StoreInfo {
 
         JSONObject jsonObject = new JSONObject();
         try {
+            jsonObject.put(JSONConsts.STORE_VIRTUALCATEGORIES, virtualCategories);
             jsonObject.put(JSONConsts.STORE_VIRTUALCURRENCIES, virtualCurrencies);
             jsonObject.put(JSONConsts.STORE_VIRTUALGOODS, virtualGoods);
             jsonObject.put(JSONConsts.STORE_CURRENCYPACKS, currencyPacks);
@@ -298,4 +337,5 @@ public class StoreInfo {
     private List<VirtualCurrency>                   mVirtualCurrencies;
     private List<VirtualCurrencyPack>               mVirtualCurrencyPacks;
     private List<VirtualGood>                       mVirtualGoods;
+    private List<VirtualCategory>                   mVirtualCategories;
 }

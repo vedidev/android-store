@@ -27,6 +27,7 @@ public class JSONConsts {
     public static final String STORE_VIRTUALCURRENCIES  = "virtualCurrencies";
     public static final String STORE_CURRENCYPACKS      = "currencyPacks";
     public static final String STORE_VIRTUALGOODS       = "virtualGoods";
+    public static final String STORE_VIRTUALCATEGORIES  = "categories";
 
     public static final String STORE_THEME_NAME         = "name";
     public static final String STORE_THEME_TEMPLATE     = "template";
@@ -46,10 +47,15 @@ public class JSONConsts {
     public static final String CURRENCYPACK_PRICE       = "price";
     public static final String CURRENCYPACK_AMOUNT      = "amount";
     public static final String CURRENCYPACK_CURRENCYITEMID = "currency_itemId";
+    public static final String CURRENCYPACK_CATEGORY_ID = "categoryId";
 
     public static final String GOOD_PRICE_MODEL         = "priceModel";
+    public static final String GOOD_CATEGORY_ID         = "categoryId";
     public static final String GOOD_PRICE_MODEL_VALUES  = "values";
     public static final String GOOD_PRICE_MODEL_TYPE    = "type";
+
+    public static final String CATEGORY_NAME            = "name";
+    public static final String CATEGORY_ID              = "id";
 
     public static final String ITEM_NAME                = "name";
     public static final String ITEM_DESCRIPTION         = "description";

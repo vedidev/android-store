@@ -15,6 +15,7 @@
  */
 package com.soomla.store;
 
+import com.soomla.store.domain.data.VirtualCategory;
 import com.soomla.store.domain.data.VirtualCurrency;
 import com.soomla.store.domain.data.VirtualCurrencyPack;
 import com.soomla.store.domain.data.VirtualGood;
@@ -44,4 +45,10 @@ public interface IStoreAssets {
      * @return an array of all virtual currency packs served by your store.
      */
     VirtualCurrencyPack[] getVirtualCurrencyPacks();
+
+    /**
+     * An array of all virtual categories served by your store.
+     * @return an array of all virtual categories served by your store.
+     */
+    VirtualCategory[] getVirtualCategories();
 }

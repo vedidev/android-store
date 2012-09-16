@@ -1,10 +1,7 @@
 package com.soomla.store.example;
 
 import com.soomla.store.IStoreAssets;
-import com.soomla.store.domain.data.StaticPriceModel;
-import com.soomla.store.domain.data.VirtualCurrency;
-import com.soomla.store.domain.data.VirtualCurrencyPack;
-import com.soomla.store.domain.data.VirtualGood;
+import com.soomla.store.domain.data.*;
 
 import java.util.HashMap;
 
@@ -32,6 +29,13 @@ public class MuffinRushAssets implements IStoreAssets {
         };
     }
 
+    @Override
+    public VirtualCategory[] getVirtualCategories() {
+        return new VirtualCategory[]{
+                GENERAL_CATEGORY
+        };
+    }
+
 
     /** Static Final members **/
 
@@ -40,6 +44,12 @@ public class MuffinRushAssets implements IStoreAssets {
     public static final String FIFTYMUFF_PACK_PRODUCT_ID    = "android.test.canceled";
     public static final String FORTYMUFF_PACK_PRODUCT_ID    = "android.test.purchased";
     public static final String THOUSANDMUFF_PACK_PRODUCT_ID = "android.test.item_unavailable";
+
+    /** Virtual Categories **/
+    // The muffin rush theme doesn't support categories, so we just put everything under a general category.
+    public static final VirtualCategory GENERAL_CATEGORY = new VirtualCategory(
+            "General", 0
+    );
 
     /** Virtual Currencies **/
     public static final VirtualCurrency MUFFIN_CURRENCY = new VirtualCurrency(
@@ -61,7 +71,8 @@ public class MuffinRushAssets implements IStoreAssets {
             "themes/muffinRush/img/items/fruit_cake.png",   // image file path
             new StaticPriceModel(MUFFINCAKE_PRICE),         // currency value
             "fruit_cake"                                    // item id
-    );
+            ,
+            GENERAL_CATEGORY);
 
     private static final HashMap<String, Integer> PAVLOVA_PRICE =
             new HashMap<String, Integer>();
@@ -74,7 +85,8 @@ public class MuffinRushAssets implements IStoreAssets {
             "themes/muffinRush/img/items/pavlova.png",      // image file path
             new StaticPriceModel(PAVLOVA_PRICE),            // currency value
             "pavlova"                                       // item id
-    );
+            ,
+            GENERAL_CATEGORY);
 
     private static final HashMap<String, Integer> CHOCLATECAKE_PRICE =
             new HashMap<String, Integer>();
@@ -87,7 +99,8 @@ public class MuffinRushAssets implements IStoreAssets {
             "themes/muffinRush/img/items/chocolate_cake.png",// image file path
             new StaticPriceModel(CHOCLATECAKE_PRICE),       // currency value
             "chocolate_cake"                                // item id
-    );
+            ,
+            GENERAL_CATEGORY);
 
     private static final HashMap<String, Integer> CREAMCUP_PRICE =
             new HashMap<String, Integer>();
@@ -100,7 +113,8 @@ public class MuffinRushAssets implements IStoreAssets {
             "themes/muffinRush/img/items/cream_cup.png",    // image file path
             new StaticPriceModel(CREAMCUP_PRICE),           // currency value
             "cream_cup"                                     // item id
-    );
+            ,
+            GENERAL_CATEGORY);
 
     /** Virtual Currency Packs **/
 
@@ -112,7 +126,7 @@ public class MuffinRushAssets implements IStoreAssets {
             TENMUFF_PACK_PRODUCT_ID,                        // product id in Google Market
             0.99,                                           // actual price in $$
             10,                                             // number of currencies in the pack
-            MUFFIN_CURRENCY);
+            MUFFIN_CURRENCY, GENERAL_CATEGORY);
 
     public static final VirtualCurrencyPack FIFTYMUFF_PACK = new VirtualCurrencyPack(
             "50 Muffins",                                   // name
@@ -122,7 +136,7 @@ public class MuffinRushAssets implements IStoreAssets {
             FIFTYMUFF_PACK_PRODUCT_ID,                      // product id in Google Market
             1.99,                                           // actual price in $$
             50,                                             // number of currencies in the pack
-            MUFFIN_CURRENCY);
+            MUFFIN_CURRENCY, GENERAL_CATEGORY);
 
     public static final VirtualCurrencyPack FORTYMUFF_PACK = new VirtualCurrencyPack(
             "400 Muffins",                                  // name
@@ -132,7 +146,7 @@ public class MuffinRushAssets implements IStoreAssets {
             FORTYMUFF_PACK_PRODUCT_ID,                      // product id in Google Market
             4.99,                                           // actual price in $$
             400,                                            // number of currencies in the pack
-            MUFFIN_CURRENCY);
+            MUFFIN_CURRENCY, GENERAL_CATEGORY);
 
     public static final VirtualCurrencyPack THOUSANDMUFF_PACK = new VirtualCurrencyPack(
             "1000 Muffins",                                 // name
@@ -142,6 +156,6 @@ public class MuffinRushAssets implements IStoreAssets {
             THOUSANDMUFF_PACK_PRODUCT_ID,                   // product id in Google Market
             8.99,                                           // actual price in $$
             1000,                                           // number of currencies in the pack
-            MUFFIN_CURRENCY);
+            MUFFIN_CURRENCY, GENERAL_CATEGORY);
 
 }

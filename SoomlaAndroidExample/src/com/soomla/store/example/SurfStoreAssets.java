@@ -31,10 +31,23 @@ public class SurfStoreAssets implements IStoreAssets {
         };
     }
 
+    @Override
+    public VirtualCategory[] getVirtualCategories() {
+        return new VirtualCategory[]{
+                GENERAL_CATEGORY
+        };
+    }
+
 
     /** Static Final members **/
 
     public static final String CLAM_CURRENCT_ITEM_ID = "currency_clam";
+
+    /** Virtual Categories **/
+    // The surf store theme doesn't support categories, so we just put everything under a general category.
+    public static final VirtualCategory GENERAL_CATEGORY = new VirtualCategory(
+            "General", 0
+    );
 
     /** Virtual Currencies **/
     public static final VirtualCurrency CLAM_CURRENCY = new VirtualCurrency(
@@ -56,7 +69,8 @@ public class SurfStoreAssets implements IStoreAssets {
             "img/examples/surf/blue-surfboard.png",         // image file path
             new StaticPriceModel(RIPCURLSHORTBOARD_PRICE),// currency value
             "blue_surfboard"                                // item id
-    );
+            ,
+            GENERAL_CATEGORY);
 
     private static final HashMap<String, Integer> BILLABONGVINTAGELONGBOARD_PRICE =
             new HashMap<String, Integer>();
@@ -73,7 +87,8 @@ public class SurfStoreAssets implements IStoreAssets {
             "img/examples/surf/girl-surfboard-th.png",      // image file path
             new BalanceDrivenPriceModel(BILLABONGVINTAGELONGBOARD_PRICE_LIST),// currency value
             "girl_surfboard_th"                             // item id
-    );
+            ,
+            GENERAL_CATEGORY);
 
     private static final HashMap<String, Integer> KEELFISH_PRICE =
             new HashMap<String, Integer>();
@@ -86,7 +101,8 @@ public class SurfStoreAssets implements IStoreAssets {
             "img/examples/surf/keelfish.png",               // image file path
             new StaticPriceModel(KEELFISH_PRICE),           // currency value
             "keelfish"                                      // item id
-    );
+            ,
+            GENERAL_CATEGORY);
 
     private static final HashMap<String, Integer> PICASSOPEELER_PRICE =
             new HashMap<String, Integer>();
@@ -99,7 +115,8 @@ public class SurfStoreAssets implements IStoreAssets {
             "img/examples/surf/picasso-peeler.png",         // image file path
             new StaticPriceModel(PICASSOPEELER_PRICE),      // currency value
             "picasso_peeler"                                // item id
-    );
+            ,
+            GENERAL_CATEGORY);
 
     private static final HashMap<String, Integer> REEFSHREDDER_PRICE =
             new HashMap<String, Integer>();
@@ -112,7 +129,8 @@ public class SurfStoreAssets implements IStoreAssets {
             "img/examples/surf/reef-shredder.png",          // image file path
             new StaticPriceModel(REEFSHREDDER_PRICE),       // currency value
             "reef_shredder"                                 // item id
-    );
+            ,
+            GENERAL_CATEGORY);
 
     private static final HashMap<String, Integer> SIXTIESGUN_PRICE =
             new HashMap<String, Integer>();
@@ -125,7 +143,8 @@ public class SurfStoreAssets implements IStoreAssets {
             "img/examples/surf/sixties-gun.png",            // image file path
             new StaticPriceModel(SIXTIESGUN_PRICE),         // currency value
             "sixties_gun"                                   // item id
-    );
+            ,
+            GENERAL_CATEGORY);
 
     private static final HashMap<String, Integer> TRADITIONALFISH_PRICE =
             new HashMap<String, Integer>();
@@ -138,7 +157,8 @@ public class SurfStoreAssets implements IStoreAssets {
             "img/examples/surf/traditional-fish.png",       // image file path
             new StaticPriceModel(TRADITIONALFISH_PRICE),    // currency value
             "traditional_fish"                              // item id
-    );
+            ,
+            GENERAL_CATEGORY);
 
 
     /** Virtual Currency Packs **/
@@ -151,7 +171,7 @@ public class SurfStoreAssets implements IStoreAssets {
             "android.test.refunded",                        // product id in Google Market
             0.99,                                           // actual price in $$
             200,                                            // number of currencies in the pack
-            CLAM_CURRENCY);
+            CLAM_CURRENCY, GENERAL_CATEGORY);
 
     public static final VirtualCurrencyPack MALIBUMEDIUMPACK_PACK = new VirtualCurrencyPack(
             "Malibu Medium Pack",                           // name
@@ -161,7 +181,7 @@ public class SurfStoreAssets implements IStoreAssets {
             "android.test.purchased",                       // product id in Google Market
             1.99,                                           // actual price in $$
             500,                                            // number of currencies in the pack
-            CLAM_CURRENCY);
+            CLAM_CURRENCY, GENERAL_CATEGORY);
 
     public static VirtualCurrencyPack PIPELINEPUMPKINPACK_PACK = new VirtualCurrencyPack(
             "Pipeline Pumpin' Pack",                        // name
@@ -171,7 +191,7 @@ public class SurfStoreAssets implements IStoreAssets {
             "android.test.canceled",                        // product id in Google Market
             5.99,                                           // actual price in $$
             1500,                                           // number of currencies in the pack
-            CLAM_CURRENCY);
+            CLAM_CURRENCY, GENERAL_CATEGORY);
 
     public static VirtualCurrencyPack SILVERPACK_PACK = new VirtualCurrencyPack(
             "Silver Pack",                                  // name
@@ -181,5 +201,5 @@ public class SurfStoreAssets implements IStoreAssets {
             "android.test.item_unavailable",                // product id in Google Market
             15.99,                                          // actual price in $$
             5500,                                           // number of currencies in the pack
-            CLAM_CURRENCY);
+            CLAM_CURRENCY, GENERAL_CATEGORY);
 }

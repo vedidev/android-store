@@ -45,11 +45,13 @@ public class VirtualCurrencyPack extends AbstractVirtualItem {
      * @param mPrice is the actual $$ cost of the virtual currency pack.
      * @param mCurrencyAmout is the amount of currency in the pack.
      * @param mCurrency is the currency associated with this pack.
+     * @param mCategory is the category this currency pack is associated with.
      */
     public VirtualCurrencyPack(String mName, String mDescription, String mImgFilePath, String mItemId,
-                               String productId, double mPrice, int mCurrencyAmout, VirtualCurrency mCurrency) {
+                               String productId, double mPrice, int mCurrencyAmout, VirtualCurrency mCurrency, VirtualCategory mCategory) {
         super(mName, mDescription, mImgFilePath, mItemId);
         this.mCurrency = mCurrency;
+        this.mCategory = mCategory;
         this.mGoogleItem = new GoogleMarketItem(productId, GoogleMarketItem.Managed.UNMANAGED);
         this.mPrice = mPrice;
         this.mCurrencyAmount = mCurrencyAmout;
@@ -63,17 +65,27 @@ public class VirtualCurrencyPack extends AbstractVirtualItem {
      */
     public VirtualCurrencyPack(JSONObject jsonObject) throws JSONException {
         super(jsonObject);
-        try {
-            this.mGoogleItem = new GoogleMarketItem(jsonObject.getString(JSONConsts.CURRENCYPACK_PRODUCT_ID),
-                    GoogleMarketItem.Managed.UNMANAGED);
-            this.mPrice = jsonObject.getDouble(JSONConsts.CURRENCYPACK_PRICE);
-            this.mCurrencyAmount = jsonObject.getInt(JSONConsts.CURRENCYPACK_AMOUNT);
-            this.mCurrency = StoreInfo.getInstance().getVirtualCurrencyByItemId(jsonObject.getString
-                    (JSONConsts.CURRENCYPACK_CURRENCYITEMID));
+        this.mGoogleItem = new GoogleMarketItem(jsonObject.getString(JSONConsts.CURRENCYPACK_PRODUCT_ID),
+                GoogleMarketItem.Managed.UNMANAGED);
+        this.mPrice = jsonObject.getDouble(JSONConsts.CURRENCYPACK_PRICE);
+        this.mCurrencyAmount = jsonObject.getInt(JSONConsts.CURRENCYPACK_AMOUNT);
+
+        String currencyItemId = jsonObject.getString(JSONConsts.CURRENCYPACK_CURRENCYITEMID);
+        try{
+            this.mCurrency = StoreInfo.getInstance().getVirtualCurrencyByItemId(currencyItemId);
         } catch (VirtualItemNotFoundException e) {
             if (StoreConfig.debug){
                 Log.d(TAG, "Couldn't find the associated currency.");
             }
+        }
+
+        int catId = jsonObject.getInt(JSONConsts.CURRENCYPACK_CATEGORY_ID);
+        try {
+            if (catId > -1){
+                this.mCategory = StoreInfo.getInstance().getVirtualCategoryById(catId);
+            }
+        } catch (VirtualItemNotFoundException e) {
+            Log.e(TAG, "Can't find category with id: " + catId);
         }
     }
 
@@ -89,6 +101,7 @@ public class VirtualCurrencyPack extends AbstractVirtualItem {
             jsonObject.put(JSONConsts.CURRENCYPACK_PRODUCT_ID, mGoogleItem.getMarketId());
             jsonObject.put(JSONConsts.CURRENCYPACK_AMOUNT, new Integer(mCurrencyAmount));
             jsonObject.put(JSONConsts.CURRENCYPACK_CURRENCYITEMID, mCurrency.getItemId());
+            jsonObject.put(JSONConsts.CURRENCYPACK_CATEGORY_ID, mCategory != null ? mCategory.getmId() : -1);
 
             Iterator<?> keys = parentJsonObject.keys();
             while(keys.hasNext())
@@ -135,4 +148,5 @@ public class VirtualCurrencyPack extends AbstractVirtualItem {
     private double           mPrice;
     private int              mCurrencyAmount;
     private VirtualCurrency  mCurrency;
+    private VirtualCategory  mCategory;
 }

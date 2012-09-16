@@ -18,6 +18,8 @@ package com.soomla.store.domain.data;
 import android.util.Log;
 import com.soomla.store.StoreConfig;
 import com.soomla.store.data.JSONConsts;
+import com.soomla.store.data.StoreInfo;
+import com.soomla.store.exceptions.VirtualItemNotFoundException;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -37,13 +39,15 @@ public class VirtualGood extends AbstractVirtualItem {
      * @param mDescription is the description of the virtual good. This will show up
      *                       in the store in the description section.
      * @param mImgFilePath is the path to the image that corresponds to the virtual good.
-     * @param mItemId is the id of the virtual good.
      * @param mPriceModel is the way the price of the current virtual good is calculated.
+     * @param mItemId is the id of the virtual good.
+     * @param mCategory is the category this virtual good is associated with.
      */
     public VirtualGood(String mName, String mDescription, String mImgFilePath, AbstractPriceModel mPriceModel,
-            String mItemId) {
+                       String mItemId, VirtualCategory mCategory) {
         super(mName, mDescription, mImgFilePath, mItemId);
         this.mPriceModel = mPriceModel;
+        this.mCategory = mCategory;
     }
 
     /** Constructor
@@ -56,6 +60,14 @@ public class VirtualGood extends AbstractVirtualItem {
         super(jsonObject);
         this.mPriceModel = AbstractPriceModel.fromJSONObject(jsonObject.getJSONObject(JSONConsts
                 .GOOD_PRICE_MODEL));
+        int catId = jsonObject.getInt(JSONConsts.GOOD_CATEGORY_ID);
+        try {
+            if (catId > -1){
+                this.mCategory = StoreInfo.getInstance().getVirtualCategoryById(catId);
+            }
+        } catch (VirtualItemNotFoundException e) {
+            Log.e(TAG, "Can't find category with id: " + catId);
+        }
     }
 
     /**
@@ -75,6 +87,7 @@ public class VirtualGood extends AbstractVirtualItem {
 
             JSONObject priceModelObject = AbstractPriceModel.priceModelToJSONObject(mPriceModel);
             jsonObject.put(JSONConsts.GOOD_PRICE_MODEL, priceModelObject);
+            jsonObject.put(JSONConsts.GOOD_CATEGORY_ID, mCategory != null ? mCategory.getmId() : -1);
         } catch (JSONException e) {
             if (StoreConfig.debug){
                 Log.d(TAG, "An error occurred while generating JSON object.");
@@ -120,4 +133,5 @@ public class VirtualGood extends AbstractVirtualItem {
     private static final String TAG = "SOOMLA VirtualGood";
 
     private AbstractPriceModel mPriceModel;
+    private VirtualCategory    mCategory;
 }
