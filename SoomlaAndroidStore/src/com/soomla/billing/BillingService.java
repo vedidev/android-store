@@ -134,7 +134,9 @@ public class BillingService extends Service implements ServiceConnection {
          */
         protected void onRemoteException(RemoteException e) {
             Log.w(TAG, "remote billing service crashed");
-            mService = null;
+
+            onServiceDisconnected(null);
+            responseCodeReceived(Consts.ResponseCode.RESULT_ERROR);
         }
 
         /**
@@ -471,7 +473,7 @@ public class BillingService extends Service implements ServiceConnection {
      * @return true if supported; false otherwise
      */
     public boolean checkBillingSupported(String itemType) {
-        return new CheckBillingSupported(itemType).runOrWaitRequest();
+        return mService != null && new CheckBillingSupported(itemType).runOrWaitRequest();
     }
 
     /**
@@ -645,6 +647,15 @@ public class BillingService extends Service implements ServiceConnection {
     @Override
     public void onServiceDisconnected(ComponentName name) {
         Log.w(TAG, "Billing service disconnected");
+
+        if (mService != null) {
+            try {
+                unbindService(this);
+            } catch (IllegalArgumentException e) {
+                Log.w(TAG, "Billing service already disconnected");
+            }
+        }
+
         mService = null;
     }
 
