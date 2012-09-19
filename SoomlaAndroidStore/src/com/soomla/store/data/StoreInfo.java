@@ -75,16 +75,16 @@ public class StoreInfo {
 
             // put StoreInfo in the database as JSON
             String store_json = toJSONObject().toString();
-            if (StorageManager.getObfuscator() != null){
-                store_json = StorageManager.getObfuscator().obfuscateString(store_json);
+            if (StorageManager.getInstance().getObfuscator() != null){
+                store_json = StorageManager.getInstance().getObfuscator().obfuscateString(store_json);
             }
-            StorageManager.getDatabase().setStoreInfo(store_json);
+            StorageManager.getInstance().getDatabase().setStoreInfo(store_json);
         }
     }
 
     public boolean initializeFromDB() {
         // first, trying to load StoreInfo from the local DB.
-        Cursor cursor = StorageManager.getDatabase().getMetaData();
+        Cursor cursor = StorageManager.getInstance().getDatabase().getMetaData();
         if (cursor != null) {
             String storejson = "";
             try {
@@ -100,8 +100,8 @@ public class StoreInfo {
                         return false;
                     }
 
-                    if (StorageManager.getObfuscator() != null){
-                        storejson = StorageManager.getObfuscator().unobfuscateToString(storejson);
+                    if (StorageManager.getInstance().getObfuscator() != null){
+                        storejson = StorageManager.getInstance().getObfuscator().unobfuscateToString(storejson);
                     }
 
                     if (StoreConfig.debug){

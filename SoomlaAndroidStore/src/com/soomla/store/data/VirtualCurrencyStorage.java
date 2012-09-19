@@ -46,10 +46,10 @@ public class VirtualCurrencyStorage {
         }
 
         String itemId = virtualCurrency.getItemId();
-        if (StorageManager.getObfuscator() != null){
-            itemId = StorageManager.getObfuscator().obfuscateString(itemId);
+        if (StorageManager.getInstance().getObfuscator() != null){
+            itemId = StorageManager.getInstance().getObfuscator().obfuscateString(itemId);
         }
-        Cursor cursor = StorageManager.getDatabase().getVirtualCurrency(itemId);
+        Cursor cursor = StorageManager.getInstance().getDatabase().getVirtualCurrency(itemId);
 
         if (cursor == null) {
             return 0;
@@ -61,8 +61,8 @@ public class VirtualCurrencyStorage {
             if (cursor.moveToNext()) {
                 String balanceStr = cursor.getString(balanceCol);
                 int balance;
-                if (StorageManager.getObfuscator() != null){
-                    balance = StorageManager.getObfuscator().unobfuscateToInt(balanceStr);
+                if (StorageManager.getInstance().getObfuscator() != null){
+                    balance = StorageManager.getInstance().getObfuscator().unobfuscateToInt(balanceStr);
                 }
                 else {
                     balance = Integer.parseInt(balanceStr);
@@ -96,11 +96,11 @@ public class VirtualCurrencyStorage {
         int balance = getBalance(virtualCurrency);
         String quantityStr = "" + (balance + amount);
         String itemId = virtualCurrency.getItemId();
-        if (StorageManager.getObfuscator() != null){
-            quantityStr = StorageManager.getObfuscator().obfuscateString(quantityStr);
-            itemId      = StorageManager.getObfuscator().obfuscateString(itemId);
+        if (StorageManager.getInstance().getObfuscator() != null){
+            quantityStr = StorageManager.getInstance().getObfuscator().obfuscateString(quantityStr);
+            itemId      = StorageManager.getInstance().getObfuscator().obfuscateString(itemId);
         }
-        StorageManager.getDatabase().updateVirtualCurrency(itemId, quantityStr);
+        StorageManager.getInstance().getDatabase().updateVirtualCurrency(itemId, quantityStr);
 
         return balance + amount;
     }
@@ -119,11 +119,11 @@ public class VirtualCurrencyStorage {
         int quantity = getBalance(virtualCurrency) - amount;
         quantity = quantity > 0 ? quantity : 0;
         String quantityStr = "" + quantity;
-        if (StorageManager.getObfuscator() != null){
-            quantityStr = StorageManager.getObfuscator().obfuscateString(quantityStr);
-            itemId      = StorageManager.getObfuscator().obfuscateString(itemId);
+        if (StorageManager.getInstance().getObfuscator() != null){
+            quantityStr = StorageManager.getInstance().getObfuscator().obfuscateString(quantityStr);
+            itemId      = StorageManager.getInstance().getObfuscator().obfuscateString(itemId);
         }
-        StorageManager.getDatabase().updateVirtualCurrency(itemId, quantityStr);
+        StorageManager.getInstance().getDatabase().updateVirtualCurrency(itemId, quantityStr);
 
         return quantity;
     }

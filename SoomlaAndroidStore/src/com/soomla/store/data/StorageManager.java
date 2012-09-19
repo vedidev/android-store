@@ -50,11 +50,11 @@ public class StorageManager {
             Log.d(TAG, "initializing StorageManager");
         }
 
-        sDatabase = new StoreDatabase(context);
+        mDatabase = new StoreDatabase(context);
 
         if(StoreConfig.DB_SECURE){
             String deviceId = Settings.Secure.getString(context.getContentResolver(), Settings.Secure.ANDROID_ID);
-            sObfuscator = new AESObfuscator(StoreConfig.obfuscationSalt, context.getPackageName(), deviceId);
+            mObfuscator = new AESObfuscator(StoreConfig.obfuscationSalt, context.getPackageName(), deviceId);
         }
 
         mVirtualCurrencyStorage =   new VirtualCurrencyStorage();
@@ -72,12 +72,12 @@ public class StorageManager {
         return mVirtualGoodsStorage;
     }
 
-    public static AESObfuscator getObfuscator(){
-        return sObfuscator;
+    public AESObfuscator getObfuscator(){
+        return mObfuscator;
     }
 
-    public static StoreDatabase getDatabase(){
-        return sDatabase;
+    public StoreDatabase getDatabase(){
+        return mDatabase;
     }
 
     private StorageManager(){ }
@@ -85,10 +85,9 @@ public class StorageManager {
     /** Private members **/
     private static final String TAG = "SOOMLA StorageManager";
 
+    private static StorageManager   sInstance;
     private VirtualGoodsStorage     mVirtualGoodsStorage;
     private VirtualCurrencyStorage  mVirtualCurrencyStorage;
-    private static StorageManager   sInstance;
-
-    private static AESObfuscator    sObfuscator;
-    private static StoreDatabase    sDatabase;
+    private AESObfuscator           mObfuscator;
+    private StoreDatabase           mDatabase;
 }

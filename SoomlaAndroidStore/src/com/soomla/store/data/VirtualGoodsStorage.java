@@ -45,10 +45,10 @@ public class VirtualGoodsStorage {
             Log.d(TAG, "trying to fetch balance for virtual good with itemId: " + virtualGood.getItemId());
         }
         String itemId = virtualGood.getItemId();
-        if (StorageManager.getObfuscator() != null){
-            itemId = StorageManager.getObfuscator().obfuscateString(itemId);
+        if (StorageManager.getInstance().getObfuscator() != null){
+            itemId = StorageManager.getInstance().getObfuscator().obfuscateString(itemId);
         }
-        Cursor cursor = StorageManager.getDatabase().getVirtualGood(itemId);
+        Cursor cursor = StorageManager.getInstance().getDatabase().getVirtualGood(itemId);
 
         if (cursor == null) {
             return 0;
@@ -60,8 +60,8 @@ public class VirtualGoodsStorage {
             if (cursor.moveToNext()) {
                 String balanceStr = cursor.getString(balanceCol);
                 int balance;
-                if (StorageManager.getObfuscator() != null){
-                    balance = StorageManager.getObfuscator().unobfuscateToInt(balanceStr);
+                if (StorageManager.getInstance().getObfuscator() != null){
+                    balance = StorageManager.getInstance().getObfuscator().unobfuscateToInt(balanceStr);
                 }
                 else {
                     balance = Integer.parseInt(balanceStr);
@@ -96,11 +96,11 @@ public class VirtualGoodsStorage {
         String itemId = virtualGood.getItemId();
         int balance = getBalance(virtualGood);
         String quantityStr = "" + (balance + amount);
-        if (StorageManager.getObfuscator() != null){
-            quantityStr = StorageManager.getObfuscator().obfuscateString(quantityStr);
-            itemId      = StorageManager.getObfuscator().obfuscateString(itemId);
+        if (StorageManager.getInstance().getObfuscator() != null){
+            quantityStr = StorageManager.getInstance().getObfuscator().obfuscateString(quantityStr);
+            itemId      = StorageManager.getInstance().getObfuscator().obfuscateString(itemId);
         }
-        StorageManager.getDatabase().updateVirtualGood(itemId, quantityStr);
+        StorageManager.getInstance().getDatabase().updateVirtualGood(itemId, quantityStr);
 
         return balance + amount;
 	}
@@ -119,11 +119,11 @@ public class VirtualGoodsStorage {
         int quantity = getBalance(virtualGood) - amount;
         quantity = quantity > 0 ? quantity : 0;
         String quantityStr = "" + quantity;
-        if (StorageManager.getObfuscator() != null){
-            quantityStr = StorageManager.getObfuscator().obfuscateString(quantityStr);
-            itemId      = StorageManager.getObfuscator().obfuscateString(itemId);
+        if (StorageManager.getInstance().getObfuscator() != null){
+            quantityStr = StorageManager.getInstance().getObfuscator().obfuscateString(quantityStr);
+            itemId      = StorageManager.getInstance().getObfuscator().obfuscateString(itemId);
         }
-        StorageManager.getDatabase().updateVirtualGood(itemId, quantityStr);
+        StorageManager.getInstance().getDatabase().updateVirtualGood(itemId, quantityStr);
 
         return quantity;
 	}
