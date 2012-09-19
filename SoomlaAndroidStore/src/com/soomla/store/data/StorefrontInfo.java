@@ -20,17 +20,11 @@ import android.text.TextUtils;
 import android.util.Log;
 import com.soomla.billing.util.AESObfuscator;
 import com.soomla.store.StoreConfig;
-import com.soomla.store.domain.ui.StoreTemplate;
-import com.soomla.store.domain.ui.StoreTheme;
-import com.soomla.store.storefront.IStorefrontAssets;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 /**
- * This class holds the store's meta data including:
- * - Store UI template
- * - Store UI theme
- * - Store UI background
+ * This class is used to retrieve the storefront JSON when it's needed.
  */
 public class StorefrontInfo {
 
@@ -44,31 +38,34 @@ public class StorefrontInfo {
 
     /**
      * This function initializes StorefrontInfo. On first initialization, when the
-     * database doesn't have any previous version of the store metadata, StorefrontInfo
-     * is being loaded from the given {@link com.soomla.store.storefront.IStorefrontAssets}. After the first initialization,
-     * StorefrontInfo will be initialized from the database.
-     * NOTE: If you want to override the current StorefrontInfo, you'll have to bump the
-     * database version (the old database will be destroyed).
+     * database doesn't have any previous version of the store metadata (JSON), StorefrontInfo
+     * saves the given JSON to the DB. After the first initialization,
+     * StorefrontInfo will load the JSON metadata when needed.
+     * NOTE: If you want to override the current StorefrontInfo metadata JSON file, you'll have to bump the
+     * database version (the old database will be destroyed but balances will be saved!!).
      */
-    public void initialize(IStorefrontAssets storefrontAssets){
-        if (storefrontAssets == null){
-            Log.e(TAG, "The given storefront assets can't be null !");
+    public void initialize(String storefrontJSON){
+        if (TextUtils.isEmpty(storefrontJSON)){
+            Log.e(TAG, "The given storefront JSON can't be null or empty !");
             return;
         }
-
-        if (!initializeFromDB()){
-            /// fall-back here if the json parsing fails or doesn't exist, we load the storefront from the given
-            // {@link IStorefrontAssets}.
-            mStoreBackground      = storefrontAssets.getStoreBackground();
-            mTemplate             = storefrontAssets.getStoreTemplate();
-            mTheme                = storefrontAssets.getStoreTheme();
-
-            // put StorefrontInfo in the database as JSON
-            String storefront_json = toJSONObject().toString();
+        if (!initializeFromDB()) {
+            // if the json doesn't already exist in the database, we load it into the DB here.
+            mStorefrontJSON = storefrontJSON;
             if (StorageManager.getObfuscator() != null){
-                storefront_json = StorageManager.getObfuscator().obfuscateString(storefront_json);
+                storefrontJSON = StorageManager.getObfuscator().obfuscateString(storefrontJSON);
             }
-            StorageManager.getDatabase().setStorefrontInfo(storefront_json);
+            StorageManager.getDatabase().setStorefrontInfo(storefrontJSON);
+
+            // get orientation value from JSON
+            try {
+                JSONObject jsonObject = new JSONObject(mStorefrontJSON);
+                mOrientationLandscape = jsonObject.getJSONObject("theme").getBoolean("isOrientationLandscape");
+            } catch (JSONException e) {
+                if (StoreConfig.debug){
+                    Log.d(TAG, "can't parse json object.");
+                }
+            }
         }
     }
 
@@ -76,104 +73,64 @@ public class StorefrontInfo {
         // first, trying to load StorefrontInfo from the local DB.
         Cursor cursor = StorageManager.getDatabase().getMetaData();
         if (cursor != null) {
-            String storefront_json = "";
             try {
                 int storefrontVal = cursor.getColumnIndexOrThrow(
                         StoreDatabase.METADATA_COLUMN_STOREFRONTINFO);
                 if (cursor.moveToNext()) {
-                    storefront_json = cursor.getString(storefrontVal);
+                    mStorefrontJSON = cursor.getString(storefrontVal);
+                    if (TextUtils.isEmpty(mStorefrontJSON)){
+                        if (StoreConfig.debug){
+                            Log.d(TAG, "storefront json is not in DB yet ");
+                        }
+                        return false;
+                    }
+
                     if (StorageManager.getObfuscator() != null){
-                        storefront_json = StorageManager.getObfuscator().unobfuscateToString(storefront_json);
+                        mStorefrontJSON = StorageManager.getObfuscator().unobfuscateToString(mStorefrontJSON);
                     }
 
                     if (StoreConfig.debug){
-                        Log.d(TAG, "the metadata json (from DB) is " + storefront_json);
+                        Log.d(TAG, "the metadata json (from DB) is " + mStorefrontJSON);
                     }
+
+                    JSONObject jsonObject = new JSONObject(mStorefrontJSON);
+                    mOrientationLandscape = jsonObject.getJSONObject("theme").getBoolean("isOrientationLandscape");
+
+                    return true;
                 }
             } catch (AESObfuscator.ValidationException e) {
-                e.printStackTrace();
+                if (StoreConfig.debug){
+                    Log.d(TAG, "can't obfuscate storefrontJSON.");
+                }
+            } catch (JSONException e) {
+                if (StoreConfig.debug){
+                    Log.d(TAG, "can't parse json object.");
+                }
             } finally {
                 cursor.close();
             }
-
-            if (!TextUtils.isEmpty(storefront_json)){
-                try {
-                    fromJSONObject(new JSONObject(storefront_json));
-
-                    // everything went well... StorefrontInfo is initialized from the local DB.
-                    // it's ok to return now.
-                    return true;
-                } catch (JSONException e) {
-                    if (StoreConfig.debug){
-                        Log.d(TAG, "Can't parse metadata json: " + storefront_json);
-                    }
-                }
-            }
         }
+
         return false;
     }
 
-    /** Getters **/
-
-    public StoreTemplate getTemplate() {
-        return mTemplate;
+    public String getStorefrontJSON() {
+        return mStorefrontJSON;
     }
 
-    public String getStoreBackground() {
-        return mStoreBackground;
-    }
-
-    public boolean isIsCurrencyStoreDisabled() {
-        return mIsCurrencyStoreDisabled;
+    public boolean isOrientationLandscape() {
+        return mOrientationLandscape;
     }
 
     /** Private functions **/
 
     private StorefrontInfo() { }
 
-    private void fromJSONObject(JSONObject jsonObject){
-        try {
-            mTemplate = new StoreTemplate(jsonObject.getJSONObject(JSONConsts.STORE_TEMPLATE));
-            mTheme = new StoreTheme(jsonObject.getJSONObject(JSONConsts.STORE_THEME));
-            mStoreBackground = jsonObject.getString(JSONConsts.STORE_BACKGROUND);
-            mIsCurrencyStoreDisabled = jsonObject.getBoolean(JSONConsts.STORE_ISCURRENCYDISABLED);
-        } catch (JSONException e) {
-            if (StoreConfig.debug){
-                Log.d(TAG, "An error occurred while parsing JSON object.");
-            }
-        }
-    }
-
-    /**
-     * Converts StorefrontInfo to a JSONObject.
-     * @return a JSONObject representation of the StorefrontInfo.
-     */
-    public JSONObject toJSONObject(){
-        JSONObject template = mTemplate.toJSONObject();
-        JSONObject theme = mTheme.toJSONObject();
-
-        JSONObject jsonObject = new JSONObject();
-        try {
-            jsonObject.put(JSONConsts.STORE_TEMPLATE, template);
-            jsonObject.put(JSONConsts.STORE_THEME, theme);
-            jsonObject.put(JSONConsts.STORE_BACKGROUND, mStoreBackground);
-            jsonObject.put(JSONConsts.STORE_ISCURRENCYDISABLED, mIsCurrencyStoreDisabled);
-        } catch (JSONException e) {
-            if (StoreConfig.debug){
-                Log.d(TAG, "An error occurred while generating JSON object.");
-            }
-        }
-
-        return jsonObject;
-    }
-
     /** Private members **/
 
     private static final String TAG = "SOOMLA StorefrontInfo";
     private static StorefrontInfo sInstance = null;
 
-    private StoreTemplate                           mTemplate;
-    private StoreTheme                              mTheme;
-    private String                                  mStoreBackground;
-    private boolean                                 mIsCurrencyStoreDisabled;
+    private boolean mOrientationLandscape;
+    private String  mStorefrontJSON;
 }

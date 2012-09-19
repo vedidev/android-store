@@ -92,6 +92,14 @@ public class StoreInfo {
                         StoreDatabase.METADATA_COLUMN_STOREINFO);
                 if (cursor.moveToNext()) {
                     storejson = cursor.getString(storeVal);
+
+                    if (TextUtils.isEmpty(storejson)){
+                        if (StoreConfig.debug){
+                            Log.d(TAG, "store json is not in DB yet ");
+                        }
+                        return false;
+                    }
+
                     if (StorageManager.getObfuscator() != null){
                         storejson = StorageManager.getObfuscator().unobfuscateToString(storejson);
                     }

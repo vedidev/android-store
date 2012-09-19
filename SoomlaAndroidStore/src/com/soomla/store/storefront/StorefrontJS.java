@@ -110,14 +110,18 @@ public class StorefrontJS{
 
         try {
             JSONObject storeJSONObject = StoreInfo.getInstance().toJSONObject();
-            JSONObject storefrontJSONObject = StorefrontInfo.getInstance().toJSONObject();
+            JSONObject storefrontJSONObject = new JSONObject(StorefrontInfo.getInstance().getStorefrontJSON());
             Iterator<?> keys = storefrontJSONObject.keys();
             while(keys.hasNext())
             {
                 String key = (String)keys.next();
                 storeJSONObject.put(key, storefrontJSONObject.get(key));
-
             }
+
+            if (StoreConfig.debug){
+                Log.d(TAG, "initializing JS with JSON: " + storeJSONObject.toString());
+            }
+
             mActivity.sendToJS("initialize", storeJSONObject.toString());
         } catch (JSONException e) {
             if (StoreConfig.debug){

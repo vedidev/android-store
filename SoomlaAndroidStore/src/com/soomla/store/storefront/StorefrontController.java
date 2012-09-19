@@ -30,8 +30,8 @@ import org.json.JSONObject;
 
 public class StorefrontController implements IStoreEventHandler {
 
-    public void openStore(Activity activity, IStorefrontAssets storefrontAssets){
-        StorefrontInfo.getInstance().initialize(storefrontAssets);
+    public void openStore(Activity activity, String storefrontJSON){
+        StorefrontInfo.getInstance().initialize(storefrontJSON);
 
         Intent intent = new Intent(activity.getApplicationContext(), StorefrontActivity.class);
         activity.startActivity(intent);
