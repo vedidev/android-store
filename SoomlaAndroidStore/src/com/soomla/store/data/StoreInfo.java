@@ -160,19 +160,13 @@ public class StoreInfo {
      * @throws VirtualItemNotFoundException
      */
     public VirtualCurrencyPack getPackByItemId(String itemId) throws VirtualItemNotFoundException {
-        VirtualCurrencyPack pack = null;
         for(VirtualCurrencyPack p : mVirtualCurrencyPacks){
             if (p.getItemId().equals(itemId)){
-                pack = p;
-                break;
+                return p;
             }
         }
 
-        if (pack == null){
-            throw new VirtualItemNotFoundException("itemId", itemId);
-        }
-
-        return pack;
+        throw new VirtualItemNotFoundException("itemId", itemId);
     }
 
     /**
@@ -182,19 +176,13 @@ public class StoreInfo {
      * @throws VirtualItemNotFoundException
      */
     public VirtualGood getVirtualGoodByItemId(String itemId) throws VirtualItemNotFoundException {
-        VirtualGood good = null;
         for(VirtualGood g : mVirtualGoods){
             if (g.getItemId().equals(itemId)){
-                good = g;
-                break;
+                return g;
             }
         }
 
-        if (good == null){
-            throw new VirtualItemNotFoundException("itemId", itemId);
-        }
-
-        return good;
+        throw new VirtualItemNotFoundException("itemId", itemId);
     }
 
     /**
@@ -204,19 +192,13 @@ public class StoreInfo {
      * @throws VirtualItemNotFoundException
      */
     public VirtualCategory getVirtualCategoryById(int id) throws VirtualItemNotFoundException {
-        VirtualCategory category = null;
         for(VirtualCategory c : mVirtualCategories){
             if (c.getmId() == id){
-                category = c;
-                break;
+                return c;
             }
         }
 
-        if (category == null){
-            throw new VirtualItemNotFoundException("id", "" + id);
-        }
-
-        return category;
+        throw new VirtualItemNotFoundException("id", "" + id);
     }
 
     /**
@@ -226,19 +208,13 @@ public class StoreInfo {
      * @throws VirtualItemNotFoundException
      */
     public VirtualCurrency getVirtualCurrencyByItemId(String itemId) throws VirtualItemNotFoundException {
-        VirtualCurrency currency = null;
         for(VirtualCurrency c : mVirtualCurrencies){
             if (c.getItemId().equals(itemId)){
-                currency = c;
-                break;
+                return c;
             }
         }
 
-        if (currency == null){
-            throw new VirtualItemNotFoundException("itemId", itemId);
-        }
-
-        return currency;
+        throw new VirtualItemNotFoundException("itemId", itemId);
     }
 
     /** Getters **/
