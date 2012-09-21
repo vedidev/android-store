@@ -255,6 +255,11 @@ public class Security {
     private static AESObfuscator getAesObfuscator(Context context) {
         if (mAesObfuscator == null) {
             String deviceId = Settings.Secure.getString(context.getContentResolver(), Settings.Secure.ANDROID_ID);
+            if (deviceId == null || TextUtils.isEmpty(deviceId)){
+                // This is a fallback in case the device id cannot be retrieved on the device
+                // (happened on some devices !)
+                deviceId = "123456789";
+            }
             mAesObfuscator = new AESObfuscator(StoreConfig.obfuscationSalt, context.getPackageName(), deviceId);
         }
         return mAesObfuscator;
