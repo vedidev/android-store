@@ -1,4 +1,4 @@
-Welcome to The SOOMLA Project
+The SOOMLA Project
 ---
 The SOOMLA Project is a series of open source initiatives with a joint goal to help mobile game developers get better stores and more in-app purchases.
 
