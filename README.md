@@ -1,4 +1,4 @@
-*This project is a part of The SOOMLA Project which is a series of open source initiatives with a joint goal to help mobile game developers get better stores and more in-app purchases.*
+*This project is a part of [The SOOMLA Project](http://project.soom.la) which is a series of open source initiatives with a joint goal to help mobile game developers get better stores and more in-app purchases.*
 
 android-store
 ---
