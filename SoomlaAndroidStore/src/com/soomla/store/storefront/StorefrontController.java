@@ -49,7 +49,7 @@ public class StorefrontController implements IStoreEventHandler {
             JSONObject jsonObject = new JSONObject();
             VirtualCurrency virtualCurrency = pack.getVirtualCurrency();
             jsonObject.put(virtualCurrency.getItemId(), StorageManager.getInstance()
-                    .getVirtualCurrencyStorage().getBalance(pack.getVirtualCurrency()));
+                    .getVirtualCurrencyStorage().getBalance(virtualCurrency));
 
             mActivity.sendToJS("currencyBalanceChanged", jsonObject.toString());
         } catch (JSONException e) {
