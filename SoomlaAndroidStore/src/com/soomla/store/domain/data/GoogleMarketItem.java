@@ -24,19 +24,19 @@ public class GoogleMarketItem {
 
     /** Constructor
      *
-     * @param mMarketId is the Id of the current item in Google Play.
+     * @param mProductId is the Id of the current item in Google Play.
      * @param mManaged is the Managed type of the current item in Google Play.
      */
-    public GoogleMarketItem(String mMarketId, Managed mManaged) {
+    public GoogleMarketItem(String mProductId, Managed mManaged) {
 
-        this.mMarketId = mMarketId;
+        this.mProductId = mProductId;
         this.mManaged = mManaged;
     }
 
     /** Getters **/
 
-    public String getMarketId() {
-        return mMarketId;
+    public String getProductId() {
+        return mProductId;
     }
 
     public Managed getManaged() {
@@ -62,5 +62,5 @@ public class GoogleMarketItem {
     /**
      *  The Id of this VirtualGood in Google Market
     */
-    private String mMarketId;
+    private String mProductId;
 }

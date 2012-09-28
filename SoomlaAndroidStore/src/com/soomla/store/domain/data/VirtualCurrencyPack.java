@@ -98,7 +98,7 @@ public class VirtualCurrencyPack extends AbstractVirtualItem {
         JSONObject jsonObject = new JSONObject();
         try {
             jsonObject.put(JSONConsts.CURRENCYPACK_PRICE, new Double(mPrice));
-            jsonObject.put(JSONConsts.CURRENCYPACK_PRODUCT_ID, mGoogleItem.getMarketId());
+            jsonObject.put(JSONConsts.CURRENCYPACK_PRODUCT_ID, mGoogleItem.getProductId());
             jsonObject.put(JSONConsts.CURRENCYPACK_AMOUNT, new Integer(mCurrencyAmount));
             jsonObject.put(JSONConsts.CURRENCYPACK_CURRENCYITEMID, mCurrency.getItemId());
             jsonObject.put(JSONConsts.CURRENCYPACK_CATEGORY_ID, mCategory != null ? mCategory.getmId() : -1);
@@ -125,7 +125,7 @@ public class VirtualCurrencyPack extends AbstractVirtualItem {
     }
 
     public String getProductId(){
-        return mGoogleItem.getMarketId();
+        return mGoogleItem.getProductId();
     }
 
     public double getPrice() {

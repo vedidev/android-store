@@ -66,8 +66,7 @@ public class StoreInfo {
         }
 
         if (!initializeFromDB()){
-            /// fall-back here if the json parsing fails or doesn't exist, we load the store from the given
-            // {@link IStoreAssets}.
+            /// fall-back here if the json doesn't exist, we load the store from the given {@link IStoreAssets}.
             mVirtualCategories    = Arrays.asList(storeAssets.getVirtualCategories());
             mVirtualCurrencies    = Arrays.asList(storeAssets.getVirtualCurrencies());
             mVirtualCurrencyPacks = Arrays.asList(storeAssets.getVirtualCurrencyPacks());
@@ -140,7 +139,7 @@ public class StoreInfo {
     public VirtualCurrencyPack getPackByGoogleProductId(String productId) throws VirtualItemNotFoundException {
         VirtualCurrencyPack pack = null;
         for(VirtualCurrencyPack p : mVirtualCurrencyPacks){
-            if (p.getmGoogleItem().getMarketId().equals(productId)){
+            if (p.getmGoogleItem().getProductId().equals(productId)){
                 pack = p;
                 break;
             }
