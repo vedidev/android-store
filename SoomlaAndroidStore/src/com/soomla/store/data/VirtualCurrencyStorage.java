@@ -100,7 +100,7 @@ public class VirtualCurrencyStorage {
             quantityStr = StorageManager.getInstance().getObfuscator().obfuscateString(quantityStr);
             itemId      = StorageManager.getInstance().getObfuscator().obfuscateString(itemId);
         }
-        StorageManager.getInstance().getDatabase().updateVirtualCurrency(itemId, quantityStr);
+        StorageManager.getInstance().getDatabase().updateVirtualCurrencyBalance(itemId, quantityStr);
 
         return balance + amount;
     }
@@ -123,7 +123,7 @@ public class VirtualCurrencyStorage {
             quantityStr = StorageManager.getInstance().getObfuscator().obfuscateString(quantityStr);
             itemId      = StorageManager.getInstance().getObfuscator().obfuscateString(itemId);
         }
-        StorageManager.getInstance().getDatabase().updateVirtualCurrency(itemId, quantityStr);
+        StorageManager.getInstance().getDatabase().updateVirtualCurrencyBalance(itemId, quantityStr);
 
         return quantity;
     }

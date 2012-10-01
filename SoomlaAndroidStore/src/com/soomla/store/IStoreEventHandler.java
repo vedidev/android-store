@@ -27,6 +27,8 @@ import com.soomla.store.domain.data.VirtualGood;
 public interface IStoreEventHandler {
     void onVirtualCurrencyPackPurchased(VirtualCurrencyPack pack);
     void onVirtualGoodPurchased(VirtualGood good);
+    void onVirtualGoodEquipped(VirtualGood good);
+    void onVirtualGoodUnequipped(VirtualGood good);
     void onBillingSupported();
     void onBillingNotSupported();
     void onMarketPurchaseProcessStarted();

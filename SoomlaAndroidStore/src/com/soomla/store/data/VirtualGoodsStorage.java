@@ -100,7 +100,7 @@ public class VirtualGoodsStorage {
             quantityStr = StorageManager.getInstance().getObfuscator().obfuscateString(quantityStr);
             itemId      = StorageManager.getInstance().getObfuscator().obfuscateString(itemId);
         }
-        StorageManager.getInstance().getDatabase().updateVirtualGood(itemId, quantityStr);
+        StorageManager.getInstance().getDatabase().updateVirtualGoodBalance(itemId, quantityStr);
 
         return balance + amount;
 	}
@@ -123,10 +123,53 @@ public class VirtualGoodsStorage {
             quantityStr = StorageManager.getInstance().getObfuscator().obfuscateString(quantityStr);
             itemId      = StorageManager.getInstance().getObfuscator().obfuscateString(itemId);
         }
-        StorageManager.getInstance().getDatabase().updateVirtualGood(itemId, quantityStr);
+        StorageManager.getInstance().getDatabase().updateVirtualGoodBalance(itemId, quantityStr);
 
         return quantity;
 	}
+
+    public boolean isEquipped(VirtualGood virtualGood){
+        if (StoreConfig.debug){
+            Log.d(TAG, "checking if virtual good with itemId: " + virtualGood.getItemId() + " is equipped.");
+        }
+        String itemId = virtualGood.getItemId();
+        if (StorageManager.getInstance().getObfuscator() != null){
+            itemId = StorageManager.getInstance().getObfuscator().obfuscateString(itemId);
+        }
+        Cursor cursor = StorageManager.getInstance().getDatabase().getVirtualGood(itemId);
+
+        if (cursor == null) {
+            return false;
+        }
+
+        int equipCol = cursor.getColumnIndexOrThrow(
+                StoreDatabase.VIRTUAL_GOODS_COLUMN_EQUIPPED);
+        if (cursor.moveToNext()) {
+            boolean equipped = cursor.getInt(equipCol) > 0;
+
+            if (StoreConfig.debug){
+                Log.d(TAG, "equipped status for " + virtualGood.getItemId() + " is " + equipped);
+            }
+            return equipped;
+        }
+        cursor.close();
+
+
+        return false;
+    }
+
+    public void equip(VirtualGood virtualGood, boolean equip){
+        if (StoreConfig.debug){
+            Log.d(TAG, (!equip ? "unequipping " : "equipping ") + virtualGood.getName() + ".");
+        }
+
+        String itemId = virtualGood.getItemId();
+        if (StorageManager.getInstance().getObfuscator() != null){
+            itemId = StorageManager.getInstance().getObfuscator().obfuscateString(itemId);
+        }
+
+        StorageManager.getInstance().getDatabase().updateVirtualGoodEquip(itemId, equip);
+    }
 
     /** Private members **/
     private static final String TAG = "SOOMLA VirtualGoodsStorage";

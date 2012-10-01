@@ -43,11 +43,16 @@ public class StoreDatabase {
      * @param itemId is the item id of the required virtual currency.
      * @param balance is the required virtual currency's new balance.
      */
-    public synchronized void updateVirtualCurrency(String itemId, String balance){
+    public synchronized void updateVirtualCurrencyBalance(String itemId, String balance){
         ContentValues values = new ContentValues();
-        values.put(VIRTUAL_CURRENCY_COLUMN_ITEM_ID, itemId);
         values.put(VIRTUAL_CURRENCY_COLUMN_BALANCE, balance);
-        mStoreDB.replace(VIRTUAL_CURRENCY_TABLE_NAME, null, values);
+
+        int affected = mStoreDB.update(VIRTUAL_CURRENCY_TABLE_NAME, values, VIRTUAL_CURRENCY_COLUMN_ITEM_ID + "='?'",
+                new String[]{ itemId });
+        if (affected == 0){
+            values.put(VIRTUAL_CURRENCY_COLUMN_ITEM_ID, itemId);
+            mStoreDB.replace(VIRTUAL_CURRENCY_TABLE_NAME, null, values);
+        }
     }
 
     /**
@@ -74,11 +79,28 @@ public class StoreDatabase {
      * @param itemId is the item id of the required virtual good.
      * @param balance is the required virtual good's new balance.
      */
-    public synchronized void updateVirtualGood(String itemId, String balance){
+    public synchronized void updateVirtualGoodBalance(String itemId, String balance){
         ContentValues values = new ContentValues();
-        values.put(VIRTUAL_GOODS_COLUMN_ITEM_ID, itemId);
         values.put(VIRTUAL_GOODS_COLUMN_BALANCE, balance);
-        mStoreDB.replace(VIRTUAL_GOODS_TABLE_NAME, null, values);
+
+        int affected = mStoreDB.update(VIRTUAL_GOODS_TABLE_NAME, values, VIRTUAL_CURRENCY_COLUMN_ITEM_ID + "='?'",
+                new String[]{ itemId });
+        if (affected == 0){
+            values.put(VIRTUAL_GOODS_COLUMN_ITEM_ID, itemId);
+            mStoreDB.replace(VIRTUAL_GOODS_TABLE_NAME, null, values);
+        }
+    }
+
+    public synchronized void updateVirtualGoodEquip(String itemId, boolean equipped){
+        ContentValues values = new ContentValues();
+        values.put(VIRTUAL_GOODS_COLUMN_EQUIPPED, equipped);
+
+        int affected = mStoreDB.update(VIRTUAL_GOODS_TABLE_NAME, values, VIRTUAL_CURRENCY_COLUMN_ITEM_ID + "='?'",
+                new String[]{ itemId });
+        if (affected == 0){
+            values.put(VIRTUAL_GOODS_COLUMN_ITEM_ID, itemId);
+            mStoreDB.replace(VIRTUAL_GOODS_TABLE_NAME, null, values);
+        }
     }
 
     /**
@@ -107,7 +129,12 @@ public class StoreDatabase {
     public synchronized void setStoreInfo(String storeinfo){
         ContentValues values = new ContentValues();
         values.put(METADATA_COLUMN_STOREINFO, storeinfo);
-        mStoreDB.replace(METADATA_TABLE_NAME, null, values);
+
+        int affected = mStoreDB.update(METADATA_TABLE_NAME, values, METADATA_COLUMN_PACKAGE + "='INFO'", null);
+        if (affected == 0){
+            values.put(METADATA_COLUMN_PACKAGE, "INFO");
+            mStoreDB.replace(METADATA_TABLE_NAME, null, values);
+        }
     }
 
     /**
@@ -117,7 +144,12 @@ public class StoreDatabase {
     public synchronized void setStorefrontInfo(String storefrontinfo){
         ContentValues values = new ContentValues();
         values.put(METADATA_COLUMN_STOREFRONTINFO, storefrontinfo);
-        mStoreDB.replace(METADATA_TABLE_NAME, null, values);
+
+        int affected = mStoreDB.update(METADATA_TABLE_NAME, values, METADATA_COLUMN_PACKAGE + "='INFO'", null);
+        if (affected == 0){
+            values.put(METADATA_COLUMN_PACKAGE, "INFO");
+            mStoreDB.replace(METADATA_TABLE_NAME, null, values);
+        }
     }
 
     /**
@@ -161,9 +193,11 @@ public class StoreDatabase {
 
             sqLiteDatabase.execSQL("CREATE TABLE IF NOT EXISTS " + VIRTUAL_GOODS_TABLE_NAME + "(" +
                     VIRTUAL_GOODS_COLUMN_ITEM_ID + " TEXT PRIMARY KEY, " +
-                    VIRTUAL_GOODS_COLUMN_BALANCE + " TEXT)");
+                    VIRTUAL_GOODS_COLUMN_BALANCE + " TEXT, " +
+                    VIRTUAL_GOODS_COLUMN_EQUIPPED + " TEXT)");
 
             sqLiteDatabase.execSQL("CREATE TABLE IF NOT EXISTS " + METADATA_TABLE_NAME + "(" +
+                    METADATA_COLUMN_PACKAGE + " TEXT PRIMARY KEY, " +
                     METADATA_COLUMN_STOREINFO + " TEXT, " +
                     METADATA_COLUMN_STOREFRONTINFO + " TEXT)");
         }
@@ -181,16 +215,18 @@ public class StoreDatabase {
     private static final String VIRTUAL_GOODS_TABLE_NAME        = "virtual_goods";
     public static final String VIRTUAL_GOODS_COLUMN_BALANCE     = "balance";
     public static final String VIRTUAL_GOODS_COLUMN_ITEM_ID     = "item_id";
+    public static final String VIRTUAL_GOODS_COLUMN_EQUIPPED    = "equipped";
     private static final String[] VIRTUAL_GOODS_COLUMNS = {
-            VIRTUAL_GOODS_COLUMN_ITEM_ID, VIRTUAL_GOODS_COLUMN_BALANCE
+            VIRTUAL_GOODS_COLUMN_ITEM_ID, VIRTUAL_GOODS_COLUMN_BALANCE, VIRTUAL_GOODS_COLUMN_EQUIPPED
     };
 
     // Store Meta-Data Table
     private static final String METADATA_TABLE_NAME             = "metadata";
+    public static final String METADATA_COLUMN_PACKAGE          = "package";
     public static final String METADATA_COLUMN_STOREINFO        = "store_info";
     public static final String METADATA_COLUMN_STOREFRONTINFO   = "storefront_info";
     private static final String[] METADATA_COLUMNS = {
-            METADATA_COLUMN_STOREINFO, METADATA_COLUMN_STOREFRONTINFO
+            METADATA_COLUMN_PACKAGE, METADATA_COLUMN_STOREINFO, METADATA_COLUMN_STOREFRONTINFO
     };
 
 

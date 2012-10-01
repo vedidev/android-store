@@ -49,6 +49,26 @@ public class StoreEventHandlers {
     }
 
     /**
+     * A virtual good was just equipped.
+     * @param good is the virtual good that was just equipped.
+     */
+    public void onVirtualGoodEquipped(VirtualGood good){
+        for(IStoreEventHandler handler : mEventHandlers){
+            handler.onVirtualGoodEquipped(good);
+        }
+    }
+
+    /**
+     * A virtual good was just unequipped.
+     * @param good is the virtual good that was just unequipped.
+     */
+    public void onVirtualGoodUnequipped(VirtualGood good){
+        for(IStoreEventHandler handler : mEventHandlers){
+            handler.onVirtualGoodUnequipped(good);
+        }
+    }
+
+    /**
      * Just got a notification that billing is supported.
      */
     public void onBillingSupported(){

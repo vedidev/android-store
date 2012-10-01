@@ -44,10 +44,11 @@ public class VirtualGood extends AbstractVirtualItem {
      * @param mCategory is the category this virtual good is associated with.
      */
     public VirtualGood(String mName, String mDescription, String mImgFilePath, AbstractPriceModel mPriceModel,
-                       String mItemId, VirtualCategory mCategory) {
+                       String mItemId, VirtualCategory mCategory, boolean mEquipped) {
         super(mName, mDescription, mImgFilePath, mItemId);
         this.mPriceModel = mPriceModel;
         this.mCategory = mCategory;
+        this.mEquipped = mEquipped;
     }
 
     /** Constructor
@@ -68,6 +69,7 @@ public class VirtualGood extends AbstractVirtualItem {
         } catch (VirtualItemNotFoundException e) {
             Log.e(TAG, "Can't find category with id: " + catId);
         }
+        this.mEquipped = jsonObject.getBoolean(JSONConsts.GOOD_EQUIPPED);
     }
 
     /**
@@ -88,6 +90,7 @@ public class VirtualGood extends AbstractVirtualItem {
             JSONObject priceModelObject = AbstractPriceModel.priceModelToJSONObject(mPriceModel);
             jsonObject.put(JSONConsts.GOOD_PRICE_MODEL, priceModelObject);
             jsonObject.put(JSONConsts.GOOD_CATEGORY_ID, mCategory != null ? mCategory.getmId() : -1);
+            jsonObject.put(JSONConsts.GOOD_EQUIPPED, mEquipped);
         } catch (JSONException e) {
             if (StoreConfig.debug){
                 Log.d(TAG, "An error occurred while generating JSON object.");
@@ -128,10 +131,15 @@ public class VirtualGood extends AbstractVirtualItem {
         return jsonObject;
     }
 
+    public boolean isEquipped() {
+        return mEquipped;
+    }
+
     /** Private members **/
 
     private static final String TAG = "SOOMLA VirtualGood";
 
     private AbstractPriceModel mPriceModel;
     private VirtualCategory    mCategory;
+    private boolean            mEquipped;
 }

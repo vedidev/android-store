@@ -63,6 +63,16 @@ public class StorefrontController implements IStoreEventHandler {
     }
 
     @Override
+    public void onVirtualGoodEquipped(VirtualGood good) {
+        mActivity.getStoreJS().updateContentInJS();
+    }
+
+    @Override
+    public void onVirtualGoodUnequipped(VirtualGood good) {
+        mActivity.getStoreJS().updateContentInJS();
+    }
+
+    @Override
     public void onBillingSupported() {
         //To change body of implemented methods use File | Settings | File Templates.
     }

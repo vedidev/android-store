@@ -25,6 +25,7 @@ import com.soomla.store.data.StorefrontInfo;
 import com.soomla.store.domain.data.VirtualCurrency;
 import com.soomla.store.domain.data.VirtualGood;
 import com.soomla.store.exceptions.InsufficientFundsException;
+import com.soomla.store.exceptions.NotEnoughGoodsException;
 import com.soomla.store.exceptions.VirtualItemNotFoundException;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -142,6 +143,38 @@ public class StorefrontJS{
         mActivity.loadWebView();
     }
 
+    public void wantsToEquipGoods(String itemId){
+        if (StoreConfig.debug){
+            Log.d(TAG, "wantsToEquipGoods");
+        }
+
+        try {
+            StoreController.getInstance().equipVirtualGood(itemId);
+        } catch (VirtualItemNotFoundException e) {
+            mActivity.sendToJS("unexpectedError", "");
+            Log.e(TAG, "Couldn't find a VirtualGood with itemId: " + itemId + ". Purchase is cancelled.");
+        } catch (NotEnoughGoodsException e) {
+            if (StoreConfig.debug){
+                Log.d(TAG, e.getMessage());
+            }
+
+            mActivity.sendToJS("notEnoughGoods", "'" + itemId + "'");
+        }
+    }
+
+    public void wantsToUnequipGoods(String itemId){
+        if (StoreConfig.debug){
+            Log.d(TAG, "wantsToUnequipGoods");
+        }
+
+        try {
+            StoreController.getInstance().unequipVirtualGood(itemId);
+        } catch (VirtualItemNotFoundException e) {
+            mActivity.sendToJS("unexpectedError", "");
+            Log.e(TAG, "Couldn't find a VirtualGood with itemId: " + itemId + ". Purchase is cancelled.");
+        }
+    }
+
     /**
      * Sends the virtual currency and virtual goods updated data to the webview's JS.
      */
@@ -160,6 +193,7 @@ public class StorefrontJS{
                 JSONObject updatedValues = new JSONObject();
                 updatedValues.put("balance", StorageManager.getInstance().getVirtualGoodsStorage().getBalance(good));
                 updatedValues.put("price", good.getCurrencyValuesAsJSONObject());
+                updatedValues.put("equipped", StorageManager.getInstance().getVirtualGoodsStorage().isEquipped(good));
 
                 jsonObject.put(good.getItemId(), updatedValues);
             }

@@ -29,6 +29,7 @@ import com.soomla.store.domain.data.VirtualCurrency;
 import com.soomla.store.domain.data.VirtualCurrencyPack;
 import com.soomla.store.domain.data.VirtualGood;
 import com.soomla.store.exceptions.InsufficientFundsException;
+import com.soomla.store.exceptions.NotEnoughGoodsException;
 import com.soomla.store.exceptions.VirtualItemNotFoundException;
 
 import java.util.ArrayList;
@@ -128,6 +129,39 @@ public class StoreController extends PurchaseObserver {
         else {
             throw new InsufficientFundsException(needMore.getItemId());
         }
+    }
+
+    /**
+     * Make a VirtualGood equipped by the user.
+     * @param itemId is the item id of the required virtual good.
+     * @throws NotEnoughGoodsException
+     * @throws VirtualItemNotFoundException
+     */
+    public void equipVirtualGood(String itemId) throws NotEnoughGoodsException, VirtualItemNotFoundException{
+        VirtualGood good = StoreInfo.getInstance().getVirtualGoodByItemId(itemId);
+
+        // if the user has enough, the virtual good is purchased.
+        if (StorageManager.getInstance().getVirtualGoodsStorage().getBalance(good) > 0){
+            StorageManager.getInstance().getVirtualGoodsStorage().equip(good, true);
+
+            StoreEventHandlers.getInstance().onVirtualGoodEquipped(good);
+        }
+        else {
+            throw new NotEnoughGoodsException(itemId);
+        }
+    }
+
+    /**
+     * Make a VirtualGood unequipped by the user.
+     * @param itemId is the item id of the required virtual good.
+     * @throws VirtualItemNotFoundException
+     */
+    public void unequipVirtualGood(String itemId) throws VirtualItemNotFoundException{
+        VirtualGood good = StoreInfo.getInstance().getVirtualGoodByItemId(itemId);
+
+        StorageManager.getInstance().getVirtualGoodsStorage().equip(good, false);
+
+        StoreEventHandlers.getInstance().onVirtualGoodUnequipped(good);
     }
 
     /**
