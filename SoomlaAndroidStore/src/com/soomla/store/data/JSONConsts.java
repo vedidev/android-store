@@ -42,6 +42,8 @@ public class JSONConsts {
 
     public static final String CATEGORY_NAME            = "name";
     public static final String CATEGORY_ID              = "id";
+    public static final String CATEGORY_TITLE           = "title";
+    public static final String CATEGORY_IMAGEFILEPATH   = "categoryImage";
 
     public static final String ITEM_NAME                = "name";
     public static final String ITEM_DESCRIPTION         = "description";

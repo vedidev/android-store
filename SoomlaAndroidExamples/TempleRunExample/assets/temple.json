@@ -1,0 +1,53 @@
+{
+"theme" : {
+        "name" : "templeRun",
+        "template" : "templeRun",
+        "version" : 1,
+        "background" : "themes/templeRun/img/BG-Level0.png",
+        "contentBackground" : "themes/templeRun/img/BG-Level1.png",
+        "isOrientationLandscape" : false,
+        "common" : {
+            "titleImage" : "themes/templeRun/img/Header Title.png",
+            "balanceImage" : "themes/templeRun/img/Header Balance.png",
+            "backButton" : "themes/templeRun/img/Back BTN.png",
+            "moreCurrencyButton" : "themes/templeRun/img/GetMore BTN.png",
+            "balanceLabelStyle" : ""
+        },
+        "itemSeparator" : "themes/templeRun/img/Item Seperator.png",
+        "balance" : {
+            "style" : "top: 20px; left: 200px; font-size: 36px; color: #FFF;"
+        },
+        "pages" : {
+            "goods" :{
+                "list" : {
+                    "background" : "themes/templeRun/img/Item Area.png"
+                },
+                "listItem" : {
+                    "background" : "",
+                    "balanceBackground" : "themes/templeRun/img/Item Balance.png"
+                },
+                "noFundsModal" : {
+                    "background" : "themes/templeRun/img/Alert BG.png",
+                    "title" : "Need More Coins!",
+                    "description" : "Would you like to get more coins?",
+                    "yesButton" : "themes/templeRun/img/Yes BTN.png",
+                    "noButton" : "themes/templeRun/img/No BTN.png"
+                }
+            },
+            "currencyPacks" : {
+                "list" : {
+                    "background" : "themes/templeRun/img/Item Area.png"
+                },
+                "listItem" : {
+                    "balanceBackground" : "",
+                    "nameStyle" : "",
+                    "priceStyle" : ""
+                }
+
+            }
+        },
+        "categories" : {
+            "style" : "background-image: url('themes/templeRun/img/Catagory Seperator.png'); color: #FFF;"
+        }
+    }
+}

@@ -70,22 +70,18 @@ public class JetpackJoyrideAssets implements IStoreAssets {
     /** Virtual Categories **/
     
     public static final VirtualCategory UTILITIES_CATEGORY = new VirtualCategory(
-                "utilities", 1
-    );
+                "utilities", 1, "UTILITIES", "themes/jetpackJoyride/img/-_Object 4.png");
     public static final VirtualCategory GADGETS_CATEGORY = new VirtualCategory(
-                "gadgets", 2
-    );
+                "gadgets", 2, "GADGETS", "themes/jetpackJoyride/img/-_Object 5.png");
     public static final VirtualCategory UPGRADES_CATEGORY = new VirtualCategory(
-                "upgrades", 3
-    );
+                "upgrades", 3, "UPGRADES", "themes/jetpackJoyride/img/-_Object 3.png");
     public static final VirtualCategory AIRPLANES_CATEGORY = new VirtualCategory(
-                "airplanes", 4
-    );
+                "airplanes", 4, "AIRPLANES", "themes/jetpackJoyride/img/-_Object 2.png");
     public static final VirtualCategory CLOTHING_CATEGORY = new VirtualCategory(
-                "clothing", 5
+                "clothing", 5, "CLOTHING", "themes/jetpackJoyride/img/-_Object 1.png"
     );
     public static final VirtualCategory CURRENCYPACKS_CATEGORY = new VirtualCategory(
-                "currencyPacks", 6
+                "currencyPacks", 6, "GET COINS", "themes/jetpackJoyride/img/-_Object 8.png"
     );
 
 

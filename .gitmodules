@@ -16,3 +16,6 @@
 [submodule "SoomlaAndroidExamples/JetpackJoyrideExample/assets/soomla_ui"]
 	path = SoomlaAndroidExamples/JetpackJoyrideExample/assets/soomla_ui
 	url = git@github.com:soomla/storefront.git
+[submodule "SoomlaAndroidExamples/TempleRunExample/assets/soomla_ui"]
+	path = SoomlaAndroidExamples/TempleRunExample/assets/soomla_ui
+	url = git@github.com:soomla/storefront.git
