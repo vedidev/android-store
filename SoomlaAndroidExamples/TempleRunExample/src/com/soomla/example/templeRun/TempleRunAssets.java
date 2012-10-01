@@ -81,7 +81,7 @@ public class TempleRunAssets implements IStoreAssets {
     public static final VirtualCurrency COINS_CURRENCY = new VirtualCurrency(
                 "Coins",
                 "",
-                "themes/templeRun/img/Item Price.png",
+                "themes/templeRun/img/Item_Price.png",
                 COINS_CURRENCY_ITEM_ID
     );
 
@@ -95,7 +95,7 @@ public class TempleRunAssets implements IStoreAssets {
     public static final VirtualGood BOOST_AHEAD_GOOD = new VirtualGood(
             "Boost Ahead", // name
             "Get a head start of 100 miles", // description
-            "themes/templeRun/img/Powerups/Object 11.png", // image file path
+            "themes/templeRun/img/Powerups/Object_11.png", // image file path
             new StaticPriceModel(BOOST_AHEAD_PRICE), // currency value
             "boost_ahead", // item id
             POWERUPS_CATEGORY, // category
@@ -108,7 +108,7 @@ public class TempleRunAssets implements IStoreAssets {
     public static final VirtualGood EXTRA_HEALTH_GOOD = new VirtualGood(
             "Extra Health", // name
             "Find hearts in the game to recover your health points", // description
-            "themes/templeRun/img/Powerups/Object 12.png", // image file path
+            "themes/templeRun/img/Powerups/Object_12.png", // image file path
             new StaticPriceModel(EXTRA_HEALTH_PRICE), // currency value
             "extra_health", // item id
             POWERUPS_CATEGORY, // category
@@ -121,7 +121,7 @@ public class TempleRunAssets implements IStoreAssets {
     public static final VirtualGood INVISIBILITY_HAT_GOOD = new VirtualGood(
             "Invisibility Hat", // name
             "Find the invisibility hat to suprise your enemies", // description
-            "themes/templeRun/img/Powerups/Object 14.png", // image file path
+            "themes/templeRun/img/Powerups/Object_14.png", // image file path
             new StaticPriceModel(INVISIBILITY_HAT_PRICE), // currency value
             "invisibility_hat", // item id
             POWERUPS_CATEGORY, // category
@@ -134,7 +134,7 @@ public class TempleRunAssets implements IStoreAssets {
     public static final VirtualGood HORN_OF_WAR_GOOD = new VirtualGood(
             "Horn of War", // name
             "Pass the word to your fleet quicker", // description
-            "themes/templeRun/img/Utilities/Object 1.png", // image file path
+            "themes/templeRun/img/Utilities/Object_1.png", // image file path
             new StaticPriceModel(HORN_OF_WAR_PRICE), // currency value
             "horn_of_war", // item id
             UTILITIES_CATEGORY, // category
@@ -147,7 +147,7 @@ public class TempleRunAssets implements IStoreAssets {
     public static final VirtualGood FLAGSHIP_GOOD = new VirtualGood(
             "Flagship", // name
             "Use the power of the wind to move faster", // description
-            "themes/templeRun/img/Utilities/Object 2.png", // image file path
+            "themes/templeRun/img/Utilities/Object_2.png", // image file path
             new StaticPriceModel(FLAGSHIP_PRICE), // currency value
             "flagship", // item id
             UTILITIES_CATEGORY, // category
@@ -160,7 +160,7 @@ public class TempleRunAssets implements IStoreAssets {
     public static final VirtualGood MYSTERY_BOX_GOOD = new VirtualGood(
             "Mystery Box", // name
             "Special utility that will be revealed once you open the box", // description
-            "themes/templeRun/img/Utilities/Object 10.png", // image file path
+            "themes/templeRun/img/Utilities/Object_10.png", // image file path
             new StaticPriceModel(MYSTERY_BOX_PRICE), // currency value
             "mystery_box", // item id
             UTILITIES_CATEGORY, // category
@@ -173,7 +173,7 @@ public class TempleRunAssets implements IStoreAssets {
     public static final VirtualGood WISDOM_GOD_GOOD = new VirtualGood(
             "Wisdom God", // name
             "Fight in the name of Wisdom God and get more powerful weapons", // description
-            "themes/templeRun/img/Gods/Object 4.png", // image file path
+            "themes/templeRun/img/Gods/Object_4.png", // image file path
             new StaticPriceModel(WISDOM_GOD_PRICE), // currency value
             "science_god", // item id
             GODS_CATEGORY, // category
@@ -186,7 +186,7 @@ public class TempleRunAssets implements IStoreAssets {
     public static final VirtualGood WIND_GOD_GOOD = new VirtualGood(
             "Wind God", // name
             "Fight in the name of the Wind God and the wind will always be at your side", // description
-            "themes/templeRun/img/Gods/Object 5.png", // image file path
+            "themes/templeRun/img/Gods/Object_5.png", // image file path
             new StaticPriceModel(WIND_GOD_PRICE), // currency value
             "wind_god", // item id
             GODS_CATEGORY, // category
@@ -199,7 +199,7 @@ public class TempleRunAssets implements IStoreAssets {
     public static final VirtualGood WINTER_GOD_GOOD = new VirtualGood(
             "Winter God", // name
             "Fight in the name of the Winter God and avoid glaciers and frost", // description
-            "themes/templeRun/img/Gods/Object 7.png", // image file path
+            "themes/templeRun/img/Gods/Object_7.png", // image file path
             new StaticPriceModel(WINTER_GOD_PRICE), // currency value
             "winter_god", // item id
             GODS_CATEGORY, // category
@@ -212,7 +212,7 @@ public class TempleRunAssets implements IStoreAssets {
     public static final VirtualGood STARS_GOD_GOOD = new VirtualGood(
             "Stars God", // name
             "Fight in the name of the Stars God and never be lost", // description
-            "themes/templeRun/img/Gods/Object 8.png", // image file path
+            "themes/templeRun/img/Gods/Object_8.png", // image file path
             new StaticPriceModel(STARS_GOD_PRICE), // currency value
             "stars_god", // item id
             GODS_CATEGORY, // category
@@ -225,7 +225,7 @@ public class TempleRunAssets implements IStoreAssets {
     public static final VirtualGood ARGRICULTURE_GOD_GOOD = new VirtualGood(
             "Argriculture God", // name
             "Fight in the name of Agriculture God and never run out of food", // description
-            "themes/templeRun/img/Gods/Object 15.png", // image file path
+            "themes/templeRun/img/Gods/Object_15.png", // image file path
             new StaticPriceModel(ARGRICULTURE_GOD_PRICE), // currency value
             "chocolate_cake", // item id
             GODS_CATEGORY, // category
@@ -238,7 +238,7 @@ public class TempleRunAssets implements IStoreAssets {
     public static final VirtualGood EAGLE_GOOD = new VirtualGood(
             "Eagle", // name
             "The eagle can tell you about enemies ahead of time up to 100 miles away", // description
-            "themes/templeRun/img/Friends/Object 3.png", // image file path
+            "themes/templeRun/img/Friends/Object_3.png", // image file path
             new StaticPriceModel(EAGLE_PRICE), // currency value
             "eagle", // item id
             FRIENDS_CATEGORY, // category
@@ -251,7 +251,7 @@ public class TempleRunAssets implements IStoreAssets {
     public static final VirtualGood BUTTERFLY_GOOD = new VirtualGood(
             "Butterfly", // name
             "The butterfly can help you control your crew and protect against mutiny", // description
-            "themes/templeRun/img/Friends/Object 9.png", // image file path
+            "themes/templeRun/img/Friends/Object_9.png", // image file path
             new StaticPriceModel(BUTTERFLY_PRICE), // currency value
             "butterfly", // item id
             FRIENDS_CATEGORY, // category
@@ -264,7 +264,7 @@ public class TempleRunAssets implements IStoreAssets {
     public static final VirtualGood FISH_GOOD = new VirtualGood(
             "Fish", // name
             "Fish can help you trick your enemy into a trap", // description
-            "themes/templeRun/img/Friends/Object 13.png", // image file path
+            "themes/templeRun/img/Friends/Object_13.png", // image file path
             new StaticPriceModel(FISH_PRICE), // currency value
             "fish", // item id
             FRIENDS_CATEGORY, // category
@@ -277,7 +277,7 @@ public class TempleRunAssets implements IStoreAssets {
     public static final VirtualCurrencyPack SMALL_COINS_PACK = new VirtualCurrencyPack(
             "2,500 Coins", // name
             "", // description
-            "themes/templeRun/img/CurrencyPacks/GetCoins 1.png", // image file path
+            "themes/templeRun/img/CurrencyPacks/GetCoins_1.png", // image file path
             "muffins_10", // item id
             SMALL_COINS_PACK_PRODUCT_ID, // product id in Google Market
             0.99, // actual price in $$
@@ -288,7 +288,7 @@ public class TempleRunAssets implements IStoreAssets {
     public static final VirtualCurrencyPack MID_COINS_PACK = new VirtualCurrencyPack(
             "25,000 Coins", // name
             "", // description
-            "themes/templeRun/img/CurrencyPacks/GetCoins 2.png", // image file path
+            "themes/templeRun/img/CurrencyPacks/GetCoins_2.png", // image file path
             "muffins_50", // item id
             MID_COINS_PACK_PRODUCT_ID, // product id in Google Market
             4.99, // actual price in $$
@@ -299,7 +299,7 @@ public class TempleRunAssets implements IStoreAssets {
     public static final VirtualCurrencyPack BIG_COINS_PACK = new VirtualCurrencyPack(
             "75,000 Coins", // name
             "", // description
-            "themes/templeRun/img/CurrencyPacks/GetCoins 3.png", // image file path
+            "themes/templeRun/img/CurrencyPacks/GetCoins_3.png", // image file path
             "muffins_400", // item id
             BIG_COINS_PACK_PRODUCT_ID, // product id in Google Market
             9.99, // actual price in $$
@@ -310,7 +310,7 @@ public class TempleRunAssets implements IStoreAssets {
     public static final VirtualCurrencyPack BIGGEST_COINS_PACK = new VirtualCurrencyPack(
             "200,000 Coins", // name
             "", // description
-            "themes/templeRun/img/CurrencyPacks/GetCoins 4.png", // image file path
+            "themes/templeRun/img/CurrencyPacks/GetCoins_4.png", // image file path
             "muffins_1000", // item id
             BIGGEST_COINS_PACK_PRODUCT_ID, // product id in Google Market
             19.99, // actual price in $$
