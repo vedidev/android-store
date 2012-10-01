@@ -61,7 +61,7 @@ public class StorefrontInfo {
             try {
                 JSONObject jsonObject = new JSONObject(mStorefrontJSON);
                 mOrientationLandscape = jsonObject.getJSONObject(JSONConsts.STOREFRONT_THEME)
-                        .getBoolean(JSONConsts.STOREFRONT_ISCURRENCYDISABLED);
+                        .getBoolean("isOrientationLandscape");
             } catch (JSONException e) {
                 if (StoreConfig.debug){
                     Log.d(TAG, "can't parse json object.");
