@@ -7,3 +7,12 @@
 [submodule "SoomlaAndroidExample/assets/soomla_ui"]
 	path = SoomlaAndroidExample/assets/soomla_ui
 	url = git@github.com:soomla/storefront.git
+[submodule "SoomlaAndroidExamples/MuffinRushExample/assets/soomla_ui"]
+	path = SoomlaAndroidExamples/MuffinRushExample/assets/soomla_ui
+	url = git@github.com:soomla/storefront.git
+[submodule "SoomlaAndroidExamples/SurfStoreExample/assets/soomla_ui"]
+	path = SoomlaAndroidExamples/SurfStoreExample/assets/soomla_ui
+	url = git@github.com:soomla/storefront.git
+[submodule "SoomlaAndroidExamples/JetpackJoyrideExample/assets/soomla_ui"]
+	path = SoomlaAndroidExamples/JetpackJoyrideExample/assets/soomla_ui
+	url = git@github.com:soomla/storefront.git
