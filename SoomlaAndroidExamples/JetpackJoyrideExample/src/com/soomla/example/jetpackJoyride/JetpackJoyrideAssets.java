@@ -108,7 +108,7 @@ public class JetpackJoyrideAssets implements IStoreAssets {
     public static final VirtualGood EXPERIMENTAL_FUEL_GOOD = new VirtualGood(
             "EXPERIMENTAL FUEL", // name
             "FLY TWICE AS FAST BUT BE CAREFUL, THERE IS INCREASED CHANCE OF ENGINE FIRE", // description
-            "themes/jetpackJoyride/img/Utilities Objects/objects-06.png", // image file path
+            "themes/jetpackJoyride/img/UtilitiesObjects/objects-06.png", // image file path
             new StaticPriceModel(EXPERIMENTAL_FUEL_PRICE), // currency value
             "experimental_fuel", // item id
             UTILITIES_CATEGORY, // category
@@ -121,7 +121,7 @@ public class JetpackJoyrideAssets implements IStoreAssets {
     public static final VirtualGood BAND_AID_GOOD = new VirtualGood(
             "BAND AID", // name
             "RECOVER FROM ONE INJURY", // description
-            "themes/jetpackJoyride/img/Utilities Objects/objects-08.png", // image file path
+            "themes/jetpackJoyride/img/UtilitiesObjects/objects-08.png", // image file path
             new StaticPriceModel(BAND_AID_PRICE), // currency value
             "band_aid", // item id
             UTILITIES_CATEGORY, // category
@@ -134,7 +134,7 @@ public class JetpackJoyrideAssets implements IStoreAssets {
     public static final VirtualGood FIRE_EXTINGUISHER_GOOD = new VirtualGood(
             "FIRE EXTINGUISHER", // name
             "RECOVER FROM ONE ENGINE FIRE", // description
-            "themes/jetpackJoyride/img/Utilities Objects/objects-09.png", // image file path
+            "themes/jetpackJoyride/img/UtilitiesObjects/objects-09.png", // image file path
             new StaticPriceModel(FIRE_EXTINGUISHER_PRICE), // currency value
             "fire_extinguisher", // item id
             UTILITIES_CATEGORY, // category
@@ -147,7 +147,7 @@ public class JetpackJoyrideAssets implements IStoreAssets {
     public static final VirtualGood EXTRA_LIFE_GOOD = new VirtualGood(
             "EXTRA LIFE", // name
             "ESCAPE DEATH ONCE. DOUBLE TAP UP TO 5 SECONDS AFTER GAME IS OVER", // description
-            "themes/jetpackJoyride/img/Utilities Objects/objects-07.png", // image file path
+            "themes/jetpackJoyride/img/UtilitiesObjects/objects-07.png", // image file path
             new StaticPriceModel(EXTRA_LIFE_PRICE), // currency value
             "extra_life", // item id
             UTILITIES_CATEGORY, // category
@@ -160,7 +160,7 @@ public class JetpackJoyrideAssets implements IStoreAssets {
     public static final VirtualGood LIGHTNING_BOLT_GOOD = new VirtualGood(
             "LIGHTNING BOLT", // name
             "SNAP ALL ENEMIES ON SIGHT WITH A SINGLE SHOT. USE DOUBLE TAP TO ACTIVATE", // description
-            "themes/jetpackJoyride/img/Gadgets Objects/objects-11.png", // image file path
+            "themes/jetpackJoyride/img/GadgetsObjects/objects-11.png", // image file path
             new StaticPriceModel(LIGHTNING_BOLT_PRICE), // currency value
             "lightning_bolt", // item id
             GADGETS_CATEGORY, // category
@@ -173,7 +173,7 @@ public class JetpackJoyrideAssets implements IStoreAssets {
     public static final VirtualGood MORE_TIME_GOOD = new VirtualGood(
             "MORE TIME", // name
             "GET AN EXTRA MINUTE TO COMPLETE YOUR TASK. TAP ON THE CLOCK TO USE IT", // description
-            "themes/jetpackJoyride/img/Gadgets Objects/objects-12.png", // image file path
+            "themes/jetpackJoyride/img/GadgetsObjects/objects-12.png", // image file path
             new StaticPriceModel(MORE_TIME_PRICE), // currency value
             "more_time", // item id
             GADGETS_CATEGORY, // category
@@ -186,7 +186,7 @@ public class JetpackJoyrideAssets implements IStoreAssets {
     public static final VirtualGood RED_CROSS_GOOD = new VirtualGood(
             "RED CROSS", // name
             "DESCISE AS RED CROSS - INVISIBLE FOR 10 MILES", // description
-            "themes/jetpackJoyride/img/Gadgets Objects/objects-13.png", // image file path
+            "themes/jetpackJoyride/img/GadgetsObjects/objects-13.png", // image file path
             new StaticPriceModel(RED_CROSS_PRICE), // currency value
             "red_cross", // item id
             GADGETS_CATEGORY, // category
@@ -199,7 +199,7 @@ public class JetpackJoyrideAssets implements IStoreAssets {
     public static final VirtualGood BLUE_STAR_GOOD = new VirtualGood(
             "BLUE STAR", // name
             "BLUE STAR WILL ALLOW YOU TO START AT A HEIGHT OF 10000 FT", // description
-            "themes/jetpackJoyride/img/Gadgets Objects/objects-14.png", // image file path
+            "themes/jetpackJoyride/img/GadgetsObjects/objects-14.png", // image file path
             new StaticPriceModel(BLUE_STAR_PRICE), // currency value
             "blue_star", // item id
             GADGETS_CATEGORY, // category
@@ -212,7 +212,7 @@ public class JetpackJoyrideAssets implements IStoreAssets {
     public static final VirtualGood PURPLE_HEART_GOOD = new VirtualGood(
             "PURPLE HEART", // name
             "TAP TO ACTIVATE AND GET 10 HEALTH POINTS", // description
-            "themes/jetpackJoyride/img/Gadgets Objects/objects-15.png", // image file path
+            "themes/jetpackJoyride/img/GadgetsObjects/objects-15.png", // image file path
             new StaticPriceModel(PURPLE_HEART_PRICE), // currency value
             "purple_heart", // item id
             GADGETS_CATEGORY, // category
@@ -225,7 +225,7 @@ public class JetpackJoyrideAssets implements IStoreAssets {
     public static final VirtualGood UPGRADE_1_GOOD = new VirtualGood(
             "UPGRADE 1", // name
             "THIS IS A REALLY GREAT UPGRADE THAT WILL MAKE THE GAME MUCH MORE EXCITING", // description
-            "themes/jetpackJoyride/img/Upgrades/Upgrade 1.png", // image file path
+            "themes/jetpackJoyride/img/Upgrades/Upgrade_1.png", // image file path
             new StaticPriceModel(UPGRADE_1_PRICE), // currency value
             "upgrade_1", // item id
             UPGRADES_CATEGORY, // category
@@ -238,7 +238,7 @@ public class JetpackJoyrideAssets implements IStoreAssets {
     public static final VirtualGood UPGRADE_2_GOOD = new VirtualGood(
             "UPGRADE 2", // name
             "THIS IS AN EVEN BETTER UPGRADE THAT WILL ALSO MAKE THE GAME FUN", // description
-            "themes/jetpackJoyride/img/Upgrades/Upgrade 2.png", // image file path
+            "themes/jetpackJoyride/img/Upgrades/Upgrade_2.png", // image file path
             new StaticPriceModel(UPGRADE_2_PRICE), // currency value
             "upgrade_2", // item id
             UPGRADES_CATEGORY, // category
@@ -251,7 +251,7 @@ public class JetpackJoyrideAssets implements IStoreAssets {
     public static final VirtualGood AIRPLANE_1_GOOD = new VirtualGood(
             "AIRPLANE 1", // name
             "THIS AIRPLANE FLIES REALLY HIGH", // description
-            "themes/jetpackJoyride/img/Airplanes/Airplane 1.png", // image file path
+            "themes/jetpackJoyride/img/Airplanes/Airplane_1.png", // image file path
             new StaticPriceModel(AIRPLANE_1_PRICE), // currency value
             "airplane_1", // item id
             AIRPLANES_CATEGORY, // category
@@ -264,7 +264,7 @@ public class JetpackJoyrideAssets implements IStoreAssets {
     public static final VirtualGood AIRPLANE_2_GOOD = new VirtualGood(
             "AIRPLANE 2", // name
             "THIS ONE FLIES FOR LONG DISTANCES", // description
-            "themes/jetpackJoyride/img/Airplanes/Airplane 2.png", // image file path
+            "themes/jetpackJoyride/img/Airplanes/Airplane_2.png", // image file path
             new StaticPriceModel(AIRPLANE_2_PRICE), // currency value
             "airplane_2", // item id
             AIRPLANES_CATEGORY, // category
@@ -277,7 +277,7 @@ public class JetpackJoyrideAssets implements IStoreAssets {
     public static final VirtualGood CLOTHING_1_GOOD = new VirtualGood(
             "CLOTHING 1", // name
             "THIS SHIRT WILL PROTECT YOU FROM FIRES", // description
-            "themes/jetpackJoyride/img/Clothing/Clothing 1.png", // image file path
+            "themes/jetpackJoyride/img/Clothing/Clothing_1.png", // image file path
             new StaticPriceModel(CLOTHING_1_PRICE), // currency value
             "clothing_1", // item id
             CLOTHING_CATEGORY, // category
@@ -290,7 +290,7 @@ public class JetpackJoyrideAssets implements IStoreAssets {
     public static final VirtualGood CLOTHING_2_GOOD = new VirtualGood(
             "CLOTHING 2", // name
             "THIS SHIRT WILL PROTECT YOU FROM BULLETS", // description
-            "themes/jetpackJoyride/img/Clothing/Clothing 2.png", // image file path
+            "themes/jetpackJoyride/img/Clothing/Clothing_2.png", // image file path
             new StaticPriceModel(CLOTHING_2_PRICE), // currency value
             "clothing_2", // item id
             CLOTHING_CATEGORY, // category

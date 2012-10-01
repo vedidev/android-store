@@ -17,18 +17,18 @@
             "buyImage" : "themes/jetpackJoyride/img/BUY.png",
             "equippedIndicatorImage" : "themes/jetpackJoyride/img/Green_Owned.png",
             "notEquippedIndicatorImage" : "themes/jetpackJoyride/img/Gray_Owned.png",
-            "expandImage" : "themes/jetpackJoyride/img/Arrow Close.png",
-            "collapseImage" : "themes/jetpackJoyride/img/Arrow Open.png",
+            "expandImage" : "themes/jetpackJoyride/img/Arrow_Close.png",
+            "collapseImage" : "themes/jetpackJoyride/img/Arrow_Open.png",
             "backImage" : "themes/jetpackJoyride/img/BACK.png",
             "quitImage" : "themes/jetpackJoyride/img/QUIT.png",
             "itemBackgroundImage" : "themes/jetpackJoyride/img/BG_Product.png",
-            "itemBackgroundImageExpanded" : "themes/jetpackJoyride/img/BG_Product Ext.png"
+            "itemBackgroundImageExpanded" : "themes/jetpackJoyride/img/BG_Product_Ext.png"
         },
         "titleStyle" : "",
         "pages" : {
             "menu" : {
                 "title" : "The Store",
-                "balance" : "themes/jetpackJoyride/img/JPJR ProductBar_Header Right"
+                "balance" : "themes/jetpackJoyride/img/JPJR_ProductBar_Header_Right.png"
             }
         }
     }
