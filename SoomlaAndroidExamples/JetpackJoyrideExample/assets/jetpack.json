@@ -1,0 +1,36 @@
+{
+
+"theme" : {
+        "name" : "jetpackJoyride",
+        "template" : "jetpackJoyride",
+        "version" : 1,
+        "isOrientationLandscape" : true,
+        "balance" : {
+            "style" : "top: 30px; left: 15px; width: 100px; text-align: right"
+        },
+        "background" : "themes/jetpackJoyride/img/BG_BG.jpg",
+        "headerBackground" : "themes/jetpackJoyride/img/Header.jpg",
+        "noFundsModal" : {
+            "background" : "themes/jetpackJoyride/img/Alert-22.png"
+        },
+        "images" : {
+            "buyImage" : "themes/jetpackJoyride/img/BUY.png",
+            "equippedIndicatorImage" : "themes/jetpackJoyride/img/Green_Owned.png",
+            "notEquippedIndicatorImage" : "themes/jetpackJoyride/img/Gray_Owned.png",
+            "expandImage" : "themes/jetpackJoyride/img/Arrow Close.png",
+            "collapseImage" : "themes/jetpackJoyride/img/Arrow Open.png",
+            "backImage" : "themes/jetpackJoyride/img/BACK.png",
+            "quitImage" : "themes/jetpackJoyride/img/QUIT.png",
+            "itemBackgroundImage" : "themes/jetpackJoyride/img/BG_Product.png",
+            "itemBackgroundImageExpanded" : "themes/jetpackJoyride/img/BG_Product Ext.png"
+        },
+        "titleStyle" : "",
+        "pages" : {
+            "menu" : {
+                "title" : "The Store",
+                "balance" : "themes/jetpackJoyride/img/JPJR ProductBar_Header Right"
+            }
+        }
+    }
+
+}
