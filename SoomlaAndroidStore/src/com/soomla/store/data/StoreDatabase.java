@@ -47,7 +47,7 @@ public class StoreDatabase {
         ContentValues values = new ContentValues();
         values.put(VIRTUAL_CURRENCY_COLUMN_BALANCE, balance);
 
-        int affected = mStoreDB.update(VIRTUAL_CURRENCY_TABLE_NAME, values, VIRTUAL_CURRENCY_COLUMN_ITEM_ID + "='?'",
+        int affected = mStoreDB.update(VIRTUAL_CURRENCY_TABLE_NAME, values, VIRTUAL_CURRENCY_COLUMN_ITEM_ID + "=?",
                 new String[]{ itemId });
         if (affected == 0){
             values.put(VIRTUAL_CURRENCY_COLUMN_ITEM_ID, itemId);
@@ -83,7 +83,7 @@ public class StoreDatabase {
         ContentValues values = new ContentValues();
         values.put(VIRTUAL_GOODS_COLUMN_BALANCE, balance);
 
-        int affected = mStoreDB.update(VIRTUAL_GOODS_TABLE_NAME, values, VIRTUAL_CURRENCY_COLUMN_ITEM_ID + "='?'",
+        int affected = mStoreDB.update(VIRTUAL_GOODS_TABLE_NAME, values, VIRTUAL_CURRENCY_COLUMN_ITEM_ID + "=?",
                 new String[]{ itemId });
         if (affected == 0){
             values.put(VIRTUAL_GOODS_COLUMN_ITEM_ID, itemId);
@@ -95,7 +95,7 @@ public class StoreDatabase {
         ContentValues values = new ContentValues();
         values.put(VIRTUAL_GOODS_COLUMN_EQUIPPED, equipped);
 
-        int affected = mStoreDB.update(VIRTUAL_GOODS_TABLE_NAME, values, VIRTUAL_CURRENCY_COLUMN_ITEM_ID + "='?'",
+        int affected = mStoreDB.update(VIRTUAL_GOODS_TABLE_NAME, values, VIRTUAL_CURRENCY_COLUMN_ITEM_ID + "=?",
                 new String[]{ itemId });
         if (affected == 0){
             values.put(VIRTUAL_GOODS_COLUMN_ITEM_ID, itemId);
