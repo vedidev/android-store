@@ -33,10 +33,14 @@ public class VirtualCategory {
      *
      * @param mName is the category's name.
      * @param mId is the category's unique id.
+     * @param mTitle is the category's title (presented in the UI)
+     * @param mImgFilePath is the category's image (presented in the UI)
      */
-    public VirtualCategory(String mName, int mId) {
+    public VirtualCategory(String mName, int mId, String mTitle, String mImgFilePath) {
         this.mName = mName;
         this.mId = mId;
+        this.mTitle = mTitle;
+        this.mImgFilePath = mImgFilePath;
     }
 
     /** Constructor
@@ -46,8 +50,10 @@ public class VirtualCategory {
      * @throws JSONException
      */
     public VirtualCategory(JSONObject jsonObject) throws JSONException{
-        this.mName = jsonObject.getString("name");
-        this.mId   = jsonObject.getInt("id");
+        this.mName = jsonObject.getString(JSONConsts.CATEGORY_NAME);
+        this.mId   = jsonObject.getInt(JSONConsts.CATEGORY_ID);
+        this.mTitle = jsonObject.getString(JSONConsts.CATEGORY_TITLE);
+        this.mImgFilePath = jsonObject.getString(JSONConsts.CATEGORY_IMAGEFILEPATH);
     }
 
     /**
@@ -59,6 +65,8 @@ public class VirtualCategory {
         try {
             jsonObject.put(JSONConsts.CATEGORY_NAME, mName);
             jsonObject.put(JSONConsts.CATEGORY_ID, mId);
+            jsonObject.put(JSONConsts.CATEGORY_TITLE, mTitle);
+            jsonObject.put(JSONConsts.CATEGORY_IMAGEFILEPATH, mImgFilePath);
         } catch (JSONException e) {
             if (StoreConfig.debug){
                 Log.d(TAG, "An error occurred while generating JSON object.");
@@ -78,4 +86,6 @@ public class VirtualCategory {
 
     private String  mName;
     private int     mId;
+    private String  mTitle;
+    private String  mImgFilePath;
 }
