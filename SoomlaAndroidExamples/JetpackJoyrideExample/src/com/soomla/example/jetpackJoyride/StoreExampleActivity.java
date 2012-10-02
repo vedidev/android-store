@@ -2,6 +2,7 @@ package com.soomla.example.jetpackJoyride;
 
 import android.app.Activity;
 import android.content.ClipData;
+import android.content.pm.ActivityInfo;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -29,6 +30,8 @@ public class StoreExampleActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
+
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
         mRobotView = (ImageView) findViewById(R.id.drag_img);
         mRobotView.setOnTouchListener(new MyTouchListener());
