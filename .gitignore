@@ -1,7 +1,20 @@
 
-SoomlaAndroidExample/.idea/workspace.xml
-SoomlaAndroidExample/out/
-SoomlaAndroidExample/gen/
+SoomlaAndroidExamples/JetpackJoyrideExample/.idea/workspace.xml
+SoomlaAndroidExamples/JetpackJoyrideExample/out/
+SoomlaAndroidExamples/JetpackJoyrideExample/gen/
+SoomlaAndroidExamples/JetpackJoyrideExample/*.apk
+SoomlaAndroidExamples/MuffinRushExample/.idea/workspace.xml
+SoomlaAndroidExamples/MuffinRushExample/out/
+SoomlaAndroidExamples/MuffinRushExample/gen/
+SoomlaAndroidExamples/MuffinRushExample/*.apk
+SoomlaAndroidExamples/SurfStoreExample/.idea/workspace.xml
+SoomlaAndroidExamples/SurfStoreExample/out/
+SoomlaAndroidExamples/SurfStoreExample/gen/
+SoomlaAndroidExamples/SurfStoreExample/*.apk
+SoomlaAndroidExamples/TempleRunExample/.idea/workspace.xml
+SoomlaAndroidExamples/TempleRunExample/out/
+SoomlaAndroidExamples/TempleRunExample/gen/
+SoomlaAndroidExamples/TempleRunExample/*.apk
 
 SoomlaAndroidStore/.idea/
 SoomlaAndroidStore/out/
