@@ -1,0 +1,29 @@
+{
+"theme" : {
+        "name" : "basic",
+        "template" : "basic",
+        "version" : 1,
+        "pages" : {
+            "goods" :{
+                "moreCurrencyText" : "Get more clams",
+                "moreCurrencyImage" : "themes/basic/img/clam.png",
+                "background" : "themes/basic/img/theme-lime-bubbles.jpg",
+                "title" : "Surf Store",
+                "leaveIcon" : "img/default/icons/close.png",
+
+                "noFundsModal" : {
+                    "text" : "Not enough clams",
+                    "question" : "Buy more clams?",
+                    "noButtonText" : "No",
+                    "yesButtonText" : "Yes",
+                    "closeIcon" : "img/default/icons/close-dialog.png"
+                }
+            },
+            "currencyPacks" : {
+                "background" : "themes/basic/img/theme-lime-bubbles.jpg",
+                "title" : "Surf Store",
+                "backIcon" : "img/default/icons/close.png"
+            }
+        }
+    }
+}
