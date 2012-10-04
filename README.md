@@ -11,7 +11,7 @@ Getting Started
 ---
 * Before doing anything, SOOMLA recommends that you go through [Android In-app Billing](http://developer.android.com/guide/google/play/billing/index.html).
 
-1. Clone android-store. Copy all files from android-store's subfolders to their equivallent folders in your Android project:
+1. Clone android-store. Copy all files from android-store/SoomlaAndroidStore subfolders to their equivallent folders in your Android project:
 
  `git clone git@github.com:soomla/android-store.git`
 
