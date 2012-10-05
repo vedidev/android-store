@@ -60,17 +60,18 @@ Example:
 Lets say you have a _VirtualCurrencyPack_ you call `TEN_COINS_PACK`, a _VirtualCurrency_ you call `COIN_CURRENCY` and a _VirtualCategory_ you call `CURRENCYPACKS_CATEGORY`:
 
 
-      VirtualCurrencyPack TEN_COINS_PACK = new VirtualCurrencyPack(
-            "10 Coins",                // name
-            "A pack of 10 coins",      // description
-            "themes/awsomegame/img/coins/10_coins.png", // image file path
-            "10_coins",                // item id
-            TEN_COINS_PACK_PRODUCT_ID, // product id in Google Market
-            1.99,                      // actual price in $$
-            10,                        // number of currencies in the pack
-            COIN_CURRENCY,             // the associated currency
-            CURRENCYPACKS_CATEGORY);   // the associated category
-
+```
+   VirtualCurrencyPack TEN_COINS_PACK = new VirtualCurrencyPack(
+      "10 Coins",                // name
+      "A pack of 10 coins",      // description
+      "themes/awsomegame/img/coins/10_coins.png", // image file path
+      "10_coins",                // item id
+      TEN_COINS_PACK_PRODUCT_ID, // product id in Google Market
+      1.99,                      // actual price in $$
+      10,                        // number of currencies in the pack
+      COIN_CURRENCY,             // the associated currency
+      CURRENCYPACKS_CATEGORY);   // the associated category
+```
      
 Now you can use _StoreController_ to call Google Play's in-app purchasing mechanism:
 
