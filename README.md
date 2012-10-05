@@ -49,6 +49,7 @@ Getting Started
 
 And that's it ! You have Storage and in-app purchesing capabilities... ALL-IN-ONE.
 
+
 In App Purchasing
 ---
 
@@ -58,27 +59,28 @@ Example:
 
 Lets say you have a _VirtualCurrencyPack_ you call `TEN_COINS_PACK`, a _VirtualCurrency_ you call `COIN_CURRENCY` and a _VirtualCategory_ you call `CURRENCYPACKS_CATEGORY`:
 
-     ```Java
-     VirtualCurrencyPack TEN_COINS_PACK = new VirtualCurrencyPack(
-            "10 Coins",            // name
-            "A pack of 10 coins",  // description
+      ```Java
+      VirtualCurrencyPack TEN_COINS_PACK = new VirtualCurrencyPack(
+            "10 Coins",                // name
+            "A pack of 10 coins",      // description
             "themes/awsomegame/img/coins/10_coins.png", // image file path
-            "10_coins",            // item id
+            "10_coins",                // item id
             TEN_COINS_PACK_PRODUCT_ID, // product id in Google Market
-            1.99,                  // actual price in $$
-            10,                    // number of currencies in the pack
-            COIN_CURRENCY,
-            CURRENCYPACKS_CATEGORY);
-     ```
+            1.99,                      // actual price in $$
+            10,                        // number of currencies in the pack
+            COIN_CURRENCY,             // the associated currency
+            CURRENCYPACKS_CATEGORY);   // the associated category
+      ```
      
 Now you can use _StoreController_ to call Google Play's in-app purchasing mechanism:
 
-    ```Java
-    StoreController.buyCurrencyPack(TEN_COINS_PACK.getProductId());
-    ```
+      ```Java
+      StoreController.buyCurrencyPack(TEN_COINS_PACK.getProductId());
+      ```
     
 And that's it! android-store knows how to contact Google Play for you and redirect the user to the purchasing mechanis.
 Don't forget to define your _IStoreEventHandler_ in order to get the events of successful or failed purchase (see [Event Handling](https://github.com/soomla/android-store#event-handling)).
+
 
 Storage & Meta-Data
 ---
