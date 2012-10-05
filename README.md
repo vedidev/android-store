@@ -56,7 +56,7 @@ android-store provides you with _VirtualCurrencyPacks_. _VirtualCurrencyPacks_ a
 
 Example:
 
-Lets say you have a _VirtualCurrencyPack_ you call `TEN_COINS_PACK`, a _VirtualCurrency_ you call COIN_CURRENCY and a _VirtualCategory_ you call CURRENCYPACKS_CATEGORY:
+Lets say you have a _VirtualCurrencyPack_ you call `TEN_COINS_PACK`, a _VirtualCurrency_ you call `COIN_CURRENCY` and a _VirtualCategory_ you call `CURRENCYPACKS_CATEGORY`:
 
     ```Java
     VirtualCurrencyPack TEN_COINS_PACK = new VirtualCurrencyPack(
