@@ -58,8 +58,8 @@ Example:
 
 Lets say you have a _VirtualCurrencyPack_ you call `TEN_COINS_PACK`, a _VirtualCurrency_ you call `COIN_CURRENCY` and a _VirtualCategory_ you call `CURRENCYPACKS_CATEGORY`:
 
-    ```Java
-    VirtualCurrencyPack TEN_COINS_PACK = new VirtualCurrencyPack(
+     ```Java
+     VirtualCurrencyPack TEN_COINS_PACK = new VirtualCurrencyPack(
             "10 Coins",            // name
             "A pack of 10 coins",  // description
             "themes/awsomegame/img/coins/10_coins.png", // image file path
@@ -69,7 +69,7 @@ Lets say you have a _VirtualCurrencyPack_ you call `TEN_COINS_PACK`, a _VirtualC
             10,                    // number of currencies in the pack
             COIN_CURRENCY,
             CURRENCYPACKS_CATEGORY);
-    ```
+     ```
 Now you can use _StoreController_ to call Google Play's in-app purchasing mechanism:
 
     ```Java
