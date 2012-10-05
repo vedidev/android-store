@@ -47,6 +47,20 @@ Getting Started
                                            false);
       ```
 
+4. Now, that you have _StoreController_ loaded, just decide when you want to show/hide your store's UI to the user and let _StoreController_ know about it:
+
+When you show the store call:
+
+```Java
+StoreController.getInstance().storeOpening([your application context], [a handler you just created]);
+```
+
+When you hide the store call:
+
+```Java
+StoreController.getInstance().storeClosing();
+```
+
 And that's it ! You have Storage and in-app purchesing capabilities... ALL-IN-ONE.
 
 
