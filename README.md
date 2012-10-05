@@ -70,6 +70,7 @@ Lets say you have a _VirtualCurrencyPack_ you call `TEN_COINS_PACK`, a _VirtualC
             COIN_CURRENCY,
             CURRENCYPACKS_CATEGORY);
      ```
+     
 Now you can use _StoreController_ to call Google Play's in-app purchasing mechanism:
 
     ```Java
