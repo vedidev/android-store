@@ -2,6 +2,15 @@
 
 android-store
 ---
+
+Didn't you ever wanted an in-app purchase one liner that looks like this ?!
+
+```Java
+    StoreController.buyCurrencyPack("[Your product id here]");
+```
+
+Now you can get it! 
+
 The android-store is our first open code initiative as part of The SOOMLA Project. It is a Java API that simplifies Google Play's in-app purchasing API and complements it with storage, security and event handling. The project also includes a sample app for reference. As an optional (and currently EXPERIMENTAL) part of our open-source projects you can also get the store's layout which you can customize with your own game's assets. To use our storefront, refer to [Get your own Storefront](https://github.com/soomla/android-store/wiki/Get-your-own-Storefront-%5BEXPERIMENTAL%5D).
 
 
