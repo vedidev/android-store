@@ -6,8 +6,6 @@ Didn't you ever wanted an in-app purchase one liner that looks like this ?!
     StoreController.buyCurrencyPack("[Your product id here]");
 ```
 
-Now you can get it! 
-
 android-store
 ---
 
