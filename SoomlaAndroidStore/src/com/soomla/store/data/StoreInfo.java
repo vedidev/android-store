@@ -122,7 +122,8 @@ public class StoreInfo {
                     return true;
                 } catch (JSONException e) {
                     if (StoreConfig.debug){
-                        Log.d(TAG, "Can't parse metadata json: " + storejson);
+                        Log.d(TAG, "Can't parse metadata json. Going to return false and make " +
+                                "StoreInfo load from static data.: " + storejson);
                     }
                 }
             }
@@ -234,40 +235,33 @@ public class StoreInfo {
 
     private StoreInfo() { }
 
-    private void fromJSONObject(JSONObject jsonObject){
-        try {
+    private void fromJSONObject(JSONObject jsonObject) throws JSONException{
+        JSONArray virtualCategories = jsonObject.getJSONArray(JSONConsts.STORE_VIRTUALCATEGORIES);
+        mVirtualCategories = new LinkedList<VirtualCategory>();
+        for(int i=0; i<virtualCategories.length(); i++){
+            JSONObject o = virtualCategories.getJSONObject(i);
+            mVirtualCategories.add(new VirtualCategory(o));
+        }
 
-            JSONArray virtualCategories = jsonObject.getJSONArray(JSONConsts.STORE_VIRTUALCATEGORIES);
-            mVirtualCategories = new LinkedList<VirtualCategory>();
-            for(int i=0; i<virtualCategories.length(); i++){
-                JSONObject o = virtualCategories.getJSONObject(i);
-                mVirtualCategories.add(new VirtualCategory(o));
-            }
+        JSONArray virtualCurrencies = jsonObject.getJSONArray(JSONConsts.STORE_VIRTUALCURRENCIES);
+        mVirtualCurrencies = new LinkedList<VirtualCurrency>();
+        for (int i=0; i<virtualCurrencies.length(); i++){
+            JSONObject o = virtualCurrencies.getJSONObject(i);
+            mVirtualCurrencies.add(new VirtualCurrency(o));
+        }
 
-            JSONArray virtualCurrencies = jsonObject.getJSONArray(JSONConsts.STORE_VIRTUALCURRENCIES);
-            mVirtualCurrencies = new LinkedList<VirtualCurrency>();
-            for (int i=0; i<virtualCurrencies.length(); i++){
-                JSONObject o = virtualCurrencies.getJSONObject(i);
-                mVirtualCurrencies.add(new VirtualCurrency(o));
-            }
+        JSONArray currencyPacks = jsonObject.getJSONArray(JSONConsts.STORE_CURRENCYPACKS);
+        mVirtualCurrencyPacks = new LinkedList<VirtualCurrencyPack>();
+        for (int i=0; i<currencyPacks.length(); i++){
+            JSONObject o = currencyPacks.getJSONObject(i);
+            mVirtualCurrencyPacks.add(new VirtualCurrencyPack(o));
+        }
 
-            JSONArray currencyPacks = jsonObject.getJSONArray(JSONConsts.STORE_CURRENCYPACKS);
-            mVirtualCurrencyPacks = new LinkedList<VirtualCurrencyPack>();
-            for (int i=0; i<currencyPacks.length(); i++){
-                JSONObject o = currencyPacks.getJSONObject(i);
-                mVirtualCurrencyPacks.add(new VirtualCurrencyPack(o));
-            }
-
-            JSONArray virtualGoods = jsonObject.getJSONArray(JSONConsts.STORE_VIRTUALGOODS);
-            mVirtualGoods = new LinkedList<VirtualGood>();
-            for (int i=0; i<virtualGoods.length(); i++){
-                JSONObject o = virtualGoods.getJSONObject(i);
-                mVirtualGoods.add(new VirtualGood(o));
-            }
-        } catch (JSONException e) {
-            if (StoreConfig.debug){
-                Log.d(TAG, "An error occurred while parsing JSON object.");
-            }
+        JSONArray virtualGoods = jsonObject.getJSONArray(JSONConsts.STORE_VIRTUALGOODS);
+        mVirtualGoods = new LinkedList<VirtualGood>();
+        for (int i=0; i<virtualGoods.length(); i++){
+            JSONObject o = virtualGoods.getJSONObject(i);
+            mVirtualGoods.add(new VirtualGood(o));
         }
     }
 
