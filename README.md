@@ -1,7 +1,14 @@
 *This project is a part of [The SOOMLA Project](http://project.soom.la) which is a series of open source initiatives with a joint goal to help mobile game developers get better stores and more in-app purchases.*
 
+Didn't you ever wanted an in-app purchase one liner that looks like this ?!
+
+```Java
+    StoreController.buyCurrencyPack("[Your product id here]");
+```
+
 android-store
 ---
+
 The android-store is our first open code initiative as part of The SOOMLA Project. It is a Java API that simplifies Google Play's in-app purchasing API and complements it with storage, security and event handling. The project also includes a sample app for reference. As an optional (and currently EXPERIMENTAL) part of our open-source projects you can also get the store's layout which you can customize with your own game's assets. To use our storefront, refer to [Get your own Storefront](https://github.com/soomla/android-store/wiki/Get-your-own-Storefront-%5BEXPERIMENTAL%5D).
 
 
@@ -11,7 +18,7 @@ Getting Started
 ---
 * Before doing anything, SOOMLA recommends that you go through [Android In-app Billing](http://developer.android.com/guide/google/play/billing/index.html).
 
-1. Clone android-store. Copy all files from android-store's subfolders to their equivallent folders in your Android project:
+1. Clone android-store. Copy all files from android-store/SoomlaAndroidStore subfolders to their equivallent folders in your Android project:
 
  `git clone git@github.com:soomla/android-store.git`
 
@@ -38,7 +45,7 @@ Getting Started
     <activity android:name="com.soomla.store.StoreActivity" />
     ```
     
-3. Create your own implementation of _IStoreAssets_ in order to describe your specific game's assets. Initialize _StoreController_ with the class you just created:
+3. Create your own implementation of _IStoreAssets_ in order to describe your specific game's assets ([example](https://github.com/soomla/android-store/blob/master/SoomlaAndroidExamples/MuffinRushExample/src/com/soomla/example/muffinRush/MuffinRushAssets.java)). Initialize _StoreController_ with the class you just created:
 
       ```Java
        StoreController.getInstance().initialize(getApplicationContext(), 
@@ -47,7 +54,55 @@ Getting Started
                                            false);
       ```
 
+4. Now, that you have _StoreController_ loaded, just decide when you want to show/hide your store's UI to the user and let _StoreController_ know about it:
+
+  When you show the store call:
+
+    ```Java
+    StoreController.getInstance().storeOpening([your application context], [a handler you just created]);
+    ```
+
+  When you hide the store call:
+
+    ```Java
+    StoreController.getInstance().storeClosing();
+    ```
+
 And that's it ! You have Storage and in-app purchesing capabilities... ALL-IN-ONE.
+
+
+What's next? In App Purchasing.
+---
+
+android-store provides you with _VirtualCurrencyPacks_. _VirtualCurrencyPacks_ are a representation of a "bag" of currencies that you want to let your users to purchase in Google Play. After you define your game specific assets in your implemetation of IStoreAssets ([example](https://github.com/soomla/android-store/blob/master/SoomlaAndroidExamples/MuffinRushExample/src/com/soomla/example/muffinRush/MuffinRushAssets.java)) you can your _StoreController_ to make the actual purchases and android-store will take care of the rest.
+
+Example:
+
+Lets say you have a _VirtualCurrencyPack_ you call `TEN_COINS_PACK`, a _VirtualCurrency_ you call `COIN_CURRENCY` and a _VirtualCategory_ you call `CURRENCYPACKS_CATEGORY`:
+
+
+```Java
+VirtualCurrencyPack TEN_COINS_PACK = new VirtualCurrencyPack(
+        "10 Coins",                // name
+        "A pack of 10 coins",      // description
+        "themes/awsomegame/img/coins/10_coins.png", // image file path
+        "10_coins",                // item id
+        TEN_COINS_PACK_PRODUCT_ID, // product id in Google Market
+        1.99,                      // actual price in $$
+        10,                        // number of currencies in the pack
+        COIN_CURRENCY,             // the associated currency
+        CURRENCYPACKS_CATEGORY);   // the associated category
+```
+     
+Now you can use _StoreController_ to call Google Play's in-app purchasing mechanism:
+
+```Java
+StoreController.buyCurrencyPack(TEN_COINS_PACK.getProductId());
+```
+    
+And that's it! android-store knows how to contact Google Play for you and redirect the user to the purchasing mechanis.
+Don't forget to define your _IStoreEventHandler_ in order to get the events of successful or failed purchase (see [Event Handling](https://github.com/soomla/android-store#event-handling)).
+
 
 Storage & Meta-Data
 ---
