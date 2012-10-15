@@ -74,7 +74,7 @@ And that's it ! You have Storage and in-app purchesing capabilities... ALL-IN-ON
 What's next? In App Purchasing.
 ---
 
-android-store provides you with _VirtualCurrencyPacks_. _VirtualCurrencyPacks_ are a representation of a "bag" of currencies that you want to let your users to purchase in Google Play. After you define your game specific assets in your implemetation of IStoreAssets ([example](https://github.com/soomla/android-store/blob/master/SoomlaAndroidExamples/MuffinRushExample/src/com/soomla/example/muffinRush/MuffinRushAssets.java)) you can your _StoreController_ to make the actual purchases and android-store will take care of the rest.
+android-store provides you with VirtualCurrencyPacks. VirtualCurrencyPack is a representation of a "bag" of currencies that you want to let your users purchase in Google Play. You define VirtualCurrencyPacks in your game specific assets file which is your implemetation of IStoreAssets ([example](https://github.com/soomla/android-store/blob/master/SoomlaAndroidExamples/MuffinRushExample/src/com/soomla/example/muffinRush/MuffinRushAssets.java)). After you do that you can call StoreController to make actual purchases and android-store will take care of the rest.
 
 Example:
 
