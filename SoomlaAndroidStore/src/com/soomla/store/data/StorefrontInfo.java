@@ -95,7 +95,7 @@ public class StorefrontInfo {
                     }
 
                     JSONObject jsonObject = new JSONObject(mStorefrontJSON);
-                    mOrientationLandscape = jsonObject.getJSONObject("theme").getBoolean("isOrientationLandscape");
+                    mOrientationLandscape = jsonObject.getJSONObject(JSONConsts.STOREFRONT_THEME).getBoolean("isOrientationLandscape");
 
                     return true;
                 }
