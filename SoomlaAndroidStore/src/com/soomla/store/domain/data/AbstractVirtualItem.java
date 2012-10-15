@@ -31,13 +31,11 @@ public abstract class AbstractVirtualItem {
      * @param mName is the name of the virtual item.
      * @param mDescription is the description of the virtual item. This will show up
      *                       in the store in the description section.
-     * @param mImgFilePath is the path to the image that corresponds to the item.
      * @param mItemId is the id of the virtual item.
      */
-    public AbstractVirtualItem(String mName, String mDescription, String mImgFilePath, String mItemId) {
+    public AbstractVirtualItem(String mName, String mDescription, String mItemId) {
         this.mName = mName;
         this.mDescription = mDescription;
-        this.mImgFilePath = mImgFilePath;
         this.mItemId = mItemId;
     }
 
@@ -50,7 +48,6 @@ public abstract class AbstractVirtualItem {
     public AbstractVirtualItem(JSONObject jsonObject) throws JSONException{
         mName = jsonObject.getString(JSONConsts.ITEM_NAME);
         mDescription = jsonObject.getString(JSONConsts.ITEM_DESCRIPTION);
-        mImgFilePath = jsonObject.getString(JSONConsts.ITEM_IMAGEFILEPATH);
         mItemId = jsonObject.getString(JSONConsts.ITEM_ITEMID);
     }
 
@@ -63,7 +60,6 @@ public abstract class AbstractVirtualItem {
         try {
             jsonObject.put(JSONConsts.ITEM_NAME, mName);
             jsonObject.put(JSONConsts.ITEM_DESCRIPTION, mDescription);
-            jsonObject.put(JSONConsts.ITEM_IMAGEFILEPATH, mImgFilePath);
             jsonObject.put(JSONConsts.ITEM_ITEMID, mItemId);
         } catch (JSONException e) {
             if (StoreConfig.debug){
@@ -84,10 +80,6 @@ public abstract class AbstractVirtualItem {
         return mDescription;
     }
 
-    public String getImgFilePath() {
-        return mImgFilePath;
-    }
-
     public String getItemId(){
         return mItemId;
     }
@@ -98,6 +90,5 @@ public abstract class AbstractVirtualItem {
 
     private String mName;
     private String mDescription;
-    private String mImgFilePath;
     private String mItemId;
 }

@@ -39,19 +39,16 @@ public class VirtualCurrencyPack extends AbstractVirtualItem {
      * @param mName is the name of the virtual currency pack.
      * @param mDescription is the description of the virtual currency pack. This will show up
      *                       in the store in the description section.
-     * @param mImgFilePath is the path to the image that corresponds to the currency pack.
      * @param mItemId is the id of the virtual currency pack.
      * @param productId is the product id on Google Market..
      * @param mPrice is the actual $$ cost of the virtual currency pack.
      * @param mCurrencyAmout is the amount of currency in the pack.
      * @param mCurrency is the currency associated with this pack.
-     * @param mCategory is the category this currency pack is associated with.
      */
-    public VirtualCurrencyPack(String mName, String mDescription, String mImgFilePath, String mItemId,
-                               String productId, double mPrice, int mCurrencyAmout, VirtualCurrency mCurrency, VirtualCategory mCategory) {
-        super(mName, mDescription, mImgFilePath, mItemId);
+    public VirtualCurrencyPack(String mName, String mDescription, String mItemId,
+                               String productId, double mPrice, int mCurrencyAmout, VirtualCurrency mCurrency) {
+        super(mName, mDescription, mItemId);
         this.mCurrency = mCurrency;
-        this.mCategory = mCategory;
         this.mGoogleItem = new GoogleMarketItem(productId, GoogleMarketItem.Managed.UNMANAGED);
         this.mPrice = mPrice;
         this.mCurrencyAmount = mCurrencyAmout;
@@ -78,15 +75,6 @@ public class VirtualCurrencyPack extends AbstractVirtualItem {
                 Log.d(TAG, "Couldn't find the associated currency.");
             }
         }
-
-        int catId = jsonObject.getInt(JSONConsts.CURRENCYPACK_CATEGORY_ID);
-        try {
-            if (catId > -1){
-                this.mCategory = StoreInfo.getInstance().getVirtualCategoryById(catId);
-            }
-        } catch (VirtualItemNotFoundException e) {
-            Log.e(TAG, "Can't find category with id: " + catId);
-        }
     }
 
     /**
@@ -101,7 +89,6 @@ public class VirtualCurrencyPack extends AbstractVirtualItem {
             jsonObject.put(JSONConsts.CURRENCYPACK_PRODUCT_ID, mGoogleItem.getProductId());
             jsonObject.put(JSONConsts.CURRENCYPACK_AMOUNT, new Integer(mCurrencyAmount));
             jsonObject.put(JSONConsts.CURRENCYPACK_CURRENCYITEMID, mCurrency.getItemId());
-            jsonObject.put(JSONConsts.CURRENCYPACK_CATEGORY_ID, mCategory != null ? mCategory.getmId() : -1);
 
             Iterator<?> keys = parentJsonObject.keys();
             while(keys.hasNext())
@@ -148,5 +135,4 @@ public class VirtualCurrencyPack extends AbstractVirtualItem {
     private double           mPrice;
     private int              mCurrencyAmount;
     private VirtualCurrency  mCurrency;
-    private VirtualCategory  mCategory;
 }

@@ -38,14 +38,13 @@ public class VirtualGood extends AbstractVirtualItem {
      * @param mName is the name of the virtual good.
      * @param mDescription is the description of the virtual good. This will show up
      *                       in the store in the description section.
-     * @param mImgFilePath is the path to the image that corresponds to the virtual good.
      * @param mPriceModel is the way the price of the current virtual good is calculated.
      * @param mItemId is the id of the virtual good.
      * @param mCategory is the category this virtual good is associated with.
      */
-    public VirtualGood(String mName, String mDescription, String mImgFilePath, AbstractPriceModel mPriceModel,
+    public VirtualGood(String mName, String mDescription, AbstractPriceModel mPriceModel,
                        String mItemId, VirtualCategory mCategory, boolean mEquipped) {
-        super(mName, mDescription, mImgFilePath, mItemId);
+        super(mName, mDescription, mItemId);
         this.mPriceModel = mPriceModel;
         this.mCategory = mCategory;
         this.mEquipped = mEquipped;
