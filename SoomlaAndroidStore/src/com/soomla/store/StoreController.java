@@ -79,7 +79,9 @@ public class StoreController extends PurchaseObserver {
      */
     public void buyCurrencyPack(String productId){
         StoreEventHandlers.getInstance().onMarketPurchaseProcessStarted();
-        mBillingService.requestPurchase(productId, Consts.ITEM_TYPE_INAPP, "");
+        if (!mBillingService.requestPurchase(productId, Consts.ITEM_TYPE_INAPP, "")){
+            StoreEventHandlers.getInstance().onUnexpectedErrorInStore();
+        }
     }
 
     /**
