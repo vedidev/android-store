@@ -32,7 +32,6 @@ public class JSONConsts {
     public static final String CURRENCYPACK_PRICE       = "price";
     public static final String CURRENCYPACK_AMOUNT      = "amount";
     public static final String CURRENCYPACK_CURRENCYITEMID = "currency_itemId";
-    public static final String CURRENCYPACK_CATEGORY_ID = "categoryId";
 
     public static final String GOOD_PRICE_MODEL         = "priceModel";
     public static final String GOOD_CATEGORY_ID         = "categoryId";
@@ -43,11 +42,9 @@ public class JSONConsts {
     public static final String CATEGORY_NAME            = "name";
     public static final String CATEGORY_ID              = "id";
     public static final String CATEGORY_TITLE           = "title";
-    public static final String CATEGORY_IMAGEFILEPATH   = "categoryImage";
 
     public static final String ITEM_NAME                = "name";
     public static final String ITEM_DESCRIPTION         = "description";
-    public static final String ITEM_IMAGEFILEPATH       = "imgFilePath";
     public static final String ITEM_ITEMID              = "itemId";
 
 }
