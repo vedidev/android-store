@@ -20,6 +20,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import com.soomla.store.StoreConfig;
 
 /**
  * The StoreDatabase provides basic SQLite database io functions for specific needs around the SDK.
@@ -27,6 +28,11 @@ import android.database.sqlite.SQLiteOpenHelper;
 public class StoreDatabase {
 
     public StoreDatabase(Context context) {
+
+        if (StoreConfig.DB_DELETE){
+            context.deleteDatabase(DATABASE_NAME);
+        }
+
         mDatabaseHelper = new DatabaseHelper(context);
         mStoreDB = mDatabaseHelper.getWritableDatabase();
     }

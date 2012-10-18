@@ -74,15 +74,6 @@ public class StoreController extends PurchaseObserver {
 
         StorageManager.getInstance().initialize(context);
         StoreInfo.getInstance().initialize(storeAssets);
-
-        SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
-        boolean initialized = prefs.getBoolean(DB_INITIALIZED, false);
-        if (!initialized) {
-            if (StoreConfig.debug){
-                Log.d(TAG, "sending restore transaction request");
-            }
-            mBillingService.restoreTransactions();
-        }
     }
 
     /**
@@ -222,13 +213,22 @@ public class StoreController extends PurchaseObserver {
         mBillingService = new BillingService();
         mBillingService.setContext(activity.getApplicationContext());
 
+        ResponseHandler.register(this);
+
         if (!mBillingService.checkBillingSupported(Consts.ITEM_TYPE_INAPP)){
             if (StoreConfig.debug){
                 Log.d(TAG, "There's no connectivity with the billing service.");
             }
         }
 
-        ResponseHandler.register(this);
+        SharedPreferences prefs = mContext.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+        boolean initialized = prefs.getBoolean(DB_INITIALIZED, false);
+        if (!initialized) {
+            if (StoreConfig.debug){
+                Log.d(TAG, "sending restore transaction request");
+            }
+            mBillingService.restoreTransactions();
+        }
 
         StoreEventHandlers.getInstance().onOpeningStore();
     }

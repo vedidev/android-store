@@ -37,6 +37,17 @@ public class StoreConfig {
     public static String customSecret = "ChangeMe!!!";
 
     /*
+    if this is true than the database will be deleted whenever the application loads.
+    don't release your game with this option set to true !!!!!!!!!!!!
+    otherwise, your users will lose all their data every time they load the application.
+
+    NOTE: this feature can be useful on testing when you want to change stuff in your implementation of IStoreAssets
+        and see how they look like. If you try to change things in IStoreAssets and don't delete the DB than your
+        changes will not be shown.
+     */
+    public static final boolean DB_DELETE = false;
+
+    /*
     this variable determines if the values in the database should be encrypted or not.
     if you change this value to "false", anyone will be able to browse your sqlite file
     and change the values of the currencies and balances.
