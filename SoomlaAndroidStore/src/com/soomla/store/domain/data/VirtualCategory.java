@@ -22,10 +22,10 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 /**
- * This class is a definition of a category. A single category can be associated with many virtual items.
+ * This class is a definition of a category. A single category can be associated with many virtual goods.
  * The purposes of virtual category are:
- * 1. You can use it to arrange virtual items to their specific categories.
- * 2. SOOMLA's storefront uses this to show the items in their categories on the UI (for supported themes only).
+ * 1. You can use it to arrange virtual goods to their specific categories.
+ * 2. SOOMLA's storefront uses this to show the goods in their categories on the UI (for supported themes only).
  */
 public class VirtualCategory {
 
@@ -33,12 +33,10 @@ public class VirtualCategory {
      *
      * @param mName is the category's name.
      * @param mId is the category's unique id.
-     * @param mTitle is the category's title (presented in the UI)
      */
-    public VirtualCategory(String mName, int mId, String mTitle) {
+    public VirtualCategory(String mName, int mId) {
         this.mName = mName;
         this.mId = mId;
-        this.mTitle = mTitle;
     }
 
     /** Constructor
@@ -50,7 +48,6 @@ public class VirtualCategory {
     public VirtualCategory(JSONObject jsonObject) throws JSONException{
         this.mName = jsonObject.getString(JSONConsts.CATEGORY_NAME);
         this.mId   = jsonObject.getInt(JSONConsts.CATEGORY_ID);
-        this.mTitle = jsonObject.getString(JSONConsts.CATEGORY_TITLE);
     }
 
     /**
@@ -62,7 +59,6 @@ public class VirtualCategory {
         try {
             jsonObject.put(JSONConsts.CATEGORY_NAME, mName);
             jsonObject.put(JSONConsts.CATEGORY_ID, mId);
-            jsonObject.put(JSONConsts.CATEGORY_TITLE, mTitle);
         } catch (JSONException e) {
             if (StoreConfig.debug){
                 Log.d(TAG, "An error occurred while generating JSON object.");
@@ -82,5 +78,4 @@ public class VirtualCategory {
 
     private String  mName;
     private int     mId;
-    private String  mTitle;
 }
