@@ -153,6 +153,34 @@ public class StoreDatabase {
     }
 
     /**
+     * Sets the status of the Google MANAGED item with the given purchased boolean.
+     * @param productId is the Google MANAGED item.
+     * @param purchased is the status of the Google MANAGED item.
+     */
+    public synchronized void setGoogleManagedItem(String productId, boolean purchased){
+        ContentValues values = new ContentValues();
+
+        if (purchased){
+            values.put(GOOGLE_MANAGED_ITEMS_COLUMN_PRODUCT_ID, productId);
+            mStoreDB.execSQL("INSERT OR IGNORE INTO " + GOOGLE_MANAGED_ITEMS_TABLE_NAME + " (" +
+                    GOOGLE_MANAGED_ITEMS_COLUMN_PRODUCT_ID + ") VALUES ('" + productId + "')");
+        }
+        else {
+            mStoreDB.delete(GOOGLE_MANAGED_ITEMS_TABLE_NAME, GOOGLE_MANAGED_ITEMS_COLUMN_PRODUCT_ID + "=?", new String[] { productId });
+        }
+    }
+
+    /**
+     * Fetch a single GoogleManagedItem information with the given productId.
+     * @param productId is the required item's product id.
+     * @return a {@link Cursor} that represents the query response.
+     */
+    public synchronized Cursor getGoogleManagedItem(String productId){
+        return mStoreDB.query(GOOGLE_MANAGED_ITEMS_TABLE_NAME, GOOGLE_MANAGED_ITEMS_COLUMNS,
+                GOOGLE_MANAGED_ITEMS_COLUMN_PRODUCT_ID + "='" + productId + "'", null, null, null, null);
+    }
+
+    /**
      * Fetch the meta data information.
      * @return the meta-data information.
      */
@@ -187,6 +215,9 @@ public class StoreDatabase {
         }
 
         private void createPurchaseTable(SQLiteDatabase sqLiteDatabase) {
+            sqLiteDatabase.execSQL("CREATE TABLE IF NOT EXISTS " + GOOGLE_MANAGED_ITEMS_TABLE_NAME + "(" +
+                    GOOGLE_MANAGED_ITEMS_COLUMN_PRODUCT_ID + " TEXT PRIMARY KEY)");
+
             sqLiteDatabase.execSQL("CREATE TABLE IF NOT EXISTS " + VIRTUAL_CURRENCY_TABLE_NAME + "(" +
                     VIRTUAL_CURRENCY_COLUMN_ITEM_ID + " TEXT PRIMARY KEY, " +
                     VIRTUAL_CURRENCY_COLUMN_BALANCE + " TEXT)");
@@ -202,6 +233,13 @@ public class StoreDatabase {
                     METADATA_COLUMN_STOREFRONTINFO + " TEXT)");
         }
     }
+
+    // Managed items Table
+    private static final String GOOGLE_MANAGED_ITEMS_TABLE_NAME = "managed_items";
+    public static final String GOOGLE_MANAGED_ITEMS_COLUMN_PRODUCT_ID = "balance";
+    private static final String[] GOOGLE_MANAGED_ITEMS_COLUMNS = {
+            GOOGLE_MANAGED_ITEMS_COLUMN_PRODUCT_ID
+    };
 
     // Virtual Currency Table
     private static final String VIRTUAL_CURRENCY_TABLE_NAME     = "virtual_currency";

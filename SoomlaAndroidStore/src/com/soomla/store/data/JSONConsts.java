@@ -27,6 +27,10 @@ public class JSONConsts {
     public static final String STORE_CURRENCYPACKS      = "currencyPacks";
     public static final String STORE_VIRTUALGOODS       = "virtualGoods";
     public static final String STORE_VIRTUALCATEGORIES  = "categories";
+    public static final String STORE_GOOGLEMANAGED      = "googleManaged";
+
+    public static final String GOOGLEMANAGED_PRODUCT_ID = "productId";
+    public static final String GOOGLEMANAGED_MANAGED    = "managed";
 
     public static final String CURRENCYPACK_PRODUCT_ID  = "productId";
     public static final String CURRENCYPACK_PRICE       = "price";

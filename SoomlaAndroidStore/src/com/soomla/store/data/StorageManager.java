@@ -59,6 +59,7 @@ public class StorageManager {
 
         mVirtualCurrencyStorage =   new VirtualCurrencyStorage();
         mVirtualGoodsStorage =      new VirtualGoodsStorage();
+        mGoogleManagedItemsStorage = new GoogleManagedItemsStorage();
     }
 
 
@@ -80,6 +81,10 @@ public class StorageManager {
         return mDatabase;
     }
 
+    public GoogleManagedItemsStorage getGoogleManagedItemsStorage() {
+        return mGoogleManagedItemsStorage;
+    }
+
     private StorageManager(){ }
 
     /** Private members **/
@@ -88,6 +93,7 @@ public class StorageManager {
     private static StorageManager   sInstance;
     private VirtualGoodsStorage     mVirtualGoodsStorage;
     private VirtualCurrencyStorage  mVirtualCurrencyStorage;
+    private GoogleManagedItemsStorage mGoogleManagedItemsStorage;
     private AESObfuscator           mObfuscator;
     private StoreDatabase           mDatabase;
 }

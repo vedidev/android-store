@@ -25,6 +25,7 @@ import com.soomla.billing.PurchaseObserver;
 import com.soomla.billing.ResponseHandler;
 import com.soomla.store.data.StorageManager;
 import com.soomla.store.data.StoreInfo;
+import com.soomla.store.domain.data.GoogleMarketItem;
 import com.soomla.store.domain.data.VirtualCurrency;
 import com.soomla.store.domain.data.VirtualCurrencyPack;
 import com.soomla.store.domain.data.VirtualGood;
@@ -78,8 +79,14 @@ public class StoreController extends PurchaseObserver {
      * @param productId is the product id of the required currency pack.
      */
     public void buyCurrencyPack(String productId){
-        StoreEventHandlers.getInstance().onMarketPurchaseProcessStarted();
-        if (!mBillingService.requestPurchase(productId, Consts.ITEM_TYPE_INAPP, "")){
+        try {
+            StoreEventHandlers.getInstance().onMarketPurchaseProcessStarted(StoreInfo.getInstance().getPackByGoogleProductId(productId).getmGoogleItem());
+            if (!mBillingService.requestPurchase(productId, Consts.ITEM_TYPE_INAPP, "")){
+                StoreEventHandlers.getInstance().onUnexpectedErrorInStore();
+            }
+        } catch (VirtualItemNotFoundException e) {
+            Log.e(TAG, "The currency pack associated with the given productId must be defined in your IStoreAssets " +
+                    "(and thus must exist in StoreInfo. (productId: " + productId + "). Unexpected error is emitted.");
             StoreEventHandlers.getInstance().onUnexpectedErrorInStore();
         }
     }
@@ -131,6 +138,29 @@ public class StoreController extends PurchaseObserver {
         else {
             throw new InsufficientFundsException(needMore.getItemId());
         }
+    }
+
+    /**
+     * Start a MANAGED item purchase process.
+     * @param productId is the product id of the MANAGED item to purchase.
+     */
+    public boolean buyManagedItem(String productId){
+        try {
+            GoogleMarketItem googleMarketItem = StoreInfo.getInstance().getGoogleManagedItemByProductId(productId);
+
+            StoreEventHandlers.getInstance().onMarketPurchaseProcessStarted(googleMarketItem);
+            if (!mBillingService.requestPurchase(productId, Consts.ITEM_TYPE_INAPP, "")){
+                StoreEventHandlers.getInstance().onUnexpectedErrorInStore();
+            }
+
+            return true;
+        } catch (VirtualItemNotFoundException e) {
+            Log.e(TAG, "The google market (MANAGED) item associated with the given productId must be defined in your IStoreAssets " +
+                    "and thus must exist in StoreInfo. (productId: " + productId + "). Unexpected error is emitted. can't continue purchase !");
+            StoreEventHandlers.getInstance().onUnexpectedErrorInStore();
+        }
+
+        return false;
     }
 
     /**
@@ -239,20 +269,57 @@ public class StoreController extends PurchaseObserver {
      */
     @Override
     public void onPurchaseStateChange(Consts.PurchaseState purchaseState, String productId, long purchaseTime, String developerPayload) {
+        GoogleMarketItem googleMarketItem = null;
         try {
 
-            if (purchaseState == Consts.PurchaseState.PURCHASED ||
-                    purchaseState == Consts.PurchaseState.REFUNDED) {
+            VirtualCurrencyPack pack = StoreInfo.getInstance().getPackByGoogleProductId(productId);
+            googleMarketItem = pack.getmGoogleItem();
 
-                // we're throwing this event when on PURCHASE or REFUND !
+            // updating the currency balance
+            if (purchaseState == Consts.PurchaseState.PURCHASED) {
+                StorageManager.getInstance().getVirtualCurrencyStorage().add(
+                        pack.getVirtualCurrency(), pack.getCurrencyAmount());
+            }
 
-                VirtualCurrencyPack pack = StoreInfo.getInstance().getPackByGoogleProductId(productId);
-                StoreEventHandlers.getInstance().onVirtualCurrencyPackPurchased(pack, purchaseState);
+            if (purchaseState == Consts.PurchaseState.REFUNDED){
+                // You can decrease the balance here ... SOOMLA believes in friendly refunds.
+                // A friendly refund policy is nice for the user.
             }
 
         } catch (VirtualItemNotFoundException e) {
-            StoreEventHandlers.getInstance().onUnexpectedErrorInStore();
-            Log.e(TAG, "ERROR : Couldn't find VirtualCurrencyPack with productId: " + productId);
+
+            try {
+                googleMarketItem = StoreInfo.getInstance().getGoogleManagedItemByProductId(productId);
+
+                // updating the MANAGED item
+                if (purchaseState == Consts.PurchaseState.PURCHASED) {
+                    StorageManager.getInstance().getGoogleManagedItemsStorage().add(googleMarketItem);
+                }
+
+                if (purchaseState == Consts.PurchaseState.REFUNDED){
+                    // You can remove the MANAGED item here ... SOOMLA believes in friendly refunds.
+                    // A friendly refund policy is nice for the user.
+                }
+
+            } catch (VirtualItemNotFoundException e1) {
+                Log.e(TAG, "ERROR : Couldn't find the " + purchaseState.name() +
+                        " VirtualCurrencyPack OR GoogleMarketItem  with productId: " + productId +
+                        ". It's unexpected so an unexpected error is being emitted.");
+                StoreEventHandlers.getInstance().onUnexpectedErrorInStore();
+            }
+        }
+
+        if (googleMarketItem == null){
+            return;
+        }
+
+        // here we just post the appropriate event.
+        if (purchaseState == Consts.PurchaseState.PURCHASED) {
+            StoreEventHandlers.getInstance().onMarketPurchase(googleMarketItem);
+        }
+
+        if (purchaseState == Consts.PurchaseState.REFUNDED){
+            StoreEventHandlers.getInstance().onMarketRefund(googleMarketItem);
         }
     }
 
@@ -283,9 +350,16 @@ public class StoreController extends PurchaseObserver {
         // THIS IS FOR MANAGED ITEMS. SOOMLA DOESN'T SUPPORT MANAGED ITEMS.
 
         if (responseCode == Consts.ResponseCode.RESULT_OK) {
+            if (StoreConfig.debug){
+                Log.d(TAG, "RestoreTransactions succeeded");
+            }
+
+
             // RestoreTransaction succeeded !
         } else {
-            // RestoreTransaction error !
+            if (StoreConfig.debug) {
+                Log.d(TAG, "RestoreTransactions error: " + responseCode);
+            }
         }
     }
 

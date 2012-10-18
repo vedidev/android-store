@@ -16,6 +16,7 @@
 package com.soomla.store;
 
 import com.soomla.billing.Consts;
+import com.soomla.store.domain.data.GoogleMarketItem;
 import com.soomla.store.domain.data.VirtualCurrencyPack;
 import com.soomla.store.domain.data.VirtualGood;
 
@@ -30,11 +31,21 @@ public class StoreEventHandlers {
 
     /**
      * A currency pack was just purchased.
-     * @param pack is the pack that was just purchased.
+     * @param googleMarketItem is the google market item that was just purchased.
      */
-    public void onVirtualCurrencyPackPurchased(VirtualCurrencyPack pack, Consts.PurchaseState purchaseState){
+    public void onMarketPurchase(GoogleMarketItem googleMarketItem){
         for(IStoreEventHandler handler : mEventHandlers){
-            handler.onVirtualCurrencyPackPurchased(pack);
+            handler.onMarketPurchase(googleMarketItem);
+        }
+    }
+
+    /**
+     * A currency pack was just refunded.
+     * @param googleMarketItem is the google market item that was just refunded.
+     */
+    public void onMarketRefund(GoogleMarketItem googleMarketItem){
+        for(IStoreEventHandler handler : mEventHandlers){
+            handler.onMarketRefund(googleMarketItem);
         }
     }
 
@@ -89,9 +100,9 @@ public class StoreEventHandlers {
     /**
      * Going to invoke the purchase process through the BillingService.
      */
-    public void onMarketPurchaseProcessStarted(){
+    public void onMarketPurchaseProcessStarted(GoogleMarketItem googleMarketItem){
         for(IStoreEventHandler handler : mEventHandlers){
-            handler.onMarketPurchaseProcessStarted();
+            handler.onMarketPurchaseProcessStarted(googleMarketItem);
         }
     }
 

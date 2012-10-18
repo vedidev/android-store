@@ -15,6 +15,7 @@
  */
 package com.soomla.store;
 
+import com.soomla.store.domain.data.GoogleMarketItem;
 import com.soomla.store.domain.data.VirtualCurrencyPack;
 import com.soomla.store.domain.data.VirtualGood;
 
@@ -25,13 +26,14 @@ import com.soomla.store.domain.data.VirtualGood;
  * 'StoreEventHandlers.getInstance().addEventHandler([your handler here]);'
  */
 public interface IStoreEventHandler {
-    void onVirtualCurrencyPackPurchased(VirtualCurrencyPack pack);
+    void onMarketPurchase(GoogleMarketItem googleMarketItem);
+    void onMarketRefund(GoogleMarketItem googleMarketItem);
     void onVirtualGoodPurchased(VirtualGood good);
     void onVirtualGoodEquipped(VirtualGood good);
     void onVirtualGoodUnequipped(VirtualGood good);
     void onBillingSupported();
     void onBillingNotSupported();
-    void onMarketPurchaseProcessStarted();
+    void onMarketPurchaseProcessStarted(GoogleMarketItem googleMarketItem);
     void onGoodsPurchaseProcessStarted();
     void onClosingStore();
     void onUnexpectedErrorInStore();

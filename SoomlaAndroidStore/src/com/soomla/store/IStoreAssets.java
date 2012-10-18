@@ -15,10 +15,7 @@
  */
 package com.soomla.store;
 
-import com.soomla.store.domain.data.VirtualCategory;
-import com.soomla.store.domain.data.VirtualCurrency;
-import com.soomla.store.domain.data.VirtualCurrencyPack;
-import com.soomla.store.domain.data.VirtualGood;
+import com.soomla.store.domain.data.*;
 
 /**
  * This interface represents a single game's metadata.
@@ -51,4 +48,14 @@ public interface IStoreAssets {
      * @return an array of all virtual categories served by your store.
      */
     VirtualCategory[] getVirtualCategories();
+
+    /**
+     * You can define managed items that you'd like to use for your needs.
+     * UNMANAGED items are usually just currency packs. If you use SOOMLA's storefront, it'll take care of
+     * the UNMANAGED for you in the UI.
+     * MANAGED items are usually used to let users purchase a "no-ads" token.
+     * Make sure you set the type of the items you add here as Managed.MANAGED.
+     * @return an array of all managed served in your game.
+     */
+    GoogleMarketItem[] getGoogleManagedItems();
 }

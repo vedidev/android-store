@@ -21,10 +21,7 @@ import android.util.Log;
 import com.soomla.billing.util.AESObfuscator;
 import com.soomla.store.IStoreAssets;
 import com.soomla.store.StoreConfig;
-import com.soomla.store.domain.data.VirtualCategory;
-import com.soomla.store.domain.data.VirtualCurrency;
-import com.soomla.store.domain.data.VirtualCurrencyPack;
-import com.soomla.store.domain.data.VirtualGood;
+import com.soomla.store.domain.data.*;
 import com.soomla.store.exceptions.VirtualItemNotFoundException;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -71,6 +68,7 @@ public class StoreInfo {
             mVirtualCurrencies    = Arrays.asList(storeAssets.getVirtualCurrencies());
             mVirtualCurrencyPacks = Arrays.asList(storeAssets.getVirtualCurrencyPacks());
             mVirtualGoods         = Arrays.asList(storeAssets.getVirtualGoods());
+            mGoogleManagedItems   = Arrays.asList(storeAssets.getGoogleManagedItems());
 
             // put StoreInfo in the database as JSON
             String store_json = toJSONObject().toString();
@@ -138,19 +136,13 @@ public class StoreInfo {
      * @throws VirtualItemNotFoundException
      */
     public VirtualCurrencyPack getPackByGoogleProductId(String productId) throws VirtualItemNotFoundException {
-        VirtualCurrencyPack pack = null;
         for(VirtualCurrencyPack p : mVirtualCurrencyPacks){
             if (p.getmGoogleItem().getProductId().equals(productId)){
-                pack = p;
-                break;
+                return p;
             }
         }
 
-        if (pack == null){
-            throw new VirtualItemNotFoundException("productId", productId);
-        }
-
-        return pack;
+        throw new VirtualItemNotFoundException("productId", productId);
     }
 
     /**
@@ -217,6 +209,22 @@ public class StoreInfo {
         throw new VirtualItemNotFoundException("itemId", itemId);
     }
 
+    /**
+     * Use this function if you need to know the definition of a specific google MANAGED item.
+     * @param productId is the requested MANAGED item's product id.
+     * @return the definition of the MANAGED item requested.
+     * @throws VirtualItemNotFoundException
+     */
+    public GoogleMarketItem getGoogleManagedItemByProductId(String productId) throws VirtualItemNotFoundException {
+        for (GoogleMarketItem gmi : mGoogleManagedItems){
+            if (gmi.getProductId().equals(productId)){
+                return gmi;
+            }
+        }
+
+        throw new VirtualItemNotFoundException("productId", productId);
+    }
+
     /** Getters **/
 
     public List<VirtualCurrency> getVirtualCurrencies(){
@@ -263,6 +271,13 @@ public class StoreInfo {
             JSONObject o = virtualGoods.getJSONObject(i);
             mVirtualGoods.add(new VirtualGood(o));
         }
+
+        JSONArray googleManagedItems = jsonObject.getJSONArray(JSONConsts.STORE_GOOGLEMANAGED);
+        mGoogleManagedItems = new LinkedList<GoogleMarketItem>();
+        for (int i=0; i<googleManagedItems.length(); i++){
+            JSONObject o = googleManagedItems.getJSONObject(i);
+            mGoogleManagedItems.add(new GoogleMarketItem(o));
+        }
     }
 
     /**
@@ -291,12 +306,18 @@ public class StoreInfo {
             virtualGoods.put(good.toJSONObject());
         }
 
+        JSONArray googleManagedItems = new JSONArray();
+        for(GoogleMarketItem gmi : mGoogleManagedItems){
+            googleManagedItems.put(gmi.toJSONObject());
+        }
+
         JSONObject jsonObject = new JSONObject();
         try {
             jsonObject.put(JSONConsts.STORE_VIRTUALCATEGORIES, virtualCategories);
             jsonObject.put(JSONConsts.STORE_VIRTUALCURRENCIES, virtualCurrencies);
             jsonObject.put(JSONConsts.STORE_VIRTUALGOODS, virtualGoods);
             jsonObject.put(JSONConsts.STORE_CURRENCYPACKS, currencyPacks);
+            jsonObject.put(JSONConsts.STORE_GOOGLEMANAGED, googleManagedItems);
         } catch (JSONException e) {
             if (StoreConfig.debug){
                 Log.d(TAG, "An error occurred while generating JSON object.");
@@ -315,4 +336,5 @@ public class StoreInfo {
     private List<VirtualCurrencyPack>               mVirtualCurrencyPacks;
     private List<VirtualGood>                       mVirtualGoods;
     private List<VirtualCategory>                   mVirtualCategories;
+    private List<GoogleMarketItem>                  mGoogleManagedItems;
 }

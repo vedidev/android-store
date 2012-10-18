@@ -15,6 +15,12 @@
  */
 package com.soomla.store.domain.data;
 
+import android.util.Log;
+import com.soomla.store.StoreConfig;
+import com.soomla.store.data.JSONConsts;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 /**
  * This class represents an item in Google Play.
  * Every {@link VirtualCurrencyPack} has an instance of this class which is a
@@ -31,6 +37,31 @@ public class GoogleMarketItem {
 
         this.mProductId = mProductId;
         this.mManaged = mManaged;
+    }
+
+    /** Constructor
+     *
+     * Generates an instance of {@link GoogleMarketItem} from a JSONObject.
+     * @param jsonObject is a JSONObject representation of the wanted {@link GoogleMarketItem}.
+     * @throws JSONException
+     */
+    public GoogleMarketItem(JSONObject jsonObject) throws JSONException {
+        this.mManaged = Managed.valueOf(JSONConsts.GOOGLEMANAGED_MANAGED);
+        this.mProductId = jsonObject.getString(JSONConsts.GOOGLEMANAGED_PRODUCT_ID);
+    }
+
+    public JSONObject toJSONObject(){
+        JSONObject jsonObject = new JSONObject();
+        try {
+            jsonObject.put(JSONConsts.GOOGLEMANAGED_MANAGED, mManaged.name());
+            jsonObject.put(JSONConsts.GOOGLEMANAGED_PRODUCT_ID, mProductId);
+        } catch (JSONException e) {
+            if (StoreConfig.debug){
+                Log.d(TAG, "An error occured while generating JSON object.");
+            }
+        }
+
+        return jsonObject;
     }
 
     /** Getters **/
@@ -62,5 +93,8 @@ public class GoogleMarketItem {
     /**
      *  The Id of this VirtualGood in Google Market
     */
+
+    private static final String TAG = "SOOMLA GoogleMarketItem";
+
     private String mProductId;
 }

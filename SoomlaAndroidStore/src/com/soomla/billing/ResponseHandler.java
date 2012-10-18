@@ -117,44 +117,14 @@ public class ResponseHandler {
             final Context context, final PurchaseState purchaseState, final String productId,
             final String orderId, final long purchaseTime, final String developerPayload) {
 
-        // Update the storage with the new purchase. We shouldn't do that
-        // from the main thread so we do the work in a background thread.
-        // We don't update the UI here. We will update the UI after we update
-        // the database because we need to read and update the current quantity
-        // first.
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    VirtualCurrencyPack pack = StoreInfo.getInstance().getPackByGoogleProductId(productId);
-
-                    // updating the currency balance
-                    // note that a refunded purchase is treated as a purchase.
-                    // a friendly refund policy is nice for the user.
-                    if (purchaseState == PurchaseState.PURCHASED || purchaseState == PurchaseState.REFUNDED) {
-                        StorageManager.getInstance().getVirtualCurrencyStorage().add(
-                                pack.getVirtualCurrency(), pack.getCurrencyAmount());
-                    }
-
-                    // This needs to be synchronized because the UI thread can change the
-                    // value of sPurchaseObserver.
-                    synchronized(ResponseHandler.class) {
-                        if (sPurchaseObserver != null) {
-                            sPurchaseObserver.postPurchaseStateChange(
-                                    purchaseState, productId, purchaseTime, developerPayload);
-                        }
-                    }
-
-                } catch (VirtualItemNotFoundException e) {
-                    Log.e(TAG, "Hey man... This is serious !!! Some of the items' productIds you provided " +
-                            "the Soomla SDK doesn't correlate to the productId on Google Merchant Account. " +
-                            "Your user was charged but she won't get the actual product in your game. " +
-                            "You will have to issue a refund now. Check the CurrencyPacks' productIds now! " +
-                            "Couldn't find a VirtualCurrencyPack with productId: " + productId);
-                }
-
+        // This needs to be synchronized because the UI thread can change the
+        // value of sPurchaseObserver.
+        synchronized(ResponseHandler.class) {
+            if (sPurchaseObserver != null) {
+                sPurchaseObserver.postPurchaseStateChange(
+                        purchaseState, productId, purchaseTime, developerPayload);
             }
-        }).start();
+        }
     }
 
     /**

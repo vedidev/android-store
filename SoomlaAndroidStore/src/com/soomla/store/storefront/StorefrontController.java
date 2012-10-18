@@ -21,10 +21,12 @@ import android.util.Log;
 import com.soomla.store.IStoreEventHandler;
 import com.soomla.store.StoreEventHandlers;
 import com.soomla.store.data.StorageManager;
+import com.soomla.store.data.StoreInfo;
 import com.soomla.store.data.StorefrontInfo;
+import com.soomla.store.domain.data.GoogleMarketItem;
 import com.soomla.store.domain.data.VirtualCurrency;
-import com.soomla.store.domain.data.VirtualCurrencyPack;
 import com.soomla.store.domain.data.VirtualGood;
+import com.soomla.store.exceptions.VirtualItemNotFoundException;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -44,17 +46,27 @@ public class StorefrontController implements IStoreEventHandler {
     }
 
     @Override
-    public void onVirtualCurrencyPackPurchased(VirtualCurrencyPack pack) {
+    public void onMarketPurchase(GoogleMarketItem googleMarketItem) {
         try {
             JSONObject jsonObject = new JSONObject();
-            VirtualCurrency virtualCurrency = pack.getVirtualCurrency();
+            VirtualCurrency virtualCurrency = StoreInfo.getInstance().getPackByGoogleProductId(
+                    googleMarketItem.getProductId()).getVirtualCurrency();
             jsonObject.put(virtualCurrency.getItemId(), StorageManager.getInstance()
                     .getVirtualCurrencyStorage().getBalance(virtualCurrency));
 
             mActivity.sendToJS("currencyBalanceChanged", jsonObject.toString());
         } catch (JSONException e) {
             Log.e(TAG, "couldn't generate json to return balance.");
+        } catch (VirtualItemNotFoundException e) {
+            Log.e(TAG, "this is really unexpected. the currency pack associated with the given " +
+                    "GoogleMarketItem is not found. productId: " + googleMarketItem.getProductId());
+            StoreEventHandlers.getInstance().onUnexpectedErrorInStore();
         }
+    }
+
+    @Override
+    public void onMarketRefund(GoogleMarketItem googleMarketItem) {
+        //To change body of implemented methods use File | Settings | File Templates.
     }
 
     @Override
@@ -83,7 +95,7 @@ public class StorefrontController implements IStoreEventHandler {
     }
 
     @Override
-    public void onMarketPurchaseProcessStarted() {
+    public void onMarketPurchaseProcessStarted(GoogleMarketItem googleMarketItem) {
         //To change body of implemented methods use File | Settings | File Templates.
     }
 
