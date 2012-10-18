@@ -17,6 +17,7 @@ package com.soomla.store;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Handler;
 import android.util.Log;
 import com.soomla.billing.BillingService;
@@ -67,11 +68,21 @@ public class StoreController extends PurchaseObserver {
                            String publicKey,
                            boolean debugMode){
 
+        mContext = context;
         StoreConfig.publicKey = publicKey;
         StoreConfig.debug = debugMode;
 
         StorageManager.getInstance().initialize(context);
         StoreInfo.getInstance().initialize(storeAssets);
+
+        SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+        boolean initialized = prefs.getBoolean(DB_INITIALIZED, false);
+        if (!initialized) {
+            if (StoreConfig.debug){
+                Log.d(TAG, "sending restore transaction request");
+            }
+            mBillingService.restoreTransactions();
+        }
     }
 
     /**
@@ -354,8 +365,12 @@ public class StoreController extends PurchaseObserver {
                 Log.d(TAG, "RestoreTransactions succeeded");
             }
 
-
-            // RestoreTransaction succeeded !
+            // Update the shared preferences so that we don't perform
+            // a RestoreTransactions again.
+            SharedPreferences prefs = mContext.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+            SharedPreferences.Editor edit = prefs.edit();
+            edit.putBoolean(DB_INITIALIZED, true);
+            edit.commit();
         } else {
             if (StoreConfig.debug) {
                 Log.d(TAG, "RestoreTransactions error: " + responseCode);
@@ -381,7 +396,10 @@ public class StoreController extends PurchaseObserver {
 
     /** Private Members**/
 
-    private static final String TAG = "SOOMLA StoreController";
+    private static final String TAG             = "SOOMLA StoreController";
+    private static final String PREFS_NAME      = "store.prefs";
+    private static final String DB_INITIALIZED  = "db_initialized";
 
     private BillingService mBillingService;
+    private Context mContext;
 }
