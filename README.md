@@ -42,7 +42,6 @@ Getting Started
             <action android:name="com.android.vending.billing.PURCHASE_STATE_CHANGED" />
         </intent-filter>
     </receiver>
-    <activity android:name="com.soomla.store.StoreActivity" />
     ```
     
 3. Create your own implementation of _IStoreAssets_ in order to describe your specific game's assets ([example](https://github.com/soomla/android-store/blob/master/SoomlaAndroidExamples/MuffinRushExample/src/com/soomla/example/muffinRush/MuffinRushAssets.java)). Initialize _StoreController_ with the class you just created:
