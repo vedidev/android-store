@@ -46,7 +46,7 @@ public class GoogleMarketItem {
      * @throws JSONException
      */
     public GoogleMarketItem(JSONObject jsonObject) throws JSONException {
-        this.mManaged = Managed.valueOf(JSONConsts.GOOGLEMANAGED_MANAGED);
+        this.mManaged = Managed.valueOf(jsonObject.getString(JSONConsts.GOOGLEMANAGED_MANAGED));
         this.mProductId = jsonObject.getString(JSONConsts.GOOGLEMANAGED_PRODUCT_ID);
     }
 
