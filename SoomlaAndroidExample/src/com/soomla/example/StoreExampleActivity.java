@@ -1,12 +1,12 @@
-package com.soomla.example.templeRun;
+package com.soomla.example;
 
 import android.app.Activity;
 import android.content.ClipData;
+import android.content.Intent;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
-import android.util.Log;
 import android.view.DragEvent;
 import android.view.MotionEvent;
 import android.view.View;
@@ -15,11 +15,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import com.soomla.store.StoreController;
 import com.soomla.store.StoreEventHandlers;
-import com.soomla.store.storefront.StorefrontController;
-
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
 
 public class StoreExampleActivity extends Activity {
     /**
@@ -57,7 +52,7 @@ public class StoreExampleActivity extends Activity {
          * long enough to perform the operation they need to perform.
          */
         StoreController.getInstance().initialize(getApplicationContext(),
-                new TempleRunAssets(),
+                new MuffinRushAssets(),
                 "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAndHbBVrbynZ9LOQhRCA/+dzYyQeT7qcbo6BD16O+7ltau6JLy78emOo4615" +
                         "+N3dl5RJ3FBlRw14aS+KhNAf0gMlrk3RBQA5d+sY/8oD22kC8Gn7blwsmk3LWYqOiGGXFtRxUyBxdibjFo0+qBz+BXJzfKY" +
                         "V+Y3wSDz0RBUoY9+akbF3EHuB6d02fXLeeIAswB28OlAM4PUuHSbj9lDNFefJwawQ7kgUALETJ98ImKlPUzG0jVh1t9vUOa" +
@@ -144,24 +139,12 @@ public class StoreExampleActivity extends Activity {
 
     private void openStore() {
 
-        try {
-            InputStream in = getAssets().open(mThemeJsonFile);
-
-            byte[] buffer = new byte[in.available()];
-            in.read(buffer);
-            ByteArrayOutputStream out = new ByteArrayOutputStream();
-            out.write(buffer);
-            out.close();
-            in.close();
-
-            StorefrontController.getInstance().openStore(this, out.toString());
-        } catch (IOException e) {
-            Log.e("StoreExampleActivity", "Can't read JSON storefront file.");
-        }
+        Intent intent = new Intent(getApplicationContext(), StoreGoodsActivity.class);
+        startActivity(intent);
     }
 
     private Handler mHandler = new Handler();
     private ImageView mRobotView;
-    private String mThemeJsonFile = "temple.json";
+    private String mThemeJsonFile = "muffinRush.json";
 }
 

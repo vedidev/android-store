@@ -1,9 +1,10 @@
-package com.soomla.example.templeRun;
+package com.soomla.example;
 
 import android.content.Context;
 import android.widget.Toast;
 import com.soomla.store.IStoreEventHandler;
 import com.soomla.store.StoreConfig;
+import com.soomla.store.domain.data.GoogleMarketItem;
 import com.soomla.store.domain.data.VirtualCurrencyPack;
 import com.soomla.store.domain.data.VirtualGood;
 
@@ -17,8 +18,13 @@ public class ExampleEventHandler implements IStoreEventHandler {
     }
 
     @Override
-    public void onVirtualCurrencyPackPurchased(VirtualCurrencyPack pack) {
-        showToastIfDebug(pack.getName() + " was just purchased");
+    public void onMarketPurchase(GoogleMarketItem googleMarketItem) {
+        showToastIfDebug(googleMarketItem.getProductId() + " was just purchased");
+    }
+
+    @Override
+    public void onMarketRefund(GoogleMarketItem googleMarketItem) {
+        showToastIfDebug(googleMarketItem.getProductId() + " was just refunded");
     }
 
     @Override
@@ -47,8 +53,8 @@ public class ExampleEventHandler implements IStoreEventHandler {
     }
 
     @Override
-    public void onMarketPurchaseProcessStarted() {
-        showToastIfDebug("Market purchase started");
+    public void onMarketPurchaseProcessStarted(GoogleMarketItem googleMarketItem) {
+        showToastIfDebug("Market purchase started for productId: " + googleMarketItem);
     }
 
     @Override
