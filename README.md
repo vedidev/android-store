@@ -44,7 +44,7 @@ Getting Started
     </receiver>
     ```
     
-3. Create your own implementation of _IStoreAssets_ in order to describe your specific game's assets ([example](https://github.com/soomla/android-store/blob/master/SoomlaAndroidExamples/MuffinRushExample/src/com/soomla/example/muffinRush/MuffinRushAssets.java)). Initialize _StoreController_ with the class you just created:
+3. Create your own implementation of _IStoreAssets_ in order to describe your specific game's assets ([example](https://github.com/soomla/android-store/blob/master/SoomlaAndroidExample/src/com/soomla/example/MuffinRushAssets.java)). Initialize _StoreController_ with the class you just created:
 
       ```Java
        StoreController.getInstance().initialize(getApplicationContext(), 
@@ -52,6 +52,7 @@ Getting Started
                                            "YOUR PUBLIC KEY FROM GOOGLE PLAY",
                                            false);
       ```
+  **NOTE**: initialize StoreController only ONCE when your application loads.
 
 4. Now, that you have _StoreController_ loaded, just decide when you want to show/hide your store's UI to the user and let _StoreController_ know about it:
 
@@ -73,7 +74,7 @@ And that's it ! You have Storage and in-app purchesing capabilities... ALL-IN-ON
 What's next? In App Purchasing.
 ---
 
-android-store provides you with VirtualCurrencyPacks. VirtualCurrencyPack is a representation of a "bag" of currencies that you want to let your users purchase in Google Play. You define VirtualCurrencyPacks in your game specific assets file which is your implemetation of IStoreAssets ([example](https://github.com/soomla/android-store/blob/master/SoomlaAndroidExamples/MuffinRushExample/src/com/soomla/example/muffinRush/MuffinRushAssets.java)). After you do that you can call StoreController to make actual purchases and android-store will take care of the rest.
+android-store provides you with VirtualCurrencyPacks. VirtualCurrencyPack is a representation of a "bag" of currencies that you want to let your users purchase in Google Play. You define VirtualCurrencyPacks in your game specific assets file which is your implemetation of IStoreAssets ([example](https://github.com/soomla/android-store/blob/master/SoomlaAndroidExample/src/com/soomla/example/MuffinRushAssets.java)). After you do that you can call StoreController to make actual purchases and android-store will take care of the rest.
 
 Example:
 
