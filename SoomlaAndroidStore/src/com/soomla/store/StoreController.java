@@ -42,8 +42,7 @@ import java.util.List;
  * This class is where all the important stuff happens. You can use it to purchase products from Google Play,
  * buy virtual goods, and get events on whatever happens.
  *
- * This is the only class you need to initialize in order to use the SOOMLA SDK. If you use the UI,
- * you'll need to also use {@link com.soomla.store.storefront.StorefrontActivity}.
+ * This is the only class you need to initialize in order to use the SOOMLA SDK.
  *
  * In addition to initializing this class, you'll also have to call
  * {@link StoreController#storeOpening(android.app.Activity, android.os.Handler)} and
@@ -55,8 +54,8 @@ import java.util.List;
 public class StoreController extends PurchaseObserver {
 
     /**
-     * If you're using SOOMLA's UI, You have to initialize the {@link StoreController} before you
-     * open the {@link com.soomla.store.storefront.StorefrontActivity}.
+     * If you're using SOOMLA's storefront, You have to initialize the {@link StoreController} before you
+     * open the StorefrontController (for more info about store front go to our Github page).
      * This initializer also initializes {@link StorageManager} and {@link StoreInfo}.
      * @param context is used to initialize {@link StorageManager}
      * @param storeAssets is the definition of your application specific assets.
@@ -67,6 +66,12 @@ public class StoreController extends PurchaseObserver {
                            IStoreAssets storeAssets,
                            String publicKey,
                            boolean debugMode){
+
+        if (initialized) {
+            return;
+        }
+
+        initialized = true;
 
         mContext = context;
         StoreConfig.publicKey = publicKey;
@@ -399,6 +404,8 @@ public class StoreController extends PurchaseObserver {
     private static final String TAG             = "SOOMLA StoreController";
     private static final String PREFS_NAME      = "store.prefs";
     private static final String DB_INITIALIZED  = "db_initialized";
+
+    private static boolean initialized          = false;
 
     private BillingService mBillingService;
     private Context mContext;

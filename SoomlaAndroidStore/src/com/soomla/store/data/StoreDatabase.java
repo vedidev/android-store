@@ -35,6 +35,10 @@ public class StoreDatabase {
 
         mDatabaseHelper = new DatabaseHelper(context);
         mStoreDB = mDatabaseHelper.getWritableDatabase();
+
+        if (StoreConfig.DB_VOLATILE_METADATA) {
+            mStoreDB.execSQL("drop table " + METADATA_TABLE_NAME);
+        }
     }
 
     /**

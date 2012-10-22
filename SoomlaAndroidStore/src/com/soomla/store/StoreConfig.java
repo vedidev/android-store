@@ -37,6 +37,14 @@ public class StoreConfig {
     public static String customSecret = "ChangeMe!!!";
 
     /*
+    if the value of this variable is true, metadata (or more specifically your IStoreAssets) that was previously
+    saved in the local DB will be deleted every time you start the application.
+
+    another way to delete just the METADATA table is to upgrade the database version.
+     */
+    public static final boolean DB_VOLATILE_METADATA = true;
+
+    /*
     if this is true than the database will be deleted whenever the application loads.
     don't release your game with this option set to true !!!!!!!!!!!!
     otherwise, your users will lose all their data every time they load the application.
