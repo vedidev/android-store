@@ -50,6 +50,12 @@ public class StorageManager {
             Log.d(TAG, "initializing StorageManager");
         }
 
+        if (initialized) {
+            return;
+        }
+
+        initialized = true;
+
         mDatabase = new StoreDatabase(context);
 
         if(StoreConfig.DB_SECURE){
@@ -89,6 +95,8 @@ public class StorageManager {
 
     /** Private members **/
     private static final String TAG = "SOOMLA StorageManager";
+
+    private static boolean initialized = false;
 
     private static StorageManager   sInstance;
     private VirtualGoodsStorage     mVirtualGoodsStorage;
