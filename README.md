@@ -52,6 +52,7 @@ Getting Started
                                            "YOUR PUBLIC KEY FROM GOOGLE PLAY",
                                            false);
       ```
+  *NOTE*: initialize StoreController only ONCE when your application loads.
 
 4. Now, that you have _StoreController_ loaded, just decide when you want to show/hide your store's UI to the user and let _StoreController_ know about it:
 
