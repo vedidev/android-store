@@ -1,6 +1,8 @@
 package com.soomla.example;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
@@ -10,6 +12,7 @@ import com.soomla.store.StoreController;
 import com.soomla.store.data.StorageManager;
 import com.soomla.store.domain.data.GoogleMarketItem;
 import com.soomla.store.domain.data.VirtualCurrencyPack;
+import com.soomla.store.exceptions.VirtualItemNotFoundException;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -60,11 +63,38 @@ public class StorePacksActivity extends Activity {
                 if (item.containsKey(StorePacksActivity.KEY_PACK)){
                     // purchasing a currency pack
                     VirtualCurrencyPack pack = (VirtualCurrencyPack) item.get(StorePacksActivity.KEY_PACK);
-                    StoreController.getInstance().buyCurrencyPack(pack.getProductId());
+                    try {
+                        StoreController.getInstance().buyCurrencyPack(pack.getProductId());
+                    } catch (VirtualItemNotFoundException e) {
+                        AlertDialog ad = new AlertDialog.Builder(activity).create();
+                        ad.setCancelable(false); // This blocks the 'BACK' button
+                        ad.setMessage("Can't continue with purchase (the given product id did not match any actual product... Fix IStoreAssets)");
+                        ad.setButton(DialogInterface.BUTTON_NEGATIVE, "OK", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                            }
+                        });
+                        ad.show();
+
+                    }
                 } else {
                     // purchasing a MANAGED item
                     GoogleMarketItem gmi = (GoogleMarketItem) item.get(StorePacksActivity.KEY_GOOGLE_ITEM);
-                    StoreController.getInstance().buyCurrencyPack(gmi.getProductId());
+                    try {
+                        StoreController.getInstance().buyCurrencyPack(gmi.getProductId());
+                    } catch (VirtualItemNotFoundException e) {
+                        AlertDialog ad = new AlertDialog.Builder(activity).create();
+                        ad.setCancelable(false); // This blocks the 'BACK' button
+                        ad.setMessage("Can't continue with purchase (the given product id did not match any actual product... Fix IStoreAssets)");
+                        ad.setButton(DialogInterface.BUTTON_NEGATIVE, "OK", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                            }
+                        });
+                        ad.show();
+                    }
                 }
 
                 /* fetching the currency balance and placing it in the balance label */
