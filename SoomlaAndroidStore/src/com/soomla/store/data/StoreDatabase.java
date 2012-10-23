@@ -37,7 +37,8 @@ public class StoreDatabase {
         mStoreDB = mDatabaseHelper.getWritableDatabase();
 
         if (StoreConfig.DB_VOLATILE_METADATA) {
-            mStoreDB.execSQL("drop table " + METADATA_TABLE_NAME);
+            mStoreDB.execSQL("drop table IF EXISTS " + METADATA_TABLE_NAME);
+            createDatabaseTables(mStoreDB);
         }
     }
 
@@ -199,6 +200,25 @@ public class StoreDatabase {
                 null, null, null, null, null);
     }
 
+    private void createDatabaseTables(SQLiteDatabase sqLiteDatabase) {
+        sqLiteDatabase.execSQL("CREATE TABLE IF NOT EXISTS " + GOOGLE_MANAGED_ITEMS_TABLE_NAME + "(" +
+                GOOGLE_MANAGED_ITEMS_COLUMN_PRODUCT_ID + " TEXT PRIMARY KEY)");
+
+        sqLiteDatabase.execSQL("CREATE TABLE IF NOT EXISTS " + VIRTUAL_CURRENCY_TABLE_NAME + "(" +
+                VIRTUAL_CURRENCY_COLUMN_ITEM_ID + " TEXT PRIMARY KEY, " +
+                VIRTUAL_CURRENCY_COLUMN_BALANCE + " TEXT)");
+
+        sqLiteDatabase.execSQL("CREATE TABLE IF NOT EXISTS " + VIRTUAL_GOODS_TABLE_NAME + "(" +
+                VIRTUAL_GOODS_COLUMN_ITEM_ID + " TEXT PRIMARY KEY, " +
+                VIRTUAL_GOODS_COLUMN_BALANCE + " TEXT, " +
+                VIRTUAL_GOODS_COLUMN_EQUIPPED + " TEXT)");
+
+        sqLiteDatabase.execSQL("CREATE TABLE IF NOT EXISTS " + METADATA_TABLE_NAME + "(" +
+                METADATA_COLUMN_PACKAGE + " TEXT PRIMARY KEY, " +
+                METADATA_COLUMN_STOREINFO + " TEXT, " +
+                METADATA_COLUMN_STOREFRONTINFO + " TEXT)");
+    }
+
     private class DatabaseHelper extends SQLiteOpenHelper{
 
         public DatabaseHelper(Context context) {
@@ -211,7 +231,7 @@ public class StoreDatabase {
                 sqLiteDatabase.execSQL("PRAGMA foreign_key=ON");
             }
 
-            createPurchaseTable(sqLiteDatabase);
+            createDatabaseTables(sqLiteDatabase);
         }
 
         /**
@@ -219,28 +239,9 @@ public class StoreDatabase {
          */
         @Override
         public void onUpgrade(SQLiteDatabase sqLiteDatabase, int i, int i1) {
-            sqLiteDatabase.execSQL("drop table " + METADATA_TABLE_NAME);
+            sqLiteDatabase.execSQL("drop table IF EXISTS " + METADATA_TABLE_NAME);
 
-            createPurchaseTable(sqLiteDatabase);
-        }
-
-        private void createPurchaseTable(SQLiteDatabase sqLiteDatabase) {
-            sqLiteDatabase.execSQL("CREATE TABLE IF NOT EXISTS " + GOOGLE_MANAGED_ITEMS_TABLE_NAME + "(" +
-                    GOOGLE_MANAGED_ITEMS_COLUMN_PRODUCT_ID + " TEXT PRIMARY KEY)");
-
-            sqLiteDatabase.execSQL("CREATE TABLE IF NOT EXISTS " + VIRTUAL_CURRENCY_TABLE_NAME + "(" +
-                    VIRTUAL_CURRENCY_COLUMN_ITEM_ID + " TEXT PRIMARY KEY, " +
-                    VIRTUAL_CURRENCY_COLUMN_BALANCE + " TEXT)");
-
-            sqLiteDatabase.execSQL("CREATE TABLE IF NOT EXISTS " + VIRTUAL_GOODS_TABLE_NAME + "(" +
-                    VIRTUAL_GOODS_COLUMN_ITEM_ID + " TEXT PRIMARY KEY, " +
-                    VIRTUAL_GOODS_COLUMN_BALANCE + " TEXT, " +
-                    VIRTUAL_GOODS_COLUMN_EQUIPPED + " TEXT)");
-
-            sqLiteDatabase.execSQL("CREATE TABLE IF NOT EXISTS " + METADATA_TABLE_NAME + "(" +
-                    METADATA_COLUMN_PACKAGE + " TEXT PRIMARY KEY, " +
-                    METADATA_COLUMN_STOREINFO + " TEXT, " +
-                    METADATA_COLUMN_STOREFRONTINFO + " TEXT)");
+            createDatabaseTables(sqLiteDatabase);
         }
     }
 
