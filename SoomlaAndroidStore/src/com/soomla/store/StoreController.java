@@ -85,7 +85,7 @@ public class StoreController extends PurchaseObserver {
      * Start a currency pack purchase process (with Google Play)
      * @param productId is the product id of the required currency pack.
      */
-    public void buyCurrencyPack(String productId){
+    public void buyCurrencyPack(String productId) throws VirtualItemNotFoundException{
         try {
             StoreEventHandlers.getInstance().onMarketPurchaseProcessStarted(StoreInfo.getInstance().getPackByGoogleProductId(productId).getmGoogleItem());
             if (!mBillingService.requestPurchase(productId, Consts.ITEM_TYPE_INAPP, "")){
@@ -94,7 +94,7 @@ public class StoreController extends PurchaseObserver {
         } catch (VirtualItemNotFoundException e) {
             Log.e(TAG, "The currency pack associated with the given productId must be defined in your IStoreAssets " +
                     "(and thus must exist in StoreInfo. (productId: " + productId + "). Unexpected error is emitted.");
-            StoreEventHandlers.getInstance().onUnexpectedErrorInStore();
+            throw e;
         }
     }
 
@@ -151,7 +151,7 @@ public class StoreController extends PurchaseObserver {
      * Start a MANAGED item purchase process.
      * @param productId is the product id of the MANAGED item to purchase.
      */
-    public boolean buyManagedItem(String productId){
+    public void buyManagedItem(String productId) throws VirtualItemNotFoundException{
         try {
             GoogleMarketItem googleMarketItem = StoreInfo.getInstance().getGoogleManagedItemByProductId(productId);
 
@@ -159,15 +159,11 @@ public class StoreController extends PurchaseObserver {
             if (!mBillingService.requestPurchase(productId, Consts.ITEM_TYPE_INAPP, "")){
                 StoreEventHandlers.getInstance().onUnexpectedErrorInStore();
             }
-
-            return true;
         } catch (VirtualItemNotFoundException e) {
             Log.e(TAG, "The google market (MANAGED) item associated with the given productId must be defined in your IStoreAssets " +
                     "and thus must exist in StoreInfo. (productId: " + productId + "). Unexpected error is emitted. can't continue purchase !");
-            StoreEventHandlers.getInstance().onUnexpectedErrorInStore();
+            throw e;
         }
-
-        return false;
     }
 
     /**
