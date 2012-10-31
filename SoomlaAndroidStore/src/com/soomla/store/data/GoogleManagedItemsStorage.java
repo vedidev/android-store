@@ -18,10 +18,8 @@ package com.soomla.store.data;
 
 import android.database.Cursor;
 import android.util.Log;
-import com.soomla.billing.util.AESObfuscator;
 import com.soomla.store.StoreConfig;
 import com.soomla.store.domain.data.GoogleMarketItem;
-import com.soomla.store.domain.data.VirtualCurrency;
 
 /**
  * This class provide basic storage operations on Google Play's MANAGED items.

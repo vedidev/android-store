@@ -16,7 +16,6 @@
 package com.soomla.store;
 
 import com.soomla.store.domain.data.GoogleMarketItem;
-import com.soomla.store.domain.data.VirtualCurrencyPack;
 import com.soomla.store.domain.data.VirtualGood;
 
 /**
