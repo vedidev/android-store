@@ -18,11 +18,11 @@ Getting Started
 ---
 * Before doing anything, SOOMLA recommends that you go through [Android In-app Billing](http://developer.android.com/guide/google/play/billing/index.html).
 
-1. Clone android-store. Copy all files from android-store/SoomlaAndroidStore subfolders to their equivallent folders in your Android project:
+1. Clone android-store. Copy all files from android-store/SoomlaAndroidStore subfolders to their equivalent folders in your Android project:
 
  `git clone git@github.com:soomla/android-store.git`
 
-2. Make the folowing changes to your AndroidManifest.xml:
+2. Make the following changes to your AndroidManifest.xml:
 
   Add the following permission:
 
@@ -52,7 +52,7 @@ Getting Started
                                            "YOUR PUBLIC KEY FROM GOOGLE PLAY",
                                            false);
       ```
-  **NOTE**: initialize StoreController only ONCE when your application loads.
+  **NOTE**: initialize StoreController ONLY ONCE when your application loads.
 
 4. Now, that you have _StoreController_ loaded, just decide when you want to show/hide your store's UI to the user and let _StoreController_ know about it:
 
@@ -68,7 +68,7 @@ Getting Started
     StoreController.getInstance().storeClosing();
     ```
 
-And that's it ! You have Storage and in-app purchesing capabilities... ALL-IN-ONE.
+And that's it ! You have storage and in-app purchasing capabilities... ALL-IN-ONE.
 
 
 What's next? In App Purchasing.
