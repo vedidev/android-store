@@ -52,7 +52,7 @@ Getting Started
                                            "YOUR PUBLIC KEY FROM GOOGLE PLAY",
                                            false);
       ```
-  **NOTE**: initialize StoreController ONLY ONCE when your application loads.
+> Initialize StoreController ONLY ONCE when your application loads.
 
 4. Now, that you have _StoreController_ loaded, just decide when you want to show/hide your store's UI to the user and let _StoreController_ know about it:
 
@@ -147,7 +147,7 @@ Event Handling
 
 SOOMLA lets you create your own event handler and add it to StoreEventHandlers. That way you'll be able to get notifications on various events and implement your own application specific behaviour to those events.
 
-NOTE: Your behaviour is an addition to the default behaviour implemented by SOOMLA. You don't replace SOOMLA's behaviour.
+> Your behaviour is an addition to the default behaviour implemented by SOOMLA. You don't replace SOOMLA's behaviour.
 
 In order to create your event handler:
 
