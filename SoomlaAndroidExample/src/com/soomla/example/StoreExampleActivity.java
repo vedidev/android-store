@@ -58,7 +58,7 @@ public class StoreExampleActivity extends Activity {
                         "V+Y3wSDz0RBUoY9+akbF3EHuB6d02fXLeeIAswB28OlAM4PUuHSbj9lDNFefJwawQ7kgUALETJ98ImKlPUzG0jVh1t9vUOa" +
                         "rsIZdzWmVu69+Au3mniqzcGY9gZyfYf0n7cNR3isSDfNOjeisDpfNpY/ljf71/6ns3/WjDwtXB2eDal5fz7fbsLEWRkSwID" +
                         "AQAB",
-                false);
+                true);
         StoreEventHandlers.getInstance().addEventHandler(
                 new ExampleEventHandler(getApplicationContext(), this));
     }
