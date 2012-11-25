@@ -247,7 +247,7 @@ public class StoreDatabase {
 
     // Managed items Table
     private static final String GOOGLE_MANAGED_ITEMS_TABLE_NAME = "managed_items";
-    public static final String GOOGLE_MANAGED_ITEMS_COLUMN_PRODUCT_ID = "balance";
+    public static final String GOOGLE_MANAGED_ITEMS_COLUMN_PRODUCT_ID = "product_id";
     private static final String[] GOOGLE_MANAGED_ITEMS_COLUMNS = {
             GOOGLE_MANAGED_ITEMS_COLUMN_PRODUCT_ID
     };

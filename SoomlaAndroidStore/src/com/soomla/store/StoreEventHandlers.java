@@ -28,7 +28,7 @@ import java.util.List;
 public class StoreEventHandlers {
 
     /**
-     * A currency pack was just purchased.
+     * A google market item (MANAGED or UNMANAGED) was just purchased.
      * @param googleMarketItem is the google market item that was just purchased.
      */
     public void onMarketPurchase(GoogleMarketItem googleMarketItem){
@@ -38,7 +38,7 @@ public class StoreEventHandlers {
     }
 
     /**
-     * A currency pack was just refunded.
+     * A google market item (MANAGED or UNMANAGED) was just refunded.
      * @param googleMarketItem is the google market item that was just refunded.
      */
     public void onMarketRefund(GoogleMarketItem googleMarketItem){
