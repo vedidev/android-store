@@ -295,7 +295,7 @@ public class StoreController extends PurchaseObserver {
 
             if (purchaseState == Consts.PurchaseState.REFUNDED){
                 // You can decrease the balance here ... SOOMLA believes in friendly refunds.
-                // A friendly refund policy is nice for the user.
+                // A friendly refund policy is nicer for the user.
             }
 
         } catch (VirtualItemNotFoundException e) {
@@ -359,7 +359,6 @@ public class StoreController extends PurchaseObserver {
      */
     @Override
     public void onRestoreTransactionsResponse(BillingService.RestoreTransactions request, Consts.ResponseCode responseCode) {
-        // THIS IS FOR MANAGED ITEMS. SOOMLA DOESN'T SUPPORT MANAGED ITEMS.
 
         if (responseCode == Consts.ResponseCode.RESULT_OK) {
             if (StoreConfig.debug){
