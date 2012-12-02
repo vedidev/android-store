@@ -67,8 +67,12 @@ public class StoreController extends PurchaseObserver {
                            String publicKey,
                            boolean debugMode){
 
-        if (initialized) {
+        if (initialized){
             return;
+        }
+
+        if (publicKey == null || publicKey.isEmpty()) {
+            Log.e(TAG, "publicKey is null or empty. can't initialize store !!");
         }
 
         initialized = true;
@@ -205,6 +209,12 @@ public class StoreController extends PurchaseObserver {
      * @param handler is a handler to post UI thread messages on.
      */
     public void storeOpening(Activity activity, Handler handler){
+        if (!initialized) {
+            Log.e(TAG, "You notified StoreController that your store is opening but StoreController was never initialized." +
+                    "REMEMBER: You should only initialize StoreController ONCE !!!");
+            return;
+        }
+
         initialize(activity, handler);
 
         StoreInfo.getInstance().initializeFromDB();
