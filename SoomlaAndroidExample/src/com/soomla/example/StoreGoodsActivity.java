@@ -5,7 +5,6 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.AssetFileDescriptor;
-import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
@@ -178,13 +177,6 @@ public class StoreGoodsActivity extends Activity {
     }
 
     public void wantsToBuyPacks(View v) throws IOException {
-        MediaPlayer mp = new MediaPlayer();
-        AssetFileDescriptor descriptor;
-        descriptor = getAssets().openFd( "pop.mp3" );
-        mp.setDataSource( descriptor.getFileDescriptor(), descriptor.getStartOffset(),  descriptor.getLength() );
-        descriptor.close();
-        mp.prepare();
-        mp.start();
 
         Intent intent = new Intent(getApplicationContext(), StorePacksActivity.class);
         startActivity(intent);
