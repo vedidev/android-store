@@ -426,8 +426,10 @@ public class StoreController extends PurchaseObserver {
 
     private void stopBillingService() {
         mLock.lock();
-        mBillingService.unbind();
-        mBillingService = null;
+        if (mBillingService != null) {
+            mBillingService.unbind();
+            mBillingService = null;
+        }
         mLock.unlock();
     }
 
