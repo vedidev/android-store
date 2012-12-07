@@ -38,6 +38,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * This class is where all the important stuff happens. You can use it to purchase products from Google Play,
@@ -457,5 +458,5 @@ public class StoreController extends PurchaseObserver {
 
     private BillingService mBillingService;
     private Context mContext;
-    private Lock    mLock;
+    private Lock    mLock = new ReentrantLock();
 }
