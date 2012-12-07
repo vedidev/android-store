@@ -37,6 +37,7 @@ import com.soomla.store.exceptions.VirtualItemNotFoundException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.concurrent.locks.Lock;
 
 /**
  * This class is where all the important stuff happens. You can use it to purchase products from Google Play,
@@ -54,10 +55,10 @@ import java.util.List;
 public class StoreController extends PurchaseObserver {
 
     /**
-     * If you're using SOOMLA's storefront, You have to initialize the {@link StoreController} before you
+     * If you're using SOOMLA's storefront, You have to initializePurchaseObserver the {@link StoreController} before you
      * open the StorefrontController (for more info about store front go to our Github page).
      * This initializer also initializes {@link StorageManager} and {@link StoreInfo}.
-     * @param context is used to initialize {@link StorageManager}
+     * @param context is used to initializePurchaseObserver {@link StorageManager}
      * @param storeAssets is the definition of your application specific assets.
      * @param publicKey is your public key from Google Play.
      * @param debugMode is determining weather you're on debug mode or not (duh !!!).
@@ -67,7 +68,7 @@ public class StoreController extends PurchaseObserver {
                            String publicKey,
                            boolean debugMode){
 
-        if (initialized){
+        if (mInitialized){
             return;
         }
 
@@ -75,7 +76,7 @@ public class StoreController extends PurchaseObserver {
             Log.e(TAG, "publicKey is null or empty. can't initialize store !!");
         }
 
-        initialized = true;
+        mInitialized = true;
 
         mContext = context;
         StoreConfig.publicKey = publicKey;
@@ -83,6 +84,12 @@ public class StoreController extends PurchaseObserver {
 
         StorageManager.getInstance().initialize(context);
         StoreInfo.getInstance().initialize(storeAssets);
+
+        ResponseHandler.register(this);
+
+        if (startBillingService(context)) {
+            tryRestoreTransactions();
+        }
     }
 
     /**
@@ -209,37 +216,24 @@ public class StoreController extends PurchaseObserver {
      * @param handler is a handler to post UI thread messages on.
      */
     public void storeOpening(Activity activity, Handler handler){
-        if (!initialized) {
+        if (!mInitialized || mStoreOpen) {
             Log.e(TAG, "You notified StoreController that your store is opening but StoreController was never initialized." +
-                    "REMEMBER: You should only initialize StoreController ONCE !!!");
+                    "REMEMBER: You should only initialize StoreController ONCE when the application loads !!!");
             return;
         }
 
-        initialize(activity, handler);
+        mStoreOpen = true;
 
+        if (handler == null) {
+            handler = new Handler();
+        }
+        initCompatibilityLayer(activity, handler);
+
+        /* Initialize StoreInfo from database in case any changes were done to it while the store was closed */
         StoreInfo.getInstance().initializeFromDB();
 
         /* Billing */
-
-        mBillingService = new BillingService();
-        mBillingService.setContext(activity.getApplicationContext());
-
-        ResponseHandler.register(this);
-
-        if (!mBillingService.checkBillingSupported(Consts.ITEM_TYPE_INAPP)){
-            if (StoreConfig.debug){
-                Log.d(TAG, "There's no connectivity with the billing service.");
-            }
-        }
-
-        SharedPreferences prefs = mContext.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
-        boolean initialized = prefs.getBoolean(DB_INITIALIZED, false);
-        if (!initialized) {
-            if (StoreConfig.debug){
-                Log.d(TAG, "sending restore transaction request");
-            }
-            mBillingService.restoreTransactions();
-        }
+        startBillingService(activity.getApplicationContext());
 
         StoreEventHandlers.getInstance().onOpeningStore();
     }
@@ -248,10 +242,12 @@ public class StoreController extends PurchaseObserver {
      * Call this function when you close the actual store window.
      */
     public void storeClosing(){
+        mStoreOpen = false;
+
         StoreEventHandlers.getInstance().onClosingStore();
 
-        mBillingService.unbind();
-        ResponseHandler.unregister(this);
+        stopBillingService();
+//        ResponseHandler.unregister(this);
     }
 
 
@@ -386,6 +382,52 @@ public class StoreController extends PurchaseObserver {
                 Log.d(TAG, "RestoreTransactions error: " + responseCode);
             }
         }
+
+        // we're stopping the billing service only if the store was not opened while the request was sent
+        if (!mStoreOpen) {
+            stopBillingService();
+        }
+    }
+
+
+    /** Private methods **/
+
+    private void tryRestoreTransactions() {
+        SharedPreferences prefs = mContext.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+        boolean initialized = prefs.getBoolean(DB_INITIALIZED, false);
+        if (!initialized) {
+            if (StoreConfig.debug){
+                Log.d(TAG, "sending restore transaction request");
+            }
+            mBillingService.restoreTransactions();
+        }
+    }
+
+    private boolean startBillingService(Context context) {
+        mLock.lock();
+        if (mBillingService == null) {
+            mBillingService = new BillingService();
+            mBillingService.setContext(context);
+
+            if (!mBillingService.checkBillingSupported(Consts.ITEM_TYPE_INAPP)){
+                if (StoreConfig.debug){
+                    Log.d(TAG, "There's no connectivity with the billing service.");
+                }
+
+                mLock.unlock();
+                return false;
+            }
+        }
+
+        mLock.unlock();
+        return true;
+    }
+
+    private void stopBillingService() {
+        mLock.lock();
+        mBillingService.unbind();
+        mBillingService = null;
+        mLock.unlock();
     }
 
     /** Singleton **/
@@ -410,8 +452,10 @@ public class StoreController extends PurchaseObserver {
     private static final String PREFS_NAME      = "store.prefs";
     private static final String DB_INITIALIZED  = "db_initialized";
 
-    private static boolean initialized          = false;
+    private boolean mInitialized          = false;
+    private boolean mStoreOpen            = false;
 
     private BillingService mBillingService;
     private Context mContext;
+    private Lock    mLock;
 }

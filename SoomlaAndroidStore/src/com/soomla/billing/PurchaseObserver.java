@@ -150,17 +150,6 @@ public abstract class PurchaseObserver {
 
     /** Private functions **/
 
-    private void initCompatibilityLayer() {
-        try {
-            mStartIntentSender = mActivity.getClass().getMethod("startIntentSender",
-                    START_INTENT_SENDER_SIG);
-        } catch (SecurityException e) {
-            mStartIntentSender = null;
-        } catch (NoSuchMethodException e) {
-            mStartIntentSender = null;
-        }
-    }
-
     private static final Class[] START_INTENT_SENDER_SIG = new Class[] {
             IntentSender.class, Intent.class, int.class, int.class, int.class
     };
@@ -169,10 +158,17 @@ public abstract class PurchaseObserver {
 
     /** Protected Functions **/
 
-    protected void initialize(Activity activity, Handler handler){
+    protected void initCompatibilityLayer(Activity activity, Handler handler){
         mActivity = activity;
         mHandler = handler;
-        initCompatibilityLayer();
+        try {
+            mStartIntentSender = mActivity.getClass().getMethod("startIntentSender",
+                    START_INTENT_SENDER_SIG);
+        } catch (SecurityException e) {
+            mStartIntentSender = null;
+        } catch (NoSuchMethodException e) {
+            mStartIntentSender = null;
+        }
     }
 
 
