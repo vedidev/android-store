@@ -2,19 +2,22 @@ package com.soomla.example;
 
 import android.app.Activity;
 import android.content.ClipData;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 import android.view.DragEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import com.soomla.store.StoreController;
-import com.soomla.store.StoreEventHandlers;
+import com.soomla.store.*;
+import com.soomla.store.exceptions.VirtualItemNotFoundException;
 
 public class StoreExampleActivity extends Activity {
     /**
@@ -51,16 +54,28 @@ public class StoreExampleActivity extends Activity {
          * Generally, encryption keys / passwords should only be kept in memory
          * long enough to perform the operation they need to perform.
          */
+        IStoreAssets storeAssets = new MuffinRushAssets();
         StoreController.getInstance().initialize(getApplicationContext(),
-                new MuffinRushAssets(),
-                "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAndHbBVrbynZ9LOQhRCA/+dzYyQeT7qcbo6BD16O+7ltau6JLy78emOo4615" +
-                        "+N3dl5RJ3FBlRw14aS+KhNAf0gMlrk3RBQA5d+sY/8oD22kC8Gn7blwsmk3LWYqOiGGXFtRxUyBxdibjFo0+qBz+BXJzfKY" +
-                        "V+Y3wSDz0RBUoY9+akbF3EHuB6d02fXLeeIAswB28OlAM4PUuHSbj9lDNFefJwawQ7kgUALETJ98ImKlPUzG0jVh1t9vUOa" +
-                        "rsIZdzWmVu69+Au3mniqzcGY9gZyfYf0n7cNR3isSDfNOjeisDpfNpY/ljf71/6ns3/WjDwtXB2eDal5fz7fbsLEWRkSwID" +
-                        "AQAB",
+                storeAssets,
+                "[YOUR PUBLIC KEY FROM GOOGLE PLAY HERE]",
                 true);
         StoreEventHandlers.getInstance().addEventHandler(
                 new ExampleEventHandler(getApplicationContext(), this));
+
+        // Checking if it's a first run and adding 10000 currencies if it is.
+        // OFCOURSE... THIS IS JUST FOR TESTING.
+        SharedPreferences prefs = getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+        boolean initialized = prefs.getBoolean(FIRST_RUN, false);
+        if (!initialized) {
+            try {
+                StoreInventory.addCurrencyAmount(storeAssets.getVirtualCurrencies()[0].getItemId(), 10000);
+                SharedPreferences.Editor edit = prefs.edit();
+                edit.putBoolean(FIRST_RUN, true);
+                edit.commit();
+            } catch (VirtualItemNotFoundException e) {
+                Log.e("Example Activity", "Couldn't add first 10000 currencies.");
+            }
+        }
     }
 
     public void robotBackHome(){
@@ -145,6 +160,8 @@ public class StoreExampleActivity extends Activity {
 
     private Handler mHandler = new Handler();
     private ImageView mRobotView;
-    private String mThemeJsonFile = "muffinRush.json";
+
+    private static final String PREFS_NAME      = "store.prefs";
+    private static final String FIRST_RUN       = "first_run";
 }
 
