@@ -21,7 +21,6 @@ package com.soomla.store.data;
 public class JSONConsts {
 
     public static final String STOREFRONT_THEME              = "theme";
-    public static final String STOREFRONT_ISCURRENCYDISABLED = "isCurrencyStoreDisabled";
 
     public static final String STORE_VIRTUALCURRENCIES  = "virtualCurrencies";
     public static final String STORE_CURRENCYPACKS      = "currencyPacks";

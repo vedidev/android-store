@@ -56,17 +56,6 @@ public class StorefrontInfo {
                 storefrontJSON = StorageManager.getInstance().getObfuscator().obfuscateString(storefrontJSON);
             }
             StorageManager.getInstance().getDatabase().setStorefrontInfo(storefrontJSON);
-
-            // get orientation value from JSON
-            try {
-                JSONObject jsonObject = new JSONObject(mStorefrontJSON);
-                mOrientationLandscape = jsonObject.getJSONObject(JSONConsts.STOREFRONT_THEME)
-                        .getBoolean("isOrientationLandscape");
-            } catch (JSONException e) {
-                if (StoreConfig.debug){
-                    Log.d(TAG, "can't parse json object.");
-                }
-            }
         }
     }
 
@@ -95,7 +84,6 @@ public class StorefrontInfo {
                     }
 
                     JSONObject jsonObject = new JSONObject(mStorefrontJSON);
-                    mOrientationLandscape = jsonObject.getJSONObject(JSONConsts.STOREFRONT_THEME).getBoolean("isOrientationLandscape");
 
                     return true;
                 }
@@ -119,10 +107,6 @@ public class StorefrontInfo {
         return mStorefrontJSON;
     }
 
-    public boolean isOrientationLandscape() {
-        return mOrientationLandscape;
-    }
-
     /** Private functions **/
 
     private StorefrontInfo() { }
@@ -132,6 +116,5 @@ public class StorefrontInfo {
     private static final String TAG = "SOOMLA StorefrontInfo";
     private static StorefrontInfo sInstance = null;
 
-    private boolean mOrientationLandscape;
     private String  mStorefrontJSON;
 }
