@@ -200,7 +200,37 @@ public class StoreDatabase {
                 null, null, null, null, null);
     }
 
+    /**
+     * Sets the given value to the given key
+     * @param key the key of the key-val pair.
+     * @param val the val of the key-val pair.
+     */
+    public synchronized void setKeyValVal(String key, String val) {
+        ContentValues values = new ContentValues();
+        values.put(KEYVAL_COLUMN_VAL, val);
+
+        int affected = mStoreDB.update(KEYVAL_TABLE_NAME, values, KEYVAL_COLUMN_KEY + "='" + key + "'", null);
+        if (affected == 0){
+            values.put(KEYVAL_COLUMN_KEY, key);
+            mStoreDB.replace(KEYVAL_TABLE_NAME, null, values);
+        }
+    }
+
+    /**
+     * Gets the value for the given key.
+     * @param key the key of the key-val pair.
+     * @return a value for the given key.
+     */
+    public synchronized Cursor getKeyValVal(String key) {
+        return mStoreDB.query(KEYVAL_TABLE_NAME, KEYVAL_COLUMNS, KEYVAL_COLUMN_KEY + "='" + key + "'",
+                null, null, null, null);
+    }
+
     private void createDatabaseTables(SQLiteDatabase sqLiteDatabase) {
+        sqLiteDatabase.execSQL("CREATE TABLE IF NOT EXISTS " + KEYVAL_TABLE_NAME + "(" +
+                KEYVAL_COLUMN_KEY + " TEXT PRIMARY KEY, " +
+                KEYVAL_COLUMN_VAL + " TEXT)");
+
         sqLiteDatabase.execSQL("CREATE TABLE IF NOT EXISTS " + GOOGLE_MANAGED_ITEMS_TABLE_NAME + "(" +
                 GOOGLE_MANAGED_ITEMS_COLUMN_PRODUCT_ID + " TEXT PRIMARY KEY)");
 
@@ -244,6 +274,14 @@ public class StoreDatabase {
             createDatabaseTables(sqLiteDatabase);
         }
     }
+
+    // General key-value storage
+    private static final String KEYVAL_TABLE_NAME = "kv_store";
+    public static final String KEYVAL_COLUMN_KEY = "key";
+    public static final String KEYVAL_COLUMN_VAL = "val";
+    private static final String[] KEYVAL_COLUMNS = {
+            KEYVAL_COLUMN_KEY, KEYVAL_COLUMN_VAL
+    };
 
     // Managed items Table
     private static final String GOOGLE_MANAGED_ITEMS_TABLE_NAME = "managed_items";
