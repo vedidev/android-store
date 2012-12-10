@@ -25,7 +25,7 @@ public class StoreInventory {
     public static int removeCurrencyAmount(String currencyItemId, int amount) throws VirtualItemNotFoundException {
         VirtualCurrency currency = StoreInfo.getInstance().getVirtualCurrencyByItemId(currencyItemId);
 
-        return StorageManager.getInstance().getVirtualCurrencyStorage().add(currency, amount);
+        return StorageManager.getInstance().getVirtualCurrencyStorage().remove(currency, amount);
     }
 
     /** Virtual Goods **/
