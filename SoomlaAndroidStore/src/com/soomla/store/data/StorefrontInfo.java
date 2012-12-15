@@ -56,6 +56,8 @@ public class StorefrontInfo {
                 storefrontJSON = StorageManager.getObfuscator().obfuscateString(storefrontJSON);
             }
             StorageManager.getDatabase().setStorefrontInfo(storefrontJSON);
+
+            mInitialized = true;
         }
     }
 
@@ -83,17 +85,14 @@ public class StorefrontInfo {
                         Log.d(TAG, "the metadata json (from DB) is " + mStorefrontJSON);
                     }
 
-                    JSONObject jsonObject = new JSONObject(mStorefrontJSON);
+//                    JSONObject jsonObject = new JSONObject(mStorefrontJSON);
 
+                    mInitialized = true;
                     return true;
                 }
             } catch (AESObfuscator.ValidationException e) {
                 if (StoreConfig.debug){
                     Log.d(TAG, "can't obfuscate storefrontJSON.");
-                }
-            } catch (JSONException e) {
-                if (StoreConfig.debug){
-                    Log.d(TAG, "can't parse json object.");
                 }
             } finally {
                 cursor.close();
@@ -104,6 +103,12 @@ public class StorefrontInfo {
     }
 
     public String getStorefrontJSON() {
+        if (!mInitialized) {
+            if (!initializeFromDB()) {
+                Log.e(TAG, "Couldn't initialize StoreFrontInfo. Can't fetch the JSON!");
+                return "";
+            }
+        }
         return mStorefrontJSON;
     }
 
@@ -115,6 +120,7 @@ public class StorefrontInfo {
 
     private static final String TAG = "SOOMLA StorefrontInfo";
     private static StorefrontInfo sInstance = null;
+    private static boolean mInitialized = false;
 
     private String  mStorefrontJSON;
 }
