@@ -95,6 +95,13 @@ public class StoreController extends PurchaseObserver {
      * @param productId is the product id of the required currency pack.
      */
     public void buyCurrencyPack(String productId) throws VirtualItemNotFoundException{
+        SharedPreferences prefs = SoomlaApp.getAppContext().getSharedPreferences(StoreConfig.PREFS_NAME, Context.MODE_PRIVATE);
+        String publicKey = prefs.getString(StoreConfig.PUBLIC_KEY, "");
+        if (publicKey.isEmpty() || publicKey.equals("[YOUR PUBLIC KEY FROM GOOGLE PLAY]")) {
+            Log.e(TAG, "You didn't provide a public key! You can't make purchases.");
+            return;
+        }
+
         try {
             StoreEventHandlers.getInstance().onMarketPurchaseProcessStarted(StoreInfo.getPackByGoogleProductId(productId).getmGoogleItem());
             if (!mBillingService.requestPurchase(productId, Consts.ITEM_TYPE_INAPP, "")){
@@ -161,13 +168,20 @@ public class StoreController extends PurchaseObserver {
      * @param productId is the product id of the MANAGED item to purchase.
      */
     public void buyManagedItem(String productId) throws VirtualItemNotFoundException{
+        SharedPreferences prefs = SoomlaApp.getAppContext().getSharedPreferences(StoreConfig.PREFS_NAME, Context.MODE_PRIVATE);
+        String publicKey = prefs.getString(StoreConfig.PUBLIC_KEY, "");
+        if (publicKey.isEmpty() || publicKey.equals("[YOUR PUBLIC KEY FROM GOOGLE PLAY]")) {
+            Log.e(TAG, "You didn't provide a public key! You can't make purchases.");
+            return;
+        }
+
         try {
             GoogleMarketItem googleMarketItem = StoreInfo.getGoogleManagedItemByProductId(productId);
 
-            StoreEventHandlers.getInstance().onMarketPurchaseProcessStarted(googleMarketItem);
             if (!mBillingService.requestPurchase(productId, Consts.ITEM_TYPE_INAPP, "")){
                 StoreEventHandlers.getInstance().onUnexpectedErrorInStore();
             }
+            StoreEventHandlers.getInstance().onMarketPurchaseProcessStarted(googleMarketItem);
         } catch (VirtualItemNotFoundException e) {
             Log.e(TAG, "The google market (MANAGED) item associated with the given productId must be defined in your IStoreAssets " +
                     "and thus must exist in StoreInfo. (productId: " + productId + "). Unexpected error is emitted. can't continue purchase !");
