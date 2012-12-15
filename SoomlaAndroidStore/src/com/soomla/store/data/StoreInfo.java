@@ -340,6 +340,12 @@ public class StoreInfo {
      * @return a JSONObject representation of the StoreInfo.
      */
     public static JSONObject toJSONObject(){
+        if (mVirtualGoods == null) {
+            if (!initializeFromDB()) {
+                Log.e(TAG, "Can't initialize StoreInfo !");
+                return null;
+            }
+        }
 
         JSONArray virtualCategories = new JSONArray();
         for (VirtualCategory cat : mVirtualCategories){
