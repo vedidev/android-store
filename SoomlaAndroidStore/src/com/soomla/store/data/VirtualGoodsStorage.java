@@ -45,10 +45,10 @@ public class VirtualGoodsStorage {
             Log.d(TAG, "trying to fetch balance for virtual good with itemId: " + virtualGood.getItemId());
         }
         String itemId = virtualGood.getItemId();
-        if (StorageManager.getInstance().getObfuscator() != null){
-            itemId = StorageManager.getInstance().getObfuscator().obfuscateString(itemId);
+        if (StorageManager.getObfuscator() != null){
+            itemId = StorageManager.getObfuscator().obfuscateString(itemId);
         }
-        Cursor cursor = StorageManager.getInstance().getDatabase().getVirtualGood(itemId);
+        Cursor cursor = StorageManager.getDatabase().getVirtualGood(itemId);
 
         if (cursor == null) {
             return 0;
@@ -60,8 +60,8 @@ public class VirtualGoodsStorage {
             if (cursor.moveToNext()) {
                 String balanceStr = cursor.getString(balanceCol);
                 int balance;
-                if (StorageManager.getInstance().getObfuscator() != null){
-                    balance = StorageManager.getInstance().getObfuscator().unobfuscateToInt(balanceStr);
+                if (StorageManager.getObfuscator() != null){
+                    balance = StorageManager.getObfuscator().unobfuscateToInt(balanceStr);
                 }
                 else {
                     balance = Integer.parseInt(balanceStr);
@@ -96,11 +96,11 @@ public class VirtualGoodsStorage {
         String itemId = virtualGood.getItemId();
         int balance = getBalance(virtualGood);
         String quantityStr = "" + (balance + amount);
-        if (StorageManager.getInstance().getObfuscator() != null){
-            quantityStr = StorageManager.getInstance().getObfuscator().obfuscateString(quantityStr);
-            itemId      = StorageManager.getInstance().getObfuscator().obfuscateString(itemId);
+        if (StorageManager.getObfuscator() != null){
+            quantityStr = StorageManager.getObfuscator().obfuscateString(quantityStr);
+            itemId      = StorageManager.getObfuscator().obfuscateString(itemId);
         }
-        StorageManager.getInstance().getDatabase().updateVirtualGoodBalance(itemId, quantityStr);
+        StorageManager.getDatabase().updateVirtualGoodBalance(itemId, quantityStr);
 
         return balance + amount;
 	}
@@ -119,11 +119,11 @@ public class VirtualGoodsStorage {
         int quantity = getBalance(virtualGood) - amount;
         quantity = quantity > 0 ? quantity : 0;
         String quantityStr = "" + quantity;
-        if (StorageManager.getInstance().getObfuscator() != null){
-            quantityStr = StorageManager.getInstance().getObfuscator().obfuscateString(quantityStr);
-            itemId      = StorageManager.getInstance().getObfuscator().obfuscateString(itemId);
+        if (StorageManager.getObfuscator() != null){
+            quantityStr = StorageManager.getObfuscator().obfuscateString(quantityStr);
+            itemId      = StorageManager.getObfuscator().obfuscateString(itemId);
         }
-        StorageManager.getInstance().getDatabase().updateVirtualGoodBalance(itemId, quantityStr);
+        StorageManager.getDatabase().updateVirtualGoodBalance(itemId, quantityStr);
 
         return quantity;
 	}
@@ -133,10 +133,10 @@ public class VirtualGoodsStorage {
             Log.d(TAG, "checking if virtual good with itemId: " + virtualGood.getItemId() + " is equipped.");
         }
         String itemId = virtualGood.getItemId();
-        if (StorageManager.getInstance().getObfuscator() != null){
-            itemId = StorageManager.getInstance().getObfuscator().obfuscateString(itemId);
+        if (StorageManager.getObfuscator() != null){
+            itemId = StorageManager.getObfuscator().obfuscateString(itemId);
         }
-        Cursor cursor = StorageManager.getInstance().getDatabase().getVirtualGood(itemId);
+        Cursor cursor = StorageManager.getDatabase().getVirtualGood(itemId);
 
         if (cursor == null) {
             return false;
@@ -164,11 +164,11 @@ public class VirtualGoodsStorage {
         }
 
         String itemId = virtualGood.getItemId();
-        if (StorageManager.getInstance().getObfuscator() != null){
-            itemId = StorageManager.getInstance().getObfuscator().obfuscateString(itemId);
+        if (StorageManager.getObfuscator() != null){
+            itemId = StorageManager.getObfuscator().obfuscateString(itemId);
         }
 
-        StorageManager.getInstance().getDatabase().updateVirtualGoodEquip(itemId, equip);
+        StorageManager.getDatabase().updateVirtualGoodEquip(itemId, equip);
     }
 
     /** Private members **/

@@ -19,6 +19,7 @@ import android.content.Context;
 import android.provider.Settings;
 import android.util.Log;
 import com.soomla.billing.util.AESObfuscator;
+import com.soomla.store.SoomlaApp;
 import com.soomla.store.StoreConfig;
 
 /**
@@ -30,84 +31,53 @@ import com.soomla.store.StoreConfig;
  */
 public class StorageManager {
 
-    public static StorageManager getInstance(){
-        if (sInstance == null){
-            sInstance = new StorageManager();
-        }
-
-        return sInstance;
-    }
-
-    /**
-     * {@link StorageManager} is initizlized by {@link com.soomla.store.StoreController} right after the latter is
-     * initialized buy your application.
-     * @param context is the application context. {@link StorageManager} uses the context to let {@link
-     * StoreDatabase} know where to save the DB file and to provide {@link AESObfuscator} with parts of information
-     * to create the encryption secret.
-     */
-    public void initialize(Context context){
-        if (StoreConfig.debug){
-            Log.d(TAG, "initializing StorageManager");
-        }
-
-        if (initialized) {
-            return;
-        }
-
-        initialized = true;
-
-        mDatabase = new StoreDatabase(context);
-
-        if(StoreConfig.DB_SECURE){
-            String deviceId = Settings.Secure.getString(context.getContentResolver(), Settings.Secure.ANDROID_ID);
-            mObfuscator = new AESObfuscator(StoreConfig.obfuscationSalt, context.getPackageName(), deviceId);
-        }
-
-        mVirtualCurrencyStorage =   new VirtualCurrencyStorage();
-        mVirtualGoodsStorage =      new VirtualGoodsStorage();
-        mGoogleManagedItemsStorage = new GoogleManagedItemsStorage();
-        mKeyValueStorage = new KeyValueStorage();
-    }
-
 
     /** Getters **/
 
-    public VirtualCurrencyStorage getVirtualCurrencyStorage(){
+    public static VirtualCurrencyStorage getVirtualCurrencyStorage(){
         return mVirtualCurrencyStorage;
     }
 
-    public VirtualGoodsStorage getVirtualGoodsStorage(){
+    public static VirtualGoodsStorage getVirtualGoodsStorage(){
         return mVirtualGoodsStorage;
     }
 
-    public AESObfuscator getObfuscator(){
+    public static AESObfuscator getObfuscator(){
+        if (mObfuscator == null && StoreConfig.DB_SECURE) {
+            String deviceId = Settings.Secure.getString(SoomlaApp.getAppContext().getContentResolver(), Settings.Secure.ANDROID_ID);
+            mObfuscator = new AESObfuscator(StoreConfig.obfuscationSalt, SoomlaApp.getAppContext().getPackageName(), deviceId);
+        }
+
         return mObfuscator;
     }
 
-    public StoreDatabase getDatabase(){
+    public static StoreDatabase getDatabase(){
+
+        if (mDatabase == null) {
+            mDatabase = new StoreDatabase(SoomlaApp.getAppContext());
+        }
+
         return mDatabase;
     }
 
-    public GoogleManagedItemsStorage getGoogleManagedItemsStorage() {
+    public static GoogleManagedItemsStorage getGoogleManagedItemsStorage() {
         return mGoogleManagedItemsStorage;
     }
 
-    public KeyValueStorage getKeyValueStorage() {
+    public static KeyValueStorage getKeyValueStorage() {
         return mKeyValueStorage;
     }
 
-    private StorageManager(){ }
 
     /** Private members **/
     private static final String TAG = "SOOMLA StorageManager";
 
     private static boolean initialized = false;
 
-    private static StorageManager   sInstance;
-    private VirtualGoodsStorage     mVirtualGoodsStorage;
-    private VirtualCurrencyStorage  mVirtualCurrencyStorage;
-    private GoogleManagedItemsStorage mGoogleManagedItemsStorage;
-    private KeyValueStorage         mKeyValueStorage;
-    private AESObfuscator           mObfuscator;
-    private StoreDatabase           mDatabase;
+    private static VirtualGoodsStorage     mVirtualGoodsStorage        = new VirtualGoodsStorage();
+    private static VirtualCurrencyStorage  mVirtualCurrencyStorage     = new VirtualCurrencyStorage();
+    private static GoogleManagedItemsStorage mGoogleManagedItemsStorage = new GoogleManagedItemsStorage();
+    private static KeyValueStorage         mKeyValueStorage            = new KeyValueStorage();
+    private static AESObfuscator           mObfuscator;
+    private static StoreDatabase           mDatabase;
 }

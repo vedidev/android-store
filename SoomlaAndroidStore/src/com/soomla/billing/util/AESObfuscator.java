@@ -16,7 +16,10 @@
 
 package com.soomla.billing.util;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.text.TextUtils;
+import com.soomla.store.SoomlaApp;
 import com.soomla.store.StoreConfig;
 
 import javax.crypto.*;
@@ -50,8 +53,9 @@ public class AESObfuscator {
     public AESObfuscator(byte[] salt, String applicationId, String deviceId) {
         try {
             SecretKeyFactory factory = SecretKeyFactory.getInstance(KEYGEN_ALGORITHM);
+            SharedPreferences prefs = SoomlaApp.getAppContext().getSharedPreferences(StoreConfig.PREFS_NAME, Context.MODE_PRIVATE);
             KeySpec keySpec =
-                    new PBEKeySpec((applicationId + deviceId + StoreConfig.customSecret).toCharArray(), salt, 1024, 256);
+                    new PBEKeySpec((applicationId + deviceId + prefs.getString(StoreConfig.CUSTOM_SEC, "SOOMLA_SEC")).toCharArray(), salt, 1024, 256);
             SecretKey tmp = factory.generateSecret(keySpec);
             SecretKey secret = new SecretKeySpec(tmp.getEncoded(), "AES");
             mEncryptor = Cipher.getInstance(CIPHER_ALGORITHM);

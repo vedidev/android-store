@@ -59,36 +59,33 @@ public class StoreController extends PurchaseObserver {
      * If you're using SOOMLA's storefront, You have to initializePurchaseObserver the {@link StoreController} before you
      * open the StorefrontController (for more info about store front go to our Github page).
      * This initializer also initializes {@link StorageManager} and {@link StoreInfo}.
-     * @param context is used to initializePurchaseObserver {@link StorageManager}
      * @param storeAssets is the definition of your application specific assets.
-     * @param publicKey is your public key from Google Play.
-     * @param debugMode is determining weather you're on debug mode or not (duh !!!).
      */
-    public void initialize(Context context,
-                           IStoreAssets storeAssets,
-                           String publicKey,
-                           boolean debugMode){
+    public void initialize(IStoreAssets storeAssets,
+                          String publicKey,
+                          String customSecret){
 
-        if (mInitialized){
+        SharedPreferences prefs = SoomlaApp.getAppContext().getSharedPreferences(StoreConfig.PREFS_NAME, Context.MODE_PRIVATE);
+        SharedPreferences.Editor edit = prefs.edit();
+        if (publicKey != null && !publicKey.isEmpty()) {
+            edit.putString(StoreConfig.PUBLIC_KEY, publicKey);
+        } else if (prefs.getString(StoreConfig.PUBLIC_KEY, "").isEmpty()) {
+            Log.e(TAG, "publicKey is null or empty. can't initialize store !!");
             return;
         }
+        if (customSecret != null && !customSecret.isEmpty()) {
+            edit.putString(StoreConfig.CUSTOM_SEC, customSecret);
+        } else if (prefs.getString(StoreConfig.CUSTOM_SEC, "").isEmpty()) {
+            Log.e(TAG, "customSecret is null or empty. can't initialize store !!");
+            return;
+        }
+        edit.commit();
 
-        if (publicKey == null || publicKey.isEmpty()) {
-            Log.e(TAG, "publicKey is null or empty. can't initialize store !!");
+        if (storeAssets != null) {
+            StoreInfo.setStoreAssets(storeAssets);
         }
 
-        mInitialized = true;
-
-        mContext = context;
-        StoreConfig.publicKey = publicKey;
-        StoreConfig.debug = debugMode;
-
-        StorageManager.getInstance().initialize(context);
-        StoreInfo.getInstance().initialize(storeAssets);
-
-        ResponseHandler.register(this);
-
-        if (startBillingService(context)) {
+        if (startBillingService()) {
             tryRestoreTransactions();
         }
     }
@@ -99,7 +96,7 @@ public class StoreController extends PurchaseObserver {
      */
     public void buyCurrencyPack(String productId) throws VirtualItemNotFoundException{
         try {
-            StoreEventHandlers.getInstance().onMarketPurchaseProcessStarted(StoreInfo.getInstance().getPackByGoogleProductId(productId).getmGoogleItem());
+            StoreEventHandlers.getInstance().onMarketPurchaseProcessStarted(StoreInfo.getPackByGoogleProductId(productId).getmGoogleItem());
             if (!mBillingService.requestPurchase(productId, Consts.ITEM_TYPE_INAPP, "")){
                 StoreEventHandlers.getInstance().onUnexpectedErrorInStore();
             }
@@ -118,7 +115,7 @@ public class StoreController extends PurchaseObserver {
      */
     public void buyVirtualGood(String itemId) throws InsufficientFundsException, VirtualItemNotFoundException{
         StoreEventHandlers.getInstance().onGoodsPurchaseProcessStarted();
-        VirtualGood good = StoreInfo.getInstance().getVirtualGoodByItemId(itemId);
+        VirtualGood good = StoreInfo.getVirtualGoodByItemId(itemId);
 
         // fetching currencies and amounts that the user needs in order to purchase the current
         // {@link VirtualGood}.
@@ -127,14 +124,14 @@ public class StoreController extends PurchaseObserver {
         // preparing list of {@link VirtualCurrency} objects.
         List<VirtualCurrency> virtualCurrencies = new ArrayList<VirtualCurrency>();
         for (String currencyItemId : currencyValues.keySet()){
-            virtualCurrencies.add(StoreInfo.getInstance().getVirtualCurrencyByItemId(currencyItemId));
+            virtualCurrencies.add(StoreInfo.getVirtualCurrencyByItemId(currencyItemId));
         }
 
         // checking if the user has enough of each of the virtual currencies in order to purchase this virtual
         // good.
         VirtualCurrency needMore = null;
         for (VirtualCurrency virtualCurrency : virtualCurrencies){
-            int currencyBalance = StorageManager.getInstance().getVirtualCurrencyStorage().getBalance
+            int currencyBalance = StorageManager.getVirtualCurrencyStorage().getBalance
                     (virtualCurrency);
             int currencyBalanceNeeded = currencyValues.get(virtualCurrency.getItemId());
             if (currencyBalance < currencyBalanceNeeded){
@@ -145,10 +142,10 @@ public class StoreController extends PurchaseObserver {
 
         // if the user has enough, the virtual good is purchased.
         if (needMore == null){
-            StorageManager.getInstance().getVirtualGoodsStorage().add(good, 1);
+            StorageManager.getVirtualGoodsStorage().add(good, 1);
             for (VirtualCurrency virtualCurrency : virtualCurrencies){
                 int currencyBalanceNeeded = currencyValues.get(virtualCurrency.getItemId());
-                StorageManager.getInstance().getVirtualCurrencyStorage().remove(virtualCurrency,
+                StorageManager.getVirtualCurrencyStorage().remove(virtualCurrency,
                         currencyBalanceNeeded);
             }
 
@@ -165,7 +162,7 @@ public class StoreController extends PurchaseObserver {
      */
     public void buyManagedItem(String productId) throws VirtualItemNotFoundException{
         try {
-            GoogleMarketItem googleMarketItem = StoreInfo.getInstance().getGoogleManagedItemByProductId(productId);
+            GoogleMarketItem googleMarketItem = StoreInfo.getGoogleManagedItemByProductId(productId);
 
             StoreEventHandlers.getInstance().onMarketPurchaseProcessStarted(googleMarketItem);
             if (!mBillingService.requestPurchase(productId, Consts.ITEM_TYPE_INAPP, "")){
@@ -185,11 +182,11 @@ public class StoreController extends PurchaseObserver {
      * @throws VirtualItemNotFoundException
      */
     public void equipVirtualGood(String itemId) throws NotEnoughGoodsException, VirtualItemNotFoundException{
-        VirtualGood good = StoreInfo.getInstance().getVirtualGoodByItemId(itemId);
+        VirtualGood good = StoreInfo.getVirtualGoodByItemId(itemId);
 
         // if the user has enough, the virtual good is purchased.
-        if (StorageManager.getInstance().getVirtualGoodsStorage().getBalance(good) > 0){
-            StorageManager.getInstance().getVirtualGoodsStorage().equip(good, true);
+        if (StorageManager.getVirtualGoodsStorage().getBalance(good) > 0){
+            StorageManager.getVirtualGoodsStorage().equip(good, true);
 
             StoreEventHandlers.getInstance().onVirtualGoodEquipped(good);
         }
@@ -204,9 +201,9 @@ public class StoreController extends PurchaseObserver {
      * @throws VirtualItemNotFoundException
      */
     public void unequipVirtualGood(String itemId) throws VirtualItemNotFoundException{
-        VirtualGood good = StoreInfo.getInstance().getVirtualGoodByItemId(itemId);
+        VirtualGood good = StoreInfo.getVirtualGoodByItemId(itemId);
 
-        StorageManager.getInstance().getVirtualGoodsStorage().equip(good, false);
+        StorageManager.getVirtualGoodsStorage().equip(good, false);
 
         StoreEventHandlers.getInstance().onVirtualGoodUnequipped(good);
     }
@@ -217,13 +214,15 @@ public class StoreController extends PurchaseObserver {
      * @param handler is a handler to post UI thread messages on.
      */
     public void storeOpening(Activity activity, Handler handler){
-        if (!mInitialized || mStoreOpen) {
-            Log.e(TAG, "You notified StoreController that your store is opening but StoreController was never initialized." +
-                    "REMEMBER: You should only initialize StoreController ONCE when the application loads !!!");
+        mLock.lock();
+        if (mStoreOpen) {
+            Log.e(TAG, "You already sent storeOpening !");
+            mLock.unlock();
             return;
         }
 
         mStoreOpen = true;
+        mLock.unlock();
 
         if (handler == null) {
             handler = new Handler();
@@ -231,10 +230,10 @@ public class StoreController extends PurchaseObserver {
         initCompatibilityLayer(activity, handler);
 
         /* Initialize StoreInfo from database in case any changes were done to it while the store was closed */
-        StoreInfo.getInstance().initializeFromDB();
+        StoreInfo.initializeFromDB();
 
         /* Billing */
-        startBillingService(activity.getApplicationContext());
+        startBillingService();
 
         StoreEventHandlers.getInstance().onOpeningStore();
     }
@@ -291,12 +290,12 @@ public class StoreController extends PurchaseObserver {
         GoogleMarketItem googleMarketItem = null;
         try {
 
-            VirtualCurrencyPack pack = StoreInfo.getInstance().getPackByGoogleProductId(productId);
+            VirtualCurrencyPack pack = StoreInfo.getPackByGoogleProductId(productId);
             googleMarketItem = pack.getmGoogleItem();
 
             // updating the currency balance
             if (purchaseState == Consts.PurchaseState.PURCHASED) {
-                StorageManager.getInstance().getVirtualCurrencyStorage().add(
+                StorageManager.getVirtualCurrencyStorage().add(
                         pack.getVirtualCurrency(), pack.getCurrencyAmount());
             }
 
@@ -308,11 +307,11 @@ public class StoreController extends PurchaseObserver {
         } catch (VirtualItemNotFoundException e) {
 
             try {
-                googleMarketItem = StoreInfo.getInstance().getGoogleManagedItemByProductId(productId);
+                googleMarketItem = StoreInfo.getGoogleManagedItemByProductId(productId);
 
                 // updating the MANAGED item
                 if (purchaseState == Consts.PurchaseState.PURCHASED) {
-                    StorageManager.getInstance().getGoogleManagedItemsStorage().add(googleMarketItem);
+                    StorageManager.getGoogleManagedItemsStorage().add(googleMarketItem);
                 }
 
                 if (purchaseState == Consts.PurchaseState.REFUNDED){
@@ -374,9 +373,9 @@ public class StoreController extends PurchaseObserver {
 
             // Update the shared preferences so that we don't perform
             // a RestoreTransactions again.
-            SharedPreferences prefs = mContext.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+            SharedPreferences prefs = SoomlaApp.getAppContext().getSharedPreferences(StoreConfig.PREFS_NAME, Context.MODE_PRIVATE);
             SharedPreferences.Editor edit = prefs.edit();
-            edit.putBoolean(DB_INITIALIZED, true);
+            edit.putBoolean(StoreConfig.DB_INITIALIZED, true);
             edit.commit();
         } else {
             if (StoreConfig.debug) {
@@ -394,8 +393,8 @@ public class StoreController extends PurchaseObserver {
     /** Private methods **/
 
     private void tryRestoreTransactions() {
-        SharedPreferences prefs = mContext.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
-        boolean initialized = prefs.getBoolean(DB_INITIALIZED, false);
+        SharedPreferences prefs = SoomlaApp.getAppContext().getSharedPreferences(StoreConfig.PREFS_NAME, Context.MODE_PRIVATE);
+        boolean initialized = prefs.getBoolean(StoreConfig.DB_INITIALIZED, false);
         if (!initialized) {
             if (StoreConfig.debug){
                 Log.d(TAG, "sending restore transaction request");
@@ -404,11 +403,12 @@ public class StoreController extends PurchaseObserver {
         }
     }
 
-    private boolean startBillingService(Context context) {
+    private boolean startBillingService() {
         mLock.lock();
         if (mBillingService == null) {
+            ResponseHandler.register(this);
             mBillingService = new BillingService();
-            mBillingService.setContext(context);
+            mBillingService.setContext(SoomlaApp.getAppContext());
 
             if (!mBillingService.checkBillingSupported(Consts.ITEM_TYPE_INAPP)){
                 if (StoreConfig.debug){
@@ -452,13 +452,9 @@ public class StoreController extends PurchaseObserver {
     /** Private Members**/
 
     private static final String TAG             = "SOOMLA StoreController";
-    private static final String PREFS_NAME      = "store.prefs";
-    private static final String DB_INITIALIZED  = "db_initialized";
 
-    private boolean mInitialized          = false;
     private boolean mStoreOpen            = false;
 
     private BillingService mBillingService;
-    private Context mContext;
     private Lock    mLock = new ReentrantLock();
 }

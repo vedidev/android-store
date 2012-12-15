@@ -63,7 +63,7 @@ public class VirtualGood extends AbstractVirtualItem {
         int catId = jsonObject.getInt(JSONConsts.GOOD_CATEGORY_ID);
         try {
             if (catId > -1){
-                this.mCategory = StoreInfo.getInstance().getVirtualCategoryById(catId);
+                this.mCategory = StoreInfo.getVirtualCategoryById(catId);
             }
         } catch (VirtualItemNotFoundException e) {
             Log.e(TAG, "Can't find category with id: " + catId);

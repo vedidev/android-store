@@ -56,7 +56,7 @@ public class BalanceDrivenPriceModel extends AbstractPriceModel{
      */
     @Override
     public HashMap<String, Integer> getCurrentPrice(VirtualGood good) {
-        int balance = StorageManager.getInstance().getVirtualGoodsStorage().getBalance(good);
+        int balance = StorageManager.getVirtualGoodsStorage().getBalance(good);
 
         // if the balance is bigger than the size of the array, return the last value in the array.
         if (balance >= mCurrencyValuePerBalance.size()){

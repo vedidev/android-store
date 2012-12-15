@@ -46,10 +46,10 @@ public class GoogleManagedItemsStorage {
         }
 
         String productId = googleMarketItem.getProductId();
-        if (StorageManager.getInstance().getObfuscator() != null){
-            productId = StorageManager.getInstance().getObfuscator().obfuscateString(productId);
+        if (StorageManager.getObfuscator() != null){
+            productId = StorageManager.getObfuscator().obfuscateString(productId);
         }
-        Cursor cursor = StorageManager.getInstance().getDatabase().getGoogleManagedItem(productId);
+        Cursor cursor = StorageManager.getDatabase().getGoogleManagedItem(productId);
 
         if (cursor == null) {
             return false;
@@ -80,10 +80,10 @@ public class GoogleManagedItemsStorage {
         }
 
         String productId = googleMarketItem.getProductId();
-        if (StorageManager.getInstance().getObfuscator() != null){
-            productId = StorageManager.getInstance().getObfuscator().obfuscateString(productId);
+        if (StorageManager.getObfuscator() != null){
+            productId = StorageManager.getObfuscator().obfuscateString(productId);
         }
-        StorageManager.getInstance().getDatabase().setGoogleManagedItem(productId, true);
+        StorageManager.getDatabase().setGoogleManagedItem(productId, true);
     }
 
     /**
@@ -96,10 +96,10 @@ public class GoogleManagedItemsStorage {
         }
 
         String productId = googleMarketItem.getProductId();
-        if (StorageManager.getInstance().getObfuscator() != null){
-            productId = StorageManager.getInstance().getObfuscator().obfuscateString(productId);
+        if (StorageManager.getObfuscator() != null){
+            productId = StorageManager.getObfuscator().obfuscateString(productId);
         }
-        StorageManager.getInstance().getDatabase().setGoogleManagedItem(productId, false);
+        StorageManager.getDatabase().setGoogleManagedItem(productId, false);
     }
 
     /** Private members **/

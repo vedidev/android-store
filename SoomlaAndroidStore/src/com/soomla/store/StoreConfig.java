@@ -21,20 +21,10 @@ package com.soomla.store;
 public class StoreConfig {
 
     // do you want to print out debug messages?
-    public static boolean debug = false;
+    public static final boolean debug = false;
 
     // the obfuscated salt. randomly generated numbers.
-    public static byte[] obfuscationSalt = new byte[] { 64, -54, -113, -47, 98, -52, 87, -102, -65, -127, 89, 51, -11, -35, 30, 77, -45, 75, -26, 3 };
-
-    // the Google Market public key
-    public static String publicKey = "WILL BE CHANGED WHEN YOU INITIALIZE StoreController !";
-
-    /*
-    your personal secret that'll be used to encrypt data.
-
-    CHANGE THE VALUE OF THIS SECRET NOW !
-    */
-    public static String customSecret = "ChangeMe!!!";
+    public static final byte[] obfuscationSalt = new byte[] { 64, -54, -113, -47, 98, -52, 87, -102, -65, -127, 89, 51, -11, -35, 30, 77, -45, 75, -26, 3 };
 
     /*
     if the value of this variable is true, metadata (or more specifically your IStoreAssets) that was previously
@@ -64,5 +54,11 @@ public class StoreConfig {
     (the only possible reason for you to want to even think of an insecure database is for debugging purposes)
      */
     public static final boolean DB_SECURE = true;
+
+    /** Shared Preferences **/
+    public static final String PREFS_NAME      = "store.prefs";
+    public static final String DB_INITIALIZED  = "db_initialized";
+    public static final String PUBLIC_KEY      = "public_key";
+    public static final String CUSTOM_SEC      = "cust_secr";
 
 }

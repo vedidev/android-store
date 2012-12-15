@@ -65,7 +65,7 @@ public class StoreGoodsActivity extends Activity {
 
                     /* fetching the currency balance and placing it in the balance label */
                     TextView muffinsBalance = (TextView)activity.findViewById(R.id.balance);
-                    muffinsBalance.setText("" + StorageManager.getInstance().getVirtualCurrencyStorage().
+                    muffinsBalance.setText("" + StorageManager.getVirtualCurrencyStorage().
                             getBalance(MuffinRushAssets.MUFFIN_CURRENCY));
 
                     HashMap<String, Integer> currencyValues = good.getCurrencyValues();
@@ -100,7 +100,7 @@ public class StoreGoodsActivity extends Activity {
 
         /* fetching the currency balance and placing it in the balance label */
         TextView muffinsBalance = (TextView)findViewById(R.id.balance);
-        muffinsBalance.setText("" + StorageManager.getInstance().getVirtualCurrencyStorage().
+        muffinsBalance.setText("" + StorageManager.getVirtualCurrencyStorage().
                 getBalance(MuffinRushAssets.MUFFIN_CURRENCY));
     }
 
@@ -170,7 +170,7 @@ public class StoreGoodsActivity extends Activity {
             thumb_image.setImageResource((Integer)data.get(position).get(KEY_THUMB));
             HashMap<String, Integer> currencyValues = good.getCurrencyValues();
             info.setText("price: " + currencyValues.get(MuffinRushAssets.MUFFIN_CURRENCY_ITEM_ID) +
-                    " balance: 0");
+                    " balance: " + StorageManager.getVirtualGoodsStorage().getBalance(good));
 
             return vi;
         }

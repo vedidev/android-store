@@ -19,6 +19,7 @@
 package com.soomla.billing;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.provider.Settings;
 import android.text.TextUtils;
 import android.util.Log;
@@ -26,6 +27,7 @@ import com.soomla.billing.Consts.PurchaseState;
 import com.soomla.billing.util.AESObfuscator;
 import com.soomla.billing.util.Base64;
 import com.soomla.billing.util.Base64DecoderException;
+import com.soomla.store.SoomlaApp;
 import com.soomla.store.StoreConfig;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -129,7 +131,13 @@ public class Security {
                 Log.w(TAG, "Empty signature. Stopping verification.");
                 return null;
             }
-            PublicKey key = Security.generatePublicKey(StoreConfig.publicKey);
+            SharedPreferences prefs = SoomlaApp.getAppContext().getSharedPreferences(StoreConfig.PREFS_NAME, Context.MODE_PRIVATE);
+            String publicKey = prefs.getString(StoreConfig.PUBLIC_KEY, "");
+            if (publicKey.isEmpty()) {
+                Log.w(TAG, "Empty publicKey. Stopping verification.");
+                return null;
+            }
+            PublicKey key = Security.generatePublicKey(publicKey);
             verified = Security.verify(key, signedData, signature);
             if (!verified) {
                 Log.w(TAG, "signature does not match data.");

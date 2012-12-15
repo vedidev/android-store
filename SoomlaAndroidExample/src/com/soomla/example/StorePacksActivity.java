@@ -31,8 +31,6 @@ public class StorePacksActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.listview);
 
-        StoreController.getInstance().storeOpening(this, new Handler());
-
         LinearLayout getMore = (LinearLayout)findViewById(R.id.getMore);
         TextView title = (TextView)findViewById(R.id.title);
 
@@ -99,7 +97,7 @@ public class StorePacksActivity extends Activity {
 
                 /* fetching the currency balance and placing it in the balance label */
                 TextView muffinsBalance = (TextView)activity.findViewById(R.id.balance);
-                muffinsBalance.setText("" + StorageManager.getInstance().getVirtualCurrencyStorage().
+                muffinsBalance.setText("" + StorageManager.getVirtualCurrencyStorage().
                         getBalance(MuffinRushAssets.MUFFIN_CURRENCY));
             }
         });
@@ -112,7 +110,7 @@ public class StorePacksActivity extends Activity {
 
         /* fetching the currency balance and placing it in the balance label */
         TextView muffinsBalance = (TextView)findViewById(R.id.balance);
-        muffinsBalance.setText("" + StorageManager.getInstance().getVirtualCurrencyStorage().
+        muffinsBalance.setText("" + StorageManager.getVirtualCurrencyStorage().
                 getBalance(MuffinRushAssets.MUFFIN_CURRENCY));
     }
 

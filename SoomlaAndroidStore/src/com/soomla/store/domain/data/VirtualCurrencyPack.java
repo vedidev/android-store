@@ -69,7 +69,7 @@ public class VirtualCurrencyPack extends AbstractVirtualItem {
 
         String currencyItemId = jsonObject.getString(JSONConsts.CURRENCYPACK_CURRENCYITEMID);
         try{
-            this.mCurrency = StoreInfo.getInstance().getVirtualCurrencyByItemId(currencyItemId);
+            this.mCurrency = StoreInfo.getVirtualCurrencyByItemId(currencyItemId);
         } catch (VirtualItemNotFoundException e) {
             if (StoreConfig.debug){
                 Log.d(TAG, "Couldn't find the associated currency.");

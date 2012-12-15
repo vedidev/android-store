@@ -52,16 +52,16 @@ public class StorefrontInfo {
         if (!initializeFromDB()) {
             // if the json doesn't already exist in the database, we load it into the DB here.
             mStorefrontJSON = storefrontJSON;
-            if (StorageManager.getInstance().getObfuscator() != null){
-                storefrontJSON = StorageManager.getInstance().getObfuscator().obfuscateString(storefrontJSON);
+            if (StorageManager.getObfuscator() != null){
+                storefrontJSON = StorageManager.getObfuscator().obfuscateString(storefrontJSON);
             }
-            StorageManager.getInstance().getDatabase().setStorefrontInfo(storefrontJSON);
+            StorageManager.getDatabase().setStorefrontInfo(storefrontJSON);
         }
     }
 
     public boolean initializeFromDB() {
         // first, trying to load StorefrontInfo from the local DB.
-        Cursor cursor = StorageManager.getInstance().getDatabase().getMetaData();
+        Cursor cursor = StorageManager.getDatabase().getMetaData();
         if (cursor != null) {
             try {
                 int storefrontVal = cursor.getColumnIndexOrThrow(
@@ -75,8 +75,8 @@ public class StorefrontInfo {
                         return false;
                     }
 
-                    if (StorageManager.getInstance().getObfuscator() != null){
-                        mStorefrontJSON = StorageManager.getInstance().getObfuscator().unobfuscateToString(mStorefrontJSON);
+                    if (StorageManager.getObfuscator() != null){
+                        mStorefrontJSON = StorageManager.getObfuscator().unobfuscateToString(mStorefrontJSON);
                     }
 
                     if (StoreConfig.debug){

@@ -11,40 +11,40 @@ public class StoreInventory {
     /** Virtual Currencies **/
 
     public static int getCurrencyBalance(String currencyItemId) throws VirtualItemNotFoundException {
-        VirtualCurrency currency = StoreInfo.getInstance().getVirtualCurrencyByItemId(currencyItemId);
+        VirtualCurrency currency = StoreInfo.getVirtualCurrencyByItemId(currencyItemId);
 
-        return StorageManager.getInstance().getVirtualCurrencyStorage().getBalance(currency);
+        return StorageManager.getVirtualCurrencyStorage().getBalance(currency);
     }
 
     public static int addCurrencyAmount(String currencyItemId, int amount) throws VirtualItemNotFoundException {
-        VirtualCurrency currency = StoreInfo.getInstance().getVirtualCurrencyByItemId(currencyItemId);
+        VirtualCurrency currency = StoreInfo.getVirtualCurrencyByItemId(currencyItemId);
 
-        return StorageManager.getInstance().getVirtualCurrencyStorage().add(currency, amount);
+        return StorageManager.getVirtualCurrencyStorage().add(currency, amount);
     }
 
     public static int removeCurrencyAmount(String currencyItemId, int amount) throws VirtualItemNotFoundException {
-        VirtualCurrency currency = StoreInfo.getInstance().getVirtualCurrencyByItemId(currencyItemId);
+        VirtualCurrency currency = StoreInfo.getVirtualCurrencyByItemId(currencyItemId);
 
-        return StorageManager.getInstance().getVirtualCurrencyStorage().remove(currency, amount);
+        return StorageManager.getVirtualCurrencyStorage().remove(currency, amount);
     }
 
     /** Virtual Goods **/
 
     public static int getGoodBalance(String goodItemId) throws VirtualItemNotFoundException {
-        VirtualGood good = StoreInfo.getInstance().getVirtualGoodByItemId(goodItemId);
+        VirtualGood good = StoreInfo.getVirtualGoodByItemId(goodItemId);
 
-        return StorageManager.getInstance().getVirtualGoodsStorage().getBalance(good);
+        return StorageManager.getVirtualGoodsStorage().getBalance(good);
     }
 
     public static int addGoodAmount(String goodItemId, int amount) throws VirtualItemNotFoundException {
-        VirtualGood good = StoreInfo.getInstance().getVirtualGoodByItemId(goodItemId);
+        VirtualGood good = StoreInfo.getVirtualGoodByItemId(goodItemId);
 
-        return StorageManager.getInstance().getVirtualGoodsStorage().add(good, amount);
+        return StorageManager.getVirtualGoodsStorage().add(good, amount);
     }
 
     public static int removeGoodAmount(String goodItemId, int amount) throws VirtualItemNotFoundException {
-        VirtualGood good = StoreInfo.getInstance().getVirtualGoodByItemId(goodItemId);
+        VirtualGood good = StoreInfo.getVirtualGoodByItemId(goodItemId);
 
-        return StorageManager.getInstance().getVirtualGoodsStorage().remove(good, amount);
+        return StorageManager.getVirtualGoodsStorage().remove(good, amount);
     }
 }

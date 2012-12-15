@@ -42,11 +42,11 @@ public class KeyValueStorage {
             Log.d(TAG, "trying to fetch a value for key: " + key);
         }
 
-        if (StorageManager.getInstance().getObfuscator() != null){
-            key = StorageManager.getInstance().getObfuscator().obfuscateString(key);
+        if (StorageManager.getObfuscator() != null){
+            key = StorageManager.getObfuscator().obfuscateString(key);
         }
 
-        Cursor cursor = StorageManager.getInstance().getDatabase().getKeyValVal(key);
+        Cursor cursor = StorageManager.getDatabase().getKeyValVal(key);
 
         if (cursor == null) {
             return "";
@@ -57,8 +57,8 @@ public class KeyValueStorage {
                     StoreDatabase.KEYVAL_COLUMN_VAL);
             if (cursor.moveToNext()) {
                 String valStr = cursor.getString(valCol);
-                if (StorageManager.getInstance().getObfuscator() != null){
-                    valStr = StorageManager.getInstance().getObfuscator().unobfuscateToString(valStr);
+                if (StorageManager.getObfuscator() != null){
+                    valStr = StorageManager.getObfuscator().unobfuscateToString(valStr);
                 }
 
                 if (StoreConfig.debug){
@@ -85,12 +85,12 @@ public class KeyValueStorage {
             Log.d(TAG, "setting " + val + " for key: " + key);
         }
 
-        if (StorageManager.getInstance().getObfuscator() != null){
-            key = StorageManager.getInstance().getObfuscator().obfuscateString(key);
-            val = StorageManager.getInstance().getObfuscator().obfuscateString(val);
+        if (StorageManager.getObfuscator() != null){
+            key = StorageManager.getObfuscator().obfuscateString(key);
+            val = StorageManager.getObfuscator().obfuscateString(val);
         }
 
-        StorageManager.getInstance().getDatabase().setKeyValVal(key, val);
+        StorageManager.getDatabase().setKeyValVal(key, val);
     }
 
 

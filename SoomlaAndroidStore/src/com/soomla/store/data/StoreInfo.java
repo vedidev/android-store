@@ -40,28 +40,22 @@ import java.util.List;
  */
 public class StoreInfo {
 
-    public static StoreInfo getInstance(){
-        if (sInstance == null){
-            sInstance = new StoreInfo();
-        }
-
-        return sInstance;
-    }
-
     /**
      * This function initializes StoreInfo. On first initialization, when the
      * database doesn't have any previous version of the store metadata, StoreInfo
      * is being loaded from the given {@link IStoreAssets}. After the first initialization,
      * StoreInfo will be initialized from the database.
      * NOTE: If you want to override the current StoreInfo, you'll have to bump the
-     * database version (the old database will be destroyed).
+     * database version (the old database will be destroyed) OR just set StoreConfig.DB_VOLATILE_METADATA
+     * to "true" in order to always remove the metadata when the application loads.
      */
-    public void initialize(IStoreAssets storeAssets){
+    public static void setStoreAssets(IStoreAssets storeAssets){
         if (storeAssets == null){
             Log.e(TAG, "The given store assets can't be null !");
             return;
         }
 
+        // we prefer initialization from the database (storeAssets are only set on the first time the game is loaded)!
         if (!initializeFromDB()){
             /// fall-back here if the json doesn't exist, we load the store from the given {@link IStoreAssets}.
             mVirtualCategories    = Arrays.asList(storeAssets.getVirtualCategories());
@@ -72,16 +66,16 @@ public class StoreInfo {
 
             // put StoreInfo in the database as JSON
             String store_json = toJSONObject().toString();
-            if (StorageManager.getInstance().getObfuscator() != null){
-                store_json = StorageManager.getInstance().getObfuscator().obfuscateString(store_json);
+            if (StorageManager.getObfuscator() != null){
+                store_json = StorageManager.getObfuscator().obfuscateString(store_json);
             }
-            StorageManager.getInstance().getDatabase().setStoreInfo(store_json);
+            StorageManager.getDatabase().setStoreInfo(store_json);
         }
     }
 
-    public boolean initializeFromDB() {
+    public static boolean initializeFromDB() {
         // first, trying to load StoreInfo from the local DB.
-        Cursor cursor = StorageManager.getInstance().getDatabase().getMetaData();
+        Cursor cursor = StorageManager.getDatabase().getMetaData();
         if (cursor != null) {
             String storejson = "";
             try {
@@ -97,8 +91,8 @@ public class StoreInfo {
                         return false;
                     }
 
-                    if (StorageManager.getInstance().getObfuscator() != null){
-                        storejson = StorageManager.getInstance().getObfuscator().unobfuscateToString(storejson);
+                    if (StorageManager.getObfuscator() != null){
+                        storejson = StorageManager.getObfuscator().unobfuscateToString(storejson);
                     }
 
                     if (StoreConfig.debug){
@@ -135,7 +129,14 @@ public class StoreInfo {
      * @return the definition of the virtual pack requested.
      * @throws VirtualItemNotFoundException
      */
-    public VirtualCurrencyPack getPackByGoogleProductId(String productId) throws VirtualItemNotFoundException {
+    public static VirtualCurrencyPack getPackByGoogleProductId(String productId) throws VirtualItemNotFoundException {
+        if (mVirtualCurrencyPacks == null) {
+            if (!initializeFromDB()) {
+                Log.e(TAG, "Can't initialize StoreInfo !");
+                return null;
+            }
+        }
+
         for(VirtualCurrencyPack p : mVirtualCurrencyPacks){
             if (p.getmGoogleItem().getProductId().equals(productId)){
                 return p;
@@ -151,7 +152,14 @@ public class StoreInfo {
      * @return the definition of the virtual pack requested.
      * @throws VirtualItemNotFoundException
      */
-    public VirtualCurrencyPack getPackByItemId(String itemId) throws VirtualItemNotFoundException {
+    public static VirtualCurrencyPack getPackByItemId(String itemId) throws VirtualItemNotFoundException {
+        if (mVirtualCurrencyPacks == null) {
+            if (!initializeFromDB()) {
+                Log.e(TAG, "Can't initialize StoreInfo !");
+                return null;
+            }
+        }
+
         for(VirtualCurrencyPack p : mVirtualCurrencyPacks){
             if (p.getItemId().equals(itemId)){
                 return p;
@@ -167,7 +175,14 @@ public class StoreInfo {
      * @return the definition of the virtual good requested.
      * @throws VirtualItemNotFoundException
      */
-    public VirtualGood getVirtualGoodByItemId(String itemId) throws VirtualItemNotFoundException {
+    public static VirtualGood getVirtualGoodByItemId(String itemId) throws VirtualItemNotFoundException {
+        if (mVirtualGoods == null) {
+            if (!initializeFromDB()) {
+                Log.e(TAG, "Can't initialize StoreInfo !");
+                return null;
+            }
+        }
+
         for(VirtualGood g : mVirtualGoods){
             if (g.getItemId().equals(itemId)){
                 return g;
@@ -183,7 +198,14 @@ public class StoreInfo {
      * @return the definition of the requested category.
      * @throws VirtualItemNotFoundException
      */
-    public VirtualCategory getVirtualCategoryById(int id) throws VirtualItemNotFoundException {
+    public static VirtualCategory getVirtualCategoryById(int id) throws VirtualItemNotFoundException {
+        if (mVirtualCategories == null) {
+            if (!initializeFromDB()) {
+                Log.e(TAG, "Can't initialize StoreInfo !");
+                return null;
+            }
+        }
+
         for(VirtualCategory c : mVirtualCategories){
             if (c.getmId() == id){
                 return c;
@@ -199,7 +221,14 @@ public class StoreInfo {
      * @return the definition of the virtual currency requested.
      * @throws VirtualItemNotFoundException
      */
-    public VirtualCurrency getVirtualCurrencyByItemId(String itemId) throws VirtualItemNotFoundException {
+    public static VirtualCurrency getVirtualCurrencyByItemId(String itemId) throws VirtualItemNotFoundException {
+        if (mVirtualCurrencies == null) {
+            if (!initializeFromDB()) {
+                Log.e(TAG, "Can't initialize StoreInfo !");
+                return null;
+            }
+        }
+
         for(VirtualCurrency c : mVirtualCurrencies){
             if (c.getItemId().equals(itemId)){
                 return c;
@@ -215,7 +244,14 @@ public class StoreInfo {
      * @return the definition of the MANAGED item requested.
      * @throws VirtualItemNotFoundException
      */
-    public GoogleMarketItem getGoogleManagedItemByProductId(String productId) throws VirtualItemNotFoundException {
+    public static GoogleMarketItem getGoogleManagedItemByProductId(String productId) throws VirtualItemNotFoundException {
+        if (mGoogleManagedItems == null) {
+            if (!initializeFromDB()) {
+                Log.e(TAG, "Can't initialize StoreInfo !");
+                return null;
+            }
+        }
+
         for (GoogleMarketItem gmi : mGoogleManagedItems){
             if (gmi.getProductId().equals(productId)){
                 return gmi;
@@ -227,23 +263,42 @@ public class StoreInfo {
 
     /** Getters **/
 
-    public List<VirtualCurrency> getVirtualCurrencies(){
+    public static List<VirtualCurrency> getVirtualCurrencies(){
+        if (mVirtualCurrencies == null) {
+            if (!initializeFromDB()) {
+                Log.e(TAG, "Can't initialize StoreInfo !");
+                return null;
+            }
+        }
+
         return mVirtualCurrencies;
     }
 
-    public List<VirtualCurrencyPack> getCurrencyPacks() {
+    public static List<VirtualCurrencyPack> getCurrencyPacks() {
+        if (mVirtualCurrencyPacks == null) {
+            if (!initializeFromDB()) {
+                Log.e(TAG, "Can't initialize StoreInfo !");
+                return null;
+            }
+        }
+
         return mVirtualCurrencyPacks;
     }
 
-    public List<VirtualGood> getVirtualGoods() {
+    public static List<VirtualGood> getVirtualGoods() {
+        if (mVirtualGoods == null) {
+            if (!initializeFromDB()) {
+                Log.e(TAG, "Can't initialize StoreInfo !");
+                return null;
+            }
+        }
+
         return mVirtualGoods;
     }
 
     /** Private functions **/
 
-    private StoreInfo() { }
-
-    private void fromJSONObject(JSONObject jsonObject) throws JSONException{
+    private static void fromJSONObject(JSONObject jsonObject) throws JSONException{
         JSONArray virtualCategories = jsonObject.getJSONArray(JSONConsts.STORE_VIRTUALCATEGORIES);
         mVirtualCategories = new LinkedList<VirtualCategory>();
         for(int i=0; i<virtualCategories.length(); i++){
@@ -284,7 +339,7 @@ public class StoreInfo {
      * Converts StoreInfo to a JSONObject.
      * @return a JSONObject representation of the StoreInfo.
      */
-    public JSONObject toJSONObject(){
+    public static JSONObject toJSONObject(){
 
         JSONArray virtualCategories = new JSONArray();
         for (VirtualCategory cat : mVirtualCategories){
@@ -330,11 +385,10 @@ public class StoreInfo {
     /** Private members **/
 
     private static final String TAG = "SOOMLA StoreInfo";
-    private static StoreInfo                        sInstance = null;
 
-    private List<VirtualCurrency>                   mVirtualCurrencies;
-    private List<VirtualCurrencyPack>               mVirtualCurrencyPacks;
-    private List<VirtualGood>                       mVirtualGoods;
-    private List<VirtualCategory>                   mVirtualCategories;
-    private List<GoogleMarketItem>                  mGoogleManagedItems;
+    private static List<VirtualCurrency>                   mVirtualCurrencies;
+    private static List<VirtualCurrencyPack>               mVirtualCurrencyPacks;
+    private static List<VirtualGood>                       mVirtualGoods;
+    private static List<VirtualCategory>                   mVirtualCategories;
+    private static List<GoogleMarketItem>                  mGoogleManagedItems;
 }
