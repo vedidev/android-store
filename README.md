@@ -3,13 +3,15 @@
 Didn't you ever wanted an in-app purchase one liner that looks like this ?!
 
 ```Java
-    StoreController.buyCurrencyPack("[Your product id here]");
+    StoreController.getInstance().buyCurrencyPack("[Product id here]");
 ```
 
 android-store
 ---
 
-The android-store is our first open code initiative as part of The SOOMLA Project. It is a Java API that simplifies Google Play's in-app purchasing API and complements it with storage, security and event handling. The project also includes a sample app for reference. As an optional (and currently EXPERIMENTAL) part of our open-source projects you can also get the store's layout which you can customize with your own game's assets. To use our storefront, refer to [Get your own Storefront](https://github.com/soomla/android-store/wiki/Get-your-own-Storefront-%5BEXPERIMENTAL%5D).
+The android-store is our first open code initiative as part of The SOOMLA Project. It is a Java API that simplifies Google Play's in-app purchasing API and complements it with storage, security and event handling. The project also includes a sample app for reference. 
+
+>If you also want to create a **storefront** you can do that using our [Store Designer](designer.soom.la).
 
 
 Check out our [Wiki] (https://github.com/soomla/android-store/wiki) for more information about the project and how to use it better.
@@ -24,13 +26,20 @@ Getting Started
 
 2. Make the following changes to your AndroidManifest.xml:
 
+  Add SoomlaApp as the main Application by placing it in the 'application' tag:
+
+    ```xml
+    <application ...
+                 android:name="com.soomla.store.SoomlaApp">
+    ```
+
   Add the following permission:
 
     ```xml
     <uses-permission android:name="com.android.vending.BILLING" />
     ```
 
-  Add the following code to your 'application' element:
+  Add the following code into your 'application' element:
 
     ```xml
     <service android:name="com.soomla.billing.BillingService" />
@@ -47,11 +56,11 @@ Getting Started
 3. Create your own implementation of _IStoreAssets_ in order to describe your specific game's assets ([example](https://github.com/soomla/android-store/blob/master/SoomlaAndroidExample/src/com/soomla/example/MuffinRushAssets.java)). Initialize _StoreController_ with the class you just created:
 
       ```Java
-       StoreController.getInstance().initialize(getApplicationContext(), 
-                                           new YourStoreAssetsImplementation(),
-                                           "YOUR PUBLIC KEY FROM GOOGLE PLAY",
-                                           false);
+       StoreController.getInstance().initialize(new YourStoreAssetsImplementation(),
+                                           "[YOUR PUBLIC KEY FROM GOOGLE PLAY]",
+                                           "[YOUR CUSTOM GAME SECRET HERE]");
       ```
+> The custom secret is your encryption secret data saved in the DB.
 > Initialize StoreController ONLY ONCE when your application loads.
 
 4. Now, that you have _StoreController_ loaded, just decide when you want to show/hide your store's UI to the user and let _StoreController_ know about it:
@@ -95,7 +104,7 @@ VirtualCurrencyPack TEN_COINS_PACK = new VirtualCurrencyPack(
 Now you can use _StoreController_ to call Google Play's in-app purchasing mechanism:
 
 ```Java
-StoreController.buyCurrencyPack(TEN_COINS_PACK.getProductId());
+StoreController.getInstance().buyCurrencyPack(TEN_COINS_PACK.getProductId());
 ```
     
 And that's it! android-store knows how to contact Google Play for you and redirect the user to the purchasing mechanis.
@@ -114,22 +123,22 @@ The on-device storage is encrypted and kept in a SQLite database. SOOMLA is prep
 * Add 10 coins to the virtual currency with itemId "currency_coin":
 
     ```Java
-    VirtualCurrency coin = StoreInfo.getInstance().getVirtualCurrencyByItemId("currency_coin");
-    StorageManager.getInstance().getVirtualCurrencyStorage().add(coin, 10);
+    VirtualCurrency coin = StoreInfo.getVirtualCurrencyByItemId("currency_coin");
+    StorageManager.getVirtualCurrencyStorage().add(coin, 10);
     ```
     
 * Remove 10 virtual goods with itemId "green_hat":
 
     ```Java
-    VirtualGood greenHat = StoreInfo.getInstance().getVirtualGoodByItemId("green_hat");
-    StorageManager.getInstance().getVirtualGoodsStorage().remove(greenHat, 10);
+    VirtualGood greenHat = StoreInfo.getVirtualGoodByItemId("green_hat");
+    StorageManager.getVirtualGoodsStorage().remove(greenHat, 10);
     ```
     
 * Get the current balance of green hats (virtual goods with itemId "green_hat"):
 
     ```Java
-    VirtualGood greenHat = StoreInfo.getInstance().getVirtualGoodByItemId("green_hat");
-    int greenHatsBalance = StorageManager.getInstance().getVirtualGoodsStorage().getBalance(greenHat);
+    VirtualGood greenHat = StoreInfo.getVirtualGoodByItemId("green_hat");
+    int greenHatsBalance = StorageManager.getVirtualGoodsStorage().getBalance(greenHat);
     ```
     
 Security
@@ -137,7 +146,7 @@ Security
 
 If you want to protect your application from 'bad people' (and who doesn't?!), you might want to follow some guidelines:
 
-+ SOOMLA keeps the game's data in an encrypted database. In order to encrypt your data, SOOMLA generates a private key out of several parts of information. StoreConfig.customSecret is one of them. SOOMLA recommends that you change this value before you release your game. BE CAREFUL: You can change this value once! If you try to change it again, old data from the database will become unavailable.
++ SOOMLA keeps the game's data in an encrypted database. In order to encrypt your data, SOOMLA generates a private key out of several parts of information. The Custom Secret is one of them. SOOMLA recommends that you provide this value when initializing StoreController and before you release your game. BE CAREFUL: You can change this value once! If you try to change it again, old data from the database will become unavailable.
 + Following Google's recommendation, SOOMLA also recommends that you split your public key and construct it on runtime or even use bit manipulation on it in order to hide it. The key itself is not secret information but if someone replaces it, your application might get fake messages that might harm it.
 
 Event Handling
