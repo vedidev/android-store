@@ -61,6 +61,7 @@ Getting Started
                                            "[YOUR CUSTOM GAME SECRET HERE]");
       ```
 > The custom secret is your encryption secret data saved in the DB.
+> This change is introduced on Dec. 15th and if you already have android-store in your game you should pay attention to the "Game Secret" before you release an upgrade. Make sure the secret is exactly the same as what you had in the released version!! (If you never changed it in previous versions than it's probably "ChangeMe!!!")
 > Initialize StoreController ONLY ONCE when your application loads.
 
 4. Now, that you have _StoreController_ loaded, just decide when you want to show/hide your store's UI to the user and let _StoreController_ know about it:
