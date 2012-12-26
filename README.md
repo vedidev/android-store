@@ -52,8 +52,10 @@ Getting Started
         </intent-filter>
     </receiver>
     ```
-    
-3. Create your own implementation of _IStoreAssets_ in order to describe your specific game's assets ([example](https://github.com/soomla/android-store/blob/master/SoomlaAndroidExample/src/com/soomla/example/MuffinRushAssets.java)). Initialize _StoreController_ with the class you just created:
+3. Change the value of StoreConfig.SOOM_SEC to a secret of you choice. Do this now!
+   ** You can't change this value after you publish your game ! **
+
+4. Create your own implementation of _IStoreAssets_ in order to describe your specific game's assets ([example](https://github.com/soomla/android-store/blob/master/SoomlaAndroidExample/src/com/soomla/example/MuffinRushAssets.java)). Initialize _StoreController_ with the class you just created:
 
       ```Java
        StoreController.getInstance().initialize(new YourStoreAssetsImplementation(),
@@ -61,12 +63,12 @@ Getting Started
                                            "[YOUR CUSTOM GAME SECRET HERE]");
       ```
 
-> The custom secret is your encryption secret data saved in the DB.
+> The custom secret is your encryption secret data saved in the DB. This secret is NOT the secret from step 3 (select a different value). 
 > **This change is introduced on Dec. 15th and if you already have android-store in your game you should pay attention to the "Game Secret" before you release an upgrade. Make sure the secret is exactly the same as what you had in the released version!! (If you never changed it in previous versions than it's probably "ChangeMe!!!")**
 
 > Initialize StoreController ONLY ONCE when your application loads.
 
-'4. Now, that you have _StoreController_ loaded, just decide when you want to show/hide your store's UI to the user and let _StoreController_ know about it:
+'5. Now, that you have _StoreController_ loaded, just decide when you want to show/hide your store's UI to the user and let _StoreController_ know about it:
 
   When you show the store call:
 
