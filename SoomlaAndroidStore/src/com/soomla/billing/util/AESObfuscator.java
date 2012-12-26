@@ -21,6 +21,7 @@ import android.content.SharedPreferences;
 import android.text.TextUtils;
 import com.soomla.store.SoomlaApp;
 import com.soomla.store.StoreConfig;
+import com.soomla.store.data.ObscuredSharedPreferences;
 
 import javax.crypto.*;
 import javax.crypto.spec.IvParameterSpec;
@@ -53,7 +54,7 @@ public class AESObfuscator {
     public AESObfuscator(byte[] salt, String applicationId, String deviceId) {
         try {
             SecretKeyFactory factory = SecretKeyFactory.getInstance(KEYGEN_ALGORITHM);
-            SharedPreferences prefs = SoomlaApp.getAppContext().getSharedPreferences(StoreConfig.PREFS_NAME, Context.MODE_PRIVATE);
+            SharedPreferences prefs = new ObscuredSharedPreferences(SoomlaApp.getAppContext(), SoomlaApp.getAppContext().getSharedPreferences(StoreConfig.PREFS_NAME, Context.MODE_PRIVATE));
             KeySpec keySpec =
                     new PBEKeySpec((applicationId + deviceId + prefs.getString(StoreConfig.CUSTOM_SEC, "SOOMLA_SEC")).toCharArray(), salt, 1024, 256);
             SecretKey tmp = factory.generateSecret(keySpec);

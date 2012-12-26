@@ -119,6 +119,9 @@ public class BalanceDrivenPriceModel extends AbstractPriceModel{
         return new BalanceDrivenPriceModel(valuesPerBalance);
     }
 
+    public ArrayList<HashMap<String, Integer>> getCurrencyValuePerBalance() {
+        return mCurrencyValuePerBalance;
+    }
 
     /** Private Members **/
 

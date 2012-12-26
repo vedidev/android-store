@@ -78,6 +78,9 @@ public abstract class AbstractPriceModel {
         return priceModel.toJSONObject();
     }
 
+    public String getType() {
+        return mType;
+    }
 
     protected AbstractPriceModel(){}
 

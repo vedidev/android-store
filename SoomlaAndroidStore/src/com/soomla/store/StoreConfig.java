@@ -58,7 +58,7 @@ public class StoreConfig {
     /** Shared Preferences **/
     public static final String PREFS_NAME      = "store.prefs";
     public static final String DB_INITIALIZED  = "db_initialized";
-    public static final String PUBLIC_KEY      = "public_key";
-    public static final String CUSTOM_SEC      = "cust_secr";
+    public static final String PUBLIC_KEY      = "PO#SU#SO#GU";
+    public static final String CUSTOM_SEC      = "SU#LL#SE#RE";
 
 }

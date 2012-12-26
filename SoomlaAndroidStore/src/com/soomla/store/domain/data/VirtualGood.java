@@ -88,7 +88,7 @@ public class VirtualGood extends AbstractVirtualItem {
 
             JSONObject priceModelObject = AbstractPriceModel.priceModelToJSONObject(mPriceModel);
             jsonObject.put(JSONConsts.GOOD_PRICE_MODEL, priceModelObject);
-            jsonObject.put(JSONConsts.GOOD_CATEGORY_ID, mCategory != null ? mCategory.getmId() : -1);
+            jsonObject.put(JSONConsts.GOOD_CATEGORY_ID, mCategory != null ? mCategory.getId() : -1);
             jsonObject.put(JSONConsts.GOOD_EQUIPPED, mEquipped);
         } catch (JSONException e) {
             if (StoreConfig.debug){
@@ -132,6 +132,14 @@ public class VirtualGood extends AbstractVirtualItem {
 
     public boolean isEquipped() {
         return mEquipped;
+    }
+
+    public AbstractPriceModel getPriceModel() {
+        return mPriceModel;
+    }
+
+    public VirtualCategory getCategory() {
+        return mCategory;
     }
 
     /** Private members **/

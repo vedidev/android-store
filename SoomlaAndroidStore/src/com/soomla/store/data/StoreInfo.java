@@ -207,7 +207,7 @@ public class StoreInfo {
         }
 
         for(VirtualCategory c : mVirtualCategories){
-            if (c.getmId() == id){
+            if (c.getId() == id){
                 return c;
             }
         }
@@ -294,6 +294,28 @@ public class StoreInfo {
         }
 
         return mVirtualGoods;
+    }
+
+    public static List<VirtualCategory> getVirtualCategories() {
+        if (mVirtualCategories == null) {
+            if (!initializeFromDB()) {
+                Log.e(TAG, "Can't initialize StoreInfo !");
+                return null;
+            }
+        }
+
+        return mVirtualCategories;
+    }
+
+    public static List<GoogleMarketItem> getGoogleManagedItems() {
+        if (mGoogleManagedItems == null) {
+            if (!initializeFromDB()) {
+                Log.e(TAG, "Can't initialize StoreInfo !");
+                return null;
+            }
+        }
+
+        return mGoogleManagedItems;
     }
 
     /** Private functions **/

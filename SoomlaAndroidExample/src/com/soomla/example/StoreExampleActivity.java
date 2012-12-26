@@ -17,6 +17,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 import com.soomla.store.*;
+import com.soomla.store.data.ObscuredSharedPreferences;
 import com.soomla.store.exceptions.VirtualItemNotFoundException;
 
 public class StoreExampleActivity extends Activity {
@@ -63,7 +64,7 @@ public class StoreExampleActivity extends Activity {
 
         // Checking if it's a first run and adding 10000 currencies if it is.
         // OFCOURSE... THIS IS JUST FOR TESTING.
-        SharedPreferences prefs = getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+        SharedPreferences prefs = new ObscuredSharedPreferences(SoomlaApp.getAppContext(), SoomlaApp.getAppContext().getSharedPreferences(StoreConfig.PREFS_NAME, Context.MODE_PRIVATE));
         boolean initialized = prefs.getBoolean(FIRST_RUN, false);
         if (!initialized) {
             try {
@@ -75,6 +76,7 @@ public class StoreExampleActivity extends Activity {
                 Log.e("Example Activity", "Couldn't add first 10000 currencies.");
             }
         }
+
     }
 
     public void robotBackHome(){
@@ -161,6 +163,6 @@ public class StoreExampleActivity extends Activity {
     private ImageView mRobotView;
 
     private static final String PREFS_NAME      = "store.prefs";
-    private static final String FIRST_RUN       = "first_run";
+    private static final String FIRST_RUN       = "a#AA#BB#C";
 }
 

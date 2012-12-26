@@ -68,8 +68,12 @@ public class VirtualCategory {
         return jsonObject;
     }
 
-    public int getmId() {
+    public int getId() {
         return mId;
+    }
+
+    public String getName() {
+        return mName;
     }
 
     /** Private members **/

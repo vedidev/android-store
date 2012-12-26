@@ -92,6 +92,9 @@ public class StaticPriceModel extends AbstractPriceModel {
         return new StaticPriceModel(values);
     }
 
+    public HashMap<String, Integer> getCurrencyValue() {
+        return mCurrencyValue;
+    }
 
     /** Private Members **/
 

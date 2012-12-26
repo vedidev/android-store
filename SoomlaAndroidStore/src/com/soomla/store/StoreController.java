@@ -24,6 +24,7 @@ import com.soomla.billing.BillingService;
 import com.soomla.billing.Consts;
 import com.soomla.billing.PurchaseObserver;
 import com.soomla.billing.ResponseHandler;
+import com.soomla.store.data.ObscuredSharedPreferences;
 import com.soomla.store.data.StorageManager;
 import com.soomla.store.data.StoreInfo;
 import com.soomla.store.domain.data.GoogleMarketItem;
@@ -65,7 +66,7 @@ public class StoreController extends PurchaseObserver {
                           String publicKey,
                           String customSecret){
 
-        SharedPreferences prefs = SoomlaApp.getAppContext().getSharedPreferences(StoreConfig.PREFS_NAME, Context.MODE_PRIVATE);
+        SharedPreferences prefs = new ObscuredSharedPreferences(SoomlaApp.getAppContext(), SoomlaApp.getAppContext().getSharedPreferences(StoreConfig.PREFS_NAME, Context.MODE_PRIVATE));
         SharedPreferences.Editor edit = prefs.edit();
         if (publicKey != null && !publicKey.isEmpty()) {
             edit.putString(StoreConfig.PUBLIC_KEY, publicKey);
@@ -95,7 +96,7 @@ public class StoreController extends PurchaseObserver {
      * @param productId is the product id of the required currency pack.
      */
     public void buyCurrencyPack(String productId) throws VirtualItemNotFoundException{
-        SharedPreferences prefs = SoomlaApp.getAppContext().getSharedPreferences(StoreConfig.PREFS_NAME, Context.MODE_PRIVATE);
+        SharedPreferences prefs = new ObscuredSharedPreferences(SoomlaApp.getAppContext(), SoomlaApp.getAppContext().getSharedPreferences(StoreConfig.PREFS_NAME, Context.MODE_PRIVATE));
         String publicKey = prefs.getString(StoreConfig.PUBLIC_KEY, "");
         if (publicKey.isEmpty() || publicKey.equals("[YOUR PUBLIC KEY FROM GOOGLE PLAY]")) {
             Log.e(TAG, "You didn't provide a public key! You can't make purchases.");
@@ -168,7 +169,7 @@ public class StoreController extends PurchaseObserver {
      * @param productId is the product id of the MANAGED item to purchase.
      */
     public void buyManagedItem(String productId) throws VirtualItemNotFoundException{
-        SharedPreferences prefs = SoomlaApp.getAppContext().getSharedPreferences(StoreConfig.PREFS_NAME, Context.MODE_PRIVATE);
+        SharedPreferences prefs = new ObscuredSharedPreferences(SoomlaApp.getAppContext(), SoomlaApp.getAppContext().getSharedPreferences(StoreConfig.PREFS_NAME, Context.MODE_PRIVATE));
         String publicKey = prefs.getString(StoreConfig.PUBLIC_KEY, "");
         if (publicKey.isEmpty() || publicKey.equals("[YOUR PUBLIC KEY FROM GOOGLE PLAY]")) {
             Log.e(TAG, "You didn't provide a public key! You can't make purchases.");
@@ -387,7 +388,7 @@ public class StoreController extends PurchaseObserver {
 
             // Update the shared preferences so that we don't perform
             // a RestoreTransactions again.
-            SharedPreferences prefs = SoomlaApp.getAppContext().getSharedPreferences(StoreConfig.PREFS_NAME, Context.MODE_PRIVATE);
+            SharedPreferences prefs = new ObscuredSharedPreferences(SoomlaApp.getAppContext(), SoomlaApp.getAppContext().getSharedPreferences(StoreConfig.PREFS_NAME, Context.MODE_PRIVATE));
             SharedPreferences.Editor edit = prefs.edit();
             edit.putBoolean(StoreConfig.DB_INITIALIZED, true);
             edit.commit();
@@ -407,7 +408,7 @@ public class StoreController extends PurchaseObserver {
     /** Private methods **/
 
     private void tryRestoreTransactions() {
-        SharedPreferences prefs = SoomlaApp.getAppContext().getSharedPreferences(StoreConfig.PREFS_NAME, Context.MODE_PRIVATE);
+        SharedPreferences prefs = new ObscuredSharedPreferences(SoomlaApp.getAppContext(), SoomlaApp.getAppContext().getSharedPreferences(StoreConfig.PREFS_NAME, Context.MODE_PRIVATE));
         boolean initialized = prefs.getBoolean(StoreConfig.DB_INITIALIZED, false);
         if (!initialized) {
             if (StoreConfig.debug){
