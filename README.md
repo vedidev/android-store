@@ -53,7 +53,7 @@ Getting Started
     </receiver>
     ```
 3. Change the value of StoreConfig.SOOM_SEC to a secret of you choice. Do this now!
-   ** You can't change this value after you publish your game ! **
+   **You can't change this value after you publish your game!**
 
 4. Create your own implementation of _IStoreAssets_ in order to describe your specific game's assets ([example](https://github.com/soomla/android-store/blob/master/SoomlaAndroidExample/src/com/soomla/example/MuffinRushAssets.java)). Initialize _StoreController_ with the class you just created:
 
