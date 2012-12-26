@@ -21,10 +21,13 @@ package com.soomla.store;
 public class StoreConfig {
 
     // do you want to print out debug messages?
-    public static final boolean debug = false;
+    public static final boolean debug = true;
 
     // the obfuscated salt. randomly generated numbers.
     public static final byte[] obfuscationSalt = new byte[] { 64, -54, -113, -47, 98, -52, 87, -102, -65, -127, 89, 51, -11, -35, 30, 77, -45, 75, -26, 3 };
+
+    /* CHANGE THIS SECRET NOW ! */
+    public static final String SOOM_SEC = "SINC_SSEEKK";
 
     /*
     if the value of this variable is true, metadata (or more specifically your IStoreAssets) that was previously
