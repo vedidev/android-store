@@ -100,7 +100,7 @@ VirtualCurrencyPack TEN_COINS_PACK = new VirtualCurrencyPack(
         "10 Coins",                // name
         "A pack of 10 coins",      // description
         "10_coins",                // item id
-        TEN_COINS_PACK_PRODUCT_ID, // product id in Google Market
+        "com.soomla.ten_coin_pack",// product id in Google Market
         1.99,                      // actual price in $$
         10,                        // number of currencies in the pack
         COIN_CURRENCY);            // the associated currency
@@ -112,8 +112,8 @@ Now you can use _StoreController_ to call Google Play's in-app purchasing mechan
 StoreController.getInstance().buyCurrencyPack(TEN_COINS_PACK.getProductId());
 ```
     
-And that's it! android-store knows how to contact Google Play for you and redirect the user to the purchasing mechanis.
-Don't forget to define your _IStoreEventHandler_ in order to get the events of successful or failed purchase (see [Event Handling](https://github.com/soomla/android-store#event-handling)).
+And that's it! android-store knows how to contact Google Play for you and redirect the user to the purchasing mechanism.
+Don't forget to define your _IStoreEventHandler_ in order to get the events of successful or failed purchases (see [Event Handling](https://github.com/soomla/android-store#event-handling)).
 
 
 Storage & Meta-Data
