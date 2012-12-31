@@ -95,7 +95,7 @@ public class StoreController extends PurchaseObserver {
      * Start a currency pack purchase process (with Google Play)
      * @param productId is the product id of the required currency pack.
      */
-    public void buyCurrencyPack(String productId) throws VirtualItemNotFoundException{
+    public void buyGoogleMarketItem(String productId) throws VirtualItemNotFoundException{
         SharedPreferences prefs = new ObscuredSharedPreferences(SoomlaApp.getAppContext(), SoomlaApp.getAppContext().getSharedPreferences(StoreConfig.PREFS_NAME, Context.MODE_PRIVATE));
         String publicKey = prefs.getString(StoreConfig.PUBLIC_KEY, "");
         if (publicKey.isEmpty() || publicKey.equals("[YOUR PUBLIC KEY FROM GOOGLE PLAY]")) {
@@ -103,16 +103,23 @@ public class StoreController extends PurchaseObserver {
             return;
         }
 
+        GoogleMarketItem googleMarketItem = null;
         try {
-            StoreEventHandlers.getInstance().onMarketPurchaseProcessStarted(StoreInfo.getPackByGoogleProductId(productId).getmGoogleItem());
-            if (!mBillingService.requestPurchase(productId, Consts.ITEM_TYPE_INAPP, "")){
-                StoreEventHandlers.getInstance().onUnexpectedErrorInStore();
+            googleMarketItem = StoreInfo.getPackByGoogleProductId(productId).getmGoogleItem();
+        } catch (VirtualItemNotFoundException ex) {
+            try {
+                googleMarketItem = StoreInfo.getGoogleManagedItemByProductId(productId);
+            } catch (VirtualItemNotFoundException e) {
+                Log.e(TAG, "The google market item (or currency pack) associated with the given productId must be defined in your IStoreAssets " +
+                        "and thus must exist in StoreInfo. (productId: " + productId + "). Unexpected error is emitted. can't continue purchase !");
+                throw e;
             }
-        } catch (VirtualItemNotFoundException e) {
-            Log.e(TAG, "The currency pack associated with the given productId must be defined in your IStoreAssets " +
-                    "(and thus must exist in StoreInfo. (productId: " + productId + "). Unexpected error is emitted.");
-            throw e;
         }
+
+        if (!mBillingService.requestPurchase(productId, Consts.ITEM_TYPE_INAPP, "")){
+            StoreEventHandlers.getInstance().onUnexpectedErrorInStore();
+        }
+        StoreEventHandlers.getInstance().onMarketPurchaseProcessStarted(googleMarketItem);
     }
 
     /**
@@ -161,32 +168,6 @@ public class StoreController extends PurchaseObserver {
         }
         else {
             throw new InsufficientFundsException(needMore.getItemId());
-        }
-    }
-
-    /**
-     * Start a MANAGED item purchase process.
-     * @param productId is the product id of the MANAGED item to purchase.
-     */
-    public void buyManagedItem(String productId) throws VirtualItemNotFoundException{
-        SharedPreferences prefs = new ObscuredSharedPreferences(SoomlaApp.getAppContext(), SoomlaApp.getAppContext().getSharedPreferences(StoreConfig.PREFS_NAME, Context.MODE_PRIVATE));
-        String publicKey = prefs.getString(StoreConfig.PUBLIC_KEY, "");
-        if (publicKey.isEmpty() || publicKey.equals("[YOUR PUBLIC KEY FROM GOOGLE PLAY]")) {
-            Log.e(TAG, "You didn't provide a public key! You can't make purchases.");
-            return;
-        }
-
-        try {
-            GoogleMarketItem googleMarketItem = StoreInfo.getGoogleManagedItemByProductId(productId);
-
-            if (!mBillingService.requestPurchase(productId, Consts.ITEM_TYPE_INAPP, "")){
-                StoreEventHandlers.getInstance().onUnexpectedErrorInStore();
-            }
-            StoreEventHandlers.getInstance().onMarketPurchaseProcessStarted(googleMarketItem);
-        } catch (VirtualItemNotFoundException e) {
-            Log.e(TAG, "The google market (MANAGED) item associated with the given productId must be defined in your IStoreAssets " +
-                    "and thus must exist in StoreInfo. (productId: " + productId + "). Unexpected error is emitted. can't continue purchase !");
-            throw e;
         }
     }
 

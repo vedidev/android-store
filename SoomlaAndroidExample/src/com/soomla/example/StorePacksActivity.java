@@ -62,7 +62,7 @@ public class StorePacksActivity extends Activity {
                     // purchasing a currency pack
                     VirtualCurrencyPack pack = (VirtualCurrencyPack) item.get(StorePacksActivity.KEY_PACK);
                     try {
-                        StoreController.getInstance().buyCurrencyPack(pack.getProductId());
+                        StoreController.getInstance().buyGoogleMarketItem(pack.getProductId());
                     } catch (VirtualItemNotFoundException e) {
                         AlertDialog ad = new AlertDialog.Builder(activity).create();
                         ad.setCancelable(false); // This blocks the 'BACK' button
@@ -80,7 +80,7 @@ public class StorePacksActivity extends Activity {
                     // purchasing a MANAGED item
                     GoogleMarketItem gmi = (GoogleMarketItem) item.get(StorePacksActivity.KEY_GOOGLE_ITEM);
                     try {
-                        StoreController.getInstance().buyCurrencyPack(gmi.getProductId());
+                        StoreController.getInstance().buyGoogleMarketItem(gmi.getProductId());
                     } catch (VirtualItemNotFoundException e) {
                         AlertDialog ad = new AlertDialog.Builder(activity).create();
                         ad.setCancelable(false); // This blocks the 'BACK' button
