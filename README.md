@@ -109,7 +109,7 @@ VirtualCurrencyPack TEN_COINS_PACK = new VirtualCurrencyPack(
 Now you can use _StoreController_ to call Google Play's in-app purchasing mechanism:
 
 ```Java
-StoreController.getInstance().buyCurrencyPack(TEN_COINS_PACK.getProductId());
+StoreController.getInstance().buyGoogleMarketItem(TEN_COINS_PACK.getProductId());
 ```
     
 And that's it! android-store knows how to contact Google Play for you and redirect the user to the purchasing mechanism.
