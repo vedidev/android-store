@@ -3,7 +3,7 @@
 Haven't you ever wanted an in-app purchase one liner that looks like this ?!
 
 ```Java
-    StoreController.getInstance().buyCurrencyPack("[Product id here]");
+    StoreController.getInstance().buyGoogleMarketItem("[Product id here]");
 ```
 
 android-store
