@@ -1,19 +1,22 @@
 package com.soomla.example;
 
-import android.content.Context;
+
+import android.os.Handler;
 import android.widget.Toast;
 import com.soomla.store.IStoreEventHandler;
+import com.soomla.store.SoomlaApp;
 import com.soomla.store.StoreConfig;
 import com.soomla.store.domain.data.GoogleMarketItem;
-import com.soomla.store.domain.data.VirtualCurrencyPack;
+import com.soomla.store.domain.data.VirtualCurrency;
 import com.soomla.store.domain.data.VirtualGood;
+
 
 public class ExampleEventHandler implements IStoreEventHandler {
 
-    private Context mContext;
+    private Handler mHandler;
     private StoreExampleActivity mActivityI;
-    public ExampleEventHandler(Context context, StoreExampleActivity activityI){
-        mContext = context;
+    public ExampleEventHandler(Handler handler, StoreExampleActivity activityI){
+        mHandler = handler;
         mActivityI = activityI;
     }
 
@@ -79,10 +82,25 @@ public class ExampleEventHandler implements IStoreEventHandler {
         showToastIfDebug("Store is opening");
     }
 
-    private void showToastIfDebug(String msg) {
+    @Override
+    public void currencyBalanceChanged(VirtualCurrency currency, int balance) {
+        showToastIfDebug("(currency) " + currency.getName() + " balance was changed to " + balance + ".");
+    }
+
+    @Override
+    public void goodBalanceChanged(VirtualGood good, int balance) {
+        showToastIfDebug("(good) " + good.getName() + " balance was changed to " + balance + ".");
+    }
+
+    private void showToastIfDebug(final String msg) {
         if (StoreConfig.debug){
-            Toast toast = Toast.makeText(mContext, msg, 5000);
-            toast.show();
+            mHandler.post(new Runnable() {
+                @Override
+                public void run() {
+                    Toast toast = Toast.makeText(SoomlaApp.getAppContext(), msg, 5000);
+                    toast.show();
+                }
+            });
         }
     }
 }

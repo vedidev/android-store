@@ -15,7 +15,9 @@
  */
 package com.soomla.store;
 
+import android.util.Log;
 import com.soomla.store.domain.data.GoogleMarketItem;
+import com.soomla.store.domain.data.VirtualCurrency;
 import com.soomla.store.domain.data.VirtualGood;
 
 import java.util.LinkedList;
@@ -138,12 +140,32 @@ public class StoreEventHandlers {
         }
     }
 
+    public void currencyBalanceChanged(VirtualCurrency currency, int balance) {
+        for(IStoreEventHandler handler : mEventHandlers){
+            Log.d("AAAAAA", "HAHAHAAH " + mEventHandlers.size());
+            handler.currencyBalanceChanged(currency, balance);
+        }
+        Log.d("AAAAAA", "HAHAHAAH " +  + mEventHandlers.size());
+    }
+
+    public void goodBalanceChanged(VirtualGood good, int balance) {
+        for(IStoreEventHandler handler : mEventHandlers){
+            handler.goodBalanceChanged(good, balance);
+        }
+    }
+
 
     /**
      * Adds an event handler to the list of handlers.
      * @param eventHandler is the event handler to add.
      */
     public void addEventHandler(IStoreEventHandler eventHandler){
+        for(IStoreEventHandler handler : mEventHandlers) {
+            if (handler == eventHandler) {
+                return;
+            }
+        }
+
         mEventHandlers.add(eventHandler);
     }
 

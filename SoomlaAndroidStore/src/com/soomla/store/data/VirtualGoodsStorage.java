@@ -19,6 +19,7 @@ import android.database.Cursor;
 import android.util.Log;
 import com.soomla.billing.util.AESObfuscator;
 import com.soomla.store.StoreConfig;
+import com.soomla.store.StoreEventHandlers;
 import com.soomla.store.domain.data.VirtualGood;
 
 /**
@@ -95,12 +96,14 @@ public class VirtualGoodsStorage {
 
         String itemId = virtualGood.getItemId();
         int balance = getBalance(virtualGood);
-        String quantityStr = "" + (balance + amount);
+        String balanceStr = "" + (balance + amount);
         if (StorageManager.getObfuscator() != null){
-            quantityStr = StorageManager.getObfuscator().obfuscateString(quantityStr);
+            balanceStr = StorageManager.getObfuscator().obfuscateString(balanceStr);
             itemId      = StorageManager.getObfuscator().obfuscateString(itemId);
         }
-        StorageManager.getDatabase().updateVirtualGoodBalance(itemId, quantityStr);
+        StorageManager.getDatabase().updateVirtualGoodBalance(itemId, balanceStr);
+
+        StoreEventHandlers.getInstance().goodBalanceChanged(virtualGood, balance + amount);
 
         return balance + amount;
 	}
@@ -116,16 +119,18 @@ public class VirtualGoodsStorage {
         }
 
         String itemId = virtualGood.getItemId();
-        int quantity = getBalance(virtualGood) - amount;
-        quantity = quantity > 0 ? quantity : 0;
-        String quantityStr = "" + quantity;
+        int balance = getBalance(virtualGood) - amount;
+        balance = balance > 0 ? balance : 0;
+        String balanceStr = "" + balance;
         if (StorageManager.getObfuscator() != null){
-            quantityStr = StorageManager.getObfuscator().obfuscateString(quantityStr);
+            balanceStr = StorageManager.getObfuscator().obfuscateString(balanceStr);
             itemId      = StorageManager.getObfuscator().obfuscateString(itemId);
         }
-        StorageManager.getDatabase().updateVirtualGoodBalance(itemId, quantityStr);
+        StorageManager.getDatabase().updateVirtualGoodBalance(itemId, balanceStr);
 
-        return quantity;
+        StoreEventHandlers.getInstance().goodBalanceChanged(virtualGood, balance);
+
+        return balance;
 	}
 
     public boolean isEquipped(VirtualGood virtualGood){

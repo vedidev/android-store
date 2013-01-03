@@ -20,6 +20,7 @@ import android.database.Cursor;
 import android.util.Log;
 import com.soomla.billing.util.AESObfuscator;
 import com.soomla.store.StoreConfig;
+import com.soomla.store.StoreEventHandlers;
 import com.soomla.store.domain.data.VirtualCurrency;
 
 /**
@@ -94,13 +95,15 @@ public class VirtualCurrencyStorage {
         }
 
         int balance = getBalance(virtualCurrency);
-        String quantityStr = "" + (balance + amount);
+        String balanceStr = "" + (balance + amount);
         String itemId = virtualCurrency.getItemId();
         if (StorageManager.getObfuscator() != null){
-            quantityStr = StorageManager.getObfuscator().obfuscateString(quantityStr);
+            balanceStr = StorageManager.getObfuscator().obfuscateString(balanceStr);
             itemId      = StorageManager.getObfuscator().obfuscateString(itemId);
         }
-        StorageManager.getDatabase().updateVirtualCurrencyBalance(itemId, quantityStr);
+        StorageManager.getDatabase().updateVirtualCurrencyBalance(itemId, balanceStr);
+
+        StoreEventHandlers.getInstance().currencyBalanceChanged(virtualCurrency, balance + amount);
 
         return balance + amount;
     }
@@ -116,16 +119,18 @@ public class VirtualCurrencyStorage {
         }
 
         String itemId = virtualCurrency.getItemId();
-        int quantity = getBalance(virtualCurrency) - amount;
-        quantity = quantity > 0 ? quantity : 0;
-        String quantityStr = "" + quantity;
+        int balance = getBalance(virtualCurrency) - amount;
+        balance = balance > 0 ? balance : 0;
+        String balanceStr = "" + balance;
         if (StorageManager.getObfuscator() != null){
-            quantityStr = StorageManager.getObfuscator().obfuscateString(quantityStr);
+            balanceStr = StorageManager.getObfuscator().obfuscateString(balanceStr);
             itemId      = StorageManager.getObfuscator().obfuscateString(itemId);
         }
-        StorageManager.getDatabase().updateVirtualCurrencyBalance(itemId, quantityStr);
+        StorageManager.getDatabase().updateVirtualCurrencyBalance(itemId, balanceStr);
 
-        return quantity;
+        StoreEventHandlers.getInstance().currencyBalanceChanged(virtualCurrency, balance);
+
+        return balance;
     }
 
     /** Private members **/

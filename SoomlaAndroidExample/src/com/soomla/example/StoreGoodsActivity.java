@@ -10,8 +10,13 @@ import android.os.Handler;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.*;
+import com.soomla.store.IStoreAssets;
+import com.soomla.store.IStoreEventHandler;
 import com.soomla.store.StoreController;
+import com.soomla.store.StoreEventHandlers;
 import com.soomla.store.data.StorageManager;
+import com.soomla.store.domain.data.GoogleMarketItem;
+import com.soomla.store.domain.data.VirtualCurrency;
 import com.soomla.store.domain.data.VirtualGood;
 import com.soomla.store.exceptions.InsufficientFundsException;
 import com.soomla.store.exceptions.VirtualItemNotFoundException;
@@ -20,7 +25,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class StoreGoodsActivity extends Activity {
+public class StoreGoodsActivity extends Activity implements IStoreEventHandler{
 
     private StoreAdapter mStoreAdapter;
     private ArrayList<HashMap<String, Object>> mData;
@@ -62,18 +67,6 @@ public class StoreGoodsActivity extends Activity {
                 VirtualGood good = (VirtualGood) mData.get(i).get(StoreGoodsActivity.KEY_GOOD);
                 try {
                     StoreController.getInstance().buyVirtualGood(good.getItemId());
-
-                    /* fetching the currency balance and placing it in the balance label */
-                    TextView muffinsBalance = (TextView)activity.findViewById(R.id.balance);
-                    muffinsBalance.setText("" + StorageManager.getVirtualCurrencyStorage().
-                            getBalance(MuffinRushAssets.MUFFIN_CURRENCY));
-
-                    HashMap<String, Integer> currencyValues = good.getCurrencyValues();
-                    TextView info = (TextView)view.findViewById(R.id.item_info);
-                    String balanceStr = info.getText().toString().substring(info.getText().toString().lastIndexOf(":") + 2);
-                    info.setText("price: " + currencyValues.get(MuffinRushAssets.MUFFIN_CURRENCY_ITEM_ID) +
-                            " balance: " + (Integer.parseInt(balanceStr) + 1));
-
                 } catch (InsufficientFundsException e) {
                     AlertDialog ad = new AlertDialog.Builder(activity).create();
                     ad.setCancelable(false);
@@ -98,10 +91,19 @@ public class StoreGoodsActivity extends Activity {
     protected void onResume() {
         super.onResume();
 
+        StoreEventHandlers.getInstance().addEventHandler(this);
+
         /* fetching the currency balance and placing it in the balance label */
         TextView muffinsBalance = (TextView)findViewById(R.id.balance);
         muffinsBalance.setText("" + StorageManager.getVirtualCurrencyStorage().
                 getBalance(MuffinRushAssets.MUFFIN_CURRENCY));
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+        StoreEventHandlers.getInstance().removeEventHandler(this);
     }
 
     @Override
@@ -130,6 +132,90 @@ public class StoreGoodsActivity extends Activity {
         item.put(StoreGoodsActivity.KEY_THUMB, R.drawable.pavlova);
         data.add(item);
         return data;
+    }
+
+    @Override
+    public void onMarketPurchase(GoogleMarketItem googleMarketItem) {
+        //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
+    public void onMarketRefund(GoogleMarketItem googleMarketItem) {
+        //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
+    public void onVirtualGoodPurchased(VirtualGood good) {
+        //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
+    public void onVirtualGoodEquipped(VirtualGood good) {
+        //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
+    public void onVirtualGoodUnequipped(VirtualGood good) {
+        //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
+    public void onBillingSupported() {
+        //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
+    public void onBillingNotSupported() {
+        //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
+    public void onMarketPurchaseProcessStarted(GoogleMarketItem googleMarketItem) {
+        //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
+    public void onGoodsPurchaseProcessStarted() {
+        //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
+    public void onClosingStore() {
+        //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
+    public void onUnexpectedErrorInStore() {
+        //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
+    public void onOpeningStore() {
+        //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
+    public void currencyBalanceChanged(VirtualCurrency currency, int balance) {
+        /* fetching the currency balance and placing it in the balance label */
+        TextView muffinsBalance = (TextView)findViewById(R.id.balance);
+        muffinsBalance.setText("" + balance);
+    }
+
+    @Override
+    public void goodBalanceChanged(VirtualGood good, int balance) {
+        int id = 0;
+        for(int i=0; i<mData.size(); i++) {
+            if (((VirtualGood)mData.get(i).get(KEY_GOOD)).getItemId().equals(good.getItemId())) {
+                id = i;
+                break;
+            }
+        }
+
+        ListView list = (ListView) findViewById(R.id.list);
+        HashMap<String, Integer> currencyValues = good.getCurrencyValues();
+        TextView info = (TextView)list.getChildAt(id).findViewById(R.id.item_info);
+        info.setText("price: " + currencyValues.get(MuffinRushAssets.MUFFIN_CURRENCY_ITEM_ID) +
+                " balance: " + balance);
     }
 
     private class StoreAdapter extends BaseAdapter {
@@ -165,6 +251,7 @@ public class StoreGoodsActivity extends Activity {
             VirtualGood good = (VirtualGood) data.get(position).get(StoreGoodsActivity.KEY_GOOD);
 
             // Setting all values in listview
+            vi.setTag(good.getItemId());
             title.setText(good.getName());
             content.setText(good.getDescription());
             thumb_image.setImageResource((Integer)data.get(position).get(KEY_THUMB));
@@ -181,6 +268,4 @@ public class StoreGoodsActivity extends Activity {
         Intent intent = new Intent(getApplicationContext(), StorePacksActivity.class);
         startActivity(intent);
     }
-
-
 }
