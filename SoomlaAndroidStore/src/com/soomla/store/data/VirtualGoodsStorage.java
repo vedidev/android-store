@@ -103,7 +103,7 @@ public class VirtualGoodsStorage {
         }
         StorageManager.getDatabase().updateVirtualGoodBalance(itemId, balanceStr);
 
-        StoreEventHandlers.getInstance().goodBalanceChanged(virtualGood, balance + amount);
+        StoreEventHandlers.getInstance().onGoodBalanceChanged(virtualGood, balance + amount);
 
         return balance + amount;
 	}
@@ -128,7 +128,7 @@ public class VirtualGoodsStorage {
         }
         StorageManager.getDatabase().updateVirtualGoodBalance(itemId, balanceStr);
 
-        StoreEventHandlers.getInstance().goodBalanceChanged(virtualGood, balance);
+        StoreEventHandlers.getInstance().onGoodBalanceChanged(virtualGood, balance);
 
         return balance;
 	}

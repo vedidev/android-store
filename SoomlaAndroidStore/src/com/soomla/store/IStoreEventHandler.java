@@ -38,6 +38,6 @@ public interface IStoreEventHandler {
     void onClosingStore();
     void onUnexpectedErrorInStore();
     void onOpeningStore();
-    void currencyBalanceChanged(VirtualCurrency currency, int balance);
-    void goodBalanceChanged(VirtualGood good, int balance);
+    void onCurrencyBalanceChanged(VirtualCurrency currency, int balance);
+    void onGoodBalanceChanged(VirtualGood good, int balance);
 }

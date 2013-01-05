@@ -103,7 +103,7 @@ public class VirtualCurrencyStorage {
         }
         StorageManager.getDatabase().updateVirtualCurrencyBalance(itemId, balanceStr);
 
-        StoreEventHandlers.getInstance().currencyBalanceChanged(virtualCurrency, balance + amount);
+        StoreEventHandlers.getInstance().onCurrencyBalanceChanged(virtualCurrency, balance + amount);
 
         return balance + amount;
     }
@@ -128,7 +128,7 @@ public class VirtualCurrencyStorage {
         }
         StorageManager.getDatabase().updateVirtualCurrencyBalance(itemId, balanceStr);
 
-        StoreEventHandlers.getInstance().currencyBalanceChanged(virtualCurrency, balance);
+        StoreEventHandlers.getInstance().onCurrencyBalanceChanged(virtualCurrency, balance);
 
         return balance;
     }

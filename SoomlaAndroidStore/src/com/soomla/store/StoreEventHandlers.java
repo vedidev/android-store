@@ -140,17 +140,15 @@ public class StoreEventHandlers {
         }
     }
 
-    public void currencyBalanceChanged(VirtualCurrency currency, int balance) {
+    public void onCurrencyBalanceChanged(VirtualCurrency currency, int balance) {
         for(IStoreEventHandler handler : mEventHandlers){
-            Log.d("AAAAAA", "HAHAHAAH " + mEventHandlers.size());
-            handler.currencyBalanceChanged(currency, balance);
+            handler.onCurrencyBalanceChanged(currency, balance);
         }
-        Log.d("AAAAAA", "HAHAHAAH " +  + mEventHandlers.size());
     }
 
-    public void goodBalanceChanged(VirtualGood good, int balance) {
+    public void onGoodBalanceChanged(VirtualGood good, int balance) {
         for(IStoreEventHandler handler : mEventHandlers){
-            handler.goodBalanceChanged(good, balance);
+            handler.onGoodBalanceChanged(good, balance);
         }
     }
 
