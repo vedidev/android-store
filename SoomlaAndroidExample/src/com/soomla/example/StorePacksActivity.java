@@ -213,14 +213,14 @@ public class StorePacksActivity extends Activity implements IStoreEventHandler{
     }
 
     @Override
-    public void currencyBalanceChanged(VirtualCurrency currency, int balance) {
+    public void onCurrencyBalanceChanged(VirtualCurrency currency, int balance) {
         /* fetching the currency balance and placing it in the balance label */
         TextView muffinsBalance = (TextView)findViewById(R.id.balance);
         muffinsBalance.setText("" + balance);
     }
 
     @Override
-    public void goodBalanceChanged(VirtualGood good, int balance) {
+    public void onGoodBalanceChanged(VirtualGood good, int balance) {
         //To change body of implemented methods use File | Settings | File Templates.
     }
 

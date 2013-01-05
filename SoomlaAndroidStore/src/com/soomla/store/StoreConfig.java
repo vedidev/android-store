@@ -27,7 +27,7 @@ public class StoreConfig {
     public static final byte[] obfuscationSalt = new byte[] { 64, -54, -113, -47, 98, -52, 87, -102, -65, -127, 89, 51, -11, -35, 30, 77, -45, 75, -26, 3 };
 
     /* CHANGE THIS SECRET NOW ! */
-    public static final String SOOM_SEC = "SINC_SSEEKK";
+    public static String SOOM_SEC = "SINC_SSEEKK";
 
     /*
     if the value of this variable is true, metadata (or more specifically your IStoreAssets) that was previously
@@ -35,7 +35,7 @@ public class StoreConfig {
 
     another way to delete just the METADATA table is to upgrade the database version.
      */
-    public static final boolean DB_VOLATILE_METADATA = true;
+    public static final boolean DB_VOLATILE_METADATA = false;
 
     /*
     if this is true than the database will be deleted whenever the application loads.

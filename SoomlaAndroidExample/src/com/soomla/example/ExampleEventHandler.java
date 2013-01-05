@@ -83,12 +83,12 @@ public class ExampleEventHandler implements IStoreEventHandler {
     }
 
     @Override
-    public void currencyBalanceChanged(VirtualCurrency currency, int balance) {
+    public void onCurrencyBalanceChanged(VirtualCurrency currency, int balance) {
         showToastIfDebug("(currency) " + currency.getName() + " balance was changed to " + balance + ".");
     }
 
     @Override
-    public void goodBalanceChanged(VirtualGood good, int balance) {
+    public void onGoodBalanceChanged(VirtualGood good, int balance) {
         showToastIfDebug("(good) " + good.getName() + " balance was changed to " + balance + ".");
     }
 

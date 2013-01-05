@@ -195,14 +195,14 @@ public class StoreGoodsActivity extends Activity implements IStoreEventHandler{
     }
 
     @Override
-    public void currencyBalanceChanged(VirtualCurrency currency, int balance) {
+    public void onCurrencyBalanceChanged(VirtualCurrency currency, int balance) {
         /* fetching the currency balance and placing it in the balance label */
         TextView muffinsBalance = (TextView)findViewById(R.id.balance);
         muffinsBalance.setText("" + balance);
     }
 
     @Override
-    public void goodBalanceChanged(VirtualGood good, int balance) {
+    public void onGoodBalanceChanged(VirtualGood good, int balance) {
         int id = 0;
         for(int i=0; i<mData.size(); i++) {
             if (((VirtualGood)mData.get(i).get(KEY_GOOD)).getItemId().equals(good.getItemId())) {
