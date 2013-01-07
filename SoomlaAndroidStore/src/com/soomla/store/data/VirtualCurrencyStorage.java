@@ -19,9 +19,10 @@ package com.soomla.store.data;
 import android.database.Cursor;
 import android.util.Log;
 import com.soomla.billing.util.AESObfuscator;
+import com.soomla.store.BusProvider;
 import com.soomla.store.StoreConfig;
-import com.soomla.store.StoreEventHandlers;
 import com.soomla.store.domain.data.VirtualCurrency;
+import com.soomla.store.events.CurrencyBalanceChangedEvent;
 
 /**
  * This class provide basic storage operations on VirtualCurrencies.
@@ -103,7 +104,7 @@ public class VirtualCurrencyStorage {
         }
         StorageManager.getDatabase().updateVirtualCurrencyBalance(itemId, balanceStr);
 
-        StoreEventHandlers.getInstance().onCurrencyBalanceChanged(virtualCurrency, balance + amount);
+        BusProvider.getInstance().post(new CurrencyBalanceChangedEvent(virtualCurrency, balance+amount));
 
         return balance + amount;
     }
@@ -128,7 +129,7 @@ public class VirtualCurrencyStorage {
         }
         StorageManager.getDatabase().updateVirtualCurrencyBalance(itemId, balanceStr);
 
-        StoreEventHandlers.getInstance().onCurrencyBalanceChanged(virtualCurrency, balance);
+        BusProvider.getInstance().post(new CurrencyBalanceChangedEvent(virtualCurrency, balance));
 
         return balance;
     }

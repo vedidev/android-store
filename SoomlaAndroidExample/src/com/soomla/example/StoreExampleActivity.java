@@ -59,8 +59,7 @@ public class StoreExampleActivity extends Activity {
         StoreController.getInstance().initialize(storeAssets,
                 "[YOUR PUBLIC KEY FROM GOOGLE PLAY HERE]",
                 "[YOUR CUSTOM GAME SECRET HERE]");
-        StoreEventHandlers.getInstance().addEventHandler(
-                new ExampleEventHandler(mHandler, this));
+        mEventHandler = new ExampleEventHandler(mHandler, this);
 
         // Checking if it's a first run and adding 10000 currencies if it is.
         // OFCOURSE... THIS IS JUST FOR TESTING.
@@ -161,6 +160,7 @@ public class StoreExampleActivity extends Activity {
 
     private Handler mHandler = new Handler();
     private ImageView mRobotView;
+    private ExampleEventHandler mEventHandler;
 
     private static final String PREFS_NAME      = "store.prefs";
     private static final String FIRST_RUN       = "a#AA#BB#C";

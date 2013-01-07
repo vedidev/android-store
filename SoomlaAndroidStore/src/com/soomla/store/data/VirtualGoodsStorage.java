@@ -18,9 +18,12 @@ package com.soomla.store.data;
 import android.database.Cursor;
 import android.util.Log;
 import com.soomla.billing.util.AESObfuscator;
+import com.soomla.store.BusProvider;
 import com.soomla.store.StoreConfig;
-import com.soomla.store.StoreEventHandlers;
 import com.soomla.store.domain.data.VirtualGood;
+import com.soomla.store.events.GoodBalanceChangedEvent;
+import com.soomla.store.events.VirtualGoodEquippedEvent;
+import com.soomla.store.events.VirtualGoodUnEquippedEvent;
 
 /**
  * This class provide basic storage operations on VirtualGoods.
@@ -103,7 +106,7 @@ public class VirtualGoodsStorage {
         }
         StorageManager.getDatabase().updateVirtualGoodBalance(itemId, balanceStr);
 
-        StoreEventHandlers.getInstance().onGoodBalanceChanged(virtualGood, balance + amount);
+        BusProvider.getInstance().post(new GoodBalanceChangedEvent(virtualGood, balance+amount));
 
         return balance + amount;
 	}
@@ -128,7 +131,7 @@ public class VirtualGoodsStorage {
         }
         StorageManager.getDatabase().updateVirtualGoodBalance(itemId, balanceStr);
 
-        StoreEventHandlers.getInstance().onGoodBalanceChanged(virtualGood, balance);
+        BusProvider.getInstance().post(new GoodBalanceChangedEvent(virtualGood, balance));
 
         return balance;
 	}
@@ -174,6 +177,12 @@ public class VirtualGoodsStorage {
         }
 
         StorageManager.getDatabase().updateVirtualGoodEquip(itemId, equip);
+
+        if (equip) {
+            BusProvider.getInstance().post(new VirtualGoodEquippedEvent(virtualGood));
+        } else {
+            BusProvider.getInstance().post(new VirtualGoodUnEquippedEvent(virtualGood));
+        }
     }
 
     /** Private members **/

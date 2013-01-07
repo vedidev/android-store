@@ -31,6 +31,7 @@ import com.soomla.store.domain.data.GoogleMarketItem;
 import com.soomla.store.domain.data.VirtualCurrency;
 import com.soomla.store.domain.data.VirtualCurrencyPack;
 import com.soomla.store.domain.data.VirtualGood;
+import com.soomla.store.events.*;
 import com.soomla.store.exceptions.InsufficientFundsException;
 import com.soomla.store.exceptions.NotEnoughGoodsException;
 import com.soomla.store.exceptions.VirtualItemNotFoundException;
@@ -117,9 +118,9 @@ public class StoreController extends PurchaseObserver {
         }
 
         if (!mBillingService.requestPurchase(productId, Consts.ITEM_TYPE_INAPP, "")){
-            StoreEventHandlers.getInstance().onUnexpectedErrorInStore();
+            BusProvider.getInstance().post(new UnexpectedStoreErrorEvent());
         }
-        StoreEventHandlers.getInstance().onMarketPurchaseProcessStarted(googleMarketItem);
+        BusProvider.getInstance().post(new MarketPurchaseStartedEvent(googleMarketItem));
     }
 
     /**
@@ -129,8 +130,9 @@ public class StoreController extends PurchaseObserver {
      * @throws VirtualItemNotFoundException
      */
     public void buyVirtualGood(String itemId) throws InsufficientFundsException, VirtualItemNotFoundException{
-        StoreEventHandlers.getInstance().onGoodsPurchaseProcessStarted();
+
         VirtualGood good = StoreInfo.getVirtualGoodByItemId(itemId);
+        BusProvider.getInstance().post(new GoodPurchaseStartedEvent(good));
 
         // fetching currencies and amounts that the user needs in order to purchase the current
         // {@link VirtualGood}.
@@ -163,8 +165,7 @@ public class StoreController extends PurchaseObserver {
                 StorageManager.getVirtualCurrencyStorage().remove(virtualCurrency,
                         currencyBalanceNeeded);
             }
-
-            StoreEventHandlers.getInstance().onVirtualGoodPurchased(good);
+            BusProvider.getInstance().post(new GoodPurchasedEvent(good));
         }
         else {
             throw new InsufficientFundsException(needMore.getItemId());
@@ -183,8 +184,6 @@ public class StoreController extends PurchaseObserver {
         // if the user has enough, the virtual good is purchased.
         if (StorageManager.getVirtualGoodsStorage().getBalance(good) > 0){
             StorageManager.getVirtualGoodsStorage().equip(good, true);
-
-            StoreEventHandlers.getInstance().onVirtualGoodEquipped(good);
         }
         else {
             throw new NotEnoughGoodsException(itemId);
@@ -200,8 +199,6 @@ public class StoreController extends PurchaseObserver {
         VirtualGood good = StoreInfo.getVirtualGoodByItemId(itemId);
 
         StorageManager.getVirtualGoodsStorage().equip(good, false);
-
-        StoreEventHandlers.getInstance().onVirtualGoodUnequipped(good);
     }
 
     /**
@@ -231,7 +228,7 @@ public class StoreController extends PurchaseObserver {
         /* Billing */
         startBillingService();
 
-        StoreEventHandlers.getInstance().onOpeningStore();
+        BusProvider.getInstance().post(new OpeningStoreEvent());
     }
 
     /**
@@ -240,7 +237,7 @@ public class StoreController extends PurchaseObserver {
     public void storeClosing(){
         mStoreOpen = false;
 
-        StoreEventHandlers.getInstance().onClosingStore();
+        BusProvider.getInstance().post(new ClosingStoreEvent());
 
         stopBillingService();
 //        ResponseHandler.unregister(this);
@@ -259,15 +256,14 @@ public class StoreController extends PurchaseObserver {
                 if (StoreConfig.debug){
                     Log.d(TAG, "billing is supported !");
                 }
-                StoreEventHandlers.getInstance().onBillingSupported();
+                BusProvider.getInstance().post(new BillingSupportedEvent());
             } else {
                 // purchase is not supported. just send a message to JS to disable the "get more ..." button.
 
                 if (StoreConfig.debug){
                     Log.d(TAG, "billing is not supported !");
                 }
-
-                StoreEventHandlers.getInstance().onBillingNotSupported();
+                BusProvider.getInstance().post(new BillingNotSupportedEvent());
             }
         } else if (type.equals(Consts.ITEM_TYPE_SUBSCRIPTION)) {
             // subscription is not supported
@@ -319,7 +315,7 @@ public class StoreController extends PurchaseObserver {
                 Log.e(TAG, "ERROR : Couldn't find the " + purchaseState.name() +
                         " VirtualCurrencyPack OR GoogleMarketItem  with productId: " + productId +
                         ". It's unexpected so an unexpected error is being emitted.");
-                StoreEventHandlers.getInstance().onUnexpectedErrorInStore();
+                BusProvider.getInstance().post(new UnexpectedStoreErrorEvent());
             }
         }
 
@@ -329,11 +325,11 @@ public class StoreController extends PurchaseObserver {
 
         // here we just post the appropriate event.
         if (purchaseState == Consts.PurchaseState.PURCHASED) {
-            StoreEventHandlers.getInstance().onMarketPurchase(googleMarketItem);
+            BusProvider.getInstance().post(new MarketPurchaseEvent(googleMarketItem));
         }
 
         if (purchaseState == Consts.PurchaseState.REFUNDED){
-            StoreEventHandlers.getInstance().onMarketRefund(googleMarketItem);
+            BusProvider.getInstance().post(new MarketRefundEvent(googleMarketItem));
         }
     }
 
@@ -351,7 +347,7 @@ public class StoreController extends PurchaseObserver {
         } else {
             // purchase failed !
 
-            StoreEventHandlers.getInstance().onUnexpectedErrorInStore();
+            BusProvider.getInstance().post(new UnexpectedStoreErrorEvent());
             Log.e(TAG, "ERROR : Purchase failed for productId: " + request.mProductId);
         }
     }

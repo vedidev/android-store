@@ -4,28 +4,28 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.res.AssetFileDescriptor;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.*;
-import com.soomla.store.IStoreAssets;
-import com.soomla.store.IStoreEventHandler;
+import com.soomla.store.BusProvider;
 import com.soomla.store.StoreController;
-import com.soomla.store.StoreEventHandlers;
 import com.soomla.store.data.StorageManager;
 import com.soomla.store.domain.data.GoogleMarketItem;
 import com.soomla.store.domain.data.VirtualCurrency;
 import com.soomla.store.domain.data.VirtualGood;
+import com.soomla.store.events.CurrencyBalanceChangedEvent;
+import com.soomla.store.events.GoodBalanceChangedEvent;
 import com.soomla.store.exceptions.InsufficientFundsException;
 import com.soomla.store.exceptions.VirtualItemNotFoundException;
+import com.squareup.otto.Subscribe;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class StoreGoodsActivity extends Activity implements IStoreEventHandler{
+public class StoreGoodsActivity extends Activity {
 
     private StoreAdapter mStoreAdapter;
     private ArrayList<HashMap<String, Object>> mData;
@@ -91,7 +91,7 @@ public class StoreGoodsActivity extends Activity implements IStoreEventHandler{
     protected void onResume() {
         super.onResume();
 
-        StoreEventHandlers.getInstance().addEventHandler(this);
+        BusProvider.getInstance().register(this);
 
         /* fetching the currency balance and placing it in the balance label */
         TextView muffinsBalance = (TextView)findViewById(R.id.balance);
@@ -103,7 +103,7 @@ public class StoreGoodsActivity extends Activity implements IStoreEventHandler{
     protected void onPause() {
         super.onPause();
 
-        StoreEventHandlers.getInstance().removeEventHandler(this);
+        BusProvider.getInstance().unregister(this);
     }
 
     @Override
@@ -134,75 +134,16 @@ public class StoreGoodsActivity extends Activity implements IStoreEventHandler{
         return data;
     }
 
-    @Override
-    public void onMarketPurchase(GoogleMarketItem googleMarketItem) {
-        //To change body of implemented methods use File | Settings | File Templates.
-    }
-
-    @Override
-    public void onMarketRefund(GoogleMarketItem googleMarketItem) {
-        //To change body of implemented methods use File | Settings | File Templates.
-    }
-
-    @Override
-    public void onVirtualGoodPurchased(VirtualGood good) {
-        //To change body of implemented methods use File | Settings | File Templates.
-    }
-
-    @Override
-    public void onVirtualGoodEquipped(VirtualGood good) {
-        //To change body of implemented methods use File | Settings | File Templates.
-    }
-
-    @Override
-    public void onVirtualGoodUnequipped(VirtualGood good) {
-        //To change body of implemented methods use File | Settings | File Templates.
-    }
-
-    @Override
-    public void onBillingSupported() {
-        //To change body of implemented methods use File | Settings | File Templates.
-    }
-
-    @Override
-    public void onBillingNotSupported() {
-        //To change body of implemented methods use File | Settings | File Templates.
-    }
-
-    @Override
-    public void onMarketPurchaseProcessStarted(GoogleMarketItem googleMarketItem) {
-        //To change body of implemented methods use File | Settings | File Templates.
-    }
-
-    @Override
-    public void onGoodsPurchaseProcessStarted() {
-        //To change body of implemented methods use File | Settings | File Templates.
-    }
-
-    @Override
-    public void onClosingStore() {
-        //To change body of implemented methods use File | Settings | File Templates.
-    }
-
-    @Override
-    public void onUnexpectedErrorInStore() {
-        //To change body of implemented methods use File | Settings | File Templates.
-    }
-
-    @Override
-    public void onOpeningStore() {
-        //To change body of implemented methods use File | Settings | File Templates.
-    }
-
-    @Override
-    public void onCurrencyBalanceChanged(VirtualCurrency currency, int balance) {
+    @Subscribe
+    public void onCurrencyBalanceChanged(CurrencyBalanceChangedEvent currencyBalanceChangedEvent) {
         /* fetching the currency balance and placing it in the balance label */
         TextView muffinsBalance = (TextView)findViewById(R.id.balance);
-        muffinsBalance.setText("" + balance);
+        muffinsBalance.setText("" + currencyBalanceChangedEvent.getBalance());
     }
 
-    @Override
-    public void onGoodBalanceChanged(VirtualGood good, int balance) {
+    @Subscribe
+    public void onGoodBalanceChanged(GoodBalanceChangedEvent goodBalanceChangedEvent) {
+        VirtualGood good = goodBalanceChangedEvent.getGood();
         int id = 0;
         for(int i=0; i<mData.size(); i++) {
             if (((VirtualGood)mData.get(i).get(KEY_GOOD)).getItemId().equals(good.getItemId())) {
@@ -215,7 +156,7 @@ public class StoreGoodsActivity extends Activity implements IStoreEventHandler{
         HashMap<String, Integer> currencyValues = good.getCurrencyValues();
         TextView info = (TextView)list.getChildAt(id).findViewById(R.id.item_info);
         info.setText("price: " + currencyValues.get(MuffinRushAssets.MUFFIN_CURRENCY_ITEM_ID) +
-                " balance: " + balance);
+                " balance: " + goodBalanceChangedEvent.getBalance());
     }
 
     private class StoreAdapter extends BaseAdapter {

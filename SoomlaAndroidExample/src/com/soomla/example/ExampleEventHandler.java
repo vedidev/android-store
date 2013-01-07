@@ -3,93 +3,97 @@ package com.soomla.example;
 
 import android.os.Handler;
 import android.widget.Toast;
-import com.soomla.store.IStoreEventHandler;
+import com.soomla.store.BusProvider;
 import com.soomla.store.SoomlaApp;
 import com.soomla.store.StoreConfig;
 import com.soomla.store.domain.data.GoogleMarketItem;
 import com.soomla.store.domain.data.VirtualCurrency;
 import com.soomla.store.domain.data.VirtualGood;
+import com.soomla.store.events.*;
+import com.squareup.otto.Subscribe;
 
 
-public class ExampleEventHandler implements IStoreEventHandler {
+public class ExampleEventHandler {
 
     private Handler mHandler;
     private StoreExampleActivity mActivityI;
     public ExampleEventHandler(Handler handler, StoreExampleActivity activityI){
         mHandler = handler;
         mActivityI = activityI;
+
+        BusProvider.getInstance().register(this);
     }
 
-    @Override
-    public void onMarketPurchase(GoogleMarketItem googleMarketItem) {
-        showToastIfDebug(googleMarketItem.getProductId() + " was just purchased");
+    @Subscribe
+    public void onMarketPurchase(MarketPurchaseEvent marketPurchaseEvent) {
+        showToastIfDebug(marketPurchaseEvent.getGoogleMarketItem().getProductId() + " was just purchased");
     }
 
-    @Override
-    public void onMarketRefund(GoogleMarketItem googleMarketItem) {
-        showToastIfDebug(googleMarketItem.getProductId() + " was just refunded");
+    @Subscribe
+    public void onMarketRefund(MarketRefundEvent marketRefundEvent) {
+        showToastIfDebug(marketRefundEvent.getGoogleMarketItem().getProductId() + " was just refunded");
     }
 
-    @Override
-    public void onVirtualGoodPurchased(VirtualGood good) {
-        showToastIfDebug(good.getName() + " was just purchased");
+    @Subscribe
+    public void onVirtualGoodPurchased(GoodPurchasedEvent goodPurchasedEvent) {
+        showToastIfDebug(goodPurchasedEvent.getGood().getName() + " was just purchased");
     }
 
-    @Override
-    public void onVirtualGoodEquipped(VirtualGood good) {
-        showToastIfDebug(good.getName() + " was just equipped");
+    @Subscribe
+    public void onVirtualGoodEquipped(VirtualGoodEquippedEvent virtualGoodEquippedEvent) {
+        showToastIfDebug(virtualGoodEquippedEvent.getGood().getName() + " was just equipped");
     }
 
-    @Override
-    public void onVirtualGoodUnequipped(VirtualGood good) {
-        showToastIfDebug(good.getName() + " was just unequipped");
+    @Subscribe
+    public void onVirtualGoodUnequipped(VirtualGoodUnEquippedEvent virtualGoodUnEquippedEvent) {
+        showToastIfDebug(virtualGoodUnEquippedEvent.getGood().getName() + " was just unequipped");
     }
 
-    @Override
-    public void onBillingSupported() {
+    @Subscribe
+    public void onBillingSupported(BillingSupportedEvent billingSupportedEvent) {
         showToastIfDebug("Billing is supported");
     }
 
-    @Override
-    public void onBillingNotSupported() {
+    @Subscribe
+    public void onBillingNotSupported(BillingNotSupportedEvent billingNotSupportedEvent) {
         showToastIfDebug("Billing is not supported");
     }
 
-    @Override
-    public void onMarketPurchaseProcessStarted(GoogleMarketItem googleMarketItem) {
-        showToastIfDebug("Market purchase started for productId: " + googleMarketItem);
+    @Subscribe
+    public void onMarketPurchaseProcessStarted(MarketPurchaseStartedEvent marketPurchaseStartedEvent) {
+        showToastIfDebug("Market purchase started for productId: " + marketPurchaseStartedEvent.getGoogleMarketItem().getProductId());
     }
 
-    @Override
-    public void onGoodsPurchaseProcessStarted() {
-        showToastIfDebug("Goods purchase started");
+    @Subscribe
+    public void onGoodsPurchaseProcessStarted(GoodPurchaseStartedEvent goodPurchaseStartedEvent) {
+        showToastIfDebug("Goods purchase started for good: " + goodPurchaseStartedEvent.getGood().getName());
     }
 
-    @Override
-    public void onClosingStore() {
+    @Subscribe
+    public void onClosingStore(ClosingStoreEvent closingStoreEvent) {
         mActivityI.robotBackHome();
 
         showToastIfDebug("Going to close store");
     }
 
-    @Override
-    public void onUnexpectedErrorInStore() {
+    @Subscribe
+    public void onUnexpectedErrorInStore(UnexpectedStoreErrorEvent unexpectedStoreErrorEvent) {
         showToastIfDebug("Unexpected error occurred !");
     }
 
-    @Override
-    public void onOpeningStore() {
+    @Subscribe
+    public void onOpeningStore(OpeningStoreEvent openingStoreEvent) {
         showToastIfDebug("Store is opening");
     }
 
-    @Override
-    public void onCurrencyBalanceChanged(VirtualCurrency currency, int balance) {
-        showToastIfDebug("(currency) " + currency.getName() + " balance was changed to " + balance + ".");
+    @Subscribe
+    public void onCurrencyBalanceChanged(CurrencyBalanceChangedEvent currencyBalanceChangedEvent) {
+        showToastIfDebug("(currency) " + currencyBalanceChangedEvent.getCurrency().getName() + " balance was changed to " + currencyBalanceChangedEvent.getBalance() + ".");
     }
 
-    @Override
-    public void onGoodBalanceChanged(VirtualGood good, int balance) {
-        showToastIfDebug("(good) " + good.getName() + " balance was changed to " + balance + ".");
+    @Subscribe
+    public void onGoodBalanceChanged(GoodBalanceChangedEvent goodBalanceChangedEvent) {
+        showToastIfDebug("(good) " + goodBalanceChangedEvent.getGood().getName() + " balance was changed to " + goodBalanceChangedEvent.getBalance() + ".");
     }
 
     private void showToastIfDebug(final String msg) {

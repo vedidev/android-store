@@ -78,7 +78,7 @@ public class MuffinRushAssets implements IStoreAssets {
             new StaticPriceModel(MUFFINCAKE_PRICE),         // currency value
             "fruit_cake"                                    // item id
             ,
-            GENERAL_CATEGORY, false);
+            GENERAL_CATEGORY);
 
     private static final HashMap<String, Integer> PAVLOVA_PRICE =
             new HashMap<String, Integer>();
@@ -91,7 +91,7 @@ public class MuffinRushAssets implements IStoreAssets {
             new StaticPriceModel(PAVLOVA_PRICE),            // currency value
             "pavlova"                                       // item id
             ,
-            GENERAL_CATEGORY, false);
+            GENERAL_CATEGORY);
 
     private static final HashMap<String, Integer> CHOCLATECAKE_PRICE =
             new HashMap<String, Integer>();
@@ -104,7 +104,7 @@ public class MuffinRushAssets implements IStoreAssets {
             new StaticPriceModel(CHOCLATECAKE_PRICE),       // currency value
             "chocolate_cake"                                // item id
             ,
-            GENERAL_CATEGORY, false);
+            GENERAL_CATEGORY);
 
     private static final HashMap<String, Integer> CREAMCUP_PRICE =
             new HashMap<String, Integer>();
@@ -117,7 +117,7 @@ public class MuffinRushAssets implements IStoreAssets {
             new StaticPriceModel(CREAMCUP_PRICE),           // currency value
             "cream_cup"                                     // item id
             ,
-            GENERAL_CATEGORY, false);
+            GENERAL_CATEGORY);
 
     /** Virtual Currency Packs **/
 
