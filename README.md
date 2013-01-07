@@ -157,15 +157,37 @@ If you want to protect your application from 'bad people' (and who doesn't?!), y
 Event Handling
 ---
 
-SOOMLA lets you create your own event handler and add it to _StoreEventHandlers_. That way you'll be able to get notifications on various events and implement your own application specific behaviour to those events.
+For event handling, we use Square's great open-source project [otto](http://square.github.com/otto/). In ordered to be notified of store related events, you can register for specific events and create your game-specific behaviour to handle them.
 
 > Your behaviour is an addition to the default behaviour implemented by SOOMLA. You don't replace SOOMLA's behaviour.
 
-In order to create your event handler:
+In order to register for events:
 
-1. Create a class that implements _IStoreEventHandler_.
-2. Add the created class to _StoreEventHandlers_:
- `StoreEventHandlers.getInstance().addEventHandler(new YourEventHandler());`
+1. In the class that should receive the event create a function with the annotation '@Subscribe'. Example:
+
+    ```Java
+    @Subscribe public void onMarketPurchase(MarketPurchaseEvent marketPurchaseEvent) {
+        ...
+    }
+    ```
+    
+2. You'll also have to register your class in the event bus (and unregister when needed):
+
+   ```Java
+   BusProvider.getInstance().register(this);
+   ```
+   
+   ```Java
+   BusProvider.getInstance().unregister(this);
+   ```
+
+> If your class is an Activity, register in 'onResume' and unregister in 'onPause'
+
+You can find a full event handler example [here](https://github.com/soomla/android-store/blob/master/SoomlaAndroidExample/src/com/soomla/example/ExampleEventHandler.java).
+
+[List of events](https://github.com/soomla/android-store/tree/master/SoomlaAndroidStore/src/com/soomla/store/events)
+
+[Full documentation and explanation of otto](http://square.github.com/otto/)
 
 Contribution
 ---
