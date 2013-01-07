@@ -38,7 +38,7 @@ public class StoreExampleActivity extends Activity {
         ((TextView) findViewById(R.id.main_text)).setTypeface(font);
 
         /**
-         * We initialize StoreController and add event handler to StoreEventHandlers before
+         * We initialize StoreController and initialize event handler before
          * we open the store.
          */
 

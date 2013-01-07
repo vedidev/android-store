@@ -23,9 +23,9 @@ import com.squareup.otto.Bus;
  * such as through injection directly into interested classes.
  */
 public final class BusProvider {
-    private static final Bus BUS = new Bus();
+    private static final AndroidBus BUS = new AndroidBus();
 
-    public static Bus getInstance() {
+    public static AndroidBus getInstance() {
         return BUS;
     }
 
