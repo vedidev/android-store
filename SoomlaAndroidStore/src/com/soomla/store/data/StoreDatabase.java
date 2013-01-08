@@ -40,7 +40,7 @@ public class StoreDatabase {
 
         SharedPreferences prefs = new ObscuredSharedPreferences(SoomlaApp.getAppContext(), SoomlaApp.getAppContext().getSharedPreferences(StoreConfig.PREFS_NAME, Context.MODE_PRIVATE));
         int mt_ver = prefs.getInt("MT_VER", 0);
-        int sa_ver_old = prefs.getInt("SA_VER_OLD", 0);
+        int sa_ver_old = prefs.getInt("SA_VER_OLD", -1);
         int sa_ver_new = prefs.getInt("SA_VER_NEW", 0);
         if (mt_ver < StoreConfig.METADATA_VERSION && sa_ver_old < sa_ver_new ) {
             SharedPreferences.Editor edit = prefs.edit();
