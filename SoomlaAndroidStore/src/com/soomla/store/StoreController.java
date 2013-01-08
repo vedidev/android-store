@@ -27,10 +27,7 @@ import com.soomla.billing.ResponseHandler;
 import com.soomla.store.data.ObscuredSharedPreferences;
 import com.soomla.store.data.StorageManager;
 import com.soomla.store.data.StoreInfo;
-import com.soomla.store.domain.data.GoogleMarketItem;
-import com.soomla.store.domain.data.VirtualCurrency;
-import com.soomla.store.domain.data.VirtualCurrencyPack;
-import com.soomla.store.domain.data.VirtualGood;
+import com.soomla.store.domain.data.*;
 import com.soomla.store.events.*;
 import com.soomla.store.exceptions.InsufficientFundsException;
 import com.soomla.store.exceptions.NotEnoughGoodsException;
@@ -299,16 +296,16 @@ public class StoreController extends PurchaseObserver {
         } catch (VirtualItemNotFoundException e) {
 
             try {
-                googleMarketItem = StoreInfo.getNonConsumableByProductId(productId).getGoogleItem();
+                NonConsumableItem nonConsumableItem = StoreInfo.getNonConsumableByProductId(productId);
+                googleMarketItem = nonConsumableItem.getGoogleItem();
 
-                // updating the MANAGED item
+                // updating the non consumable item
                 if (purchaseState == Consts.PurchaseState.PURCHASED) {
-                    StorageManager.getGoogleManagedItemsStorage().add(googleMarketItem);
+                    StorageManager.getGoogleManagedItemsStorage().add(nonConsumableItem);
                 }
 
                 if (purchaseState == Consts.PurchaseState.REFUNDED){
-                    // You can remove the MANAGED item here ... SOOMLA believes in friendly refunds.
-                    // A friendly refund policy is nice for the user.
+                    StorageManager.getGoogleManagedItemsStorage().remove(nonConsumableItem);
                 }
 
             } catch (VirtualItemNotFoundException e1) {

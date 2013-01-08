@@ -19,33 +19,33 @@ package com.soomla.store.data;
 import android.database.Cursor;
 import android.util.Log;
 import com.soomla.store.StoreConfig;
-import com.soomla.store.domain.data.GoogleMarketItem;
+import com.soomla.store.domain.data.NonConsumableItem;
 
 /**
  * This class provide basic storage operations on Google Play's MANAGED items.
  */
-public class GoogleManagedItemsStorage {
+public class NonConsumableItemsStorage {
 
     /** Constructor
      *
      */
-    public GoogleManagedItemsStorage() {
+    public NonConsumableItemsStorage() {
     }
 
     /** Public functions **/
 
     /**
-     * Figure out if the given MANAGED {@link GoogleMarketItem} exists.
-     * @param googleMarketItem the required MANAGED {@link GoogleMarketItem}.
+     * Figure out if the given non-consumable {@link NonConsumableItem} exists.
+     * @param nonConsumableItem the required non-consumable {@link NonConsumableItem}.
      * @return whether the given item exists or not.
      */
-    public boolean googleManagedItemExists(GoogleMarketItem googleMarketItem){
+    public boolean nonConsumableItemExists(NonConsumableItem nonConsumableItem){
 
         if (StoreConfig.debug){
             Log.d(TAG, "trying to figure out if the given MANAGED item exists.");
         }
 
-        String productId = googleMarketItem.getProductId();
+        String productId = nonConsumableItem.getProductId();
         if (StorageManager.getObfuscator() != null){
             productId = StorageManager.getObfuscator().obfuscateString(productId);
         }
@@ -59,7 +59,7 @@ public class GoogleManagedItemsStorage {
                     StoreDatabase.GOOGLE_MANAGED_ITEMS_COLUMN_PRODUCT_ID);
         if (cursor.moveToNext()) {
             if (StoreConfig.debug){
-                Log.d(TAG, "the google managed item exists: " + googleMarketItem.getProductId());
+                Log.d(TAG, "the google managed item exists: " + nonConsumableItem.getProductId());
             }
 
             cursor.close();
@@ -71,15 +71,15 @@ public class GoogleManagedItemsStorage {
     }
 
     /**
-     * Adds the given google MANAGED item to the storage.
-     * @param googleMarketItem is the required google MANAGED item.
+     * Adds the given google non-consumable item to the storage.
+     * @param nonConsumableItem is the required google non-consumable item.
      */
-    public void add(GoogleMarketItem googleMarketItem){
+    public void add(NonConsumableItem nonConsumableItem){
         if (StoreConfig.debug){
-            Log.d(TAG, "adding " + googleMarketItem.getProductId());
+            Log.d(TAG, "adding " + nonConsumableItem.getProductId());
         }
 
-        String productId = googleMarketItem.getProductId();
+        String productId = nonConsumableItem.getProductId();
         if (StorageManager.getObfuscator() != null){
             productId = StorageManager.getObfuscator().obfuscateString(productId);
         }
@@ -87,15 +87,15 @@ public class GoogleManagedItemsStorage {
     }
 
     /**
-     * Removes the given google MANAGED item from the storage.
-     * @param googleMarketItem is the required google MANAGED item.
+     * Removes the given google non-consumable item from the storage.
+     * @param nonConsumableItem is the required google non-consumable item.
      */
-    public void remove(GoogleMarketItem googleMarketItem){
+    public void remove(NonConsumableItem nonConsumableItem){
         if (StoreConfig.debug){
-            Log.d(TAG, "removing " + googleMarketItem.getProductId());
+            Log.d(TAG, "removing " + nonConsumableItem.getProductId());
         }
 
-        String productId = googleMarketItem.getProductId();
+        String productId = nonConsumableItem.getProductId();
         if (StorageManager.getObfuscator() != null){
             productId = StorageManager.getObfuscator().obfuscateString(productId);
         }
@@ -104,5 +104,5 @@ public class GoogleManagedItemsStorage {
 
     /** Private members **/
 
-    private static final String TAG = "SOOMLA GoogleManagedItemsStorage";
+    private static final String TAG = "SOOMLA NonConsumableItemsStorage";
 }

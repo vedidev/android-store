@@ -57,7 +57,7 @@ public class StorageManager {
         return mDatabase;
     }
 
-    public static GoogleManagedItemsStorage getGoogleManagedItemsStorage() {
+    public static NonConsumableItemsStorage getGoogleManagedItemsStorage() {
         return mGoogleManagedItemsStorage;
     }
 
@@ -73,7 +73,7 @@ public class StorageManager {
 
     private static VirtualGoodsStorage     mVirtualGoodsStorage        = new VirtualGoodsStorage();
     private static VirtualCurrencyStorage  mVirtualCurrencyStorage     = new VirtualCurrencyStorage();
-    private static GoogleManagedItemsStorage mGoogleManagedItemsStorage = new GoogleManagedItemsStorage();
+    private static NonConsumableItemsStorage mGoogleManagedItemsStorage = new NonConsumableItemsStorage();
     private static KeyValueStorage         mKeyValueStorage            = new KeyValueStorage();
     private static AESObfuscator           mObfuscator;
     private static StoreDatabase           mDatabase;

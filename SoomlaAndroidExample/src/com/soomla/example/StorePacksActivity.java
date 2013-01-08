@@ -11,11 +11,8 @@ import com.soomla.store.BusProvider;
 import com.soomla.store.StoreController;
 import com.soomla.store.data.StorageManager;
 import com.soomla.store.domain.data.GoogleMarketItem;
-import com.soomla.store.domain.data.VirtualCurrency;
 import com.soomla.store.domain.data.VirtualCurrencyPack;
-import com.soomla.store.domain.data.VirtualGood;
 import com.soomla.store.events.CurrencyBalanceChangedEvent;
-import com.soomla.store.events.GoodBalanceChangedEvent;
 import com.soomla.store.exceptions.VirtualItemNotFoundException;
 import com.squareup.otto.Subscribe;
 
