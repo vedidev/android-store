@@ -132,7 +132,7 @@ public class StorePacksActivity extends Activity {
         final ArrayList<HashMap<String, Object>> data = new ArrayList<HashMap<String, Object>>();
         HashMap<String, Object> item = new HashMap<String, Object>();
 
-        item.put(StorePacksActivity.KEY_GOOGLE_ITEM, MuffinRushAssets.NO_ADDS_MANAGED);
+        item.put(StorePacksActivity.KEY_GOOGLE_ITEM, MuffinRushAssets.NO_ADDS_NONCONS);
         item.put(StorePacksActivity.KEY_THUMB, R.drawable.no_ads);
         data.add(item);
         item.put(StorePacksActivity.KEY_PACK, MuffinRushAssets.TENMUFF_PACK);

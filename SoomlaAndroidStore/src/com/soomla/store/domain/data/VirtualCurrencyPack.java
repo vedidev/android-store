@@ -49,8 +49,7 @@ public class VirtualCurrencyPack extends AbstractVirtualItem {
                                String productId, double mPrice, int mCurrencyAmout, VirtualCurrency mCurrency) {
         super(mName, mDescription, mItemId);
         this.mCurrency = mCurrency;
-        this.mGoogleItem = new GoogleMarketItem(productId, GoogleMarketItem.Managed.UNMANAGED);
-        this.mPrice = mPrice;
+        this.mGoogleItem = new GoogleMarketItem(productId, GoogleMarketItem.Managed.UNMANAGED, mPrice);
         this.mCurrencyAmount = mCurrencyAmout;
     }
 
@@ -62,9 +61,8 @@ public class VirtualCurrencyPack extends AbstractVirtualItem {
      */
     public VirtualCurrencyPack(JSONObject jsonObject) throws JSONException {
         super(jsonObject);
-        this.mGoogleItem = new GoogleMarketItem(jsonObject.getString(JSONConsts.CURRENCYPACK_PRODUCT_ID),
-                GoogleMarketItem.Managed.UNMANAGED);
-        this.mPrice = jsonObject.getDouble(JSONConsts.CURRENCYPACK_PRICE);
+        this.mGoogleItem = new GoogleMarketItem(jsonObject);
+        this.mGoogleItem.setManaged(GoogleMarketItem.Managed.UNMANAGED);
         this.mCurrencyAmount = jsonObject.getInt(JSONConsts.CURRENCYPACK_AMOUNT);
 
         String currencyItemId = jsonObject.getString(JSONConsts.CURRENCYPACK_CURRENCYITEMID);
@@ -83,10 +81,9 @@ public class VirtualCurrencyPack extends AbstractVirtualItem {
      */
     public JSONObject toJSONObject(){
         JSONObject parentJsonObject = super.toJSONObject();
+        JSONObject gmiJSONObject = mGoogleItem.toJSONObject();
         JSONObject jsonObject = new JSONObject();
         try {
-            jsonObject.put(JSONConsts.CURRENCYPACK_PRICE, new Double(mPrice));
-            jsonObject.put(JSONConsts.CURRENCYPACK_PRODUCT_ID, mGoogleItem.getProductId());
             jsonObject.put(JSONConsts.CURRENCYPACK_AMOUNT, new Integer(mCurrencyAmount));
             jsonObject.put(JSONConsts.CURRENCYPACK_CURRENCYITEMID, mCurrency.getItemId());
 
@@ -95,6 +92,13 @@ public class VirtualCurrencyPack extends AbstractVirtualItem {
             {
                 String key = (String)keys.next();
                 jsonObject.put(key, parentJsonObject.get(key));
+            }
+
+            keys = gmiJSONObject.keys();
+            while(keys.hasNext())
+            {
+                String key = (String)keys.next();
+                jsonObject.put(key, gmiJSONObject.get(key));
             }
         } catch (JSONException e) {
             if (StoreConfig.debug){
@@ -107,7 +111,7 @@ public class VirtualCurrencyPack extends AbstractVirtualItem {
 
     /** Getters **/
 
-    public GoogleMarketItem getmGoogleItem() {
+    public GoogleMarketItem getGoogleItem() {
         return mGoogleItem;
     }
 
@@ -115,8 +119,8 @@ public class VirtualCurrencyPack extends AbstractVirtualItem {
         return mGoogleItem.getProductId();
     }
 
-    public double getPrice() {
-        return mPrice;
+    public double getPrice(){
+        return mGoogleItem.getPrice();
     }
 
     public int getCurrencyAmount() {
@@ -132,7 +136,6 @@ public class VirtualCurrencyPack extends AbstractVirtualItem {
     private static final String TAG = "SOOMLA VirtualCurrencyPack";
 
     private GoogleMarketItem mGoogleItem;
-    private double           mPrice;
     private int              mCurrencyAmount;
     private VirtualCurrency  mCurrency;
 }

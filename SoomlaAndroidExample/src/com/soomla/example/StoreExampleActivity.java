@@ -18,6 +18,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import com.soomla.store.*;
 import com.soomla.store.data.ObscuredSharedPreferences;
+import com.soomla.store.data.StorageManager;
 import com.soomla.store.exceptions.VirtualItemNotFoundException;
 
 public class StoreExampleActivity extends Activity {

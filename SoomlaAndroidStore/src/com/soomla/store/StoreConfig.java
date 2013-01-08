@@ -20,22 +20,18 @@ package com.soomla.store;
  */
 public class StoreConfig {
 
+    /* CHANGE THIS SECRET NOW ! */
+    public static String SOOM_SEC = "SINC_SSEEKK";
+
     // do you want to print out debug messages?
     public static final boolean debug = true;
 
     // the obfuscated salt. randomly generated numbers.
     public static final byte[] obfuscationSalt = new byte[] { 64, -54, -113, -47, 98, -52, 87, -102, -65, -127, 89, 51, -11, -35, 30, 77, -45, 75, -26, 3 };
 
-    /* CHANGE THIS SECRET NOW ! */
-    public static String SOOM_SEC = "SINC_SSEEKK";
-
-    /*
-    if the value of this variable is true, metadata (or more specifically your IStoreAssets) that was previously
-    saved in the local DB will be deleted every time you start the application.
-
-    another way to delete just the METADATA table is to upgrade the database version.
-     */
-    public static final boolean DB_VOLATILE_METADATA = false;
+    // ***NEVER*** CHANGE THE VALUE FOR THIS VARIABLE !!!
+    // This value defines the version of the metadata located in your database.
+    public static final int METADATA_VERSION = 1;
 
     /*
     if this is true than the database will be deleted whenever the application loads.

@@ -15,9 +15,7 @@
  */
 package com.soomla.store.data;
 
-import android.content.Context;
 import android.provider.Settings;
-import android.util.Log;
 import com.soomla.billing.util.AESObfuscator;
 import com.soomla.store.SoomlaApp;
 import com.soomla.store.StoreConfig;
@@ -30,7 +28,6 @@ import com.soomla.store.StoreConfig;
  * You will usually need the storage in order to get/set the amounts of virtual goods/currency.
  */
 public class StorageManager {
-
 
     /** Getters **/
 

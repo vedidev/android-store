@@ -106,10 +106,10 @@ public class StoreController extends PurchaseObserver {
 
         GoogleMarketItem googleMarketItem = null;
         try {
-            googleMarketItem = StoreInfo.getPackByGoogleProductId(productId).getmGoogleItem();
+            googleMarketItem = StoreInfo.getPackByGoogleProductId(productId).getGoogleItem();
         } catch (VirtualItemNotFoundException ex) {
             try {
-                googleMarketItem = StoreInfo.getGoogleManagedItemByProductId(productId);
+                googleMarketItem = StoreInfo.getNonConsumableByProductId(productId).getGoogleItem();
             } catch (VirtualItemNotFoundException e) {
                 Log.e(TAG, "The google market item (or currency pack) associated with the given productId must be defined in your IStoreAssets " +
                         "and thus must exist in StoreInfo. (productId: " + productId + "). Unexpected error is emitted. can't continue purchase !");
@@ -283,7 +283,7 @@ public class StoreController extends PurchaseObserver {
         try {
 
             VirtualCurrencyPack pack = StoreInfo.getPackByGoogleProductId(productId);
-            googleMarketItem = pack.getmGoogleItem();
+            googleMarketItem = pack.getGoogleItem();
 
             // updating the currency balance
             if (purchaseState == Consts.PurchaseState.PURCHASED) {
@@ -299,7 +299,7 @@ public class StoreController extends PurchaseObserver {
         } catch (VirtualItemNotFoundException e) {
 
             try {
-                googleMarketItem = StoreInfo.getGoogleManagedItemByProductId(productId);
+                googleMarketItem = StoreInfo.getNonConsumableByProductId(productId).getGoogleItem();
 
                 // updating the MANAGED item
                 if (purchaseState == Consts.PurchaseState.PURCHASED) {

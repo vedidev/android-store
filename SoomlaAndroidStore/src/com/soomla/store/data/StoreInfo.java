@@ -15,11 +15,14 @@
  */
 package com.soomla.store.data;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.text.TextUtils;
 import android.util.Log;
 import com.soomla.billing.util.AESObfuscator;
 import com.soomla.store.IStoreAssets;
+import com.soomla.store.SoomlaApp;
 import com.soomla.store.StoreConfig;
 import com.soomla.store.domain.data.*;
 import com.soomla.store.exceptions.VirtualItemNotFoundException;
@@ -46,8 +49,8 @@ public class StoreInfo {
      * is being loaded from the given {@link IStoreAssets}. After the first initialization,
      * StoreInfo will be initialized from the database.
      * NOTE: If you want to override the current StoreInfo, you'll have to bump the
-     * database version (the old database will be destroyed) OR just set StoreConfig.DB_VOLATILE_METADATA
-     * to "true" in order to always remove the metadata when the application loads.
+     * database version (the old database will be destroyed) OR just call StorageManager.deleteMetadata()
+     * before you initialize StoreController in order to always remove the metadata when the application loads.
      */
     public static void setStoreAssets(IStoreAssets storeAssets){
         if (storeAssets == null){
@@ -57,12 +60,17 @@ public class StoreInfo {
 
         // we prefer initialization from the database (storeAssets are only set on the first time the game is loaded)!
         if (!initializeFromDB()){
+            SharedPreferences prefs = new ObscuredSharedPreferences(SoomlaApp.getAppContext(), SoomlaApp.getAppContext().getSharedPreferences(StoreConfig.PREFS_NAME, Context.MODE_PRIVATE));
+            SharedPreferences.Editor edit = prefs.edit();
+            edit.putInt("SA_VER_NEW", storeAssets.getVersion());
+            edit.commit();
+
             /// fall-back here if the json doesn't exist, we load the store from the given {@link IStoreAssets}.
             mVirtualCategories    = Arrays.asList(storeAssets.getVirtualCategories());
             mVirtualCurrencies    = Arrays.asList(storeAssets.getVirtualCurrencies());
             mVirtualCurrencyPacks = Arrays.asList(storeAssets.getVirtualCurrencyPacks());
             mVirtualGoods         = Arrays.asList(storeAssets.getVirtualGoods());
-            mGoogleManagedItems   = Arrays.asList(storeAssets.getGoogleManagedItems());
+            mNonConsumableItems   = Arrays.asList(storeAssets.getNonConsumableItems());
 
             // put StoreInfo in the database as JSON
             String store_json = toJSONObject().toString();
@@ -138,7 +146,7 @@ public class StoreInfo {
         }
 
         for(VirtualCurrencyPack p : mVirtualCurrencyPacks){
-            if (p.getmGoogleItem().getProductId().equals(productId)){
+            if (p.getProductId().equals(productId)){
                 return p;
             }
         }
@@ -244,17 +252,17 @@ public class StoreInfo {
      * @return the definition of the MANAGED item requested.
      * @throws VirtualItemNotFoundException
      */
-    public static GoogleMarketItem getGoogleManagedItemByProductId(String productId) throws VirtualItemNotFoundException {
-        if (mGoogleManagedItems == null) {
+    public static NonConsumableItem getNonConsumableByProductId(String productId) throws VirtualItemNotFoundException {
+        if (mNonConsumableItems == null) {
             if (!initializeFromDB()) {
                 Log.e(TAG, "Can't initialize StoreInfo !");
                 return null;
             }
         }
 
-        for (GoogleMarketItem gmi : mGoogleManagedItems){
-            if (gmi.getProductId().equals(productId)){
-                return gmi;
+        for (NonConsumableItem non : mNonConsumableItems){
+            if (non.getProductId().equals(productId)){
+                return non;
             }
         }
 
@@ -307,15 +315,15 @@ public class StoreInfo {
         return mVirtualCategories;
     }
 
-    public static List<GoogleMarketItem> getGoogleManagedItems() {
-        if (mGoogleManagedItems == null) {
+    public static List<NonConsumableItem> getNonConsumableItems() {
+        if (mNonConsumableItems == null) {
             if (!initializeFromDB()) {
                 Log.e(TAG, "Can't initialize StoreInfo !");
                 return null;
             }
         }
 
-        return mGoogleManagedItems;
+        return mNonConsumableItems;
     }
 
     /** Private functions **/
@@ -350,10 +358,10 @@ public class StoreInfo {
         }
 
         JSONArray googleManagedItems = jsonObject.getJSONArray(JSONConsts.STORE_GOOGLEMANAGED);
-        mGoogleManagedItems = new LinkedList<GoogleMarketItem>();
+        mNonConsumableItems = new LinkedList<NonConsumableItem>();
         for (int i=0; i<googleManagedItems.length(); i++){
             JSONObject o = googleManagedItems.getJSONObject(i);
-            mGoogleManagedItems.add(new GoogleMarketItem(o));
+            mNonConsumableItems.add(new NonConsumableItem(o));
         }
     }
 
@@ -389,9 +397,9 @@ public class StoreInfo {
             virtualGoods.put(good.toJSONObject());
         }
 
-        JSONArray googleManagedItems = new JSONArray();
-        for(GoogleMarketItem gmi : mGoogleManagedItems){
-            googleManagedItems.put(gmi.toJSONObject());
+        JSONArray nonConsumableItems = new JSONArray();
+        for(NonConsumableItem non : mNonConsumableItems){
+            nonConsumableItems.put(non.toJSONObject());
         }
 
         JSONObject jsonObject = new JSONObject();
@@ -400,7 +408,7 @@ public class StoreInfo {
             jsonObject.put(JSONConsts.STORE_VIRTUALCURRENCIES, virtualCurrencies);
             jsonObject.put(JSONConsts.STORE_VIRTUALGOODS, virtualGoods);
             jsonObject.put(JSONConsts.STORE_CURRENCYPACKS, currencyPacks);
-            jsonObject.put(JSONConsts.STORE_GOOGLEMANAGED, googleManagedItems);
+            jsonObject.put(JSONConsts.STORE_GOOGLEMANAGED, nonConsumableItems);
         } catch (JSONException e) {
             if (StoreConfig.debug){
                 Log.d(TAG, "An error occurred while generating JSON object.");
@@ -418,5 +426,5 @@ public class StoreInfo {
     private static List<VirtualCurrencyPack>               mVirtualCurrencyPacks;
     private static List<VirtualGood>                       mVirtualGoods;
     private static List<VirtualCategory>                   mVirtualCategories;
-    private static List<GoogleMarketItem>                  mGoogleManagedItems;
+    private static List<NonConsumableItem>                 mNonConsumableItems;
 }

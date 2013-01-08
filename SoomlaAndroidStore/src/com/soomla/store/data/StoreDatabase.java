@@ -17,9 +17,11 @@ package com.soomla.store.data;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import com.soomla.store.SoomlaApp;
 import com.soomla.store.StoreConfig;
 
 /**
@@ -36,7 +38,16 @@ public class StoreDatabase {
         mDatabaseHelper = new DatabaseHelper(context);
         mStoreDB = mDatabaseHelper.getWritableDatabase();
 
-        if (StoreConfig.DB_VOLATILE_METADATA) {
+        SharedPreferences prefs = new ObscuredSharedPreferences(SoomlaApp.getAppContext(), SoomlaApp.getAppContext().getSharedPreferences(StoreConfig.PREFS_NAME, Context.MODE_PRIVATE));
+        int mt_ver = prefs.getInt("MT_VER", 0);
+        int sa_ver_old = prefs.getInt("SA_VER_OLD", 0);
+        int sa_ver_new = prefs.getInt("SA_VER_NEW", 0);
+        if (mt_ver < StoreConfig.METADATA_VERSION && sa_ver_old < sa_ver_new ) {
+            SharedPreferences.Editor edit = prefs.edit();
+            edit.putInt("MT_VER", StoreConfig.METADATA_VERSION);
+            edit.putInt("SA_VER_OLD", sa_ver_new);
+            edit.commit();
+
             mStoreDB.execSQL("drop table IF EXISTS " + METADATA_TABLE_NAME);
             createDatabaseTables(mStoreDB);
         }

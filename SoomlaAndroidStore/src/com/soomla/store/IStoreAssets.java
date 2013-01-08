@@ -24,6 +24,18 @@ import com.soomla.store.domain.data.*;
  */
 public interface IStoreAssets {
     /**
+     * This value will determine if the saved data in the database will be deleted or not.
+     * Bump the version every time you want to delete the old data in the DB.
+     * If you don't bump this value, you won't be able to see changes you've made to the objects in this file.
+     *
+     * For example: If you previously created a VirtualGood with name "Hat" and you published your application,
+     * the name "Hat will be saved in any of your users' databases. If you want to change the name to "Green Hat"
+     * than you'll also have to bump the version (from 0 to 1). Now the new "Green Hat" name will replace the old one.
+     * @return the version of your specific IStoreAssets.
+     */
+    int getVersion();
+
+    /**
      * A representation of your game's virtual currency.
      * @return a representation of your game's virtual currency.
      */
@@ -50,12 +62,12 @@ public interface IStoreAssets {
     VirtualCategory[] getVirtualCategories();
 
     /**
-     * You can define managed items that you'd like to use for your needs.
-     * UNMANAGED items are usually just currency packs. If you use SOOMLA's storefront, it'll take care of
-     * the UNMANAGED for you in the UI.
-     * MANAGED items are usually used to let users purchase a "no-ads" token.
+     * You can define non consumable items that you'd like to use for your needs.
+     * CONSUMABLE (or UNMANAGED) items are usually just currency packs. If you use SOOMLA's storefront, it'll take care of
+     * the consumables for you in the UI.
+     * NON-CONSUMABLE (or MANAGED) items are usually used to let users purchase a "no-ads" token.
      * Make sure you set the type of the items you add here as Managed.MANAGED.
-     * @return an array of all managed served in your game.
+     * @return an array of all non-consumables served in your game.
      */
-    GoogleMarketItem[] getGoogleManagedItems();
+    NonConsumableItem[] getNonConsumableItems();
 }

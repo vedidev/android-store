@@ -32,11 +32,13 @@ public class GoogleMarketItem {
      *
      * @param mProductId is the Id of the current item in Google Play.
      * @param mManaged is the Managed type of the current item in Google Play.
+     * @param mPrice is the actual $$ cost of the current item in Google Play.
      */
-    public GoogleMarketItem(String mProductId, Managed mManaged) {
+    public GoogleMarketItem(String mProductId, Managed mManaged, double mPrice) {
 
         this.mProductId = mProductId;
         this.mManaged = mManaged;
+        this.mPrice = mPrice;
     }
 
     /** Constructor
@@ -46,8 +48,13 @@ public class GoogleMarketItem {
      * @throws JSONException
      */
     public GoogleMarketItem(JSONObject jsonObject) throws JSONException {
-        this.mManaged = Managed.valueOf(jsonObject.getString(JSONConsts.GOOGLEMANAGED_MANAGED));
+        if (jsonObject.has(JSONConsts.GOOGLEMANAGED_MANAGED)) {
+            this.mManaged = Managed.valueOf(jsonObject.getString(JSONConsts.GOOGLEMANAGED_MANAGED));
+        } else {
+            this.mManaged = Managed.UNMANAGED;
+        }
         this.mProductId = jsonObject.getString(JSONConsts.GOOGLEMANAGED_PRODUCT_ID);
+        this.mPrice = jsonObject.getDouble(JSONConsts.GOOGLEMANAGED_PRICE);
     }
 
     public JSONObject toJSONObject(){
@@ -55,6 +62,7 @@ public class GoogleMarketItem {
         try {
             jsonObject.put(JSONConsts.GOOGLEMANAGED_MANAGED, mManaged.name());
             jsonObject.put(JSONConsts.GOOGLEMANAGED_PRODUCT_ID, mProductId);
+            jsonObject.put(JSONConsts.GOOGLEMANAGED_PRICE, new Double(mPrice));
         } catch (JSONException e) {
             if (StoreConfig.debug){
                 Log.d(TAG, "An error occured while generating JSON object.");
@@ -72,6 +80,14 @@ public class GoogleMarketItem {
 
     public Managed getManaged() {
         return mManaged;
+    }
+
+    public void setManaged(Managed managed) {
+        this.mManaged = managed;
+    }
+
+    public double getPrice() {
+        return mPrice;
     }
 
     /** Private members **/
@@ -97,4 +113,5 @@ public class GoogleMarketItem {
     private static final String TAG = "SOOMLA GoogleMarketItem";
 
     private String mProductId;
+    private double mPrice;
 }
