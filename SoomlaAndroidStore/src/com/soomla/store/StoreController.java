@@ -289,8 +289,8 @@ public class StoreController extends PurchaseObserver {
             }
 
             if (purchaseState == Consts.PurchaseState.REFUNDED){
-                // You can decrease the balance here ... SOOMLA believes in friendly refunds.
-                // A friendly refund policy is nicer for the user.
+                StorageManager.getVirtualCurrencyStorage().remove(
+                        pack.getVirtualCurrency(), pack.getCurrencyAmount());
             }
 
         } catch (VirtualItemNotFoundException e) {

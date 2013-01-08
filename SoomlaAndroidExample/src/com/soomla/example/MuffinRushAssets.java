@@ -167,7 +167,7 @@ public class MuffinRushAssets implements IStoreAssets {
 
     public static final NonConsumableItem NO_ADDS_NONCONS  = new NonConsumableItem(
             "No Ads",
-            "",
+            "Test purchase of MANAGED item.",
             "no_ads",
             NO_ADDS_NONCONS_PRODUCT_ID,
             1.99

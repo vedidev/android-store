@@ -10,7 +10,7 @@ import android.widget.*;
 import com.soomla.store.BusProvider;
 import com.soomla.store.StoreController;
 import com.soomla.store.data.StorageManager;
-import com.soomla.store.domain.data.GoogleMarketItem;
+import com.soomla.store.domain.data.NonConsumableItem;
 import com.soomla.store.domain.data.VirtualCurrencyPack;
 import com.soomla.store.events.CurrencyBalanceChangedEvent;
 import com.soomla.store.exceptions.VirtualItemNotFoundException;
@@ -26,7 +26,7 @@ public class StorePacksActivity extends Activity {
 
     static final String KEY_THUMB        = "thumb_url";
     static final String KEY_PACK         = "virtual_pack";
-    static final String KEY_GOOGLE_ITEM  = "google_market_item";
+    static final String KEY_NON_CONSUMABLE = "non_consumable";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,9 +80,9 @@ public class StorePacksActivity extends Activity {
                     }
                 } else {
                     // purchasing a MANAGED item
-                    GoogleMarketItem gmi = (GoogleMarketItem) item.get(StorePacksActivity.KEY_GOOGLE_ITEM);
+                    NonConsumableItem non = (NonConsumableItem) item.get(StorePacksActivity.KEY_NON_CONSUMABLE);
                     try {
-                        StoreController.getInstance().buyGoogleMarketItem(gmi.getProductId());
+                        StoreController.getInstance().buyGoogleMarketItem(non.getProductId());
                     } catch (VirtualItemNotFoundException e) {
                         AlertDialog ad = new AlertDialog.Builder(activity).create();
                         ad.setCancelable(false); // This blocks the 'BACK' button
@@ -129,9 +129,10 @@ public class StorePacksActivity extends Activity {
         final ArrayList<HashMap<String, Object>> data = new ArrayList<HashMap<String, Object>>();
         HashMap<String, Object> item = new HashMap<String, Object>();
 
-        item.put(StorePacksActivity.KEY_GOOGLE_ITEM, MuffinRushAssets.NO_ADDS_NONCONS);
+        item.put(StorePacksActivity.KEY_NON_CONSUMABLE, MuffinRushAssets.NO_ADDS_NONCONS);
         item.put(StorePacksActivity.KEY_THUMB, R.drawable.no_ads);
         data.add(item);
+        item = new HashMap<String, Object>();
         item.put(StorePacksActivity.KEY_PACK, MuffinRushAssets.TENMUFF_PACK);
         item.put(StorePacksActivity.KEY_THUMB, R.drawable.muffins01);
         data.add(item);
@@ -194,8 +195,9 @@ public class StorePacksActivity extends Activity {
                 info.setText("price: $" + pack.getPrice());
                 thumb_image.setImageResource((Integer)mData.get(position).get(KEY_THUMB));
             } else {
-                title.setText("Remove Ads!");
-                content.setText("Test purchase of MANAGED item.");
+                NonConsumableItem nonConsumableItem = (NonConsumableItem) item.get(StorePacksActivity.KEY_NON_CONSUMABLE);
+                title.setText(nonConsumableItem.getName());
+                content.setText(nonConsumableItem.getDescription());
                 info.setText("");
                 thumb_image.setImageResource((Integer)mData.get(position).get(KEY_THUMB));
             }
