@@ -49,8 +49,8 @@ public class StoreInfo {
      * is being loaded from the given {@link IStoreAssets}. After the first initialization,
      * StoreInfo will be initialized from the database.
      * NOTE: If you want to override the current StoreInfo, you'll have to bump the
-     * database version (the old database will be destroyed) OR just call StorageManager.deleteMetadata()
-     * before you initialize StoreController in order to always remove the metadata when the application loads.
+     * database version (the old database will be destroyed) OR just bump the version of your implementation of IStoreAssets
+     * in order to remove the metadata when the application loads.
      */
     public static void setStoreAssets(IStoreAssets storeAssets){
         if (storeAssets == null){
