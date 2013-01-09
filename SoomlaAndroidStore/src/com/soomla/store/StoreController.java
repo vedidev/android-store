@@ -78,6 +78,7 @@ public class StoreController extends PurchaseObserver {
             Log.e(TAG, "customSecret is null or empty. can't initialize store !!");
             return;
         }
+        edit.putInt("SA_VER_NEW", storeAssets.getVersion());
         edit.commit();
 
         if (storeAssets != null) {
@@ -301,11 +302,11 @@ public class StoreController extends PurchaseObserver {
 
                 // updating the non consumable item
                 if (purchaseState == Consts.PurchaseState.PURCHASED) {
-                    StorageManager.getGoogleManagedItemsStorage().add(nonConsumableItem);
+                    StorageManager.getNonConsumableItemsStorage().add(nonConsumableItem);
                 }
 
                 if (purchaseState == Consts.PurchaseState.REFUNDED){
-                    StorageManager.getGoogleManagedItemsStorage().remove(nonConsumableItem);
+                    StorageManager.getNonConsumableItemsStorage().remove(nonConsumableItem);
                 }
 
             } catch (VirtualItemNotFoundException e1) {

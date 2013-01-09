@@ -60,10 +60,6 @@ public class StoreInfo {
 
         // we prefer initialization from the database (storeAssets are only set on the first time the game is loaded)!
         if (!initializeFromDB()){
-            SharedPreferences prefs = new ObscuredSharedPreferences(SoomlaApp.getAppContext(), SoomlaApp.getAppContext().getSharedPreferences(StoreConfig.PREFS_NAME, Context.MODE_PRIVATE));
-            SharedPreferences.Editor edit = prefs.edit();
-            edit.putInt("SA_VER_NEW", storeAssets.getVersion());
-            edit.commit();
 
             /// fall-back here if the json doesn't exist, we load the store from the given {@link IStoreAssets}.
             mVirtualCategories    = Arrays.asList(storeAssets.getVirtualCategories());
