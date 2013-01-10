@@ -21,6 +21,8 @@ import com.soomla.store.data.JSONConsts;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.EnumSet;
+
 /**
  * This class is a definition of a category. A single category can be associated with many virtual goods.
  * The purposes of virtual category are:
@@ -33,10 +35,12 @@ public class VirtualCategory {
      *
      * @param mName is the category's name.
      * @param mId is the category's unique id.
+     * @param mEquippingModel is the equipping model for this category.
      */
-    public VirtualCategory(String mName, int mId) {
+    public VirtualCategory(String mName, int mId, EquippingModel mEquippingModel) {
         this.mName = mName;
         this.mId = mId;
+        this.mEquippingModel = mEquippingModel;
     }
 
     /** Constructor
@@ -48,6 +52,7 @@ public class VirtualCategory {
     public VirtualCategory(JSONObject jsonObject) throws JSONException{
         this.mName = jsonObject.getString(JSONConsts.CATEGORY_NAME);
         this.mId   = jsonObject.getInt(JSONConsts.CATEGORY_ID);
+        this.mEquippingModel = EquippingModel.fromString(jsonObject.getString(JSONConsts.CATEGORY_EQUIPPING));
     }
 
     /**
@@ -59,6 +64,7 @@ public class VirtualCategory {
         try {
             jsonObject.put(JSONConsts.CATEGORY_NAME, mName);
             jsonObject.put(JSONConsts.CATEGORY_ID, mId);
+            jsonObject.put(JSONConsts.CATEGORY_EQUIPPING, mEquippingModel.toString());
         } catch (JSONException e) {
             if (StoreConfig.debug){
                 Log.d(TAG, "An error occurred while generating JSON object.");
@@ -76,10 +82,44 @@ public class VirtualCategory {
         return mName;
     }
 
+    public EquippingModel getEquippingModel() {
+        return mEquippingModel;
+    }
+
+    /**
+     * EquippingModel is the way VirtualGoods are equipped inside the current category.
+     * NONE - Can't equip virtual goods.
+     * SINGLE - Only one virtual good can be equipped at any given time in the game.
+     * MULTIPLE - Many virtual goods can be equipped at any given time in the game.
+     */
+    public static enum EquippingModel {
+        NONE("none"), SINGLE("single"), MULTIPLE("multiple");
+
+        private EquippingModel(final String em) {
+            this.mEm = em;
+        }
+
+        private final String mEm;
+
+        public String toString() {
+            return mEm;
+        }
+
+        public static EquippingModel fromString(String em) {
+            for (final EquippingModel element : EnumSet.allOf(EquippingModel.class)) {
+                if (element.toString().equals(em)) {
+                    return element;
+                }
+            }
+            return null;
+        }
+    }
+
     /** Private members **/
 
     private static final String TAG = "SOOMLA VirtualCategory";
 
     private String  mName;
     private int     mId;
+    private EquippingModel mEquippingModel;
 }

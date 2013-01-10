@@ -23,6 +23,7 @@ public class StoreConfig {
     /* CHANGE THIS SECRET NOW ! */
     public static String SOOM_SEC = "SINC_SSEEKK";
 
+
     // do you want to print out debug messages?
     public static final boolean debug = true;
 
@@ -31,7 +32,7 @@ public class StoreConfig {
 
     // ***NEVER*** CHANGE THE VALUE FOR THIS VARIABLE !!!
     // This value defines the version of the metadata located in your database.
-    public static final int METADATA_VERSION = 1;
+    public static final int METADATA_VERSION = 2;
 
     /*
     if this is true than the database will be deleted whenever the application loads.

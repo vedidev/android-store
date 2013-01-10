@@ -61,7 +61,7 @@ public class MuffinRushAssets implements IStoreAssets {
     /** Virtual Categories **/
     // The muffin rush theme doesn't support categories, so we just put everything under a general category.
     public static final VirtualCategory GENERAL_CATEGORY = new VirtualCategory(
-            "General", 0
+            "General", 0, VirtualCategory.EquippingModel.NONE
     );
 
     /** Virtual Currencies **/
