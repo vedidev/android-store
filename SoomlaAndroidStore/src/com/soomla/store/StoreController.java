@@ -182,6 +182,16 @@ public class StoreController extends PurchaseObserver {
         // if the user has enough, the virtual good is purchased.
         if (StorageManager.getVirtualGoodsStorage().getBalance(good) > 0){
             StorageManager.getVirtualGoodsStorage().equip(good, true);
+
+            // if the category allows only one virtual good to be equipped at any given time, remove the other
+            // equipped virtual good.
+            if (good.getCategory().getEquippingModel() == VirtualCategory.EquippingModel.SINGLE) {
+                for(VirtualGood g : StoreInfo.getVirtualGoods()) {
+                    if (g.getCategory().equals(good.getCategory()) && !g.equals(good)) {
+                        StorageManager.getVirtualGoodsStorage().equip(g, false);
+                    }
+                }
+            }
         }
         else {
             throw new NotEnoughGoodsException(itemId);

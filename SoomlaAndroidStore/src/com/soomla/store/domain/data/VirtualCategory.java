@@ -115,6 +115,22 @@ public class VirtualCategory {
         }
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        VirtualCategory that = (VirtualCategory) o;
+
+        return mId == that.mId;
+
+    }
+
+    @Override
+    public int hashCode() {
+        return mId;
+    }
+
     /** Private members **/
 
     private static final String TAG = "SOOMLA VirtualCategory";

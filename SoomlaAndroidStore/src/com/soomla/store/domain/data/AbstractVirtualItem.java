@@ -70,6 +70,21 @@ public abstract class AbstractVirtualItem {
         return jsonObject;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof AbstractVirtualItem)) return false;
+
+        AbstractVirtualItem that = (AbstractVirtualItem) o;
+
+        return mItemId.equals(that.mItemId);
+    }
+
+    @Override
+    public int hashCode() {
+        return mItemId != null ? mItemId.hashCode() : 0;
+    }
+
     /** Getters **/
 
     public String getName() {
