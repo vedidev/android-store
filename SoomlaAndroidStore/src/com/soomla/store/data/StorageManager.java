@@ -119,6 +119,10 @@ public class StorageManager {
     /** This code will be removed in the next version of android-store. Along with the StoreDatabase itself.**/
 
     private static void migrateOldData() {
+        if (mOldDataMigrated) {
+            return;
+        }
+
         if (!StoreDatabase.checkDataBaseExists(SoomlaApp.getAppContext())) {
             if (StoreConfig.debug) {
                 Log.d(TAG, "Old store database doesn't exist. Nothing to migrate.");
