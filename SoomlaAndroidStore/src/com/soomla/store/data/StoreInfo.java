@@ -70,61 +70,58 @@ public class StoreInfo {
 
             // put StoreInfo in the database as JSON
             String store_json = toJSONObject().toString();
+            String key = KeyValDatabase.keyMetaStoreInfo();
             if (StorageManager.getObfuscator() != null){
                 store_json = StorageManager.getObfuscator().obfuscateString(store_json);
+                key = StorageManager.getObfuscator().obfuscateString(key);
             }
-            StorageManager.getDatabase().setStoreInfo(store_json);
+            StorageManager.getDatabase().setKeyVal(key, store_json);
         }
     }
 
     public static boolean initializeFromDB() {
         // first, trying to load StoreInfo from the local DB.
-        Cursor cursor = StorageManager.getDatabase().getMetaData();
-        if (cursor != null) {
-            String storejson = "";
-            try {
-                int storeVal = cursor.getColumnIndexOrThrow(
-                        StoreDatabase.METADATA_COLUMN_STOREINFO);
-                if (cursor.moveToNext()) {
-                    storejson = cursor.getString(storeVal);
+        String key = KeyValDatabase.keyMetaStoreInfo();
+        if (StorageManager.getObfuscator() != null){
+            key = StorageManager.getObfuscator().obfuscateString(key);
+        }
+        String val = StorageManager.getDatabase().getKeyVal(key);
 
-                    if (TextUtils.isEmpty(storejson)){
-                        if (StoreConfig.debug){
-                            Log.d(TAG, "store json is not in DB yet ");
-                        }
-                        return false;
-                    }
-
-                    if (StorageManager.getObfuscator() != null){
-                        storejson = StorageManager.getObfuscator().unobfuscateToString(storejson);
-                    }
-
-                    if (StoreConfig.debug){
-                        Log.d(TAG, "the metadata json (from DB) is " + storejson);
-                    }
-                }
-            } catch (AESObfuscator.ValidationException e) {
-                e.printStackTrace();
-            } finally {
-                cursor.close();
+        if (val == null && TextUtils.isEmpty(val)){
+            if (StoreConfig.debug){
+                Log.d(TAG, "store json is not in DB yet ");
             }
+            return false;
+        }
 
-            if (!TextUtils.isEmpty(storejson)){
-                try {
-                    fromJSONObject(new JSONObject(storejson));
-
-                    // everything went well... StoreInfo is initialized from the local DB.
-                    // it's ok to return now.
-                    return true;
-                } catch (JSONException e) {
-                    if (StoreConfig.debug){
-                        Log.d(TAG, "Can't parse metadata json. Going to return false and make " +
-                                "StoreInfo load from static data.: " + storejson);
-                    }
-                }
+        if (StorageManager.getObfuscator() != null){
+            try {
+                val = StorageManager.getObfuscator().unobfuscateToString(val);
+            } catch (AESObfuscator.ValidationException e) {
+                Log.e(TAG, e.getMessage());
+                return false;
             }
         }
+
+        if (StoreConfig.debug){
+            Log.d(TAG, "the metadata json (from DB) is " + val);
+        }
+
+        try {
+            fromJSONObject(new JSONObject(val));
+
+            // everything went well... StoreInfo is initialized from the local DB.
+            // it's ok to return now.
+            return true;
+        } catch (JSONException e) {
+            if (StoreConfig.debug){
+                Log.d(TAG, "Can't parse metadata json. Going to return false and make " +
+                        "StoreInfo load from static data.: " + val);
+            }
+        }
+
         return false;
+
     }
 
     /**

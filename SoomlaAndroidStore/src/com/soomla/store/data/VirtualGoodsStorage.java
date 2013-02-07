@@ -49,40 +49,30 @@ public class VirtualGoodsStorage {
             Log.d(TAG, "trying to fetch balance for virtual good with itemId: " + virtualGood.getItemId());
         }
         String itemId = virtualGood.getItemId();
+        String key = KeyValDatabase.keyGoodBalance(itemId);
         if (StorageManager.getObfuscator() != null){
-            itemId = StorageManager.getObfuscator().obfuscateString(itemId);
+            key = StorageManager.getObfuscator().obfuscateString(key);
         }
-        Cursor cursor = StorageManager.getDatabase().getVirtualGood(itemId);
+        String val = StorageManager.getDatabase().getKeyVal(key);
 
-        if (cursor == null) {
-            return 0;
-        }
-
-        try {
-            int balanceCol = cursor.getColumnIndexOrThrow(
-                    StoreDatabase.VIRTUAL_GOODS_COLUMN_BALANCE);
-            if (cursor.moveToNext()) {
-                String balanceStr = cursor.getString(balanceCol);
-                int balance;
-                if (StorageManager.getObfuscator() != null){
-                    balance = StorageManager.getObfuscator().unobfuscateToInt(balanceStr);
+        int balance = 0;
+        if (val != null) {
+            if (StorageManager.getObfuscator() != null){
+                try {
+                    balance = StorageManager.getObfuscator().unobfuscateToInt(val);
+                } catch (AESObfuscator.ValidationException e) {
+                    Log.e(TAG, e.getMessage());
                 }
-                else {
-                    balance = Integer.parseInt(balanceStr);
-                }
-
-                if (StoreConfig.debug){
-                    Log.d(TAG, "the balance for " + virtualGood.getItemId() + " is " + balance);
-                }
-                return balance;
             }
-        } catch (AESObfuscator.ValidationException e) {
-            e.printStackTrace();
-        } finally {
-            cursor.close();
+            else {
+                balance = Integer.parseInt(val);
+            }
         }
 
-        return 0;
+        if (StoreConfig.debug){
+            Log.d(TAG, "the balance for " + virtualGood.getItemId() + " is " + balance);
+        }
+        return balance;
 	}
 
 
@@ -100,11 +90,12 @@ public class VirtualGoodsStorage {
         String itemId = virtualGood.getItemId();
         int balance = getBalance(virtualGood);
         String balanceStr = "" + (balance + amount);
+        String key = KeyValDatabase.keyGoodBalance(itemId);
         if (StorageManager.getObfuscator() != null){
             balanceStr = StorageManager.getObfuscator().obfuscateString(balanceStr);
-            itemId      = StorageManager.getObfuscator().obfuscateString(itemId);
+            key      = StorageManager.getObfuscator().obfuscateString(key);
         }
-        StorageManager.getDatabase().updateVirtualGoodBalance(itemId, balanceStr);
+        StorageManager.getDatabase().setKeyVal(key, balanceStr);
 
         BusProvider.getInstance().post(new GoodBalanceChangedEvent(virtualGood, balance+amount));
 
@@ -125,11 +116,12 @@ public class VirtualGoodsStorage {
         int balance = getBalance(virtualGood) - amount;
         balance = balance > 0 ? balance : 0;
         String balanceStr = "" + balance;
+        String key = KeyValDatabase.keyGoodBalance(itemId);
         if (StorageManager.getObfuscator() != null){
             balanceStr = StorageManager.getObfuscator().obfuscateString(balanceStr);
-            itemId      = StorageManager.getObfuscator().obfuscateString(itemId);
+            key      = StorageManager.getObfuscator().obfuscateString(key);
         }
-        StorageManager.getDatabase().updateVirtualGoodBalance(itemId, balanceStr);
+        StorageManager.getDatabase().setKeyVal(key, balanceStr);
 
         BusProvider.getInstance().post(new GoodBalanceChangedEvent(virtualGood, balance));
 
@@ -141,29 +133,13 @@ public class VirtualGoodsStorage {
             Log.d(TAG, "checking if virtual good with itemId: " + virtualGood.getItemId() + " is equipped.");
         }
         String itemId = virtualGood.getItemId();
+        String key = KeyValDatabase.keyGoodEquipped(itemId);
         if (StorageManager.getObfuscator() != null){
-            itemId = StorageManager.getObfuscator().obfuscateString(itemId);
+            key = StorageManager.getObfuscator().obfuscateString(key);
         }
-        Cursor cursor = StorageManager.getDatabase().getVirtualGood(itemId);
+        String val = StorageManager.getDatabase().getKeyVal(key);
 
-        if (cursor == null) {
-            return false;
-        }
-
-        int equipCol = cursor.getColumnIndexOrThrow(
-                StoreDatabase.VIRTUAL_GOODS_COLUMN_EQUIPPED);
-        if (cursor.moveToNext()) {
-            boolean equipped = cursor.getInt(equipCol) > 0;
-
-            if (StoreConfig.debug){
-                Log.d(TAG, "equipped status for " + virtualGood.getItemId() + " is " + equipped);
-            }
-            return equipped;
-        }
-        cursor.close();
-
-
-        return false;
+        return val != null;
     }
 
     public void equip(VirtualGood virtualGood, boolean equip){
@@ -172,15 +148,16 @@ public class VirtualGoodsStorage {
         }
 
         String itemId = virtualGood.getItemId();
+        String key = KeyValDatabase.keyGoodEquipped(itemId);
         if (StorageManager.getObfuscator() != null){
-            itemId = StorageManager.getObfuscator().obfuscateString(itemId);
+            key = StorageManager.getObfuscator().obfuscateString(key);
         }
 
-        StorageManager.getDatabase().updateVirtualGoodEquip(itemId, equip);
-
         if (equip) {
+            StorageManager.getDatabase().setKeyVal(key, "");
             BusProvider.getInstance().post(new VirtualGoodEquippedEvent(virtualGood));
         } else {
+            StorageManager.getDatabase().deleteKeyVal(key);
             BusProvider.getInstance().post(new VirtualGoodUnEquippedEvent(virtualGood));
         }
     }

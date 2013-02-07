@@ -35,4 +35,32 @@ public class AndroidBus extends Bus {
             });
         }
     }
+
+    @Override
+    public void register(final Object object) {
+        if (Looper.myLooper() == Looper.getMainLooper()) {
+            super.register(object);
+        } else {
+            mainThread.post(new Runnable() {
+                @Override
+                public void run() {
+                    register(object);
+                }
+            });
+        }
+    }
+
+    @Override
+    public void unregister(final Object object) {
+        if (Looper.myLooper() == Looper.getMainLooper()) {
+            super.unregister(object);
+        } else {
+            mainThread.post(new Runnable() {
+                @Override
+                public void run() {
+                    unregister(object);
+                }
+            });
+        }
+    }
 }

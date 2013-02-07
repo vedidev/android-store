@@ -17,6 +17,7 @@
 package com.soomla.store.data;
 
 import android.database.Cursor;
+import android.text.TextUtils;
 import android.util.Log;
 import com.soomla.billing.util.AESObfuscator;
 import com.soomla.store.StoreConfig;
@@ -46,33 +47,22 @@ public class KeyValueStorage {
             key = StorageManager.getObfuscator().obfuscateString(key);
         }
 
-        Cursor cursor = StorageManager.getDatabase().getKeyValVal(key);
+        String val = StorageManager.getDatabase().getKeyVal(key);
 
-        if (cursor == null) {
-            return "";
-        }
-
-        try {
-            int valCol = cursor.getColumnIndexOrThrow(
-                    StoreDatabase.KEYVAL_COLUMN_VAL);
-            if (cursor.moveToNext()) {
-                String valStr = cursor.getString(valCol);
-                if (StorageManager.getObfuscator() != null){
-                    valStr = StorageManager.getObfuscator().unobfuscateToString(valStr);
+        if (val != null && !TextUtils.isEmpty(val)) {
+            if (StorageManager.getObfuscator() != null){
+                try {
+                    val = StorageManager.getObfuscator().unobfuscateToString(val);
+                } catch (AESObfuscator.ValidationException e) {
+                    Log.e(TAG, e.getMessage());
                 }
-
-                if (StoreConfig.debug){
-                    Log.d(TAG, "the fetched value is " + valStr);
-                }
-                return valStr;
             }
-        } catch (AESObfuscator.ValidationException e) {
-            e.printStackTrace();
-        } finally {
-            cursor.close();
-        }
 
-        return "";
+            if (StoreConfig.debug){
+                Log.d(TAG, "the fetched value is " + val);
+            }
+        }
+        return val;
     }
 
     /**
@@ -90,7 +80,7 @@ public class KeyValueStorage {
             val = StorageManager.getObfuscator().obfuscateString(val);
         }
 
-        StorageManager.getDatabase().setKeyValVal(key, val);
+        StorageManager.getDatabase().setKeyVal(key, val);
     }
 
 

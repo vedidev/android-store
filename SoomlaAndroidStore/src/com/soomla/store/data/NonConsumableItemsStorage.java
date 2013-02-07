@@ -16,7 +16,6 @@
 
 package com.soomla.store.data;
 
-import android.database.Cursor;
 import android.util.Log;
 import com.soomla.store.StoreConfig;
 import com.soomla.store.domain.data.NonConsumableItem;
@@ -46,28 +45,13 @@ public class NonConsumableItemsStorage {
         }
 
         String productId = nonConsumableItem.getProductId();
+        String key = KeyValDatabase.keyNonConsExists(productId);
         if (StorageManager.getObfuscator() != null){
-            productId = StorageManager.getObfuscator().obfuscateString(productId);
+            key = StorageManager.getObfuscator().obfuscateString(key);
         }
-        Cursor cursor = StorageManager.getDatabase().getGoogleManagedItem(productId);
+        String val = StorageManager.getDatabase().getKeyVal(key);
 
-        if (cursor == null) {
-            return false;
-        }
-
-        int productIdCol = cursor.getColumnIndexOrThrow(
-                    StoreDatabase.GOOGLE_MANAGED_ITEMS_COLUMN_PRODUCT_ID);
-        if (cursor.moveToNext()) {
-            if (StoreConfig.debug){
-                Log.d(TAG, "the google managed item exists: " + nonConsumableItem.getProductId());
-            }
-
-            cursor.close();
-            return true;
-        }
-
-        cursor.close();
-        return false;
+        return val != null;
     }
 
     /**
@@ -80,10 +64,11 @@ public class NonConsumableItemsStorage {
         }
 
         String productId = nonConsumableItem.getProductId();
+        String key = KeyValDatabase.keyNonConsExists(productId);
         if (StorageManager.getObfuscator() != null){
-            productId = StorageManager.getObfuscator().obfuscateString(productId);
+            key = StorageManager.getObfuscator().obfuscateString(key);
         }
-        StorageManager.getDatabase().setGoogleManagedItem(productId, true);
+        StorageManager.getDatabase().setKeyVal(key, "");
     }
 
     /**
@@ -96,10 +81,11 @@ public class NonConsumableItemsStorage {
         }
 
         String productId = nonConsumableItem.getProductId();
+        String key = KeyValDatabase.keyNonConsExists(productId);
         if (StorageManager.getObfuscator() != null){
-            productId = StorageManager.getObfuscator().obfuscateString(productId);
+            key = StorageManager.getObfuscator().obfuscateString(key);
         }
-        StorageManager.getDatabase().setGoogleManagedItem(productId, false);
+        StorageManager.getDatabase().deleteKeyVal(key);
     }
 
     /** Private members **/

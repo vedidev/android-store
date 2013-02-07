@@ -52,54 +52,49 @@ public class StorefrontInfo {
         if (!initializeFromDB()) {
             // if the json doesn't already exist in the database, we load it into the DB here.
             mStorefrontJSON = storefrontJSON;
+            String key = KeyValDatabase.keyMetaStorefrontInfo();
             if (StorageManager.getObfuscator() != null){
                 storefrontJSON = StorageManager.getObfuscator().obfuscateString(storefrontJSON);
+                key = StorageManager.getObfuscator().obfuscateString(key);
             }
-            StorageManager.getDatabase().setStorefrontInfo(storefrontJSON);
+            StorageManager.getDatabase().setKeyVal(key, storefrontJSON);
 
             mInitialized = true;
         }
     }
 
     public boolean initializeFromDB() {
-        // first, trying to load StorefrontInfo from the local DB.
-        Cursor cursor = StorageManager.getDatabase().getMetaData();
-        if (cursor != null) {
+
+        String key = KeyValDatabase.keyMetaStorefrontInfo();
+        if (StorageManager.getObfuscator() != null){
+            key = StorageManager.getObfuscator().obfuscateString(key);
+        }
+
+        String val = StorageManager.getDatabase().getKeyVal(key);
+
+        if (val == null && TextUtils.isEmpty(val)){
+            if (StoreConfig.debug){
+                Log.d(TAG, "storefront json is not in DB yet ");
+            }
+            return false;
+        }
+
+        if (StorageManager.getObfuscator() != null){
             try {
-                int storefrontVal = cursor.getColumnIndexOrThrow(
-                        StoreDatabase.METADATA_COLUMN_STOREFRONTINFO);
-                if (cursor.moveToNext()) {
-                    mStorefrontJSON = cursor.getString(storefrontVal);
-                    if (TextUtils.isEmpty(mStorefrontJSON)){
-                        if (StoreConfig.debug){
-                            Log.d(TAG, "storefront json is not in DB yet ");
-                        }
-                        return false;
-                    }
-
-                    if (StorageManager.getObfuscator() != null){
-                        mStorefrontJSON = StorageManager.getObfuscator().unobfuscateToString(mStorefrontJSON);
-                    }
-
-                    if (StoreConfig.debug){
-                        Log.d(TAG, "the metadata json (from DB) is " + mStorefrontJSON);
-                    }
-
-//                    JSONObject jsonObject = new JSONObject(mStorefrontJSON);
-
-                    mInitialized = true;
-                    return true;
-                }
+                mStorefrontJSON = StorageManager.getObfuscator().unobfuscateToString(val);
             } catch (AESObfuscator.ValidationException e) {
-                if (StoreConfig.debug){
-                    Log.d(TAG, "can't obfuscate storefrontJSON.");
-                }
-            } finally {
-                cursor.close();
+                Log.e(TAG, e.getMessage());
+                return false;
             }
         }
 
-        return false;
+        if (StoreConfig.debug){
+            Log.d(TAG, "the metadata json (from DB) is " + mStorefrontJSON);
+        }
+
+        mInitialized = true;
+        return true;
+
     }
 
     public String getStorefrontJSON() {

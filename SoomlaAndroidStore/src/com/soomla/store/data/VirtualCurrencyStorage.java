@@ -48,40 +48,30 @@ public class VirtualCurrencyStorage {
         }
 
         String itemId = virtualCurrency.getItemId();
+        String key = KeyValDatabase.keyCurrencyBalance(itemId);
         if (StorageManager.getObfuscator() != null){
-            itemId = StorageManager.getObfuscator().obfuscateString(itemId);
-        }
-        Cursor cursor = StorageManager.getDatabase().getVirtualCurrency(itemId);
-
-        if (cursor == null) {
-            return 0;
+            key = StorageManager.getObfuscator().obfuscateString(key);
         }
 
-        try {
-            int balanceCol = cursor.getColumnIndexOrThrow(
-                    StoreDatabase.VIRTUAL_CURRENCY_COLUMN_BALANCE);
-            if (cursor.moveToNext()) {
-                String balanceStr = cursor.getString(balanceCol);
-                int balance;
-                if (StorageManager.getObfuscator() != null){
+        String balanceStr = StorageManager.getDatabase().getKeyVal(key);
+        int balance = 0;
+        if (balanceStr != null) {
+            if (StorageManager.getObfuscator() != null){
+                try {
                     balance = StorageManager.getObfuscator().unobfuscateToInt(balanceStr);
+                } catch (AESObfuscator.ValidationException e) {
+                    Log.e(TAG, e.getMessage());
                 }
-                else {
-                    balance = Integer.parseInt(balanceStr);
-                }
-
-                if (StoreConfig.debug){
-                    Log.d(TAG, "the currency balance is " + balance);
-                }
-                return balance;
             }
-        } catch (AESObfuscator.ValidationException e) {
-            e.printStackTrace();
-        } finally {
-            cursor.close();
+            else {
+                balance = Integer.parseInt(balanceStr);
+            }
         }
 
-        return 0;
+        if (StoreConfig.debug){
+            Log.d(TAG, "the currency balance is " + balance);
+        }
+        return balance;
     }
 
     /**
@@ -98,11 +88,12 @@ public class VirtualCurrencyStorage {
         int balance = getBalance(virtualCurrency);
         String balanceStr = "" + (balance + amount);
         String itemId = virtualCurrency.getItemId();
+        String key = KeyValDatabase.keyCurrencyBalance(itemId);
         if (StorageManager.getObfuscator() != null){
             balanceStr = StorageManager.getObfuscator().obfuscateString(balanceStr);
-            itemId      = StorageManager.getObfuscator().obfuscateString(itemId);
+            key      = StorageManager.getObfuscator().obfuscateString(key);
         }
-        StorageManager.getDatabase().updateVirtualCurrencyBalance(itemId, balanceStr);
+        StorageManager.getDatabase().setKeyVal(key, balanceStr);
 
         BusProvider.getInstance().post(new CurrencyBalanceChangedEvent(virtualCurrency, balance+amount));
 
@@ -123,11 +114,12 @@ public class VirtualCurrencyStorage {
         int balance = getBalance(virtualCurrency) - amount;
         balance = balance > 0 ? balance : 0;
         String balanceStr = "" + balance;
+        String key = KeyValDatabase.keyCurrencyBalance(itemId);
         if (StorageManager.getObfuscator() != null){
             balanceStr = StorageManager.getObfuscator().obfuscateString(balanceStr);
-            itemId      = StorageManager.getObfuscator().obfuscateString(itemId);
+            key      = StorageManager.getObfuscator().obfuscateString(key);
         }
-        StorageManager.getDatabase().updateVirtualCurrencyBalance(itemId, balanceStr);
+        StorageManager.getDatabase().setKeyVal(key, balanceStr);
 
         BusProvider.getInstance().post(new CurrencyBalanceChangedEvent(virtualCurrency, balance));
 

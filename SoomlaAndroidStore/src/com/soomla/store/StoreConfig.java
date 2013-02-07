@@ -45,16 +45,6 @@ public class StoreConfig {
      */
     public static final boolean DB_DELETE = false;
 
-    /*
-    this variable determines if the values in the database should be encrypted or not.
-    if you change this value to "false", anyone will be able to browse your sqlite file
-    and change the values of the currencies and balances.
-
-    SOOMLA RECOMMENDS YOU TO ***NEVER*** CHANGE THE VALUE FOR THIS VARIABLE !!!
-    (the only possible reason for you to want to even think of an insecure database is for debugging purposes)
-     */
-    public static final boolean DB_SECURE = true;
-
     /** Shared Preferences **/
     public static final String PREFS_NAME      = "store.prefs";
     public static final String DB_INITIALIZED  = "db_initialized";
