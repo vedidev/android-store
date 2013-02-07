@@ -23,7 +23,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 import com.soomla.store.StoreConfig;
 
 /**
- * The StoreDatabase provides basic SQLite database io functions for specific needs around the SDK.
+ * The KeyValDatabase provides basic key-value store above SQLite.
  */
 public class KeyValDatabase {
 
