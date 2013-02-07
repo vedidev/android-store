@@ -9,6 +9,9 @@ Haven't you ever wanted an in-app purchase one liner that looks like this ?!
 android-store
 ---
 
+**Feb 7th, 2013 - We've just released v2.0 of android-store. The major change is a key-value storage (above SQLite) instead of the previous tables. We've also added code that migrates old data and removes the old database (StorageManager.migrateOldData). When you upgrade your code make sure data is transferred from the old database.**
+
+
 The android-store is our first open code initiative as part of The SOOMLA Project. It is a Java API that simplifies Google Play's in-app purchasing API and complements it with storage, security and event handling. The project also includes a sample app for reference. 
 
 >If you also want to create a **storefront** you can do that using our [Store Designer](http://designer.soom.la).
