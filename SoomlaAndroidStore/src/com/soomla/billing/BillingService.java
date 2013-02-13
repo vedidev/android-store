@@ -473,7 +473,7 @@ public class BillingService extends Service implements ServiceConnection {
      * @return true if supported; false otherwise
      */
     public boolean checkBillingSupported(String itemType) {
-        return mService != null && new CheckBillingSupported(itemType).runOrWaitRequest();
+        return new CheckBillingSupported(itemType).runOrWaitRequest();
     }
 
     /**
