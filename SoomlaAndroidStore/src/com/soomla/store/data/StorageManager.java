@@ -65,10 +65,12 @@ public class StorageManager {
             int mt_ver = prefs.getInt("MT_VER", 0);
             int sa_ver_old = prefs.getInt("SA_VER_OLD", -1);
             int sa_ver_new = prefs.getInt("SA_VER_NEW", 0);
-            if (mt_ver < StoreConfig.METADATA_VERSION || sa_ver_old < sa_ver_new ) {
+//            boolean mt_override = prefs.getBoolean("MT_FORCE_DELETE", false);
+            if (mt_ver < StoreConfig.METADATA_VERSION || sa_ver_old < sa_ver_new) {// || mt_override) {
                 SharedPreferences.Editor edit = prefs.edit();
                 edit.putInt("MT_VER", StoreConfig.METADATA_VERSION);
                 edit.putInt("SA_VER_OLD", sa_ver_new);
+//                edit.putBoolean("MT_FORCE_DELETE", false);
                 edit.commit();
 
                 mKvDatabase.deleteKeyVal(KeyValDatabase.keyMetaStorefrontInfo());

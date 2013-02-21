@@ -74,6 +74,27 @@ public class VirtualCurrencyStorage {
         return balance;
     }
 
+
+    public int setBalance(VirtualCurrency virtualCurrency, int balance) {
+        if (StoreConfig.debug){
+            Log.d(TAG, "setting balance " + balance + " to " + virtualCurrency.getName() + ".");
+        }
+
+        String itemId = virtualCurrency.getItemId();
+
+        String balanceStr = "" + balance;
+        String key = KeyValDatabase.keyCurrencyBalance(itemId);
+        if (StorageManager.getObfuscator() != null){
+            balanceStr = StorageManager.getObfuscator().obfuscateString(balanceStr);
+            key      = StorageManager.getObfuscator().obfuscateString(key);
+        }
+        StorageManager.getDatabase().setKeyVal(key, balanceStr);
+
+        BusProvider.getInstance().post(new CurrencyBalanceChangedEvent(virtualCurrency, balance, 0));
+
+        return balance;
+    }
+
     /**
      * Adds the given amount of currency to the storage.
      * @param virtualCurrency is the required virtual currency.
@@ -95,7 +116,7 @@ public class VirtualCurrencyStorage {
         }
         StorageManager.getDatabase().setKeyVal(key, balanceStr);
 
-        BusProvider.getInstance().post(new CurrencyBalanceChangedEvent(virtualCurrency, balance+amount));
+        BusProvider.getInstance().post(new CurrencyBalanceChangedEvent(virtualCurrency, balance+amount, amount));
 
         return balance + amount;
     }
@@ -121,7 +142,7 @@ public class VirtualCurrencyStorage {
         }
         StorageManager.getDatabase().setKeyVal(key, balanceStr);
 
-        BusProvider.getInstance().post(new CurrencyBalanceChangedEvent(virtualCurrency, balance));
+        BusProvider.getInstance().post(new CurrencyBalanceChangedEvent(virtualCurrency, balance, -1*amount));
 
         return balance;
     }
@@ -129,4 +150,5 @@ public class VirtualCurrencyStorage {
     /** Private members **/
 
     private static final String TAG = "SOOMLA VirtualCurrencyStorage";
+
 }

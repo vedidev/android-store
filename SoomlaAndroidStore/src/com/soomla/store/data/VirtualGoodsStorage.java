@@ -15,7 +15,6 @@
  */
 package com.soomla.store.data;
 
-import android.database.Cursor;
 import android.util.Log;
 import com.soomla.billing.util.AESObfuscator;
 import com.soomla.store.BusProvider;
@@ -75,7 +74,25 @@ public class VirtualGoodsStorage {
         return balance;
 	}
 
+    public int setBalance(VirtualGood virtualGood, int balance) {
+        if (StoreConfig.debug){
+            Log.d(TAG, "setting balance " + balance + " to " + virtualGood.getName() + ".");
+        }
 
+        String itemId = virtualGood.getItemId();
+
+        String balanceStr = "" + balance;
+        String key = KeyValDatabase.keyGoodBalance(itemId);
+        if (StorageManager.getObfuscator() != null){
+            balanceStr = StorageManager.getObfuscator().obfuscateString(balanceStr);
+            key      = StorageManager.getObfuscator().obfuscateString(key);
+        }
+        StorageManager.getDatabase().setKeyVal(key, balanceStr);
+
+        BusProvider.getInstance().post(new GoodBalanceChangedEvent(virtualGood, balance, 0));
+
+        return balance;
+    }
 
     /**
     * Adds the given amount of goods to the storage.
@@ -97,7 +114,7 @@ public class VirtualGoodsStorage {
         }
         StorageManager.getDatabase().setKeyVal(key, balanceStr);
 
-        BusProvider.getInstance().post(new GoodBalanceChangedEvent(virtualGood, balance+amount));
+        BusProvider.getInstance().post(new GoodBalanceChangedEvent(virtualGood, balance+amount, amount));
 
         return balance + amount;
 	}
@@ -123,7 +140,7 @@ public class VirtualGoodsStorage {
         }
         StorageManager.getDatabase().setKeyVal(key, balanceStr);
 
-        BusProvider.getInstance().post(new GoodBalanceChangedEvent(virtualGood, balance));
+        BusProvider.getInstance().post(new GoodBalanceChangedEvent(virtualGood, balance, -1*amount));
 
         return balance;
 	}

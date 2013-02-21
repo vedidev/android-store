@@ -21,10 +21,12 @@ public class CurrencyBalanceChangedEvent {
 
     private VirtualCurrency mCurrency;
     private int mBalance;
+    private int mAmountAdded;
 
-    public CurrencyBalanceChangedEvent(VirtualCurrency currency, int balance) {
+    public CurrencyBalanceChangedEvent(VirtualCurrency currency, int balance, int amountAdded) {
         mCurrency = currency;
         mBalance = balance;
+        mAmountAdded = amountAdded;
     }
 
     public VirtualCurrency getCurrency() {
@@ -33,5 +35,9 @@ public class CurrencyBalanceChangedEvent {
 
     public int getBalance() {
         return mBalance;
+    }
+
+    public int getAmountAdded() {
+        return mAmountAdded;
     }
 }

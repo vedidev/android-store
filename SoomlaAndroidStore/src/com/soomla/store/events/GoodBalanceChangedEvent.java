@@ -21,10 +21,12 @@ public class GoodBalanceChangedEvent {
 
     private VirtualGood mGood;
     private int mBalance;
+    private int mAmountAdded;
 
-    public GoodBalanceChangedEvent(VirtualGood good, int balance) {
+    public GoodBalanceChangedEvent(VirtualGood good, int balance, int amountAdded) {
         mGood = good;
         mBalance = balance;
+        mAmountAdded = amountAdded;
     }
 
     public VirtualGood getGood() {
@@ -33,5 +35,9 @@ public class GoodBalanceChangedEvent {
 
     public int getBalance() {
         return mBalance;
+    }
+
+    public int getAmountAdded() {
+        return mAmountAdded;
     }
 }

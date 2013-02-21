@@ -83,6 +83,18 @@ public class KeyValueStorage {
         StorageManager.getDatabase().setKeyVal(key, val);
     }
 
+    public void deleteKeyValue(String key) {
+        if (StoreConfig.debug){
+            Log.d(TAG, "deleting " + key);
+        }
+
+        if (StorageManager.getObfuscator() != null){
+            key = StorageManager.getObfuscator().obfuscateString(key);
+        }
+
+        StorageManager.getDatabase().deleteKeyVal(key);
+    }
+
 
     /** Private Members **/
 

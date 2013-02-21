@@ -15,13 +15,15 @@
  */
 package com.soomla.store.data;
 
-import android.database.Cursor;
 import android.text.TextUtils;
 import android.util.Log;
 import com.soomla.billing.util.AESObfuscator;
+import com.soomla.store.SoomlaApp;
 import com.soomla.store.StoreConfig;
-import org.json.JSONException;
-import org.json.JSONObject;
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 
 /**
  * This class is used to retrieve the storefront JSON when it's needed.
@@ -44,13 +46,16 @@ public class StorefrontInfo {
      * NOTE: If you want to override the current StorefrontInfo metadata JSON file, you'll have to bump the
      * database version (the old database will be destroyed but balances will be saved!!).
      */
-    public void initialize(String storefrontJSON){
-        if (TextUtils.isEmpty(storefrontJSON)){
-            Log.e(TAG, "The given storefront JSON can't be null or empty !");
-            return;
-        }
+    public void initialize(){
         if (!initializeFromDB()) {
             // if the json doesn't already exist in the database, we load it into the DB here.
+
+            String storefrontJSON = fetchTemeJsonFromFile();
+            if (TextUtils.isEmpty(storefrontJSON)){
+                Log.e(TAG, "Couldn't find storefront in the DB AND the filesystem. Something is totally wrong !");
+                return;
+            }
+
             mStorefrontJSON = storefrontJSON;
             String key = KeyValDatabase.keyMetaStorefrontInfo();
             if (StorageManager.getObfuscator() != null){
@@ -95,6 +100,26 @@ public class StorefrontInfo {
         mInitialized = true;
         return true;
 
+    }
+
+    public String fetchTemeJsonFromFile() {
+        String storefrontJSON = "";
+        try {
+            InputStream in = SoomlaApp.getAppContext().getAssets().open("theme.json");
+
+            byte[] buffer = new byte[in.available()];
+            in.read(buffer);
+            ByteArrayOutputStream out = new ByteArrayOutputStream();
+            out.write(buffer);
+            out.close();
+            in.close();
+
+            storefrontJSON = out.toString();
+        } catch (IOException e) {
+            Log.e(TAG, "Can't read JSON storefront file. Please add theme.json to your 'assets' folder.");
+        }
+
+        return storefrontJSON;
     }
 
     public String getStorefrontJSON() {
