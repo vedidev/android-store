@@ -23,6 +23,7 @@ import android.app.PendingIntent.CanceledException;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import com.soomla.billing.BillingService.RequestPurchase;
 import com.soomla.billing.BillingService.RestoreTransactions;
@@ -139,13 +140,18 @@ public abstract class PurchaseObserver {
      */
     public void postPurchaseStateChange(final PurchaseState purchaseState, final String itemId,
                                  final long purchaseTime, final String developerPayload) {
-        mHandler.post(new Runnable() {
-            @Override
-            public void run() {
-                onPurchaseStateChange(
-                        purchaseState, itemId, purchaseTime, developerPayload);
-            }
-        });
+        if (Looper.myLooper() == Looper.getMainLooper()) {
+            onPurchaseStateChange(
+                    purchaseState, itemId, purchaseTime, developerPayload);
+        } else {
+            mMainThread.post(new Runnable() {
+                @Override
+                public void run() {
+                    onPurchaseStateChange(
+                            purchaseState, itemId, purchaseTime, developerPayload);
+                }
+            });
+        }
     }
 
     /** Private functions **/
@@ -158,9 +164,8 @@ public abstract class PurchaseObserver {
 
     /** Protected Functions **/
 
-    protected void initCompatibilityLayer(Activity activity, Handler handler){
+    protected void initCompatibilityLayer(Activity activity){
         mActivity = activity;
-        mHandler = handler;
         try {
             mStartIntentSender = mActivity.getClass().getMethod("startIntentSender",
                     START_INTENT_SENDER_SIG);
@@ -176,7 +181,7 @@ public abstract class PurchaseObserver {
 
     private static final String TAG = "SOOMLA PurchaseObserver";
     private Activity mActivity;
-    private Handler mHandler;
+    private final Handler mMainThread = new Handler(Looper.getMainLooper());
     private Method mStartIntentSender;
     private Object[] mStartIntentSenderArgs = new Object[5];
 }

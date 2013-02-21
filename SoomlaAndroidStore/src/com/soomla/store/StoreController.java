@@ -18,7 +18,6 @@ package com.soomla.store;
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.os.Handler;
 import android.util.Log;
 import com.soomla.billing.BillingService;
 import com.soomla.billing.Consts;
@@ -46,7 +45,7 @@ import java.util.concurrent.locks.ReentrantLock;
  * This is the only class you need to initialize in order to use the SOOMLA SDK.
  *
  * In addition to initializing this class, you'll also have to call
- * {@link StoreController#storeOpening(android.app.Activity, android.os.Handler)} and
+ * {@link StoreController#storeOpening(android.app.Activity)} and
  * {@link com.soomla.store.StoreController#storeClosing()} when you open the store window or close it. These two
  * calls initializes important components that support billing and storage information (see implementation below).
  * IMPORTANT: if you use the SOOMLA storefront (SOOMLA Storefront), than DON'T call these 2 functions.
@@ -212,9 +211,8 @@ public class StoreController extends PurchaseObserver {
     /**
      * Call this function when you open the actual store window
      * @param activity is the activity being opened (or the activity that contains the store)/
-     * @param handler is a handler to post UI thread messages on.
      */
-    public void storeOpening(Activity activity, Handler handler){
+    public void storeOpening(Activity activity){
         mLock.lock();
         if (mStoreOpen) {
             Log.e(TAG, "You already sent storeOpening !");
@@ -225,10 +223,7 @@ public class StoreController extends PurchaseObserver {
         mStoreOpen = true;
         mLock.unlock();
 
-        if (handler == null) {
-            handler = new Handler();
-        }
-        initCompatibilityLayer(activity, handler);
+        initCompatibilityLayer(activity);
 
         /* Initialize StoreInfo from database in case any changes were done to it while the store was closed */
         StoreInfo.initializeFromDB();

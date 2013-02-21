@@ -5,7 +5,6 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.*;
@@ -36,7 +35,7 @@ public class StoreGoodsActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.listview);
 
-        StoreController.getInstance().storeOpening(this, new Handler());
+        StoreController.getInstance().storeOpening(this);
 
         TextView title = (TextView)findViewById(R.id.title);
 
