@@ -84,9 +84,7 @@ public class StoreController extends PurchaseObserver {
             StoreInfo.setStoreAssets(storeAssets);
         }
 
-        if (startBillingService()) {
-            tryRestoreTransactions();
-        }
+        startBillingService();
     }
 
     /**
@@ -260,6 +258,8 @@ public class StoreController extends PurchaseObserver {
                     Log.d(TAG, "billing is supported !");
                 }
                 BusProvider.getInstance().post(new BillingSupportedEvent());
+
+                tryRestoreTransactions();
             } else {
                 // purchase is not supported. just send a message to JS to disable the "get more ..." button.
 
@@ -398,7 +398,7 @@ public class StoreController extends PurchaseObserver {
         }
     }
 
-    private boolean startBillingService() {
+    private void startBillingService() {
         mLock.lock();
         if (mBillingService == null) {
             ResponseHandler.register(this);
@@ -409,14 +409,10 @@ public class StoreController extends PurchaseObserver {
                 if (StoreConfig.debug){
                     Log.d(TAG, "There's no connectivity with the billing service.");
                 }
-
-                mLock.unlock();
-                return false;
             }
         }
 
         mLock.unlock();
-        return true;
     }
 
     private void stopBillingService() {
