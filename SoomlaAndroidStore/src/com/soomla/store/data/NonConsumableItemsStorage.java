@@ -46,9 +46,8 @@ public class NonConsumableItemsStorage {
 
         String productId = nonConsumableItem.getProductId();
         String key = KeyValDatabase.keyNonConsExists(productId);
-        if (StorageManager.getObfuscator() != null){
-            key = StorageManager.getObfuscator().obfuscateString(key);
-        }
+        key = StorageManager.getAESObfuscator().obfuscateString(key);
+
         String val = StorageManager.getDatabase().getKeyVal(key);
 
         return val != null;
@@ -65,9 +64,7 @@ public class NonConsumableItemsStorage {
 
         String productId = nonConsumableItem.getProductId();
         String key = KeyValDatabase.keyNonConsExists(productId);
-        if (StorageManager.getObfuscator() != null){
-            key = StorageManager.getObfuscator().obfuscateString(key);
-        }
+        key = StorageManager.getAESObfuscator().obfuscateString(key);
         StorageManager.getDatabase().setKeyVal(key, "");
     }
 
@@ -82,9 +79,7 @@ public class NonConsumableItemsStorage {
 
         String productId = nonConsumableItem.getProductId();
         String key = KeyValDatabase.keyNonConsExists(productId);
-        if (StorageManager.getObfuscator() != null){
-            key = StorageManager.getObfuscator().obfuscateString(key);
-        }
+        key = StorageManager.getAESObfuscator().obfuscateString(key);
         StorageManager.getDatabase().deleteKeyVal(key);
     }
 

@@ -44,7 +44,7 @@ public class StorageManager {
         return mVirtualGoodsStorage;
     }
 
-    public static AESObfuscator getObfuscator(){
+    public static AESObfuscator getAESObfuscator(){
         if (mObfuscator == null) {
             String deviceId = Settings.Secure.getString(SoomlaApp.getAppContext().getContentResolver(), Settings.Secure.ANDROID_ID);
             mObfuscator = new AESObfuscator(StoreConfig.obfuscationSalt, SoomlaApp.getAppContext().getPackageName(), deviceId);
@@ -53,7 +53,7 @@ public class StorageManager {
         return mObfuscator;
     }
 
-    public static KeyValDatabase getDatabase(){
+    public synchronized static KeyValDatabase getDatabase(){
 
         if (mKvDatabase == null) {
             mKvDatabase = new KeyValDatabase(SoomlaApp.getAppContext());
@@ -144,22 +144,19 @@ public class StorageManager {
                 int itemIdColIdx = cursor.getColumnIndexOrThrow(StoreDatabase.VIRTUAL_CURRENCY_COLUMN_ITEM_ID);
                 int balanceColIdx = cursor.getColumnIndexOrThrow(StoreDatabase.VIRTUAL_CURRENCY_COLUMN_BALANCE);
                 String itemIdStr = cursor.getString(itemIdColIdx);
-                if (StorageManager.getObfuscator() != null){
-                    try {
-                        itemIdStr = mObfuscator.unobfuscateToString(itemIdStr);
-                    } catch (AESObfuscator.ValidationException e) {
-                        Log.e(TAG, e.getMessage());
-                    }
-                }
-                String balanceStr = cursor.getString(balanceColIdx);
+                try {
+                    itemIdStr = mObfuscator.unobfuscateToString(itemIdStr);
 
-                String key = KeyValDatabase.keyCurrencyBalance(itemIdStr);
-                Log.d(TAG, "currency key: " + key + " val: " + balanceStr);
-                if (StorageManager.getObfuscator() != null){
+                    String balanceStr = cursor.getString(balanceColIdx);
+
+                    String key = KeyValDatabase.keyCurrencyBalance(itemIdStr);
+                    Log.d(TAG, "currency key: " + key + " val: " + balanceStr);
                     key = mObfuscator.obfuscateString(key);
-                }
-                mKvDatabase.setKeyVal(key, balanceStr);
 
+                    mKvDatabase.setKeyVal(key, balanceStr);
+                } catch (AESObfuscator.ValidationException e) {
+                    Log.e(TAG, e.getMessage());
+                }
             }
         }
         if (cursor != null) {
@@ -184,15 +181,14 @@ public class StorageManager {
                 String key = KeyValDatabase.keyGoodBalance(itemIdStr);
                 try {
                     Log.d(TAG, "good key: " + key + " val: " + mObfuscator.unobfuscateToString(balanceStr));
+
+                    key = mObfuscator.obfuscateString(key);
+                    mKvDatabase.setKeyVal(key, balanceStr);
+                    if (equippedInt > 0) {
+                        mKvDatabase.setKeyVal(key, "");
+                    }
                 } catch (AESObfuscator.ValidationException e) {
                     e.printStackTrace();
-                }
-                if (StorageManager.getObfuscator() != null){
-                    key = mObfuscator.obfuscateString(key);
-                }
-                mKvDatabase.setKeyVal(key, balanceStr);
-                if (equippedInt > 0) {
-                    mKvDatabase.setKeyVal(key, "");
                 }
             }
         }
@@ -210,18 +206,14 @@ public class StorageManager {
 
                 String key = KeyValDatabase.keyMetaStoreInfo();
                 Log.d(TAG, "meta1 key: " + key + " val: " + storeInfo);
-                if (StorageManager.getObfuscator() != null){
-                    key = mObfuscator.obfuscateString(key);
-                }
+                key = mObfuscator.obfuscateString(key);
                 if (!TextUtils.isEmpty(storeInfo)) {
                     mKvDatabase.setKeyVal(key, storeInfo);
                 }
 
                 key = KeyValDatabase.keyMetaStorefrontInfo();
                 Log.d(TAG, "meta1 key: " + key + " val: " + storefrontInfo);
-                if (StorageManager.getObfuscator() != null){
-                    key = mObfuscator.obfuscateString(key);
-                }
+                key = mObfuscator.obfuscateString(key);
                 if (!TextUtils.isEmpty(storefrontInfo)) {
                     mKvDatabase.setKeyVal(key, storefrontInfo);
                 }
@@ -244,9 +236,7 @@ public class StorageManager {
 
                 String key = KeyValDatabase.keyNonConsExists(productIdStr);
                 Log.d(TAG, "gmi key: " + key + " val: " + "");
-                if (StorageManager.getObfuscator() != null){
-                    key = mObfuscator.obfuscateString(key);
-                }
+                key = mObfuscator.obfuscateString(key);
                 mKvDatabase.setKeyVal(key, "");
             }
         }

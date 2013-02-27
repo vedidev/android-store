@@ -58,10 +58,8 @@ public class StorefrontInfo {
 
             mStorefrontJSON = storefrontJSON;
             String key = KeyValDatabase.keyMetaStorefrontInfo();
-            if (StorageManager.getObfuscator() != null){
-                storefrontJSON = StorageManager.getObfuscator().obfuscateString(storefrontJSON);
-                key = StorageManager.getObfuscator().obfuscateString(key);
-            }
+            storefrontJSON = StorageManager.getAESObfuscator().obfuscateString(storefrontJSON);
+            key = StorageManager.getAESObfuscator().obfuscateString(key);
             StorageManager.getDatabase().setKeyVal(key, storefrontJSON);
 
             mInitialized = true;
@@ -71,9 +69,7 @@ public class StorefrontInfo {
     public boolean initializeFromDB() {
 
         String key = KeyValDatabase.keyMetaStorefrontInfo();
-        if (StorageManager.getObfuscator() != null){
-            key = StorageManager.getObfuscator().obfuscateString(key);
-        }
+        key = StorageManager.getAESObfuscator().obfuscateString(key);
 
         String val = StorageManager.getDatabase().getKeyVal(key);
 
@@ -84,13 +80,11 @@ public class StorefrontInfo {
             return false;
         }
 
-        if (StorageManager.getObfuscator() != null){
-            try {
-                mStorefrontJSON = StorageManager.getObfuscator().unobfuscateToString(val);
-            } catch (AESObfuscator.ValidationException e) {
-                Log.e(TAG, e.getMessage());
-                return false;
-            }
+        try {
+            mStorefrontJSON = StorageManager.getAESObfuscator().unobfuscateToString(val);
+        } catch (AESObfuscator.ValidationException e) {
+            Log.e(TAG, e.getMessage());
+            return false;
         }
 
         if (StoreConfig.debug){

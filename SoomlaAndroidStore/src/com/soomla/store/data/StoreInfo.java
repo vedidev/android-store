@@ -15,14 +15,10 @@
  */
 package com.soomla.store.data;
 
-import android.content.Context;
-import android.content.SharedPreferences;
-import android.database.Cursor;
 import android.text.TextUtils;
 import android.util.Log;
 import com.soomla.billing.util.AESObfuscator;
 import com.soomla.store.IStoreAssets;
-import com.soomla.store.SoomlaApp;
 import com.soomla.store.StoreConfig;
 import com.soomla.store.domain.data.*;
 import com.soomla.store.exceptions.VirtualItemNotFoundException;
@@ -71,10 +67,8 @@ public class StoreInfo {
             // put StoreInfo in the database as JSON
             String store_json = toJSONObject().toString();
             String key = KeyValDatabase.keyMetaStoreInfo();
-            if (StorageManager.getObfuscator() != null){
-                store_json = StorageManager.getObfuscator().obfuscateString(store_json);
-                key = StorageManager.getObfuscator().obfuscateString(key);
-            }
+            store_json = StorageManager.getAESObfuscator().obfuscateString(store_json);
+            key = StorageManager.getAESObfuscator().obfuscateString(key);
             StorageManager.getDatabase().setKeyVal(key, store_json);
         }
     }
@@ -82,9 +76,7 @@ public class StoreInfo {
     public static boolean initializeFromDB() {
         // first, trying to load StoreInfo from the local DB.
         String key = KeyValDatabase.keyMetaStoreInfo();
-        if (StorageManager.getObfuscator() != null){
-            key = StorageManager.getObfuscator().obfuscateString(key);
-        }
+        key = StorageManager.getAESObfuscator().obfuscateString(key);
         String val = StorageManager.getDatabase().getKeyVal(key);
 
         if (val == null && TextUtils.isEmpty(val)){
@@ -94,13 +86,11 @@ public class StoreInfo {
             return false;
         }
 
-        if (StorageManager.getObfuscator() != null){
-            try {
-                val = StorageManager.getObfuscator().unobfuscateToString(val);
-            } catch (AESObfuscator.ValidationException e) {
-                Log.e(TAG, e.getMessage());
-                return false;
-            }
+        try {
+            val = StorageManager.getAESObfuscator().unobfuscateToString(val);
+        } catch (AESObfuscator.ValidationException e) {
+            Log.e(TAG, e.getMessage());
+            return false;
         }
 
         if (StoreConfig.debug){

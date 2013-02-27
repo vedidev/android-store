@@ -43,19 +43,15 @@ public class KeyValueStorage {
             Log.d(TAG, "trying to fetch a value for key: " + key);
         }
 
-        if (StorageManager.getObfuscator() != null){
-            key = StorageManager.getObfuscator().obfuscateString(key);
-        }
+        key = StorageManager.getAESObfuscator().obfuscateString(key);
 
         String val = StorageManager.getDatabase().getKeyVal(key);
 
         if (val != null && !TextUtils.isEmpty(val)) {
-            if (StorageManager.getObfuscator() != null){
-                try {
-                    val = StorageManager.getObfuscator().unobfuscateToString(val);
-                } catch (AESObfuscator.ValidationException e) {
-                    Log.e(TAG, e.getMessage());
-                }
+            try {
+                val = StorageManager.getAESObfuscator().unobfuscateToString(val);
+            } catch (AESObfuscator.ValidationException e) {
+                Log.e(TAG, e.getMessage());
             }
 
             if (StoreConfig.debug){
@@ -75,10 +71,8 @@ public class KeyValueStorage {
             Log.d(TAG, "setting " + val + " for key: " + key);
         }
 
-        if (StorageManager.getObfuscator() != null){
-            key = StorageManager.getObfuscator().obfuscateString(key);
-            val = StorageManager.getObfuscator().obfuscateString(val);
-        }
+        key = StorageManager.getAESObfuscator().obfuscateString(key);
+        val = StorageManager.getAESObfuscator().obfuscateString(val);
 
         StorageManager.getDatabase().setKeyVal(key, val);
     }
@@ -88,9 +82,7 @@ public class KeyValueStorage {
             Log.d(TAG, "deleting " + key);
         }
 
-        if (StorageManager.getObfuscator() != null){
-            key = StorageManager.getObfuscator().obfuscateString(key);
-        }
+        key = StorageManager.getAESObfuscator().obfuscateString(key);
 
         StorageManager.getDatabase().deleteKeyVal(key);
     }

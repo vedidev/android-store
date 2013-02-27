@@ -19,6 +19,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteCantOpenDatabaseException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
@@ -50,6 +51,10 @@ public class StoreDatabase {
             checkDB = SQLiteDatabase.openDatabase(context.getDatabasePath(DATABASE_NAME).getAbsolutePath(), null,
                     SQLiteDatabase.OPEN_READONLY);
             checkDB.close();
+        } catch (SQLiteCantOpenDatabaseException ex) {
+            if (StoreConfig.debug) {
+                Log.d(TAG, "Database doesn't exist");
+            }
         } catch (SQLiteException e) {
             if (StoreConfig.debug) {
                 Log.d(TAG, "Database doesn't exist");

@@ -49,22 +49,15 @@ public class VirtualGoodsStorage {
         }
         String itemId = virtualGood.getItemId();
         String key = KeyValDatabase.keyGoodBalance(itemId);
-        if (StorageManager.getObfuscator() != null){
-            key = StorageManager.getObfuscator().obfuscateString(key);
-        }
+        key = StorageManager.getAESObfuscator().obfuscateString(key);
         String val = StorageManager.getDatabase().getKeyVal(key);
 
         int balance = 0;
         if (val != null) {
-            if (StorageManager.getObfuscator() != null){
-                try {
-                    balance = StorageManager.getObfuscator().unobfuscateToInt(val);
-                } catch (AESObfuscator.ValidationException e) {
-                    Log.e(TAG, e.getMessage());
-                }
-            }
-            else {
-                balance = Integer.parseInt(val);
+            try {
+                balance = StorageManager.getAESObfuscator().unobfuscateToInt(val);
+            } catch (AESObfuscator.ValidationException e) {
+                Log.e(TAG, e.getMessage());
             }
         }
 
@@ -79,14 +72,17 @@ public class VirtualGoodsStorage {
             Log.d(TAG, "setting balance " + balance + " to " + virtualGood.getName() + ".");
         }
 
+        int oldBalance = getBalance(virtualGood);
+        if (oldBalance == balance) {
+            return balance;
+        }
+
         String itemId = virtualGood.getItemId();
 
         String balanceStr = "" + balance;
         String key = KeyValDatabase.keyGoodBalance(itemId);
-        if (StorageManager.getObfuscator() != null){
-            balanceStr = StorageManager.getObfuscator().obfuscateString(balanceStr);
-            key      = StorageManager.getObfuscator().obfuscateString(key);
-        }
+        balanceStr = StorageManager.getAESObfuscator().obfuscateString(balanceStr);
+        key      = StorageManager.getAESObfuscator().obfuscateString(key);
         StorageManager.getDatabase().setKeyVal(key, balanceStr);
 
         BusProvider.getInstance().post(new GoodBalanceChangedEvent(virtualGood, balance, 0));
@@ -108,10 +104,8 @@ public class VirtualGoodsStorage {
         int balance = getBalance(virtualGood);
         String balanceStr = "" + (balance + amount);
         String key = KeyValDatabase.keyGoodBalance(itemId);
-        if (StorageManager.getObfuscator() != null){
-            balanceStr = StorageManager.getObfuscator().obfuscateString(balanceStr);
-            key      = StorageManager.getObfuscator().obfuscateString(key);
-        }
+        balanceStr = StorageManager.getAESObfuscator().obfuscateString(balanceStr);
+        key      = StorageManager.getAESObfuscator().obfuscateString(key);
         StorageManager.getDatabase().setKeyVal(key, balanceStr);
 
         BusProvider.getInstance().post(new GoodBalanceChangedEvent(virtualGood, balance+amount, amount));
@@ -134,10 +128,8 @@ public class VirtualGoodsStorage {
         balance = balance > 0 ? balance : 0;
         String balanceStr = "" + balance;
         String key = KeyValDatabase.keyGoodBalance(itemId);
-        if (StorageManager.getObfuscator() != null){
-            balanceStr = StorageManager.getObfuscator().obfuscateString(balanceStr);
-            key      = StorageManager.getObfuscator().obfuscateString(key);
-        }
+        balanceStr = StorageManager.getAESObfuscator().obfuscateString(balanceStr);
+        key      = StorageManager.getAESObfuscator().obfuscateString(key);
         StorageManager.getDatabase().setKeyVal(key, balanceStr);
 
         BusProvider.getInstance().post(new GoodBalanceChangedEvent(virtualGood, balance, -1*amount));
@@ -151,9 +143,7 @@ public class VirtualGoodsStorage {
         }
         String itemId = virtualGood.getItemId();
         String key = KeyValDatabase.keyGoodEquipped(itemId);
-        if (StorageManager.getObfuscator() != null){
-            key = StorageManager.getObfuscator().obfuscateString(key);
-        }
+        key = StorageManager.getAESObfuscator().obfuscateString(key);
         String val = StorageManager.getDatabase().getKeyVal(key);
 
         return val != null;
@@ -166,9 +156,7 @@ public class VirtualGoodsStorage {
 
         String itemId = virtualGood.getItemId();
         String key = KeyValDatabase.keyGoodEquipped(itemId);
-        if (StorageManager.getObfuscator() != null){
-            key = StorageManager.getObfuscator().obfuscateString(key);
-        }
+        key = StorageManager.getAESObfuscator().obfuscateString(key);
 
         if (equip) {
             StorageManager.getDatabase().setKeyVal(key, "");
