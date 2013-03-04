@@ -73,7 +73,7 @@ public class AESObfuscator {
         return obfuscateString("" + original);
     }
 
-    public String obfuscateString(String original) {
+    public synchronized String obfuscateString(String original) {
         if (original == null) {
             return null;
         }
@@ -91,7 +91,7 @@ public class AESObfuscator {
         return Integer.parseInt(unobfuscateToString(obfuscated));
     }
 
-    public String unobfuscateToString(String obfuscated) throws ValidationException {
+    public synchronized String unobfuscateToString(String obfuscated) throws ValidationException {
         if (TextUtils.isEmpty(obfuscated)) {
             return null;
         }
