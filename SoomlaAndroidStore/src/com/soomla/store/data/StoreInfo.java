@@ -94,7 +94,7 @@ public class StoreInfo {
         }
 
         if (StoreConfig.debug){
-            Log.d(TAG, "the metadata json (from DB) is " + val);
+            Log.d(TAG, "the metadata-economy json (from DB) is " + val);
         }
 
         try {

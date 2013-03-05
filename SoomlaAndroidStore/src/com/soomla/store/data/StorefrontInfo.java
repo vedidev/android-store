@@ -88,7 +88,7 @@ public class StorefrontInfo {
         }
 
         if (StoreConfig.debug){
-            Log.d(TAG, "the metadata json (from DB) is " + mStorefrontJSON);
+            Log.d(TAG, "the metadata-design json (from DB) is " + mStorefrontJSON);
         }
 
         mInitialized = true;
