@@ -18,13 +18,10 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import com.soomla.store.*;
 import com.soomla.store.data.ObscuredSharedPreferences;
-import com.soomla.store.data.StorageManager;
 import com.soomla.store.exceptions.VirtualItemNotFoundException;
 
 public class StoreExampleActivity extends Activity {
-    /**
-     * Called when the activity is first created.
-     */
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -39,11 +36,6 @@ public class StoreExampleActivity extends Activity {
         ((TextView) findViewById(R.id.main_text)).setTypeface(font);
 
         /**
-         * We initialize StoreController and initialize event handler before
-         * we open the store.
-         */
-
-        /**
          * Compute your public key (that you got from the Android Market publisher site).
          *
          * Instead of just storing the entire literal string here embedded in the
@@ -55,6 +47,15 @@ public class StoreExampleActivity extends Activity {
          *
          * Generally, encryption keys / passwords should only be kept in memory
          * long enough to perform the operation they need to perform.
+         */
+
+        /**
+         * We initialize StoreController and event handler before
+         * we open the store.
+         */
+
+        /**
+         * IMPORTANT: MAKE SURE YOU CALL THESE 2 FUNCTIONS ONLY ONCE (preferably when your application loads) !!
          */
         IStoreAssets storeAssets = new MuffinRushAssets();
         StoreController.getInstance().initialize(storeAssets,
