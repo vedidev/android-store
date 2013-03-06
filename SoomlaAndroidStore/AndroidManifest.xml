@@ -4,7 +4,7 @@
 
     <application>
 
-        <!-- Add this activity to your AndroidManifest.xml -->
+        <!-- Add this activity to your AndroidManifest.xml.swig -->
         <activity
                 android:name="SoomlaStoreActivity" />
 
