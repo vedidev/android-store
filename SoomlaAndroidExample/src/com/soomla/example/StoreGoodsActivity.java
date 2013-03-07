@@ -11,6 +11,7 @@ import android.widget.*;
 import com.soomla.store.BusProvider;
 import com.soomla.store.StoreController;
 import com.soomla.store.data.StorageManager;
+import com.soomla.store.data.StoreInfo;
 import com.soomla.store.domain.data.VirtualGood;
 import com.soomla.store.events.CurrencyBalanceChangedEvent;
 import com.soomla.store.events.GoodBalanceChangedEvent;
@@ -19,16 +20,12 @@ import com.soomla.store.exceptions.VirtualItemNotFoundException;
 import com.squareup.otto.Subscribe;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
 
 public class StoreGoodsActivity extends Activity {
 
     private StoreAdapter mStoreAdapter;
-    private ArrayList<HashMap<String, Object>> mData;
-
-    static final String KEY_THUMB = "thumb_url";
-    static final String KEY_GOOD = "virtual_good";
+    private HashMap<String, Object> mImages;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,9 +38,9 @@ public class StoreGoodsActivity extends Activity {
 
         title.setText("Virtual Goods");
 
-        mData = generateDataHash();
+        mImages = generateImagesHash();
 
-        mStoreAdapter = new StoreAdapter(mData);
+        mStoreAdapter = new StoreAdapter();
 
 
         /* configuring the list with an adapter */
@@ -61,7 +58,7 @@ public class StoreGoodsActivity extends Activity {
                 * have enough than an InsufficientFundsException will be thrown.
                 */
 
-                VirtualGood good = (VirtualGood) mData.get(i).get(StoreGoodsActivity.KEY_GOOD);
+                VirtualGood good = StoreInfo.getVirtualGoods().get(i);
                 try {
                     StoreController.getInstance().buyVirtualGood(good.getItemId());
                 } catch (InsufficientFundsException e) {
@@ -93,7 +90,7 @@ public class StoreGoodsActivity extends Activity {
         /* fetching the currency balance and placing it in the balance label */
         TextView muffinsBalance = (TextView)findViewById(R.id.balance);
         muffinsBalance.setText("" + StorageManager.getVirtualCurrencyStorage().
-                getBalance(MuffinRushAssets.MUFFIN_CURRENCY));
+                getBalance(StoreInfo.getVirtualCurrencies().get(0)));
     }
 
     @Override
@@ -110,25 +107,13 @@ public class StoreGoodsActivity extends Activity {
         StoreController.getInstance().storeClosing();
     }
 
-    private ArrayList<HashMap<String, Object>> generateDataHash() {
-        final ArrayList<HashMap<String, Object>> data = new ArrayList<HashMap<String, Object>>();
-        HashMap<String, Object> item = new HashMap<String, Object>();
-        item.put(StoreGoodsActivity.KEY_GOOD, MuffinRushAssets.CHOCLATECAKE_GOOD);
-        item.put(StoreGoodsActivity.KEY_THUMB, R.drawable.chocolate_cake);
-        data.add(item);
-        item = new HashMap<String, Object>();
-        item.put(StoreGoodsActivity.KEY_GOOD, MuffinRushAssets.CREAMCUP_GOOD);
-        item.put(StoreGoodsActivity.KEY_THUMB, R.drawable.cream_cup);
-        data.add(item);
-        item = new HashMap<String, Object>();
-        item.put(StoreGoodsActivity.KEY_GOOD, MuffinRushAssets.MUFFINCAKE_GOOD);
-        item.put(StoreGoodsActivity.KEY_THUMB, R.drawable.fruit_cake);
-        data.add(item);
-        item = new HashMap<String, Object>();
-        item.put(StoreGoodsActivity.KEY_GOOD, MuffinRushAssets.PAVLOVA_GOOD);
-        item.put(StoreGoodsActivity.KEY_THUMB, R.drawable.pavlova);
-        data.add(item);
-        return data;
+    private HashMap<String, Object> generateImagesHash() {
+        final HashMap<String, Object> images = new HashMap<String, Object>();
+        images.put(MuffinRushAssets.CHOCLATECAKE_ITEM_ID, R.drawable.chocolate_cake);
+        images.put(MuffinRushAssets.CREAMCUP_ITEM_ID, R.drawable.cream_cup);
+        images.put(MuffinRushAssets.MUFFINCAKE_ITEM_ID, R.drawable.fruit_cake);
+        images.put(MuffinRushAssets.PAVLOVA_ITEM_ID, R.drawable.pavlova);
+        return images;
     }
 
     @Subscribe
@@ -142,8 +127,8 @@ public class StoreGoodsActivity extends Activity {
     public void onGoodBalanceChanged(GoodBalanceChangedEvent goodBalanceChangedEvent) {
         VirtualGood good = goodBalanceChangedEvent.getGood();
         int id = 0;
-        for(int i=0; i<mData.size(); i++) {
-            if (((VirtualGood)mData.get(i).get(KEY_GOOD)).getItemId().equals(good.getItemId())) {
+        for(int i=0; i<StoreInfo.getVirtualGoods().size(); i++) {
+            if (StoreInfo.getVirtualGoods().get(i).getItemId().equals(good.getItemId())) {
                 id = i;
                 break;
             }
@@ -152,19 +137,17 @@ public class StoreGoodsActivity extends Activity {
         ListView list = (ListView) findViewById(R.id.list);
         HashMap<String, Integer> currencyValues = good.getCurrencyValues();
         TextView info = (TextView)list.getChildAt(id).findViewById(R.id.item_info);
-        info.setText("price: " + currencyValues.get(MuffinRushAssets.MUFFIN_CURRENCY_ITEM_ID) +
+        info.setText("price: " + currencyValues.get(StoreInfo.getVirtualCurrencies().get(0).getItemId()) +
                 " balance: " + goodBalanceChangedEvent.getBalance());
     }
 
     private class StoreAdapter extends BaseAdapter {
-        private ArrayList<HashMap<String, Object>> data;
 
-        public StoreAdapter(ArrayList<HashMap<String, Object>> d) {
-            data=d;
+        public StoreAdapter() {
         }
 
         public int getCount() {
-            return data.size();
+            return mImages.size();
         }
 
         public Object getItem(int position) {
@@ -186,15 +169,15 @@ public class StoreGoodsActivity extends Activity {
             ImageView thumb_image=(ImageView)vi.findViewById(R.id.list_image);
             TextView info = (TextView)vi.findViewById(R.id.item_info);
 
-            VirtualGood good = (VirtualGood) data.get(position).get(StoreGoodsActivity.KEY_GOOD);
+            VirtualGood good = StoreInfo.getVirtualGoods().get(position);//VirtualGood) data.get(position).get(StoreGoodsActivity.KEY_GOOD);
 
             // Setting all values in listview
             vi.setTag(good.getItemId());
             title.setText(good.getName());
             content.setText(good.getDescription());
-            thumb_image.setImageResource((Integer)data.get(position).get(KEY_THUMB));
+            thumb_image.setImageResource((Integer)mImages.get(good.getItemId()));
             HashMap<String, Integer> currencyValues = good.getCurrencyValues();
-            info.setText("price: " + currencyValues.get(MuffinRushAssets.MUFFIN_CURRENCY_ITEM_ID) +
+            info.setText("price: " + currencyValues.get(StoreInfo.getVirtualCurrencies().get(0).getItemId()) +
                     " balance: " + StorageManager.getVirtualGoodsStorage().getBalance(good));
 
             return vi;

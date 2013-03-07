@@ -10,6 +10,7 @@ import android.widget.*;
 import com.soomla.store.BusProvider;
 import com.soomla.store.StoreController;
 import com.soomla.store.data.StorageManager;
+import com.soomla.store.data.StoreInfo;
 import com.soomla.store.domain.data.NonConsumableItem;
 import com.soomla.store.domain.data.VirtualCurrencyPack;
 import com.soomla.store.events.CurrencyBalanceChangedEvent;
@@ -22,11 +23,7 @@ import java.util.HashMap;
 public class StorePacksActivity extends Activity {
 
     private StoreAdapter mStoreAdapter;
-    private ArrayList<HashMap<String, Object>> mData;
-
-    static final String KEY_THUMB        = "thumb_url";
-    static final String KEY_PACK         = "virtual_pack";
-    static final String KEY_NON_CONSUMABLE = "non_consumable";
+    private HashMap<String, Object> mImages;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,9 +36,9 @@ public class StorePacksActivity extends Activity {
         getMore.setVisibility(View.INVISIBLE);
         title.setText("Virtual Currency Packs");
 
-        mData = generateDataHash();
+        mImages = generateImagesHash();
 
-        mStoreAdapter = new StoreAdapter(mData);
+        mStoreAdapter = new StoreAdapter();
 
 
         /* configuring the list with an adapter */
@@ -59,10 +56,24 @@ public class StorePacksActivity extends Activity {
                 * have enough than an InsufficientFundsException will be thrown.
                 */
 
-                HashMap<String, Object> item = mData.get(i);
-                if (item.containsKey(StorePacksActivity.KEY_PACK)){
-                    // purchasing a currency pack
-                    VirtualCurrencyPack pack = (VirtualCurrencyPack) item.get(StorePacksActivity.KEY_PACK);
+                if (i == 0) {
+                    NonConsumableItem non = StoreInfo.getNonConsumableItems().get(0);
+                    try {
+                        StoreController.getInstance().buyGoogleMarketItem(non.getProductId());
+                    } catch (VirtualItemNotFoundException e) {
+                        AlertDialog ad = new AlertDialog.Builder(activity).create();
+                        ad.setCancelable(false); // This blocks the 'BACK' button
+                        ad.setMessage("Can't continue with purchase (the given product id did not match any actual product... Fix IStoreAssets)");
+                        ad.setButton(DialogInterface.BUTTON_NEGATIVE, "OK", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                            }
+                        });
+                        ad.show();
+                    }
+                } else {
+                    VirtualCurrencyPack pack = StoreInfo.getCurrencyPacks().get(i-1);
                     try {
                         StoreController.getInstance().buyGoogleMarketItem(pack.getProductId());
                     } catch (VirtualItemNotFoundException e) {
@@ -78,29 +89,12 @@ public class StorePacksActivity extends Activity {
                         ad.show();
 
                     }
-                } else {
-                    // purchasing a MANAGED item
-                    NonConsumableItem non = (NonConsumableItem) item.get(StorePacksActivity.KEY_NON_CONSUMABLE);
-                    try {
-                        StoreController.getInstance().buyGoogleMarketItem(non.getProductId());
-                    } catch (VirtualItemNotFoundException e) {
-                        AlertDialog ad = new AlertDialog.Builder(activity).create();
-                        ad.setCancelable(false); // This blocks the 'BACK' button
-                        ad.setMessage("Can't continue with purchase (the given product id did not match any actual product... Fix IStoreAssets)");
-                        ad.setButton(DialogInterface.BUTTON_NEGATIVE, "OK", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                dialog.dismiss();
-                            }
-                        });
-                        ad.show();
-                    }
                 }
 
                 /* fetching the currency balance and placing it in the balance label */
                 TextView muffinsBalance = (TextView)activity.findViewById(R.id.balance);
                 muffinsBalance.setText("" + StorageManager.getVirtualCurrencyStorage().
-                        getBalance(MuffinRushAssets.MUFFIN_CURRENCY));
+                        getBalance(StoreInfo.getVirtualCurrencies().get(0)));
             }
         });
 
@@ -115,7 +109,7 @@ public class StorePacksActivity extends Activity {
         /* fetching the currency balance and placing it in the balance label */
         TextView muffinsBalance = (TextView)findViewById(R.id.balance);
         muffinsBalance.setText("" + StorageManager.getVirtualCurrencyStorage().
-                getBalance(MuffinRushAssets.MUFFIN_CURRENCY));
+                getBalance(StoreInfo.getVirtualCurrencies().get(0)));
     }
 
     @Override
@@ -125,30 +119,16 @@ public class StorePacksActivity extends Activity {
         BusProvider.getInstance().unregister(this);
     }
 
-    private ArrayList<HashMap<String, Object>> generateDataHash() {
-        final ArrayList<HashMap<String, Object>> data = new ArrayList<HashMap<String, Object>>();
-        HashMap<String, Object> item = new HashMap<String, Object>();
+    private HashMap<String, Object> generateImagesHash() {
+        final HashMap<String, Object> images = new HashMap<String, Object>();
 
-        item.put(StorePacksActivity.KEY_NON_CONSUMABLE, MuffinRushAssets.NO_ADDS_NONCONS);
-        item.put(StorePacksActivity.KEY_THUMB, R.drawable.no_ads);
-        data.add(item);
-        item = new HashMap<String, Object>();
-        item.put(StorePacksActivity.KEY_PACK, MuffinRushAssets.TENMUFF_PACK);
-        item.put(StorePacksActivity.KEY_THUMB, R.drawable.muffins01);
-        data.add(item);
-        item = new HashMap<String, Object>();
-        item.put(StorePacksActivity.KEY_PACK, MuffinRushAssets.FIFTYMUFF_PACK);
-        item.put(StorePacksActivity.KEY_THUMB, R.drawable.muffins02);
-        data.add(item);
-        item = new HashMap<String, Object>();
-        item.put(StorePacksActivity.KEY_PACK, MuffinRushAssets.FORTYMUFF_PACK);
-        item.put(StorePacksActivity.KEY_THUMB, R.drawable.muffins03);
-        data.add(item);
-        item = new HashMap<String, Object>();
-        item.put(StorePacksActivity.KEY_PACK, MuffinRushAssets.THOUSANDMUFF_PACK);
-        item.put(StorePacksActivity.KEY_THUMB, R.drawable.muffins04);
-        data.add(item);
-        return data;
+        images.put(MuffinRushAssets.NO_ADDS_NONCONS_PRODUCT_ID, R.drawable.no_ads);
+        images.put(MuffinRushAssets.TENMUFF_PACK_PRODUCT_ID, R.drawable.muffins01);
+        images.put(MuffinRushAssets.FIFTYMUFF_PACK_PRODUCT_ID, R.drawable.muffins02);
+        images.put(MuffinRushAssets.FORTYMUFF_PACK_PRODUCT_ID, R.drawable.muffins03);
+        images.put(MuffinRushAssets.THOUSANDMUFF_PACK_PRODUCT_ID, R.drawable.muffins04);
+
+        return images;
     }
 
     @Subscribe
@@ -160,11 +140,11 @@ public class StorePacksActivity extends Activity {
 
     private class StoreAdapter extends BaseAdapter {
 
-        public StoreAdapter(ArrayList<HashMap<String, Object>> d) {
+        public StoreAdapter() {
         }
 
         public int getCount() {
-            return mData.size();
+            return mImages.size();
         }
 
         public Object getItem(int position) {
@@ -187,19 +167,18 @@ public class StorePacksActivity extends Activity {
             ImageView thumb_image=(ImageView)vi.findViewById(R.id.list_image);
 
             // Setting all values in listview
-            HashMap<String, Object> item = mData.get(position);
-            if (item.containsKey(StorePacksActivity.KEY_PACK)){
-                VirtualCurrencyPack pack = (VirtualCurrencyPack) item.get(StorePacksActivity.KEY_PACK);
-                title.setText(pack.getName());
-                content.setText(pack.getDescription());
-                info.setText("price: $" + pack.getPrice());
-                thumb_image.setImageResource((Integer)mData.get(position).get(KEY_THUMB));
-            } else {
-                NonConsumableItem nonConsumableItem = (NonConsumableItem) item.get(StorePacksActivity.KEY_NON_CONSUMABLE);
+            if (position == 0) {
+                NonConsumableItem nonConsumableItem = StoreInfo.getNonConsumableItems().get(0);
                 title.setText(nonConsumableItem.getName());
                 content.setText(nonConsumableItem.getDescription());
                 info.setText("");
-                thumb_image.setImageResource((Integer)mData.get(position).get(KEY_THUMB));
+                thumb_image.setImageResource((Integer)mImages.get(nonConsumableItem.getProductId()));
+            } else {
+                VirtualCurrencyPack pack = StoreInfo.getCurrencyPacks().get(position-1);
+                title.setText(pack.getName());
+                content.setText(pack.getDescription());
+                info.setText("price: $" + pack.getPrice());
+                thumb_image.setImageResource((Integer)mImages.get(pack.getProductId()));
             }
 
             return vi;

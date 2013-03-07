@@ -58,6 +58,12 @@ public class MuffinRushAssets implements IStoreAssets {
     public static final String THOUSANDMUFF_PACK_PRODUCT_ID = "android.test.item_unavailable";
     public static final String NO_ADDS_NONCONS_PRODUCT_ID   = "no_ads";
 
+    public static final String MUFFINCAKE_ITEM_ID   = "fruit_cake";
+    public static final String PAVLOVA_ITEM_ID   = "pavlova";
+    public static final String CHOCLATECAKE_ITEM_ID   = "chocolate_cake";
+    public static final String CREAMCUP_ITEM_ID   = "cream_cup";
+
+
     /** Virtual Categories **/
     // The muffin rush theme doesn't support categories, so we just put everything under a general category.
     public static final VirtualCategory GENERAL_CATEGORY = new VirtualCategory(

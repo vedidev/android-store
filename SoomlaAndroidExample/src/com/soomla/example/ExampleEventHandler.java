@@ -6,6 +6,9 @@ import android.widget.Toast;
 import com.soomla.store.BusProvider;
 import com.soomla.store.SoomlaApp;
 import com.soomla.store.StoreConfig;
+import com.soomla.store.domain.data.GoogleMarketItem;
+import com.soomla.store.domain.data.VirtualCurrency;
+import com.soomla.store.domain.data.VirtualGood;
 import com.soomla.store.events.*;
 import com.squareup.otto.Subscribe;
 
