@@ -2,6 +2,7 @@ package com.soomla.store;
 
 import com.soomla.store.data.StorageManager;
 import com.soomla.store.data.StoreInfo;
+import com.soomla.store.domain.data.NonConsumableItem;
 import com.soomla.store.domain.data.VirtualCurrency;
 import com.soomla.store.domain.data.VirtualGood;
 import com.soomla.store.exceptions.VirtualItemNotFoundException;
@@ -46,5 +47,25 @@ public class StoreInventory {
         VirtualGood good = StoreInfo.getVirtualGoodByItemId(goodItemId);
 
         return StorageManager.getVirtualGoodsStorage().remove(good, amount);
+    }
+
+    /** NonConsumables **/
+
+    public boolean nonConsumableItemExists(String nonConsProductId) throws VirtualItemNotFoundException {
+        NonConsumableItem nonConsumableItem = StoreInfo.getNonConsumableByProductId(nonConsProductId);
+
+        return StorageManager.getNonConsumableItemsStorage().nonConsumableItemExists(nonConsumableItem);
+    }
+
+    public void addNonConsumableItem(String nonConsProductId) throws VirtualItemNotFoundException {
+        NonConsumableItem nonConsumableItem = StoreInfo.getNonConsumableByProductId(nonConsProductId);
+
+        StorageManager.getNonConsumableItemsStorage().add(nonConsumableItem);
+    }
+
+    public void removeNonConsumableItem(String nonConsProductId) throws VirtualItemNotFoundException {
+        NonConsumableItem nonConsumableItem = StoreInfo.getNonConsumableByProductId(nonConsProductId);
+
+        StorageManager.getNonConsumableItemsStorage().remove(nonConsumableItem);
     }
 }

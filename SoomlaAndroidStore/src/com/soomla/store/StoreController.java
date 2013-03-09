@@ -344,8 +344,23 @@ public class StoreController extends PurchaseObserver {
         if (responseCode == Consts.ResponseCode.RESULT_OK) {
             // purchase was sent to server
         } else if (responseCode == Consts.ResponseCode.RESULT_USER_CANCELED) {
+            GoogleMarketItem googleMarketItem = null;
+            try {
+                VirtualCurrencyPack pack = StoreInfo.getPackByGoogleProductId(request.mProductId);
+                googleMarketItem = pack.getGoogleItem();
+            } catch (VirtualItemNotFoundException e) {
 
-            // purchase canceled by user... doing nothing for now.
+                try {
+                    NonConsumableItem nonConsumableItem = StoreInfo.getNonConsumableByProductId(request.mProductId);
+                    googleMarketItem = nonConsumableItem.getGoogleItem();
+                } catch (VirtualItemNotFoundException e1) {
+                    Log.e(TAG, "ERROR : Couldn't find the CANCELLED VirtualCurrencyPack OR GoogleMarketItem  with productId: " + request.mProductId +
+                            ". It's unexpected so an unexpected error is being emitted.");
+                    BusProvider.getInstance().post(new UnexpectedStoreErrorEvent());
+                }
+            }
+
+            BusProvider.getInstance().post(new MarketPurchaseCancelledEvent(googleMarketItem));
 
         } else {
             // purchase failed !
