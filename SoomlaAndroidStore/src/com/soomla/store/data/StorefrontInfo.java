@@ -99,7 +99,7 @@ public class StorefrontInfo {
     public String fetchTemeJsonFromFile() {
         String storefrontJSON = "";
         try {
-            InputStream in = SoomlaApp.getAppContext().getAssets().open("theme.json");
+            InputStream in = SoomlaApp.getAppContext().getAssets().open("soomla/theme.json");
 
             byte[] buffer = new byte[in.available()];
             in.read(buffer);
