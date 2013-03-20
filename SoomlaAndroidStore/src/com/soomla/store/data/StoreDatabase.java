@@ -46,21 +46,8 @@ public class StoreDatabase {
         if (StoreConfig.debug) {
             Log.d(TAG, "Checking if database exists");
         }
-        SQLiteDatabase checkDB = null;
-        try {
-            checkDB = SQLiteDatabase.openDatabase(context.getDatabasePath(DATABASE_NAME).getAbsolutePath(), null,
-                    SQLiteDatabase.OPEN_READONLY);
-            checkDB.close();
-        } catch (SQLiteCantOpenDatabaseException ex) {
-            if (StoreConfig.debug) {
-                Log.d(TAG, "Database doesn't exist");
-            }
-        } catch (SQLiteException e) {
-            if (StoreConfig.debug) {
-                Log.d(TAG, "Database doesn't exist");
-            }
-        }
-        return checkDB != null;
+
+        return context.getDatabasePath(DATABASE_NAME).exists();
     }
 
     @Deprecated
