@@ -15,12 +15,12 @@
  */
 package com.soomla.store.data;
 
-import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+
 import com.soomla.store.StoreConfig;
 
 /**
@@ -45,10 +45,6 @@ public class KeyValDatabase {
         mDatabaseHelper.close();
     }
 
-    public static void setActivity(Activity activity) {
-        mActivity = activity;
-    }
-	
     /**
      * Sets the given value to the given key
      * @param key the key of the key-val pair.
@@ -73,15 +69,16 @@ public class KeyValDatabase {
     public synchronized String getKeyVal(String key) {
         Cursor cursor = mStoreDB.query(KEYVAL_TABLE_NAME, KEYVAL_COLUMNS, KEYVAL_COLUMN_KEY + "='" + key + "'",
                 null, null, null, null);
-        
-        //Start managing cursor to stop exception when building with API-8.
-        if(mActivity != null) {
-        	mActivity.startManagingCursor(cursor);
-        }
-        
+ 
         if (cursor != null && cursor.moveToNext()) {
             int valColIdx = cursor.getColumnIndexOrThrow(KEYVAL_COLUMN_VAL);
-            return cursor.getString(valColIdx);
+            String ret = cursor.getString(valColIdx);
+            cursor.close();
+            return ret;
+        }
+        
+        if(cursor != null) {
+        	cursor.close();
         }
         
         return null;
@@ -158,5 +155,4 @@ public class KeyValDatabase {
 
     private SQLiteDatabase mStoreDB;
     private DatabaseHelper mDatabaseHelper;
-    private static Activity mActivity = null;
 }
