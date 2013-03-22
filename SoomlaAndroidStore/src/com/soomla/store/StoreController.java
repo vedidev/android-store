@@ -23,6 +23,7 @@ import com.soomla.billing.BillingService;
 import com.soomla.billing.Consts;
 import com.soomla.billing.PurchaseObserver;
 import com.soomla.billing.ResponseHandler;
+import com.soomla.store.data.KeyValDatabase;
 import com.soomla.store.data.ObscuredSharedPreferences;
 import com.soomla.store.data.StorageManager;
 import com.soomla.store.data.StoreInfo;
@@ -222,6 +223,8 @@ public class StoreController extends PurchaseObserver {
 
         mStoreOpen = true;
         mLock.unlock();
+        
+        KeyValDatabase.setActivity(activity);
 
         initCompatibilityLayer(activity);
 
