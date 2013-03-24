@@ -49,6 +49,24 @@ public class StoreInventory {
         return StorageManager.getVirtualGoodsStorage().remove(good, amount);
     }
 
+    public static void equipVirtualGood(String goodItemId) throws VirtualItemNotFoundException{
+        VirtualGood good = StoreInfo.getVirtualGoodByItemId(goodItemId);
+
+        StorageManager.getVirtualGoodsStorage().equip(good, true);
+    }
+
+    public static void unEquipVirtualGood(String goodItemId) throws VirtualItemNotFoundException{
+        VirtualGood good = StoreInfo.getVirtualGoodByItemId(goodItemId);
+
+        StorageManager.getVirtualGoodsStorage().equip(good, false);
+    }
+
+    public static boolean isVirtualGoodEquipped(String goodItemId) throws VirtualItemNotFoundException{
+        VirtualGood good = StoreInfo.getVirtualGoodByItemId(goodItemId);
+
+        return StorageManager.getVirtualGoodsStorage().isEquipped(good);
+    }
+
     /** NonConsumables **/
 
     public boolean nonConsumableItemExists(String nonConsProductId) throws VirtualItemNotFoundException {
