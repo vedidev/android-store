@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.soomla.store.domain.data;
+package com.soomla.store.domain;
 
 import android.util.Log;
 import com.soomla.store.StoreConfig;

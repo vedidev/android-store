@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.soomla.store.domain.data;
+package com.soomla.store.domain;
 
 import android.util.Log;
 import com.soomla.store.StoreConfig;
@@ -23,7 +23,7 @@ import org.json.JSONObject;
 
 /**
  * This class represents an item in Google Play.
- * Every {@link VirtualCurrencyPack} has an instance of this class which is a
+ * Every {@link com.soomla.store.domain.virtualCurrencies.VirtualCurrencyPack} has an instance of this class which is a
  * representation of the same currency pack as an item on Google Play.
  */
 public class GoogleMarketItem {

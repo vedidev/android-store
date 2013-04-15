@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.soomla.store.domain.data;
+package com.soomla.store.domain;
 
 import android.util.Log;
 import com.soomla.store.StoreConfig;
@@ -24,7 +24,7 @@ import org.json.JSONObject;
 /**
  * This class is the parent of all virtual items in the application.
  */
-public abstract class AbstractVirtualItem {
+public abstract class VirtualItem {
 
     /** Constructor
      *
@@ -33,7 +33,7 @@ public abstract class AbstractVirtualItem {
      *                       in the store in the description section.
      * @param mItemId is the id of the virtual item.
      */
-    public AbstractVirtualItem(String mName, String mDescription, String mItemId) {
+    public VirtualItem(String mName, String mDescription, String mItemId) {
         this.mName = mName;
         this.mDescription = mDescription;
         this.mItemId = mItemId;
@@ -41,19 +41,19 @@ public abstract class AbstractVirtualItem {
 
     /** Constructor
      *
-     * Generates an instance of {@link AbstractVirtualItem} from a JSONObject.
-     * @param jsonObject is a JSONObject representation of the wanted {@link AbstractVirtualItem}.
+     * Generates an instance of {@link VirtualItem} from a JSONObject.
+     * @param jsonObject is a JSONObject representation of the wanted {@link VirtualItem}.
      * @throws JSONException
      */
-    public AbstractVirtualItem(JSONObject jsonObject) throws JSONException{
+    public VirtualItem(JSONObject jsonObject) throws JSONException{
         mName = jsonObject.getString(JSONConsts.ITEM_NAME);
         mDescription = jsonObject.getString(JSONConsts.ITEM_DESCRIPTION);
         mItemId = jsonObject.getString(JSONConsts.ITEM_ITEMID);
     }
 
     /**
-     * Converts the current {@link AbstractVirtualItem} to a JSONObject.
-     * @return a JSONObject representation of the current {@link AbstractVirtualItem}.
+     * Converts the current {@link VirtualItem} to a JSONObject.
+     * @return a JSONObject representation of the current {@link VirtualItem}.
      */
     public JSONObject toJSONObject(){
         JSONObject jsonObject = new JSONObject();
@@ -73,9 +73,9 @@ public abstract class AbstractVirtualItem {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof AbstractVirtualItem)) return false;
+        if (!(o instanceof VirtualItem)) return false;
 
-        AbstractVirtualItem that = (AbstractVirtualItem) o;
+        VirtualItem that = (VirtualItem) o;
 
         return mItemId.equals(that.mItemId);
     }
@@ -101,7 +101,7 @@ public abstract class AbstractVirtualItem {
 
     /** Private members **/
 
-    private static final String TAG = "SOOMLA AbstractVirtualItem";
+    private static final String TAG = "SOOMLA VirtualItem";
 
     private String mName;
     private String mDescription;

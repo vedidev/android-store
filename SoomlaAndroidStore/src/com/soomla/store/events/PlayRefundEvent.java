@@ -15,17 +15,17 @@
  */
 package com.soomla.store.events;
 
-import com.soomla.store.domain.data.VirtualGood;
+import com.soomla.store.domain.GoogleMarketItem;
 
-public class VirtualGoodUnEquippedEvent {
+public class PlayRefundEvent {
 
-    private VirtualGood mGood;
+    private GoogleMarketItem mGoogleMarketItem;
 
-    public VirtualGoodUnEquippedEvent(VirtualGood good) {
-        mGood = good;
+    public PlayRefundEvent(GoogleMarketItem googleMarketItem) {
+        mGoogleMarketItem = googleMarketItem;
     }
 
-    public VirtualGood getGood() {
-        return mGood;
+    public GoogleMarketItem getGoogleMarketItem() {
+        return mGoogleMarketItem;
     }
 }

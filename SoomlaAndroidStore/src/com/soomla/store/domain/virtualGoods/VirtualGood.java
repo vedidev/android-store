@@ -13,39 +13,37 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.soomla.store.domain.data;
+package com.soomla.store.domain.virtualGoods;
 
 import android.util.Log;
 import com.soomla.store.StoreConfig;
 import com.soomla.store.data.JSONConsts;
 import com.soomla.store.data.StoreInfo;
+import com.soomla.store.domain.PurchasableVirtualItem;
+import com.soomla.store.domain.VirtualCategory;
+import com.soomla.store.domain.purchaseStrategies.IPurchaseStrategy;
 import com.soomla.store.exceptions.VirtualItemNotFoundException;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.HashMap;
 import java.util.Iterator;
 
 /**
  * This is a representation of the application's virtual good.
- * Virtual goods are bought with one or more {@link VirtualCurrency}. The price
- * is determined by the {@link VirtualGood#mPriceModel}
  */
-public class VirtualGood extends AbstractVirtualItem {
+public abstract class VirtualGood extends PurchasableVirtualItem {
 
     /** Constructor
      *
      * @param mName is the name of the virtual good.
      * @param mDescription is the description of the virtual good. This will show up
      *                       in the store in the description section.
-     * @param mPriceModel is the way the price of the current virtual good is calculated.
      * @param mItemId is the id of the virtual good.
      * @param mCategory is the category this virtual good is associated with.
      */
-    public VirtualGood(String mName, String mDescription, AbstractPriceModel mPriceModel,
-                       String mItemId, VirtualCategory mCategory) {
-        super(mName, mDescription, mItemId);
-        this.mPriceModel = mPriceModel;
+    public VirtualGood(String mName, String mDescription,
+                       String mItemId, VirtualCategory mCategory, IPurchaseStrategy purchaseType) {
+        super(mName, mDescription, mItemId, purchaseType);
         this.mCategory = mCategory;
     }
 
@@ -57,8 +55,6 @@ public class VirtualGood extends AbstractVirtualItem {
      */
     public VirtualGood(JSONObject jsonObject) throws JSONException{
         super(jsonObject);
-        this.mPriceModel = AbstractPriceModel.fromJSONObject(jsonObject.getJSONObject(JSONConsts
-                .GOOD_PRICE_MODEL));
         int catId = jsonObject.getInt(JSONConsts.GOOD_CATEGORY_ID);
         try {
             if (catId > -1){
@@ -83,10 +79,6 @@ public class VirtualGood extends AbstractVirtualItem {
                 String key = (String)keys.next();
                 jsonObject.put(key, parentJsonObject.get(key));
             }
-
-            JSONObject priceModelObject = AbstractPriceModel.priceModelToJSONObject(mPriceModel);
-            jsonObject.put(JSONConsts.GOOD_PRICE_MODEL, priceModelObject);
-            jsonObject.put(JSONConsts.GOOD_CATEGORY_ID, mCategory != null ? mCategory.getId() : -1);
         } catch (JSONException e) {
             if (StoreConfig.debug){
                 Log.d(TAG, "An error occurred while generating JSON object.");
@@ -94,41 +86,6 @@ public class VirtualGood extends AbstractVirtualItem {
         }
 
         return jsonObject;
-    }
-
-    /**
-     * The currency value is calculated in the price model so we return the current price of the
-     * virtual good as defined in its price model.
-     * @return the current price of the virtual good according to its price model.
-     */
-    public HashMap<String, Integer> getCurrencyValues(){
-        return mPriceModel.getCurrentPrice(this);
-    }
-
-    /**
-     * The same as the above {@link com.soomla.store.domain.data.VirtualGood#getCurrencyValues()}
-     * only here the returned value is a representation of the HashMap as a JSONObject.
-     * @return the current price of the virtual good according to its price model as a JSONObject.
-     */
-    public JSONObject getCurrencyValuesAsJSONObject(){
-
-        HashMap<String, Integer> currencyValue = mPriceModel.getCurrentPrice(this);
-        JSONObject jsonObject = new JSONObject();
-        for(String key : currencyValue.keySet()){
-            try {
-                jsonObject.put(key, currencyValue.get(key));
-            } catch (JSONException e) {
-                if (StoreConfig.debug){
-                    Log.d(TAG, "An error occurred while generating JSON object.");
-                }
-            }
-        }
-
-        return jsonObject;
-    }
-
-    public AbstractPriceModel getPriceModel() {
-        return mPriceModel;
     }
 
     public VirtualCategory getCategory() {
@@ -139,6 +96,5 @@ public class VirtualGood extends AbstractVirtualItem {
 
     private static final String TAG = "SOOMLA VirtualGood";
 
-    private AbstractPriceModel mPriceModel;
     private VirtualCategory    mCategory;
 }

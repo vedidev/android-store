@@ -13,19 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.soomla.store.events;
 
-import com.soomla.store.domain.data.GoogleMarketItem;
+package com.soomla.store.domain.virtualGoods;
 
-public class MarketRefundEvent {
+import com.soomla.store.domain.VirtualCategory;
+import com.soomla.store.purchaseStrategies.IPurchaseStrategy;
+import org.json.JSONException;
+import org.json.JSONObject;
 
-    private GoogleMarketItem mGoogleMarketItem;
-
-    public MarketRefundEvent(GoogleMarketItem googleMarketItem) {
-        mGoogleMarketItem = googleMarketItem;
+public class LifetimeVG extends VirtualGood{
+    public LifetimeVG(String mName, String mDescription, String mItemId, VirtualCategory mCategory, IPurchaseStrategy purchaseType) {
+        super(mName, mDescription, mItemId, mCategory, purchaseType);
     }
 
-    public GoogleMarketItem getGoogleMarketItem() {
-        return mGoogleMarketItem;
+    public LifetimeVG(JSONObject jsonObject) throws JSONException {
+        super(jsonObject);
     }
 }

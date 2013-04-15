@@ -13,19 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.soomla.store.events;
 
-import com.soomla.store.domain.data.GoogleMarketItem;
+package com.soomla.store.domain.virtualGoods;
 
-public class MarketPurchaseEvent {
+import com.soomla.store.domain.VirtualCategory;
+import com.soomla.store.purchaseStrategies.IPurchaseStrategy;
+import org.json.JSONException;
+import org.json.JSONObject;
 
-    private GoogleMarketItem mGoogleMarketItem;
+public class SingleUseVG extends VirtualGood{
 
-    public MarketPurchaseEvent(GoogleMarketItem googleMarketItem) {
-        mGoogleMarketItem = googleMarketItem;
+    public SingleUseVG(String mName, String mDescription, String mItemId, VirtualCategory mCategory, IPurchaseStrategy purchaseType) {
+        super(mName, mDescription, mItemId, mCategory, purchaseType);
     }
 
-    public GoogleMarketItem getGoogleMarketItem() {
-        return mGoogleMarketItem;
+    public SingleUseVG(JSONObject jsonObject) throws JSONException {
+        super(jsonObject);
     }
 }

@@ -13,10 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.soomla.store.domain.data;
+package com.soomla.store.domain;
 
 import android.util.Log;
 import com.soomla.store.StoreConfig;
+import com.soomla.store.domain.AbstractVirtualItem;
+import com.soomla.store.domain.data.GoogleMarketItem;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -25,7 +27,7 @@ import java.util.Iterator;
 /**
  * A representation of a non-consumable item. These kinds of items are bought by the user once and kept for him forever.
  */
-public class NonConsumableItem extends AbstractVirtualItem{
+public class NonConsumableItem extends AbstractVirtualItem {
 
     /** Constructor
      *

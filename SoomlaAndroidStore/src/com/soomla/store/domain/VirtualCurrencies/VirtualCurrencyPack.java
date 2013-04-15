@@ -13,12 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.soomla.store.domain.data;
+package com.soomla.store.domain.VirtualCurrencies;
 
 import android.util.Log;
 import com.soomla.store.StoreConfig;
 import com.soomla.store.data.JSONConsts;
 import com.soomla.store.data.StoreInfo;
+import com.soomla.store.domain.PurchasableVirtualItem;
+import com.soomla.store.domain.purchaseStrategies.IPurchaseStrategy;
 import com.soomla.store.exceptions.VirtualItemNotFoundException;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -32,7 +34,7 @@ import java.util.Iterator;
  * The currency pack usually has a google item related to it. As a developer,
  * you'll define the google item in Google's in-app purchase dashboard.
  */
-public class VirtualCurrencyPack extends AbstractVirtualItem {
+public class VirtualCurrencyPack extends PurchasableVirtualItem {
 
     /** Constructor
      *
@@ -46,10 +48,10 @@ public class VirtualCurrencyPack extends AbstractVirtualItem {
      * @param mCurrency is the currency associated with this pack.
      */
     public VirtualCurrencyPack(String mName, String mDescription, String mItemId,
-                               String productId, double mPrice, int mCurrencyAmout, VirtualCurrency mCurrency) {
-        super(mName, mDescription, mItemId);
+                               String productId, double mPrice, int mCurrencyAmout,
+                               VirtualCurrency mCurrency, IPurchaseStrategy purchaseType) {
+        super(mName, mDescription, mItemId, purchaseType);
         this.mCurrency = mCurrency;
-        this.mGoogleItem = new GoogleMarketItem(productId, GoogleMarketItem.Managed.UNMANAGED, mPrice);
         this.mCurrencyAmount = mCurrencyAmout;
     }
 
@@ -61,8 +63,6 @@ public class VirtualCurrencyPack extends AbstractVirtualItem {
      */
     public VirtualCurrencyPack(JSONObject jsonObject) throws JSONException {
         super(jsonObject);
-        this.mGoogleItem = new GoogleMarketItem(jsonObject);
-        this.mGoogleItem.setManaged(GoogleMarketItem.Managed.UNMANAGED);
         this.mCurrencyAmount = jsonObject.getInt(JSONConsts.CURRENCYPACK_AMOUNT);
 
         String currencyItemId = jsonObject.getString(JSONConsts.CURRENCYPACK_CURRENCYITEMID);
@@ -81,7 +81,6 @@ public class VirtualCurrencyPack extends AbstractVirtualItem {
      */
     public JSONObject toJSONObject(){
         JSONObject parentJsonObject = super.toJSONObject();
-        JSONObject gmiJSONObject = mGoogleItem.toJSONObject();
         JSONObject jsonObject = new JSONObject();
         try {
             jsonObject.put(JSONConsts.CURRENCYPACK_AMOUNT, new Integer(mCurrencyAmount));
@@ -94,12 +93,6 @@ public class VirtualCurrencyPack extends AbstractVirtualItem {
                 jsonObject.put(key, parentJsonObject.get(key));
             }
 
-            keys = gmiJSONObject.keys();
-            while(keys.hasNext())
-            {
-                String key = (String)keys.next();
-                jsonObject.put(key, gmiJSONObject.get(key));
-            }
         } catch (JSONException e) {
             if (StoreConfig.debug){
                 Log.d(TAG, "An error occured while generating JSON object.");
@@ -110,18 +103,6 @@ public class VirtualCurrencyPack extends AbstractVirtualItem {
     }
 
     /** Getters **/
-
-    public GoogleMarketItem getGoogleItem() {
-        return mGoogleItem;
-    }
-
-    public String getProductId(){
-        return mGoogleItem.getProductId();
-    }
-
-    public double getPrice(){
-        return mGoogleItem.getPrice();
-    }
 
     public int getCurrencyAmount() {
         return mCurrencyAmount;
@@ -135,7 +116,6 @@ public class VirtualCurrencyPack extends AbstractVirtualItem {
 
     private static final String TAG = "SOOMLA VirtualCurrencyPack";
 
-    private GoogleMarketItem mGoogleItem;
     private int              mCurrencyAmount;
     private VirtualCurrency  mCurrency;
 }

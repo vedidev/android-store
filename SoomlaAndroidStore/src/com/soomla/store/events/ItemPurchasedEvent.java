@@ -15,17 +15,17 @@
  */
 package com.soomla.store.events;
 
-import com.soomla.store.domain.data.GoogleMarketItem;
+import com.soomla.store.domain.PurchasableVirtualItem;
 
-public class MarketPurchaseCancelledEvent {
+public class ItemPurchasedEvent {
 
-    private GoogleMarketItem mGoogleMarketItem;
+    private PurchasableVirtualItem mPurchasableVirtualItem;
 
-    public MarketPurchaseCancelledEvent(GoogleMarketItem googleMarketItem) {
-        mGoogleMarketItem = googleMarketItem;
+    public ItemPurchasedEvent(PurchasableVirtualItem purchasableVirtualItem) {
+        mPurchasableVirtualItem = purchasableVirtualItem;
     }
 
-    public GoogleMarketItem getGoogleMarketItem() {
-        return mGoogleMarketItem;
+    public PurchasableVirtualItem getGood() {
+        return mPurchasableVirtualItem;
     }
 }

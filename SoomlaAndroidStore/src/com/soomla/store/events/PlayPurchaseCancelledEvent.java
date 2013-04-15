@@ -15,13 +15,13 @@
  */
 package com.soomla.store.events;
 
-import com.soomla.store.domain.data.GoogleMarketItem;
+import com.soomla.store.domain.GoogleMarketItem;
 
-public class MarketPurchaseStartedEvent {
+public class PlayPurchaseCancelledEvent {
 
     private GoogleMarketItem mGoogleMarketItem;
 
-    public MarketPurchaseStartedEvent(GoogleMarketItem googleMarketItem) {
+    public PlayPurchaseCancelledEvent(GoogleMarketItem googleMarketItem) {
         mGoogleMarketItem = googleMarketItem;
     }
 

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.soomla.store.domain.data;
+package com.soomla.store.domain.VirtualCurrencies;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -22,7 +22,7 @@ import org.json.JSONObject;
  * This is a representation of the game's virtual currency.
  * Each game can have multiple instances of a virtual currency, all kept in {@link com.soomla.store.data.StoreInfo};
  */
-public class VirtualCurrency extends AbstractVirtualItem {
+public class VirtualCurrency extends VirtualIt {
 
     /** Constructor
      *

@@ -15,17 +15,17 @@
  */
 package com.soomla.store.events;
 
-import com.soomla.store.domain.data.VirtualGood;
+import com.soomla.store.domain.PurchasableVirtualItem;
 
-public class GoodPurchaseStartedEvent {
+public class ItemPurchaseStartedEvent {
 
-    private VirtualGood mGood;
+    private PurchasableVirtualItem mPurchasableVirtualItem;
 
-    public GoodPurchaseStartedEvent(VirtualGood good) {
-        mGood = good;
+    public ItemPurchaseStartedEvent(PurchasableVirtualItem purchasableVirtualItem) {
+        mPurchasableVirtualItem = purchasableVirtualItem;
     }
 
-    public VirtualGood getGood() {
-        return mGood;
+    public PurchasableVirtualItem getPurchasableVirtualItem() {
+        return mPurchasableVirtualItem;
     }
 }
