@@ -67,7 +67,7 @@ public class StoreExampleActivity extends Activity {
         boolean initialized = prefs.getBoolean(FIRST_RUN, false);
         if (!initialized) {
             try {
-                StoreInventory.addCurrencyAmount(storeAssets.getVirtualCurrencies()[0].getItemId(), 10000);
+                StoreInventory.addVirtualItemAmount(storeAssets.getVirtualCurrencies()[0].getItemId(), 10000);
                 SharedPreferences.Editor edit = prefs.edit();
                 edit.putBoolean(FIRST_RUN, true);
                 edit.commit();

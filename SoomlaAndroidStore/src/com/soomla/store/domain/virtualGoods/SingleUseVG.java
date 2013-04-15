@@ -16,18 +16,38 @@
 
 package com.soomla.store.domain.virtualGoods;
 
-import com.soomla.store.domain.VirtualCategory;
-import com.soomla.store.purchaseStrategies.IPurchaseStrategy;
+import com.soomla.store.data.StorageManager;
+import com.soomla.store.purchaseTypes.PurchaseType;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 public class SingleUseVG extends VirtualGood{
 
-    public SingleUseVG(String mName, String mDescription, String mItemId, VirtualCategory mCategory, IPurchaseStrategy purchaseType) {
-        super(mName, mDescription, mItemId, mCategory, purchaseType);
+    public SingleUseVG(String mName, String mDescription, String mItemId, PurchaseType purchaseType) {
+        super(mName, mDescription, mItemId, purchaseType);
     }
 
     public SingleUseVG(JSONObject jsonObject) throws JSONException {
         super(jsonObject);
+    }
+
+    @Override
+    public JSONObject toJSONObject() {
+        return super.toJSONObject();
+    }
+
+    @Override
+    public void give(int amount) {
+        StorageManager.getVirtualGoodsStorage().add(this, amount);
+    }
+
+    @Override
+    public void take(int amount) {
+        StorageManager.getVirtualGoodsStorage().remove(this, amount);
+    }
+
+    @Override
+    protected boolean canBuy() {
+        return true;
     }
 }

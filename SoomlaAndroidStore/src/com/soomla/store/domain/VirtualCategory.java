@@ -17,11 +17,17 @@ package com.soomla.store.domain;
 
 import android.util.Log;
 import com.soomla.store.StoreConfig;
+import com.soomla.store.StoreUtils;
 import com.soomla.store.data.JSONConsts;
+import com.soomla.store.data.StoreInfo;
+import com.soomla.store.domain.virtualGoods.VirtualGood;
+import com.soomla.store.exceptions.VirtualItemNotFoundException;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.EnumSet;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * This class is a definition of a category. A single category can be associated with many virtual goods.
@@ -33,14 +39,11 @@ public class VirtualCategory {
 
     /** Constructor
      *
-     * @param mName is the category's name.
-     * @param mId is the category's unique id.
-     * @param mEquippingModel is the equipping model for this category.
+     * @param name is the category's name.
      */
-    public VirtualCategory(String mName, int mId, EquippingModel mEquippingModel) {
-        this.mName = mName;
-        this.mId = mId;
-        this.mEquippingModel = mEquippingModel;
+    public VirtualCategory(String name, ArrayList<VirtualGood> goods) {
+        mName = name;
+        mGoods = goods;
     }
 
     /** Constructor
@@ -50,9 +53,18 @@ public class VirtualCategory {
      * @throws JSONException
      */
     public VirtualCategory(JSONObject jsonObject) throws JSONException{
-        this.mName = jsonObject.getString(JSONConsts.CATEGORY_NAME);
-        this.mId   = jsonObject.getInt(JSONConsts.CATEGORY_ID);
-        this.mEquippingModel = EquippingModel.fromString(jsonObject.getString(JSONConsts.CATEGORY_EQUIPPING));
+        mName = jsonObject.getString(JSONConsts.CATEGORY_NAME);
+
+        JSONArray goodsArr = jsonObject.getJSONArray(JSONConsts.CATEGORY_GOODSITEMIDS);
+        for(int i=0; i<goodsArr.length(); i++) {
+            String goodItemId = goodsArr.getString(i);
+            try {
+                VirtualGood good = (VirtualGood) StoreInfo.getVirtualItem(goodItemId);
+                mGoods.add(good);
+            } catch (VirtualItemNotFoundException e) {
+                StoreUtils.LogError(TAG, "Tried to fetch virtual good with itemId '" + goodItemId + "' but it didn't exist.");
+            }
+        }
     }
 
     /**
@@ -63,79 +75,40 @@ public class VirtualCategory {
         JSONObject jsonObject = new JSONObject();
         try {
             jsonObject.put(JSONConsts.CATEGORY_NAME, mName);
-            jsonObject.put(JSONConsts.CATEGORY_ID, mId);
-            jsonObject.put(JSONConsts.CATEGORY_EQUIPPING, mEquippingModel.toString());
-        } catch (JSONException e) {
-            if (StoreConfig.debug){
-                Log.d(TAG, "An error occurred while generating JSON object.");
+
+            JSONArray goodsArr = new JSONArray();
+            for(VirtualGood good : mGoods) {
+                goodsArr.put(good.getItemId());
             }
+
+            jsonObject.put(JSONConsts.CATEGORY_GOODSITEMIDS, goodsArr);
+        } catch (JSONException e) {
+            StoreUtils.LogError(TAG, "An error occurred while generating JSON object.");
         }
 
         return jsonObject;
-    }
-
-    public int getId() {
-        return mId;
     }
 
     public String getName() {
         return mName;
     }
 
-    public EquippingModel getEquippingModel() {
-        return mEquippingModel;
+    public List<VirtualGood> getGoods() {
+        return mGoods;
     }
 
-    /**
-     * EquippingModel is the way VirtualGoods are equipped inside the current category.
-     * NONE - Can't equip virtual goods.
-     * SINGLE - Only one virtual good can be equipped at any given time in the game.
-     * MULTIPLE - Many virtual goods can be equipped at any given time in the game.
-     */
-    public static enum EquippingModel {
-        NONE("none"), SINGLE("single"), MULTIPLE("multiple");
-
-        private EquippingModel(final String em) {
-            this.mEm = em;
-        }
-
-        private final String mEm;
-
-        public String toString() {
-            return mEm;
-        }
-
-        public static EquippingModel fromString(String em) {
-            for (final EquippingModel element : EnumSet.allOf(EquippingModel.class)) {
-                if (element.toString().equals(em)) {
-                    return element;
-                }
-            }
-            return null;
-        }
+    public void addGood(VirtualGood good) {
+        mGoods.add(good);
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        VirtualCategory that = (VirtualCategory) o;
-
-        return mId == that.mId;
-
-    }
-
-    @Override
-    public int hashCode() {
-        return mId;
+    public void removeGood(VirtualGood good) {
+        mGoods.remove(good);
     }
 
     /** Private members **/
 
     private static final String TAG = "SOOMLA VirtualCategory";
 
+    private ArrayList<VirtualGood> mGoods = new ArrayList<VirtualGood>();
     private String  mName;
-    private int     mId;
-    private EquippingModel mEquippingModel;
 }

@@ -25,7 +25,7 @@ public class ItemPurchasedEvent {
         mPurchasableVirtualItem = purchasableVirtualItem;
     }
 
-    public PurchasableVirtualItem getGood() {
+    public PurchasableVirtualItem getPurchasableVirtualItem() {
         return mPurchasableVirtualItem;
     }
 }

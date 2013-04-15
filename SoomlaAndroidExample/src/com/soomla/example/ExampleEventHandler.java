@@ -6,9 +6,6 @@ import android.widget.Toast;
 import com.soomla.store.BusProvider;
 import com.soomla.store.SoomlaApp;
 import com.soomla.store.StoreConfig;
-import com.soomla.store.domain.data.GoogleMarketItem;
-import com.soomla.store.domain.data.VirtualCurrency;
-import com.soomla.store.domain.data.VirtualGood;
 import com.soomla.store.events.*;
 import com.squareup.otto.Subscribe;
 
@@ -25,27 +22,27 @@ public class ExampleEventHandler {
     }
 
     @Subscribe
-    public void onMarketPurchase(MarketPurchaseEvent marketPurchaseEvent) {
-        showToastIfDebug(marketPurchaseEvent.getGoogleMarketItem().getProductId() + " was just purchased");
+    public void onMarketPurchase(PlayPurchaseEvent marketPurchaseEvent) {
+        showToastIfDebug(marketPurchaseEvent.getPurchasableVirtualItem().getName() + " was just purchased");
     }
 
     @Subscribe
-    public void onMarketRefund(MarketRefundEvent marketRefundEvent) {
-        showToastIfDebug(marketRefundEvent.getGoogleMarketItem().getProductId() + " was just refunded");
+    public void onMarketRefund(PlayRefundEvent marketRefundEvent) {
+        showToastIfDebug(marketRefundEvent.getPurchasableVirtualItem().getName() + " was just refunded");
     }
 
     @Subscribe
-    public void onVirtualGoodPurchased(GoodPurchasedEvent goodPurchasedEvent) {
-        showToastIfDebug(goodPurchasedEvent.getGood().getName() + " was just purchased");
+    public void onVirtualItemPurchased(ItemPurchasedEvent itemPurchasedEvent) {
+        showToastIfDebug(itemPurchasedEvent.getPurchasableVirtualItem().getName() + " was just purchased");
     }
 
     @Subscribe
-    public void onVirtualGoodEquipped(VirtualGoodEquippedEvent virtualGoodEquippedEvent) {
+    public void onVirtualGoodEquipped(GoodEquippedEvent virtualGoodEquippedEvent) {
         showToastIfDebug(virtualGoodEquippedEvent.getGood().getName() + " was just equipped");
     }
 
     @Subscribe
-    public void onVirtualGoodUnequipped(VirtualGoodUnEquippedEvent virtualGoodUnEquippedEvent) {
+    public void onVirtualGoodUnequipped(GoodUnEquippedEvent virtualGoodUnEquippedEvent) {
         showToastIfDebug(virtualGoodUnEquippedEvent.getGood().getName() + " was just unequipped");
     }
 
@@ -60,13 +57,18 @@ public class ExampleEventHandler {
     }
 
     @Subscribe
-    public void onMarketPurchaseProcessStarted(MarketPurchaseStartedEvent marketPurchaseStartedEvent) {
-        showToastIfDebug("Market purchase started for productId: " + marketPurchaseStartedEvent.getGoogleMarketItem().getProductId());
+    public void onPlayPurchaseStartedEvent(PlayPurchaseStartedEvent marketPurchaseStartedEvent) {
+        showToastIfDebug("Market purchase started for: " + marketPurchaseStartedEvent.getPurchasableVirtualItem().getName());
     }
 
     @Subscribe
-    public void onGoodsPurchaseProcessStarted(GoodPurchaseStartedEvent goodPurchaseStartedEvent) {
-        showToastIfDebug("Goods purchase started for good: " + goodPurchaseStartedEvent.getGood().getName());
+    public void onPlayPurchaseCancelledEvent(PlayPurchaseCancelledEvent marketPurchaseCancelledEvent) {
+        showToastIfDebug("Market purchase started for: " + marketPurchaseCancelledEvent.getPurchasableVirtualItem().getName());
+    }
+
+    @Subscribe
+    public void onItemPurchaseStartedEvent(ItemPurchaseStartedEvent itemPurchaseStartedEvent) {
+        showToastIfDebug("Item purchase started for: " + itemPurchaseStartedEvent.getPurchasableVirtualItem().getName());
     }
 
     @Subscribe
@@ -101,7 +103,7 @@ public class ExampleEventHandler {
             mHandler.post(new Runnable() {
                 @Override
                 public void run() {
-                    Toast toast = Toast.makeText(SoomlaApp.getAppContext(), msg, 5000);
+                    Toast toast = Toast.makeText(SoomlaApp.getAppContext(), msg, 2000);
                     toast.show();
                 }
             });

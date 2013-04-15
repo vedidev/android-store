@@ -15,7 +15,7 @@
  */
 package com.soomla.store.events;
 
-import com.soomla.store.domain.data.VirtualCurrency;
+import com.soomla.store.domain.virtualCurrencies.VirtualCurrency;
 
 public class CurrencyBalanceChangedEvent {
 

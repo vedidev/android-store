@@ -24,6 +24,9 @@ import android.util.Log;
 import com.soomla.billing.util.AESObfuscator;
 import com.soomla.store.SoomlaApp;
 import com.soomla.store.StoreConfig;
+import com.soomla.store.domain.VirtualItem;
+import com.soomla.store.domain.virtualCurrencies.VirtualCurrency;
+import com.soomla.store.domain.virtualGoods.VirtualGood;
 
 /**
  * This is the place where all the relevant storage classes are created.
@@ -87,6 +90,18 @@ public class StorageManager {
 
     public static KeyValueStorage getKeyValueStorage() {
         return mKeyValueStorage;
+    }
+
+    public static VirtualItemStorage getVirtualItemStorage(VirtualItem item) {
+        VirtualItemStorage storage = null;
+
+
+        if (item instanceof VirtualGood) {
+            storage = StorageManager.getVirtualGoodsStorage();
+        } else if (item instanceof VirtualCurrency) {
+            storage = StorageManager.getVirtualCurrencyStorage();
+        }
+        return storage;
     }
 
 

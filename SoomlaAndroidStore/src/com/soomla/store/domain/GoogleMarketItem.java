@@ -35,7 +35,6 @@ public class GoogleMarketItem {
      * @param mPrice is the actual $$ cost of the current item in Google Play.
      */
     public GoogleMarketItem(String mProductId, Managed mManaged, double mPrice) {
-
         this.mProductId = mProductId;
         this.mManaged = mManaged;
         this.mPrice = mPrice;
@@ -48,21 +47,21 @@ public class GoogleMarketItem {
      * @throws JSONException
      */
     public GoogleMarketItem(JSONObject jsonObject) throws JSONException {
-        if (jsonObject.has(JSONConsts.GOOGLEMANAGED_MANAGED)) {
-            this.mManaged = Managed.valueOf(jsonObject.getString(JSONConsts.GOOGLEMANAGED_MANAGED));
+        if (jsonObject.has(JSONConsts.MARKETITEM_MANAGED)) {
+            this.mManaged = Managed.valueOf(jsonObject.getString(JSONConsts.MARKETITEM_MANAGED));
         } else {
             this.mManaged = Managed.UNMANAGED;
         }
-        this.mProductId = jsonObject.getString(JSONConsts.GOOGLEMANAGED_PRODUCT_ID);
-        this.mPrice = jsonObject.getDouble(JSONConsts.GOOGLEMANAGED_PRICE);
+        this.mProductId = jsonObject.getString(JSONConsts.MARKETITEM_PRODUCT_ID);
+        this.mPrice = jsonObject.getDouble(JSONConsts.MARKETITEM_PRICE);
     }
 
     public JSONObject toJSONObject(){
         JSONObject jsonObject = new JSONObject();
         try {
-            jsonObject.put(JSONConsts.GOOGLEMANAGED_MANAGED, mManaged.name());
-            jsonObject.put(JSONConsts.GOOGLEMANAGED_PRODUCT_ID, mProductId);
-            jsonObject.put(JSONConsts.GOOGLEMANAGED_PRICE, new Double(mPrice));
+            jsonObject.put(JSONConsts.MARKETITEM_MANAGED, mManaged.name());
+            jsonObject.put(JSONConsts.MARKETITEM_PRODUCT_ID, mProductId);
+            jsonObject.put(JSONConsts.MARKETITEM_PRICE, new Double(mPrice));
         } catch (JSONException e) {
             if (StoreConfig.debug){
                 Log.d(TAG, "An error occured while generating JSON object.");

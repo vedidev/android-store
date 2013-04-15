@@ -13,19 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.soomla.store.events;
 
-import com.soomla.store.domain.PurchasableVirtualItem;
+package com.soomla.store;
 
-public class PlayPurchaseCancelledEvent {
+import android.util.Log;
 
-    private PurchasableVirtualItem mPurchasableVirtualItem;
+public class StoreUtils {
 
-    public PlayPurchaseCancelledEvent(PurchasableVirtualItem purchasableVirtualItem) {
-        mPurchasableVirtualItem = purchasableVirtualItem;
+    public static void LogDebug(String tag, String message) {
+        if (StoreConfig.debug) {
+            Log.d(tag, message);
+        }
     }
 
-    public PurchasableVirtualItem getPurchasableVirtualItem() {
-        return mPurchasableVirtualItem;
+    public static void LogError(String tag, String message) {
+        Log.e(tag, message);
     }
+
+    private static String TAG = "SOOMLA StoreUtils";
 }

@@ -13,14 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.soomla.store.domain.VirtualCurrencies;
+package com.soomla.store.domain.virtualCurrencies;
 
 import android.util.Log;
 import com.soomla.store.StoreConfig;
+import com.soomla.store.StoreUtils;
 import com.soomla.store.data.JSONConsts;
+import com.soomla.store.data.StorageManager;
 import com.soomla.store.data.StoreInfo;
 import com.soomla.store.domain.PurchasableVirtualItem;
-import com.soomla.store.domain.purchaseStrategies.IPurchaseStrategy;
+import com.soomla.store.purchaseTypes.PurchaseType;
 import com.soomla.store.exceptions.VirtualItemNotFoundException;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -42,14 +44,12 @@ public class VirtualCurrencyPack extends PurchasableVirtualItem {
      * @param mDescription is the description of the virtual currency pack. This will show up
      *                       in the store in the description section.
      * @param mItemId is the id of the virtual currency pack.
-     * @param productId is the product id on Google Market..
-     * @param mPrice is the actual $$ cost of the virtual currency pack.
      * @param mCurrencyAmout is the amount of currency in the pack.
      * @param mCurrency is the currency associated with this pack.
      */
     public VirtualCurrencyPack(String mName, String mDescription, String mItemId,
-                               String productId, double mPrice, int mCurrencyAmout,
-                               VirtualCurrency mCurrency, IPurchaseStrategy purchaseType) {
+                               int mCurrencyAmout,
+                               VirtualCurrency mCurrency, PurchaseType purchaseType) {
         super(mName, mDescription, mItemId, purchaseType);
         this.mCurrency = mCurrency;
         this.mCurrencyAmount = mCurrencyAmout;
@@ -63,15 +63,13 @@ public class VirtualCurrencyPack extends PurchasableVirtualItem {
      */
     public VirtualCurrencyPack(JSONObject jsonObject) throws JSONException {
         super(jsonObject);
-        this.mCurrencyAmount = jsonObject.getInt(JSONConsts.CURRENCYPACK_AMOUNT);
+        this.mCurrencyAmount = jsonObject.getInt(JSONConsts.CURRENCYPACK_CURRENCYAMOUNT);
 
         String currencyItemId = jsonObject.getString(JSONConsts.CURRENCYPACK_CURRENCYITEMID);
         try{
-            this.mCurrency = StoreInfo.getVirtualCurrencyByItemId(currencyItemId);
+            this.mCurrency = (VirtualCurrency) StoreInfo.getVirtualItem(currencyItemId);
         } catch (VirtualItemNotFoundException e) {
-            if (StoreConfig.debug){
-                Log.d(TAG, "Couldn't find the associated currency.");
-            }
+            StoreUtils.LogError(TAG, "Couldn't find the associated currency");
         }
     }
 
@@ -83,7 +81,7 @@ public class VirtualCurrencyPack extends PurchasableVirtualItem {
         JSONObject parentJsonObject = super.toJSONObject();
         JSONObject jsonObject = new JSONObject();
         try {
-            jsonObject.put(JSONConsts.CURRENCYPACK_AMOUNT, new Integer(mCurrencyAmount));
+            jsonObject.put(JSONConsts.CURRENCYPACK_CURRENCYAMOUNT, mCurrencyAmount);
             jsonObject.put(JSONConsts.CURRENCYPACK_CURRENCYITEMID, mCurrency.getItemId());
 
             Iterator<?> keys = parentJsonObject.keys();
@@ -100,6 +98,21 @@ public class VirtualCurrencyPack extends PurchasableVirtualItem {
         }
 
         return jsonObject;
+    }
+
+    @Override
+    public void give(int amount) {
+        StorageManager.getVirtualCurrencyStorage().add(mCurrency, mCurrencyAmount*amount);
+    }
+
+    @Override
+    public void take(int amount) {
+        StorageManager.getVirtualCurrencyStorage().remove(mCurrency, mCurrencyAmount*amount);
+    }
+
+    @Override
+    protected boolean canBuy() {
+        return true;
     }
 
     /** Getters **/

@@ -15,17 +15,23 @@
  */
 package com.soomla.store.events;
 
-import com.soomla.store.domain.GoogleMarketItem;
+import com.soomla.store.domain.PurchasableVirtualItem;
 
 public class PlayRefundEvent {
 
-    private GoogleMarketItem mGoogleMarketItem;
+    private PurchasableVirtualItem mPurchasableVirtualItem;
+    private String           mPayload;
 
-    public PlayRefundEvent(GoogleMarketItem googleMarketItem) {
-        mGoogleMarketItem = googleMarketItem;
+    public PlayRefundEvent(PurchasableVirtualItem purchasableVirtualItem, String payload) {
+        mPurchasableVirtualItem = purchasableVirtualItem;
+        mPayload = payload;
     }
 
-    public GoogleMarketItem getGoogleMarketItem() {
-        return mGoogleMarketItem;
+    public PurchasableVirtualItem getPurchasableVirtualItem() {
+        return mPurchasableVirtualItem;
+    }
+
+    public String getPayload() {
+        return mPayload;
     }
 }

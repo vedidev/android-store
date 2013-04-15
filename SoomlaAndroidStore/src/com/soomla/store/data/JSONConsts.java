@@ -20,31 +20,55 @@ package com.soomla.store.data;
  */
 public class JSONConsts {
 
-    public static final String STORE_VIRTUALCURRENCIES  = "virtualCurrencies";
+    public static final String STORE_CURRENCIES         = "currencies";
     public static final String STORE_CURRENCYPACKS      = "currencyPacks";
-    public static final String STORE_VIRTUALGOODS       = "virtualGoods";
-    public static final String STORE_VIRTUALCATEGORIES  = "categories";
-    public static final String STORE_GOOGLEMANAGED      = "nonConsumables";
-
-    public static final String GOOGLEMANAGED_PRODUCT_ID = "productId";
-    public static final String GOOGLEMANAGED_MANAGED    = "managed";
-    public static final String GOOGLEMANAGED_PRICE       = "price";
-
-    public static final String CURRENCYPACK_AMOUNT      = "amount";
-    public static final String CURRENCYPACK_CURRENCYITEMID = "currency_itemId";
-
-    public static final String GOOD_PRICE_MODEL         = "priceModel";
-    public static final String GOOD_CATEGORY_ID         = "categoryId";
-    public static final String GOOD_PRICE_MODEL_VALUES  = "values";
-    public static final String GOOD_PRICE_MODEL_TYPE    = "type";
-
-    public static final String CATEGORY_NAME            = "name";
-    public static final String CATEGORY_ID              = "id";
-    public static final String CATEGORY_EQUIPPING       = "equipping";
+    public static final String STORE_GOODS              = "goods";
+    public static final String STORE_CATEGORIES         = "categories";
+    public static final String STORE_NONCONSUMABLES     = "nonConsumables";
+    public static final String STORE_GOODS_SU           = "singleUse";
+    public static final String STORE_GOODS_PA           = "goodPacks";
+    public static final String STORE_GOODS_UP           = "goodUpgrades";
+    public static final String STORE_GOODS_LT           = "lifetime";
+    public static final String STORE_GOODS_EQ           = "equippable";
 
     public static final String ITEM_NAME                = "name";
     public static final String ITEM_DESCRIPTION         = "description";
     public static final String ITEM_ITEMID              = "itemId";
+
+    public static final String CATEGORY_NAME            = "name";
+    public static final String CATEGORY_GOODSITEMIDS    = "goods_itemIds";
+
+    public static final String MARKETITEM_PRODUCT_ID    = "productId";
+    public static final String MARKETITEM_MANAGED       = "managed";
+    public static final String MARKETITEM_PRICE         = "price";
+
+    public static final String EQUIPPABLE_EQUIPPING     = "equipping";
+
+    // VGP = SingleUsePackVG
+    public static final String VGP_GOOD_ITEMID          = "good_itemId";
+    public static final String VGP_GOOD_AMOUNT          = "good_amount";
+
+    // VGU = UpgradeVG
+    public static final String VGU_LEVEL                = "level";
+    public static final String VGU_GOOD_ITEMID          = "good_itemId";
+    public static final String VGU_NEXT_ITEMID          = "next_itemId";
+    public static final String VGU_PREV_ITEMID          = "prev_itemId";
+
+    public static final String CURRENCYPACK_CURRENCYAMOUNT = "currency_amount";
+    public static final String CURRENCYPACK_CURRENCYITEMID = "currency_itemId";
+
+    /** Purchase Type **/
+    public static final String PURCHASABLE_ITEM         = "purchasableItem";
+
+    public static final String PURCHASE_TYPE            = "purchaseType";
+    public static final String PURCHASE_TYPE_MARKET     = "market";
+    public static final String PURCHASE_TYPE_VI         = "virtualItem";
+
+    public static final String PURCHASE_MARKET_ITEM     = "marketItem";
+
+    public static final String PURCHASE_VI_ITEMID       = "pvi_itemId";
+    public static final String PURCHASE_VI_AMOUNT       = "pvi_amount";
+
 
 }
 

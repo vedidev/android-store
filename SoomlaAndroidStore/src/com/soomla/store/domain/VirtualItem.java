@@ -36,7 +36,7 @@ public abstract class VirtualItem {
     public VirtualItem(String mName, String mDescription, String mItemId) {
         this.mName = mName;
         this.mDescription = mDescription;
-        this.mItemId = mItemId;
+        this.mItemId = mItemId.trim();
     }
 
     /** Constructor
@@ -69,6 +69,9 @@ public abstract class VirtualItem {
 
         return jsonObject;
     }
+
+    public abstract void give(int amount);
+    public abstract void take(int amount);
 
     @Override
     public boolean equals(Object o) {

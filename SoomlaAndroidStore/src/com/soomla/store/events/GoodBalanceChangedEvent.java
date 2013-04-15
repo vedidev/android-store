@@ -15,7 +15,7 @@
  */
 package com.soomla.store.events;
 
-import com.soomla.store.domain.data.VirtualGood;
+import com.soomla.store.domain.virtualGoods.VirtualGood;
 
 public class GoodBalanceChangedEvent {
 

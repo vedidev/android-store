@@ -18,7 +18,7 @@ package com.soomla.store.data;
 
 import android.util.Log;
 import com.soomla.store.StoreConfig;
-import com.soomla.store.domain.data.NonConsumableItem;
+import com.soomla.store.domain.NonConsumableItem;
 
 /**
  * This class provide basic storage operations on Google Play's MANAGED items.
@@ -44,8 +44,8 @@ public class NonConsumableItemsStorage {
             Log.d(TAG, "trying to figure out if the given MANAGED item exists.");
         }
 
-        String productId = nonConsumableItem.getProductId();
-        String key = KeyValDatabase.keyNonConsExists(productId);
+        String itemId = nonConsumableItem.getItemId();
+        String key = KeyValDatabase.keyNonConsExists(itemId);
         key = StorageManager.getAESObfuscator().obfuscateString(key);
 
         String val = StorageManager.getDatabase().getKeyVal(key);
@@ -59,11 +59,11 @@ public class NonConsumableItemsStorage {
      */
     public void add(NonConsumableItem nonConsumableItem){
         if (StoreConfig.debug){
-            Log.d(TAG, "adding " + nonConsumableItem.getProductId());
+            Log.d(TAG, "adding " + nonConsumableItem.getItemId());
         }
 
-        String productId = nonConsumableItem.getProductId();
-        String key = KeyValDatabase.keyNonConsExists(productId);
+        String itemId = nonConsumableItem.getItemId();
+        String key = KeyValDatabase.keyNonConsExists(itemId);
         key = StorageManager.getAESObfuscator().obfuscateString(key);
         StorageManager.getDatabase().setKeyVal(key, "");
     }
@@ -74,11 +74,11 @@ public class NonConsumableItemsStorage {
      */
     public void remove(NonConsumableItem nonConsumableItem){
         if (StoreConfig.debug){
-            Log.d(TAG, "removing " + nonConsumableItem.getProductId());
+            Log.d(TAG, "removing " + nonConsumableItem.getName());
         }
 
-        String productId = nonConsumableItem.getProductId();
-        String key = KeyValDatabase.keyNonConsExists(productId);
+        String itemId = nonConsumableItem.getItemId();
+        String key = KeyValDatabase.keyNonConsExists(itemId);
         key = StorageManager.getAESObfuscator().obfuscateString(key);
         StorageManager.getDatabase().deleteKeyVal(key);
     }

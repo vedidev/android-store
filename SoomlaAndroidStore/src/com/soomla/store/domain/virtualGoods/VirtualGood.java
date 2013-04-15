@@ -15,18 +15,10 @@
  */
 package com.soomla.store.domain.virtualGoods;
 
-import android.util.Log;
-import com.soomla.store.StoreConfig;
-import com.soomla.store.data.JSONConsts;
-import com.soomla.store.data.StoreInfo;
 import com.soomla.store.domain.PurchasableVirtualItem;
-import com.soomla.store.domain.VirtualCategory;
-import com.soomla.store.domain.purchaseStrategies.IPurchaseStrategy;
-import com.soomla.store.exceptions.VirtualItemNotFoundException;
+import com.soomla.store.purchaseTypes.PurchaseType;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.util.Iterator;
 
 /**
  * This is a representation of the application's virtual good.
@@ -39,12 +31,10 @@ public abstract class VirtualGood extends PurchasableVirtualItem {
      * @param mDescription is the description of the virtual good. This will show up
      *                       in the store in the description section.
      * @param mItemId is the id of the virtual good.
-     * @param mCategory is the category this virtual good is associated with.
      */
     public VirtualGood(String mName, String mDescription,
-                       String mItemId, VirtualCategory mCategory, IPurchaseStrategy purchaseType) {
+                       String mItemId, PurchaseType purchaseType) {
         super(mName, mDescription, mItemId, purchaseType);
-        this.mCategory = mCategory;
     }
 
     /** Constructor
@@ -55,46 +45,17 @@ public abstract class VirtualGood extends PurchasableVirtualItem {
      */
     public VirtualGood(JSONObject jsonObject) throws JSONException{
         super(jsonObject);
-        int catId = jsonObject.getInt(JSONConsts.GOOD_CATEGORY_ID);
-        try {
-            if (catId > -1){
-                this.mCategory = StoreInfo.getVirtualCategoryById(catId);
-            }
-        } catch (VirtualItemNotFoundException e) {
-            Log.e(TAG, "Can't find category with id: " + catId);
-        }
     }
 
     /**
      * Converts the current {@link VirtualGood} to a JSONObject.
      * @return a JSONObject representation of the current {@link VirtualGood}.
      */
+    @Override
     public JSONObject toJSONObject(){
-        JSONObject parentJsonObject = super.toJSONObject();
-        JSONObject jsonObject = new JSONObject();
-        try {
-            Iterator<?> keys = parentJsonObject.keys();
-            while(keys.hasNext())
-            {
-                String key = (String)keys.next();
-                jsonObject.put(key, parentJsonObject.get(key));
-            }
-        } catch (JSONException e) {
-            if (StoreConfig.debug){
-                Log.d(TAG, "An error occurred while generating JSON object.");
-            }
-        }
-
-        return jsonObject;
-    }
-
-    public VirtualCategory getCategory() {
-        return mCategory;
+        return super.toJSONObject();
     }
 
     /** Private members **/
 
-    private static final String TAG = "SOOMLA VirtualGood";
-
-    private VirtualCategory    mCategory;
-}
+    private static final String TAG = "SOOMLA VirtualGood";}

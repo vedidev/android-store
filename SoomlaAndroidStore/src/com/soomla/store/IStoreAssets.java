@@ -15,7 +15,10 @@
  */
 package com.soomla.store;
 
-import com.soomla.store.domain.data.*;
+import com.soomla.store.domain.*;
+import com.soomla.store.domain.virtualCurrencies.VirtualCurrency;
+import com.soomla.store.domain.virtualCurrencies.VirtualCurrencyPack;
+import com.soomla.store.domain.virtualGoods.VirtualGood;
 
 /**
  * This interface represents a single game's metadata.
@@ -43,7 +46,6 @@ public interface IStoreAssets {
 
     /**
      * An array of all virtual goods served by your store.
-     * NOTE: The order of the items in the array will be their order when shown to the user.
      * @return an array of all virtual goods served by your store.
      */
     VirtualGood[] getVirtualGoods();

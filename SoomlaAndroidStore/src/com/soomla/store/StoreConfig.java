@@ -27,6 +27,8 @@ public class StoreConfig {
     // do you want to print out debug messages?
     public static final boolean debug = true;
 
+    public static final boolean friendlyRefunds = false;
+
     // the obfuscated salt. randomly generated numbers.
     // IMPORTANT: it's recommended that you change these numbers for your specific application BUT change them only once.
     public static final byte[] obfuscationSalt = new byte[] { 64, -54, -113, -47, 98, -52, 87, -102, -65, -127, 89, 51, -11, -35, 30, 77, -45, 75, -26, 3 };

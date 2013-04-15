@@ -13,19 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.soomla.store.events;
+
+package com.soomla.store.purchaseTypes;
 
 import com.soomla.store.domain.PurchasableVirtualItem;
+import com.soomla.store.exceptions.InsufficientFundsException;
 
-public class PlayPurchaseCancelledEvent {
+public abstract class PurchaseType {
 
-    private PurchasableVirtualItem mPurchasableVirtualItem;
+    public abstract void buy(int amount) throws InsufficientFundsException;
 
-    public PlayPurchaseCancelledEvent(PurchasableVirtualItem purchasableVirtualItem) {
-        mPurchasableVirtualItem = purchasableVirtualItem;
+    public void setAssociatedItem(PurchasableVirtualItem associatedItem) {
+        mAssociatedItem = associatedItem;
     }
 
-    public PurchasableVirtualItem getPurchasableVirtualItem() {
-        return mPurchasableVirtualItem;
+    public PurchasableVirtualItem getAssociatedItem() {
+        return mAssociatedItem;
     }
+
+    private PurchasableVirtualItem mAssociatedItem;
+
 }

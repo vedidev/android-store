@@ -1,0 +1,122 @@
+/*
+ * Copyright (C) 2012 Soomla Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package com.soomla.store.domain;
+
+import com.soomla.store.StoreUtils;
+import com.soomla.store.data.JSONConsts;
+import com.soomla.store.data.StoreInfo;
+import com.soomla.store.exceptions.InsufficientFundsException;
+import com.soomla.store.exceptions.VirtualItemNotFoundException;
+import com.soomla.store.purchaseTypes.PurchaseType;
+import com.soomla.store.purchaseTypes.PurchaseWithMarket;
+import com.soomla.store.purchaseTypes.PurchaseWithVirtualItem;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.Iterator;
+
+/**
+ * A representation of an AbstractVirtualItem you can actually purchase.
+ */
+public abstract class PurchasableVirtualItem extends VirtualItem {
+
+    public PurchasableVirtualItem(String mName, String mDescription, String mItemId, PurchaseType purchaseType) {
+        super(mName, mDescription, mItemId);
+
+        mPurchaseType = purchaseType;
+
+        mPurchaseType.setAssociatedItem(this);
+    }
+
+    public PurchasableVirtualItem(JSONObject jsonObject) throws JSONException {
+        super(jsonObject);
+
+        JSONObject purchasableObj = jsonObject.getJSONObject(JSONConsts.PURCHASABLE_ITEM);
+        String purchaseType = purchasableObj.getString(JSONConsts.PURCHASE_TYPE);
+
+        if (purchaseType.equals(JSONConsts.PURCHASE_TYPE_MARKET)) {
+            JSONObject marketItemObj = purchasableObj.getJSONObject(JSONConsts.PURCHASE_MARKET_ITEM);
+
+            mPurchaseType = new PurchaseWithMarket(new GoogleMarketItem(marketItemObj));
+        } else if (purchaseType.equals(JSONConsts.PURCHASE_TYPE_VI)) {
+            String itemId = purchasableObj.getString(JSONConsts.PURCHASE_VI_ITEMID);
+            int amount = purchasableObj.getInt(JSONConsts.PURCHASE_VI_AMOUNT);
+
+            try {
+                mPurchaseType = new PurchaseWithVirtualItem(StoreInfo.getVirtualItem(itemId), amount);
+            } catch (VirtualItemNotFoundException e) {
+                StoreUtils.LogError(TAG, "Tried to fetch virtual item with itemId '" + itemId + "' but it didn't exist.");
+            }
+        } else {
+            StoreUtils.LogError(TAG, "Purchase type not recognized !");
+        }
+
+        if (mPurchaseType != null) {
+            mPurchaseType.setAssociatedItem(this);
+        }
+    }
+
+    @Override
+    public JSONObject toJSONObject(){
+        JSONObject parentJsonObject = super.toJSONObject();
+        JSONObject jsonObject = new JSONObject();
+        try {
+            Iterator<?> keys = parentJsonObject.keys();
+            while(keys.hasNext())
+            {
+                String key = (String)keys.next();
+                jsonObject.put(key, parentJsonObject.get(key));
+            }
+
+            JSONObject purchasableObj = new JSONObject();
+
+            if(mPurchaseType instanceof PurchaseWithMarket) {
+                purchasableObj.put(JSONConsts.PURCHASE_TYPE, JSONConsts.PURCHASE_TYPE_MARKET);
+
+                GoogleMarketItem  mi = ((PurchaseWithMarket) mPurchaseType).getGoogleMarketItem();
+                purchasableObj.put(JSONConsts.PURCHASE_MARKET_ITEM, mi.toJSONObject());
+            } else if(mPurchaseType instanceof PurchaseWithVirtualItem) {
+                purchasableObj.put(JSONConsts.PURCHASE_TYPE, JSONConsts.PURCHASE_TYPE_VI);
+
+                purchasableObj.put(JSONConsts.PURCHASE_VI_ITEMID, ((PurchaseWithVirtualItem) mPurchaseType).getItem().getItemId());
+                purchasableObj.put(JSONConsts.PURCHASE_VI_AMOUNT, ((PurchaseWithVirtualItem) mPurchaseType).getAmount());
+            }
+
+            jsonObject.put(JSONConsts.PURCHASABLE_ITEM, purchasableObj);
+        } catch (JSONException e) {
+            StoreUtils.LogError(TAG, "An error occurred while generating JSON object.");
+        }
+
+        return jsonObject;
+    }
+
+    public void buy(int amount) throws InsufficientFundsException {
+        if (!canBuy()) return;
+
+        mPurchaseType.buy(amount);
+    }
+
+    protected abstract boolean canBuy();
+
+    public PurchaseType getPurchaseType() {
+        return mPurchaseType;
+    }
+
+    private static final String TAG = "SOOMLA PurchasableVirtualItem";
+
+    private PurchaseType mPurchaseType;
+}

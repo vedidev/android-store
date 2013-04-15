@@ -26,7 +26,10 @@ import com.soomla.billing.ResponseHandler;
 import com.soomla.store.data.ObscuredSharedPreferences;
 import com.soomla.store.data.StorageManager;
 import com.soomla.store.data.StoreInfo;
-import com.soomla.store.domain.data.*;
+import com.soomla.store.domain.*;
+import com.soomla.store.domain.virtualCurrencies.VirtualCurrency;
+import com.soomla.store.domain.virtualCurrencies.VirtualCurrencyPack;
+import com.soomla.store.domain.virtualGoods.VirtualGood;
 import com.soomla.store.events.*;
 import com.soomla.store.exceptions.InsufficientFundsException;
 import com.soomla.store.exceptions.NotEnoughGoodsException;
@@ -91,121 +94,24 @@ public class StoreController extends PurchaseObserver {
 
     /**
      * Start a currency pack purchase process (with Google Play)
-     * @param productId is the product id of the required currency pack.
      */
-    public void buyGoogleMarketItem(String productId) throws VirtualItemNotFoundException{
+    public boolean buyWithGooglePlay(GoogleMarketItem googleMarketItem, String payload) {
         SharedPreferences prefs = new ObscuredSharedPreferences(SoomlaApp.getAppContext(), SoomlaApp.getAppContext().getSharedPreferences(StoreConfig.PREFS_NAME, Context.MODE_PRIVATE));
         String publicKey = prefs.getString(StoreConfig.PUBLIC_KEY, "");
         if (publicKey.isEmpty() || publicKey.equals("[YOUR PUBLIC KEY FROM GOOGLE PLAY]")) {
             Log.e(TAG, "You didn't provide a public key! You can't make purchases.");
-            return;
+            return false;
         }
 
-        GoogleMarketItem googleMarketItem = null;
+        if (!mBillingService.requestPurchase(googleMarketItem.getProductId(), Consts.ITEM_TYPE_INAPP, payload)){
+            return false;
+        }
         try {
-            googleMarketItem = StoreInfo.getPackByGoogleProductId(productId).getGoogleItem();
-        } catch (VirtualItemNotFoundException ex) {
-            try {
-                googleMarketItem = StoreInfo.getNonConsumableByProductId(productId).getGoogleItem();
-            } catch (VirtualItemNotFoundException e) {
-                Log.e(TAG, "The google market item (or currency pack) associated with the given productId must be defined in your IStoreAssets " +
-                        "and thus must exist in StoreInfo. (productId: " + productId + "). Unexpected error is emitted. can't continue purchase !");
-                throw e;
-            }
+            BusProvider.getInstance().post(new PlayPurchaseStartedEvent(StoreInfo.getPurchasableItem(googleMarketItem.getProductId())));
+        } catch (VirtualItemNotFoundException e) {
+            StoreUtils.LogError(TAG, "Couldn't find a purchasable item with productId: " + googleMarketItem.getProductId());
         }
-
-        if (!mBillingService.requestPurchase(productId, Consts.ITEM_TYPE_INAPP, "")){
-            BusProvider.getInstance().post(new UnexpectedStoreErrorEvent());
-        }
-        BusProvider.getInstance().post(new MarketPurchaseStartedEvent(googleMarketItem));
-    }
-
-    /**
-     * Start a virtual goods purchase process.
-     * @param itemId is the item id of the required virtual good.
-     * @throws InsufficientFundsException
-     * @throws VirtualItemNotFoundException
-     */
-    public void buyVirtualGood(String itemId) throws InsufficientFundsException, VirtualItemNotFoundException{
-
-        VirtualGood good = StoreInfo.getVirtualGoodByItemId(itemId);
-        BusProvider.getInstance().post(new GoodPurchaseStartedEvent(good));
-
-        // fetching currencies and amounts that the user needs in order to purchase the current
-        // {@link VirtualGood}.
-        HashMap<String, Integer> currencyValues = good.getCurrencyValues();
-
-        // preparing list of {@link VirtualCurrency} objects.
-        List<VirtualCurrency> virtualCurrencies = new ArrayList<VirtualCurrency>();
-        for (String currencyItemId : currencyValues.keySet()){
-            virtualCurrencies.add(StoreInfo.getVirtualCurrencyByItemId(currencyItemId));
-        }
-
-        // checking if the user has enough of each of the virtual currencies in order to purchase this virtual
-        // good.
-        VirtualCurrency needMore = null;
-        for (VirtualCurrency virtualCurrency : virtualCurrencies){
-            int currencyBalance = StorageManager.getVirtualCurrencyStorage().getBalance
-                    (virtualCurrency);
-            int currencyBalanceNeeded = currencyValues.get(virtualCurrency.getItemId());
-            if (currencyBalance < currencyBalanceNeeded){
-                needMore = virtualCurrency;
-                break;
-            }
-        }
-
-        // if the user has enough, the virtual good is purchased.
-        if (needMore == null){
-            StorageManager.getVirtualGoodsStorage().add(good, 1);
-            for (VirtualCurrency virtualCurrency : virtualCurrencies){
-                int currencyBalanceNeeded = currencyValues.get(virtualCurrency.getItemId());
-                StorageManager.getVirtualCurrencyStorage().remove(virtualCurrency,
-                        currencyBalanceNeeded);
-            }
-            BusProvider.getInstance().post(new GoodPurchasedEvent(good));
-        }
-        else {
-            throw new InsufficientFundsException(needMore.getItemId());
-        }
-    }
-
-    /**
-     * Make a VirtualGood equipped by the user.
-     * @param itemId is the item id of the required virtual good.
-     * @throws NotEnoughGoodsException
-     * @throws VirtualItemNotFoundException
-     */
-    public void equipVirtualGood(String itemId) throws NotEnoughGoodsException, VirtualItemNotFoundException{
-        VirtualGood good = StoreInfo.getVirtualGoodByItemId(itemId);
-
-        // if the user has enough, the virtual good is purchased.
-        if (StorageManager.getVirtualGoodsStorage().getBalance(good) > 0){
-            StorageManager.getVirtualGoodsStorage().equip(good, true);
-
-            // if the category allows only one virtual good to be equipped at any given time, remove the other
-            // equipped virtual good.
-            if (good.getCategory().getEquippingModel() == VirtualCategory.EquippingModel.SINGLE) {
-                for(VirtualGood g : StoreInfo.getVirtualGoods()) {
-                    if (g.getCategory().equals(good.getCategory()) && !g.equals(good)) {
-                        StorageManager.getVirtualGoodsStorage().equip(g, false);
-                    }
-                }
-            }
-        }
-        else {
-            throw new NotEnoughGoodsException(itemId);
-        }
-    }
-
-    /**
-     * Make a VirtualGood unequipped by the user.
-     * @param itemId is the item id of the required virtual good.
-     * @throws VirtualItemNotFoundException
-     */
-    public void unequipVirtualGood(String itemId) throws VirtualItemNotFoundException{
-        VirtualGood good = StoreInfo.getVirtualGoodByItemId(itemId);
-
-        StorageManager.getVirtualGoodsStorage().equip(good, false);
+        return true;
     }
 
     /**
@@ -282,57 +188,31 @@ public class StoreController extends PurchaseObserver {
      */
     @Override
     public void onPurchaseStateChange(Consts.PurchaseState purchaseState, String productId, long purchaseTime, String developerPayload) {
-        GoogleMarketItem googleMarketItem = null;
         try {
+            PurchasableVirtualItem purchasableVirtualItem = StoreInfo.getPurchasableItem(productId);
 
-            VirtualCurrencyPack pack = StoreInfo.getPackByGoogleProductId(productId);
-            googleMarketItem = pack.getGoogleItem();
+            BusProvider.getInstance().post(new PlayPurchaseEvent(purchasableVirtualItem, developerPayload));
 
-            // updating the currency balance
+            int amount = 1;
+            try {
+                amount = Integer.parseInt(developerPayload);
+            } catch (Exception ignored) {}
             if (purchaseState == Consts.PurchaseState.PURCHASED) {
-                StorageManager.getVirtualCurrencyStorage().add(
-                        pack.getVirtualCurrency(), pack.getCurrencyAmount());
+                purchasableVirtualItem.give(amount);
             }
 
             if (purchaseState == Consts.PurchaseState.REFUNDED){
-                StorageManager.getVirtualCurrencyStorage().remove(
-                        pack.getVirtualCurrency(), pack.getCurrencyAmount());
+                if (!StoreConfig.friendlyRefunds) {
+                    purchasableVirtualItem.take(amount);
+                }
             }
 
+            BusProvider.getInstance().post(new ItemPurchasedEvent(purchasableVirtualItem));
         } catch (VirtualItemNotFoundException e) {
-
-            try {
-                NonConsumableItem nonConsumableItem = StoreInfo.getNonConsumableByProductId(productId);
-                googleMarketItem = nonConsumableItem.getGoogleItem();
-
-                // updating the non consumable item
-                if (purchaseState == Consts.PurchaseState.PURCHASED) {
-                    StorageManager.getNonConsumableItemsStorage().add(nonConsumableItem);
-                }
-
-                if (purchaseState == Consts.PurchaseState.REFUNDED){
-                    StorageManager.getNonConsumableItemsStorage().remove(nonConsumableItem);
-                }
-
-            } catch (VirtualItemNotFoundException e1) {
-                Log.e(TAG, "ERROR : Couldn't find the " + purchaseState.name() +
-                        " VirtualCurrencyPack OR GoogleMarketItem  with productId: " + productId +
-                        ". It's unexpected so an unexpected error is being emitted.");
-                BusProvider.getInstance().post(new UnexpectedStoreErrorEvent());
-            }
-        }
-
-        if (googleMarketItem == null){
-            return;
-        }
-
-        // here we just post the appropriate event.
-        if (purchaseState == Consts.PurchaseState.PURCHASED) {
-            BusProvider.getInstance().post(new MarketPurchaseEvent(googleMarketItem));
-        }
-
-        if (purchaseState == Consts.PurchaseState.REFUNDED){
-            BusProvider.getInstance().post(new MarketRefundEvent(googleMarketItem));
+            StoreUtils.LogError(TAG, "ERROR : Couldn't find the " + purchaseState.name() +
+                    " VirtualCurrencyPack OR GoogleMarketItem  with productId: " + productId +
+                    ". It's unexpected so an unexpected error is being emitted.");
+            BusProvider.getInstance().post(new UnexpectedStoreErrorEvent());
         }
     }
 
@@ -344,23 +224,14 @@ public class StoreController extends PurchaseObserver {
         if (responseCode == Consts.ResponseCode.RESULT_OK) {
             // purchase was sent to server
         } else if (responseCode == Consts.ResponseCode.RESULT_USER_CANCELED) {
-            GoogleMarketItem googleMarketItem = null;
+
             try {
-                VirtualCurrencyPack pack = StoreInfo.getPackByGoogleProductId(request.mProductId);
-                googleMarketItem = pack.getGoogleItem();
+                BusProvider.getInstance().post(new PlayPurchaseCancelledEvent(StoreInfo.getPurchasableItem(request.mProductId)));
             } catch (VirtualItemNotFoundException e) {
-
-                try {
-                    NonConsumableItem nonConsumableItem = StoreInfo.getNonConsumableByProductId(request.mProductId);
-                    googleMarketItem = nonConsumableItem.getGoogleItem();
-                } catch (VirtualItemNotFoundException e1) {
-                    Log.e(TAG, "ERROR : Couldn't find the CANCELLED VirtualCurrencyPack OR GoogleMarketItem  with productId: " + request.mProductId +
-                            ". It's unexpected so an unexpected error is being emitted.");
-                    BusProvider.getInstance().post(new UnexpectedStoreErrorEvent());
-                }
+                Log.e(TAG, "ERROR : Couldn't find the CANCELLED VirtualCurrencyPack OR GoogleMarketItem  with productId: " + request.mProductId +
+                        ". It's unexpected so an unexpected error is being emitted.");
+                BusProvider.getInstance().post(new UnexpectedStoreErrorEvent());
             }
-
-            BusProvider.getInstance().post(new MarketPurchaseCancelledEvent(googleMarketItem));
 
         } else {
             // purchase failed !
@@ -441,6 +312,10 @@ public class StoreController extends PurchaseObserver {
             mBillingService = null;
         }
         mLock.unlock();
+    }
+
+    public BillingService getBillingService() {
+        return mBillingService;
     }
 
     /** Singleton **/
