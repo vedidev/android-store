@@ -66,6 +66,11 @@ public class StoreController extends PurchaseObserver {
                           String publicKey,
                           String customSecret){
 
+        if (mInitialized) {
+            StoreUtils.LogError(TAG, "StoreController is already initialized. You can't initialize it twice!");
+            return;
+        }
+
         SharedPreferences prefs = new ObscuredSharedPreferences(SoomlaApp.getAppContext(), SoomlaApp.getAppContext().getSharedPreferences(StoreConfig.PREFS_NAME, Context.MODE_PRIVATE));
         SharedPreferences.Editor edit = prefs.edit();
         if (publicKey != null && !publicKey.isEmpty()) {
@@ -88,14 +93,20 @@ public class StoreController extends PurchaseObserver {
         }
 
         if (startBillingService()) {
-            tryRestoreTransactions();
+            // We're not restoring transactions automatically anymore.
+            // Call storeController.getInstance().restoreTransactions() when you want to do that.
+//            tryRestoreTransactions();
         }
+
+        mInitialized = true;
     }
 
     /**
      * Start a currency pack purchase process (with Google Play)
      */
     public boolean buyWithGooglePlay(GoogleMarketItem googleMarketItem, String payload) {
+        if (!checkInit()) return false;
+
         SharedPreferences prefs = new ObscuredSharedPreferences(SoomlaApp.getAppContext(), SoomlaApp.getAppContext().getSharedPreferences(StoreConfig.PREFS_NAME, Context.MODE_PRIVATE));
         String publicKey = prefs.getString(StoreConfig.PUBLIC_KEY, "");
         if (publicKey.isEmpty() || publicKey.equals("[YOUR PUBLIC KEY FROM GOOGLE PLAY]")) {
@@ -119,9 +130,11 @@ public class StoreController extends PurchaseObserver {
      * @param activity is the activity being opened (or the activity that contains the store)/
      */
     public void storeOpening(Activity activity){
+        if (!checkInit()) return;
+
         mLock.lock();
         if (mStoreOpen) {
-            Log.e(TAG, "You already sent storeOpening !");
+            Log.e(TAG, "Store is already open !");
             mLock.unlock();
             return;
         }
@@ -150,6 +163,15 @@ public class StoreController extends PurchaseObserver {
 
         stopBillingService();
 //        ResponseHandler.unregister(this);
+    }
+
+    public void restoreTransactions() {
+        if (!checkInit()) return;
+
+        StoreUtils.LogDebug(TAG, "Sending restore transaction request");
+        mBillingService.restoreTransactions();
+
+        BusProvider.getInstance().post(new RestoreTransactionsStartedEvent());
     }
 
 
@@ -254,14 +276,16 @@ public class StoreController extends PurchaseObserver {
 
             // Update the shared preferences so that we don't perform
             // a RestoreTransactions again.
-            SharedPreferences prefs = new ObscuredSharedPreferences(SoomlaApp.getAppContext(), SoomlaApp.getAppContext().getSharedPreferences(StoreConfig.PREFS_NAME, Context.MODE_PRIVATE));
-            SharedPreferences.Editor edit = prefs.edit();
-            edit.putBoolean(StoreConfig.DB_INITIALIZED, true);
-            edit.commit();
+//            SharedPreferences prefs = new ObscuredSharedPreferences(SoomlaApp.getAppContext(), SoomlaApp.getAppContext().getSharedPreferences(StoreConfig.PREFS_NAME, Context.MODE_PRIVATE));
+//            SharedPreferences.Editor edit = prefs.edit();
+//            edit.putBoolean(StoreConfig.DB_INITIALIZED, true);
+//            edit.commit();
+
+            BusProvider.getInstance().post(new RestoreTransactionsEvent(true));
         } else {
-            if (StoreConfig.debug) {
-                Log.d(TAG, "RestoreTransactions error: " + responseCode);
-            }
+            StoreUtils.LogDebug(TAG, "RestoreTransactions error: " + responseCode);
+
+            BusProvider.getInstance().post(new RestoreTransactionsEvent(false));
         }
 
         // we're stopping the billing service only if the store was not opened while the request was sent
@@ -273,15 +297,12 @@ public class StoreController extends PurchaseObserver {
 
     /** Private methods **/
 
-    private void tryRestoreTransactions() {
-        SharedPreferences prefs = new ObscuredSharedPreferences(SoomlaApp.getAppContext(), SoomlaApp.getAppContext().getSharedPreferences(StoreConfig.PREFS_NAME, Context.MODE_PRIVATE));
-        boolean initialized = prefs.getBoolean(StoreConfig.DB_INITIALIZED, false);
-        if (!initialized) {
-            if (StoreConfig.debug){
-                Log.d(TAG, "sending restore transaction request");
-            }
-            mBillingService.restoreTransactions();
+    private boolean checkInit() {
+        if (!mInitialized) {
+            StoreUtils.LogDebug(TAG, "You can't perform any of StoreController's actions before it was initialized. Initialize it once when your game loads.");
+            return false;
         }
+        return true;
     }
 
     private boolean startBillingService() {
@@ -336,9 +357,10 @@ public class StoreController extends PurchaseObserver {
 
     /** Private Members**/
 
-    private static final String TAG             = "SOOMLA StoreController";
+    private static final String TAG       = "SOOMLA StoreController";
 
     private boolean mStoreOpen            = false;
+    private boolean mInitialized          = false;
 
     private BillingService mBillingService;
     private Lock    mLock = new ReentrantLock();

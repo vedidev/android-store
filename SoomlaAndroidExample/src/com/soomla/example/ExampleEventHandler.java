@@ -98,6 +98,16 @@ public class ExampleEventHandler {
         showToastIfDebug("(good) " + goodBalanceChangedEvent.getGood().getName() + " balance was changed to " + goodBalanceChangedEvent.getBalance() + ".");
     }
 
+    @Subscribe
+    public void onRestoreTransactionsEvent(RestoreTransactionsEvent restoreTransactionsEvent) {
+        showToastIfDebug("restoreTransactions: " + restoreTransactionsEvent.isSuccess() + ".");
+    }
+
+    @Subscribe
+    public void onRestoreTransactionsStartedEvent(RestoreTransactionsStartedEvent restoreTransactionsStartedEvent) {
+        showToastIfDebug("restoreTransactions Started");
+    }
+
     private void showToastIfDebug(final String msg) {
         if (StoreConfig.debug){
             mHandler.post(new Runnable() {

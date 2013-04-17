@@ -16,10 +16,8 @@
 package com.soomla.store.data;
 
 import android.text.TextUtils;
-import android.util.Log;
 import com.soomla.billing.util.AESObfuscator;
 import com.soomla.store.IStoreAssets;
-import com.soomla.store.StoreConfig;
 import com.soomla.store.StoreUtils;
 import com.soomla.store.domain.*;
 import com.soomla.store.domain.virtualCurrencies.VirtualCurrency;
@@ -57,7 +55,7 @@ public class StoreInfo {
      */
     public static void setStoreAssets(IStoreAssets storeAssets){
         if (storeAssets == null){
-            Log.e(TAG, "The given store assets can't be null !");
+            StoreUtils.LogError(TAG, "The given store assets can't be null !");
             return;
         }
 
@@ -69,28 +67,23 @@ public class StoreInfo {
     }
 
     public static boolean initializeFromDB() {
-        // first, trying to load StoreInfo from the local DB.
         String key = KeyValDatabase.keyMetaStoreInfo();
         key = StorageManager.getAESObfuscator().obfuscateString(key);
         String val = StorageManager.getDatabase().getKeyVal(key);
 
         if (val == null && TextUtils.isEmpty(val)){
-            if (StoreConfig.debug){
-                Log.d(TAG, "store json is not in DB yet ");
-            }
+            StoreUtils.LogDebug(TAG, "store json is not in DB yet.");
             return false;
         }
 
         try {
             val = StorageManager.getAESObfuscator().unobfuscateToString(val);
         } catch (AESObfuscator.ValidationException e) {
-            Log.e(TAG, e.getMessage());
+            StoreUtils.LogError(TAG, e.getMessage());
             return false;
         }
 
-        if (StoreConfig.debug){
-            Log.d(TAG, "the metadata-economy json (from DB) is " + val);
-        }
+        StoreUtils.LogDebug(TAG, "the metadata-economy json (from DB) is " + val);
 
         try {
             fromJSONObject(new JSONObject(val));
@@ -100,80 +93,13 @@ public class StoreInfo {
 
             return true;
         } catch (JSONException e) {
-            if (StoreConfig.debug){
-                Log.d(TAG, "Can't parse metadata json. Going to return false and make " +
-                        "StoreInfo load from static data.: " + val);
-            }
+            StoreUtils.LogDebug(TAG, "Can't parse metadata json. Going to return false and make " +
+                    "StoreInfo load from static data.: " + val);
         }
 
         return false;
 
     }
-
-
-//    /**
-//     * Use this function if you need to know the definition of a specific virtual currency pack.
-//     * @param itemId is the requested pack's item id.
-//     * @return the definition of the virtual pack requested.
-//     * @throws VirtualItemNotFoundException
-//     */
-//    public static VirtualCurrencyPack getPackByItemId(String itemId) throws VirtualItemNotFoundException {
-//        if (mCurrencyPacks == null) {
-//            if (!initializeFromDB()) {
-//                Log.e(TAG, "Can't initialize StoreInfo !");
-//                return null;
-//            }
-//        }
-//
-//        for(VirtualCurrencyPack p : mCurrencyPacks){
-//            if (p.getItemId().equals(itemId)){
-//                return p;
-//            }
-//        }
-//
-//        throw new VirtualItemNotFoundException("itemId", itemId);
-//    }
-//
-//    /**
-//     * Use this function if you need to know the definition of a specific virtual good.
-//     * @param itemId is the requested good's item id.
-//     * @return the definition of the virtual good requested.
-//     * @throws VirtualItemNotFoundException
-//     */
-//    public static VirtualGood getVirtualGoodByItemId(String itemId) throws VirtualItemNotFoundException {
-//        if (mGoods == null) {
-//            if (!initializeFromDB()) {
-//                Log.e(TAG, "Can't initialize StoreInfo !");
-//                return null;
-//            }
-//        }
-//
-//        for(VirtualGood g : mGoods){
-//            if (g.getItemId().equals(itemId)){
-//                return g;
-//            }
-//        }
-//
-//        throw new VirtualItemNotFoundException("itemId", itemId);
-//    }
-//
-//    /**
-//     * Use this function if you need to know the definition of a specific virtual currency.
-//     * @param itemId is the requested currency's item id.
-//     * @return the definition of the virtual currency requested.
-//     * @throws VirtualItemNotFoundException
-//     */
-//    public static VirtualCurrency getVirtualCurrencyByItemId(String itemId) throws VirtualItemNotFoundException {
-//        if (initCheck(mCurrencies)) return null;
-//
-//        for(VirtualCurrency c : mCurrencies){
-//            if (c.getItemId().equals(itemId)){
-//                return c;
-//            }
-//        }
-//
-//        throw new VirtualItemNotFoundException("itemId", itemId);
-//    }
 
     public static VirtualItem getVirtualItem(String itemId) throws VirtualItemNotFoundException{
         return mVirtualItems.get(itemId);
@@ -363,9 +289,7 @@ public class StoreInfo {
             jsonObject.put(JSONConsts.STORE_CURRENCYPACKS, currencyPacks);
             jsonObject.put(JSONConsts.STORE_NONCONSUMABLES, nonConsumableItems);
         } catch (JSONException e) {
-            if (StoreConfig.debug){
-                Log.d(TAG, "An error occurred while generating JSON object.");
-            }
+            StoreUtils.LogDebug(TAG, "An error occurred while generating JSON object.");
         }
 
         return jsonObject;
@@ -415,7 +339,6 @@ public class StoreInfo {
 
         // put StoreInfo in the database as JSON
         String store_json = toJSONObject().toString();
-        Log.d("HHHHHH", store_json);
         String key = KeyValDatabase.keyMetaStoreInfo();
         store_json = StorageManager.getAESObfuscator().obfuscateString(store_json);
         key = StorageManager.getAESObfuscator().obfuscateString(key);

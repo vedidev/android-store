@@ -16,8 +16,7 @@
 
 package com.soomla.store.data;
 
-import android.util.Log;
-import com.soomla.store.StoreConfig;
+import com.soomla.store.StoreUtils;
 import com.soomla.store.domain.NonConsumableItem;
 
 /**
@@ -40,9 +39,7 @@ public class NonConsumableItemsStorage {
      */
     public boolean nonConsumableItemExists(NonConsumableItem nonConsumableItem){
 
-        if (StoreConfig.debug){
-            Log.d(TAG, "trying to figure out if the given MANAGED item exists.");
-        }
+        StoreUtils.LogDebug(TAG, "trying to figure out if the given MANAGED item exists.");
 
         String itemId = nonConsumableItem.getItemId();
         String key = KeyValDatabase.keyNonConsExists(itemId);
@@ -58,9 +55,7 @@ public class NonConsumableItemsStorage {
      * @param nonConsumableItem is the required google non-consumable item.
      */
     public void add(NonConsumableItem nonConsumableItem){
-        if (StoreConfig.debug){
-            Log.d(TAG, "adding " + nonConsumableItem.getItemId());
-        }
+        StoreUtils.LogDebug(TAG, "adding " + nonConsumableItem.getItemId());
 
         String itemId = nonConsumableItem.getItemId();
         String key = KeyValDatabase.keyNonConsExists(itemId);
@@ -73,9 +68,7 @@ public class NonConsumableItemsStorage {
      * @param nonConsumableItem is the required google non-consumable item.
      */
     public void remove(NonConsumableItem nonConsumableItem){
-        if (StoreConfig.debug){
-            Log.d(TAG, "removing " + nonConsumableItem.getName());
-        }
+        StoreUtils.LogDebug(TAG, "removing " + nonConsumableItem.getName());
 
         String itemId = nonConsumableItem.getItemId();
         String key = KeyValDatabase.keyNonConsExists(itemId);

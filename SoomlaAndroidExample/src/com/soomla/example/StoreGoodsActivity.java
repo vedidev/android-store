@@ -188,4 +188,8 @@ public class StoreGoodsActivity extends Activity {
         Intent intent = new Intent(getApplicationContext(), StorePacksActivity.class);
         startActivity(intent);
     }
+
+    public void restoreTransactions(View v) throws IOException{
+        StoreController.getInstance().restoreTransactions();
+    }
 }
