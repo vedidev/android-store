@@ -24,16 +24,31 @@ import com.soomla.store.domain.GoogleMarketItem;
 import com.soomla.store.events.*;
 import com.soomla.store.exceptions.InsufficientFundsException;
 
+/**
+ * This type of Purchase is used to let users purchase PurchasableVirtualItems with Google Play (with real $$).
+ */
 public class PurchaseWithMarket extends PurchaseType {
 
+    /** Constructor
+     *
+     * @param productId is the productId to purchase in Google Play.
+     * @param price is the price in Google Play.
+     */
     public PurchaseWithMarket(String productId, double price) {
         mGoogleMarketItem = new GoogleMarketItem(productId, GoogleMarketItem.Managed.UNMANAGED, price);
     }
 
+    /** Constructor
+     *
+     * @param googleMarketItem is the representation of the item in Google Play.
+     */
     public PurchaseWithMarket(GoogleMarketItem googleMarketItem) {
         mGoogleMarketItem = googleMarketItem;
     }
 
+    /**
+     * see parent
+     */
     @Override
     public void buy(int amount) throws InsufficientFundsException {
         SharedPreferences prefs = new ObscuredSharedPreferences(

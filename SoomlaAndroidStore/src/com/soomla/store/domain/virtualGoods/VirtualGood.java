@@ -21,16 +21,18 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 /**
- * This is a representation of the application's virtual good.
+ * This is an abstract representation of the application's virtual good.
+ * Your game's virtual economy revolves around virtual goods. This class defines the abstract
+ * and most common virtual good while the descendants of this class defines specific definitions of VirtualGood.
  */
 public abstract class VirtualGood extends PurchasableVirtualItem {
 
     /** Constructor
      *
-     * @param mName is the name of the virtual good.
-     * @param mDescription is the description of the virtual good. This will show up
-     *                       in the store in the description section.
-     * @param mItemId is the id of the virtual good.
+     * @param mName see parent
+     * @param mDescription see parent
+     * @param mItemId see parent
+     * @param purchaseType see parent
      */
     public VirtualGood(String mName, String mDescription,
                        String mItemId, PurchaseType purchaseType) {
@@ -39,17 +41,14 @@ public abstract class VirtualGood extends PurchasableVirtualItem {
 
     /** Constructor
      *
-     * Generates an instance of {@link VirtualGood} from a JSONObject.
-     * @param jsonObject is a JSONObject representation of the wanted {@link VirtualGood}.
-     * @throws JSONException
+     * see parent
      */
     public VirtualGood(JSONObject jsonObject) throws JSONException{
         super(jsonObject);
     }
 
     /**
-     * Converts the current {@link VirtualGood} to a JSONObject.
-     * @return a JSONObject representation of the current {@link VirtualGood}.
+     * see parent
      */
     @Override
     public JSONObject toJSONObject(){

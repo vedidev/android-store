@@ -20,6 +20,9 @@ import com.soomla.billing.util.AESObfuscator;
 import com.soomla.store.StoreUtils;
 import com.soomla.store.domain.VirtualItem;
 
+/**
+ * This class is an abstract definition of a Virtual Item Storage.
+ */
 public abstract class VirtualItemStorage {
 
     /**

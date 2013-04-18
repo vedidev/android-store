@@ -15,8 +15,27 @@
  */
 package com.soomla.store.events;
 
+import com.soomla.store.domain.virtualGoods.UpgradeVG;
+import com.soomla.store.domain.virtualGoods.VirtualGood;
+
 /**
- * This event is fired if there's an unexpected/unrecognized error in store.
+ * This event is fired when the balance of a specific EquippableVG has been upgraded/downgraded.
  */
-public class UnexpectedStoreErrorEvent {
+public class GoodUpgradeEvent {
+
+    private VirtualGood mGood;
+    private UpgradeVG   mCurrentUpgrade;
+
+    public GoodUpgradeEvent(VirtualGood good, UpgradeVG upgradeVG) {
+        mGood = good;
+        mCurrentUpgrade = upgradeVG;
+    }
+
+    public VirtualGood getGood() {
+        return mGood;
+    }
+
+    public UpgradeVG getCurrentUpgrade() {
+        return mCurrentUpgrade;
+    }
 }

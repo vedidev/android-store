@@ -15,7 +15,9 @@
  */
 package com.soomla.store.events;
 
-
+/**
+ * This event is fired when restore transaction was finished.
+ */
 public class RestoreTransactionsEvent {
     private boolean mSuccess;
 

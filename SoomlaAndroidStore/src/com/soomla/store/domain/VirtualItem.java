@@ -29,9 +29,9 @@ public abstract class VirtualItem {
     /** Constructor
      *
      * @param mName is the name of the virtual item.
-     * @param mDescription is the description of the virtual item. This will show up
+     * @param mDescription is the description of the virtual item. If you use SOOMLA's storefront, This will show up
      *                       in the store in the description section.
-     * @param mItemId is the id of the virtual item.
+     * @param mItemId is the itemId of the virtual item.
      */
     public VirtualItem(String mName, String mDescription, String mItemId) {
         this.mName = mName;
@@ -70,9 +70,23 @@ public abstract class VirtualItem {
         return jsonObject;
     }
 
+    /**
+     * By performing this action, you give your user a curtain amount of the specific VirtualItem.
+     * The giving process is different from the "buy" process. You just give your user something and you get
+     * nothing in return.
+     * @param amount the amount of the specific item to be given.
+     */
     public abstract void give(int amount);
+
+    /**
+     * By performing this action, you take curtain amount of the specific VirtualItem from your user.
+     * @param amount the amount of the specific item to be taken.
+     */
     public abstract void take(int amount);
 
+    /**
+     * ItemId is the unique id of every VirtualItem. We use it to compare VirtualItems.
+     */
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

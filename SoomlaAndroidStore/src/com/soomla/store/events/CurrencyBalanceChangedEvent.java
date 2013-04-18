@@ -17,6 +17,9 @@ package com.soomla.store.events;
 
 import com.soomla.store.domain.virtualCurrencies.VirtualCurrency;
 
+/**
+ * This event is fired when the balance of a specific VirtualCurrency has changed.
+ */
 public class CurrencyBalanceChangedEvent {
 
     private VirtualCurrency mCurrency;

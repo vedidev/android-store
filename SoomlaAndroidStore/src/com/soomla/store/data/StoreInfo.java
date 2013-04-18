@@ -37,10 +37,11 @@ import java.util.List;
 
 /**
  * This class holds the store's meta data including:
- * - Virtual Currencies definitions
- * - Virtual Currency Packs definitions
- * - Virtual Goods definitions
- * - Virtual Categories definitions
+ * - Virtual Currencies
+ * - Virtual Currency Packs
+ * - All kinds of Virtual Goods
+ * - Virtual Categories
+ * - NonConsumables
  */
 public class StoreInfo {
 
@@ -49,9 +50,10 @@ public class StoreInfo {
      * database doesn't have any previous version of the store metadata, StoreInfo
      * is being loaded from the given {@link IStoreAssets}. After the first initialization,
      * StoreInfo will be initialized from the database.
-     * NOTE: If you want to override the current StoreInfo, you'll have to bump the
-     * database version (the old database will be destroyed) OR just bump the version of your implementation of IStoreAssets
-     * in order to remove the metadata when the application loads.
+     *
+     * IMPORTANT: If you want to override the current StoreInfo, you'll have to bump the version of your
+     * implementation of IStoreAssets in order to remove the metadata when the application loads.
+     * (bumping the version is done by returning a higher number in {@link com.soomla.store.IStoreAssets#getVersion()}.
      */
     public static void setStoreAssets(IStoreAssets storeAssets){
         if (storeAssets == null){
@@ -66,6 +68,12 @@ public class StoreInfo {
         }
     }
 
+    /**
+     * Initializes StoreInfo from the database. This action should be performed only once during the lifetime of
+     * a session of the game. StoreController automatically initializes StoreInfo. Don't do it if you don't know what
+     * you're doing.
+     * @return success.
+     */
     public static boolean initializeFromDB() {
         String key = KeyValDatabase.keyMetaStoreInfo();
         key = StorageManager.getAESObfuscator().obfuscateString(key);
@@ -101,12 +109,36 @@ public class StoreInfo {
 
     }
 
+    /**
+     * A utility function to retrieve a single VirtualItem that resides in the meta data.
+     * @param itemId the itemId of the required VirtualItem.
+     * @throws VirtualItemNotFoundException when the given itemId was not found.
+     */
     public static VirtualItem getVirtualItem(String itemId) throws VirtualItemNotFoundException{
         return mVirtualItems.get(itemId);
     }
 
+    /**
+     * A utility function to retrieve a single PurchasableVirtualItem that resides in the meta data.
+     *
+     * IMPORTANT: The retrieved PurchasableVirtualItems are only those which has a purchaseType of PurchaseWithMarket.
+     * (This is why we fetch here with productId)
+     *
+     * @param productId the productId of the required PurchasableVirtualItem.
+     * @throws VirtualItemNotFoundException when the given itemId was not found.
+     */
     public static PurchasableVirtualItem getPurchasableItem(String productId) throws VirtualItemNotFoundException{
         return mPurchasableItems.get(productId);
+    }
+
+    /**
+     * A utility function to retrieve a single VirtualCategory for a given VirtualGood itemId.
+     *
+     * @param goodItemId the virtualGood in the category.
+     * @return a VirtualCategory for the given VirtualGood.
+     */
+    public static VirtualCategory getCategory(String goodItemId) {
+        return mGoodsCategories.get(goodItemId);
     }
 
     /** Getters **/
@@ -132,6 +164,7 @@ public class StoreInfo {
     private static void fromJSONObject(JSONObject jsonObject) throws JSONException{
         mVirtualItems = new HashMap<String, VirtualItem>();
         mPurchasableItems = new HashMap<String, PurchasableVirtualItem>();
+        mGoodsCategories = new HashMap<String, VirtualCategory>();
 
         JSONArray virtualCurrencies = jsonObject.getJSONArray(JSONConsts.STORE_CURRENCIES);
         mCurrencies = new LinkedList<VirtualCurrency>();
@@ -198,7 +231,11 @@ public class StoreInfo {
         mCategories = new LinkedList<VirtualCategory>();
         for(int i=0; i<virtualCategories.length(); i++){
             JSONObject o = virtualCategories.getJSONObject(i);
-            mCategories.add(new VirtualCategory(o));
+            VirtualCategory category = new VirtualCategory(o);
+            mCategories.add(category);
+            for(VirtualGood good : category.getGoods()) {
+                mGoodsCategories.put(good.getItemId(), category);
+            }
         }
 
         JSONArray nonConsumables = jsonObject.getJSONArray(JSONConsts.STORE_NONCONSUMABLES);
@@ -305,6 +342,7 @@ public class StoreInfo {
 
         mVirtualItems = new HashMap<String, VirtualItem>();
         mPurchasableItems = new HashMap<String, PurchasableVirtualItem>();
+        mGoodsCategories = new HashMap<String, VirtualCategory>();
 
         for(VirtualCurrency vi : mCurrencies) {
             mVirtualItems.put(vi.getItemId(), vi);
@@ -337,6 +375,12 @@ public class StoreInfo {
             }
         }
 
+        for(VirtualCategory category : mCategories) {
+            for(VirtualGood good : category.getGoods()) {
+                mGoodsCategories.put(good.getItemId(), category);
+            }
+        }
+
         // put StoreInfo in the database as JSON
         String store_json = toJSONObject().toString();
         String key = KeyValDatabase.keyMetaStoreInfo();
@@ -352,6 +396,7 @@ public class StoreInfo {
     // convenient hash to retrieve virtual items
     private static HashMap<String, VirtualItem>             mVirtualItems;
     private static HashMap<String, PurchasableVirtualItem>  mPurchasableItems;
+    private static HashMap<String, VirtualCategory>         mGoodsCategories;
 
     private static List<VirtualCurrency>                mCurrencies;
     private static List<VirtualCurrencyPack>            mCurrencyPacks;

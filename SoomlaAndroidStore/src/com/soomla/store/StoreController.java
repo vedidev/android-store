@@ -42,8 +42,8 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 /**
- * This class is where all the important stuff happens. You can use it to purchase products from Google Play,
- * buy virtual goods, and get events on whatever happens.
+ * This class holds the most basic assets needed to operate the Store.
+ * You can use it to purchase products from Google Play.
  *
  * This is the only class you need to initialize in order to use the SOOMLA SDK.
  *
@@ -51,16 +51,16 @@ import java.util.concurrent.locks.ReentrantLock;
  * {@link StoreController#storeOpening(android.app.Activity)} and
  * {@link com.soomla.store.StoreController#storeClosing()} when you open the store window or close it. These two
  * calls initializes important components that support billing and storage information (see implementation below).
- * IMPORTANT: if you use the SOOMLA storefront (SOOMLA Storefront), than DON'T call these 2 functions.
+ * IMPORTANT: if you use the SOOMLA's storefront, then DON'T call these 2 functions.
  *
  */
 public class StoreController extends PurchaseObserver {
 
     /**
-     * If you're using SOOMLA's storefront, You have to initializePurchaseObserver the {@link StoreController} before you
-     * open the StorefrontController (for more info about store front go to our Github page).
-     * This initializer also initializes {@link StorageManager} and {@link StoreInfo}.
+     * This initializer also initializes {@link StoreInfo}.
      * @param storeAssets is the definition of your application specific assets.
+     * @param publicKey is the public key given to you from Google.
+     * @param customSecret is your encryption secret (it's used to encrypt your data in the database)
      */
     public void initialize(IStoreAssets storeAssets,
                           String publicKey,
@@ -102,7 +102,10 @@ public class StoreController extends PurchaseObserver {
     }
 
     /**
-     * Start a currency pack purchase process (with Google Play)
+     * Start a purchase process with Google Play.
+     *
+     * @param googleMarketItem is the item to purchase. This item has to be defined EXACTLY the same in Google Play.
+     * @param payload a payload to get back when this purchase is finished.
      */
     public boolean buyWithGooglePlay(GoogleMarketItem googleMarketItem, String payload) {
         if (!checkInit()) return false;

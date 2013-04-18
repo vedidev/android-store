@@ -69,6 +69,10 @@ public class KeyValueStorage {
         StorageManager.getDatabase().setKeyVal(key, val);
     }
 
+    /**
+     * Deletes a key-val pair with the given key.
+     * @param key is the key in the key-val pair.
+     */
     public void deleteKeyValue(String key) {
         StoreUtils.LogDebug(TAG, "deleting " + key);
 

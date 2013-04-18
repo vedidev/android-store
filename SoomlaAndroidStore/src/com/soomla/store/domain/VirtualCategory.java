@@ -40,6 +40,7 @@ public class VirtualCategory {
     /** Constructor
      *
      * @param name is the category's name.
+     * @param goods is the list of VirtualGoods in this category.
      */
     public VirtualCategory(String name, ArrayList<VirtualGood> goods) {
         mName = name;
@@ -88,6 +89,8 @@ public class VirtualCategory {
 
         return jsonObject;
     }
+
+    /** Getters **/
 
     public String getName() {
         return mName;

@@ -122,6 +122,10 @@ public class KeyValDatabase {
         return "good." + itemId + ".equipped";
     }
 
+    public static String keyGoodUpgrade(String itemId) {
+        return "good." + itemId + ".currentUpgrade";
+    }
+
     public static String keyCurrencyBalance(String itemId) {
         return "currency." + itemId + ".balance";
     }
@@ -150,8 +154,8 @@ public class KeyValDatabase {
 
     /** Private Members**/
 
-    private static final String TAG = "KeyValDatabase";
-    private static final String DATABASE_NAME               = "store.kv.db";
+    private static final String TAG            = "KeyValDatabase";
+    private static final String DATABASE_NAME  = "store.kv.db";
 
     private SQLiteDatabase mStoreDB;
     private DatabaseHelper mDatabaseHelper;

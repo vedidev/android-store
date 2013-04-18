@@ -20,19 +20,31 @@ import com.soomla.store.BusProvider;
 import com.soomla.store.StoreUtils;
 import com.soomla.store.data.StorageManager;
 import com.soomla.store.data.VirtualItemStorage;
+import com.soomla.store.domain.PurchasableVirtualItem;
 import com.soomla.store.domain.VirtualItem;
 
 import com.soomla.store.events.ItemPurchaseStartedEvent;
 import com.soomla.store.events.ItemPurchasedEvent;
 import com.soomla.store.exceptions.InsufficientFundsException;
 
+/**
+ * This type of Purchase allows users to purchase PurchasableVirtualItems with other VirtualItems.
+ */
 public class PurchaseWithVirtualItem extends PurchaseType {
 
+    /** Constructor
+     *
+     * @param item is the VirtualItem that is used to "pay" in order to make the purchase.
+     * @param amount is the number of items to purchase.
+     */
     public PurchaseWithVirtualItem(VirtualItem item, int amount) {
         mItem = item;
         mAmount = amount;
     }
 
+    /**
+     * see parent
+     */
     @Override
     public void buy(int amount) throws InsufficientFundsException{
 
@@ -60,11 +72,6 @@ public class PurchaseWithVirtualItem extends PurchaseType {
     public int getAmount() {
         return mAmount;
     }
-
-    //    @Override
-//    public String getTypeName() {
-//        return "virtualItemPurchase";
-//    }
 
     private static final String TAG = "SOOMLA PurchaseWithVirtualItem";
 

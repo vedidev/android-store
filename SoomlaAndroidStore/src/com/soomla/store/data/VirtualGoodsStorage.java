@@ -15,14 +15,18 @@
  */
 package com.soomla.store.data;
 
+import com.soomla.billing.util.AESObfuscator;
 import com.soomla.store.BusProvider;
 import com.soomla.store.StoreUtils;
 import com.soomla.store.domain.VirtualItem;
 import com.soomla.store.domain.virtualGoods.EquippableVG;
+import com.soomla.store.domain.virtualGoods.UpgradeVG;
 import com.soomla.store.domain.virtualGoods.VirtualGood;
 import com.soomla.store.events.GoodBalanceChangedEvent;
 import com.soomla.store.events.GoodEquippedEvent;
 import com.soomla.store.events.GoodUnEquippedEvent;
+import com.soomla.store.events.GoodUpgradeEvent;
+import com.soomla.store.exceptions.VirtualItemNotFoundException;
 
 /**
  * This class provide basic storage operations on VirtualGoods.
@@ -39,7 +43,79 @@ public class VirtualGoodsStorage extends VirtualItemStorage{
 
     /** Public functions **/
 
-    public boolean isEquipped(VirtualGood good){
+    /**
+     * This function removes any upgrade associated with the given VirtualGood.
+     * @param good the VirtualGood to remove upgrade from.
+     */
+    public void removeUpgrades(VirtualGood good) {
+        StoreUtils.LogDebug(mTag, "Removing upgrade information from virtual good: " + good.getName());
+
+        String itemId = good.getItemId();
+        String key = KeyValDatabase.keyGoodUpgrade(itemId);
+        key = StorageManager.getAESObfuscator().obfuscateString(key);
+
+        StorageManager.getDatabase().deleteKeyVal(key);
+
+        BusProvider.getInstance().post(new GoodUpgradeEvent(good, null));
+    }
+
+    /**
+     * Assigns a specific upgrade to the given VirtualGood.
+     * @param good the VirtualGood to upgrade.
+     * @param upgradeVG the upgrade to assign.
+     */
+    public void assignCurrentUpgrade(VirtualGood good, UpgradeVG upgradeVG) {
+        StoreUtils.LogDebug(mTag, "Assigning upgrade " + upgradeVG.getName() + " to virtual good: " + good.getName());
+
+        String itemId = good.getItemId();
+        String key = KeyValDatabase.keyGoodUpgrade(itemId);
+        key = StorageManager.getAESObfuscator().obfuscateString(key);
+
+        String upItemId =  StorageManager.getAESObfuscator().obfuscateString(upgradeVG.getItemId());
+        StorageManager.getDatabase().setKeyVal(key, upItemId);
+
+        BusProvider.getInstance().post(new GoodUpgradeEvent(good, upgradeVG));
+    }
+
+    /**
+     * Retrieves the current upgrade for the given VirtualGood.
+     * @param good the VirtualGood to retrieve upgrade for.
+     * @return the current upgrade for the given VirtualGood.
+     */
+    public UpgradeVG getCurrentUpgrade(VirtualGood good) {
+        StoreUtils.LogDebug(mTag, "Fetching upgrade to virtual good: " + good.getName());
+
+        String itemId = good.getItemId();
+        String key = KeyValDatabase.keyGoodUpgrade(itemId);
+        key = StorageManager.getAESObfuscator().obfuscateString(key);
+
+        String upItemId = StorageManager.getDatabase().getKeyVal(key);
+
+        if (upItemId == null) {
+            StoreUtils.LogError(mTag, "You tried to fetch the current upgrade of " + good.getName() + " but there's not upgrade to it.");
+            return null;
+        }
+
+        try {
+            upItemId = StorageManager.getAESObfuscator().unobfuscateToString(upItemId);
+            return (UpgradeVG) StoreInfo.getVirtualItem(upItemId);
+        } catch (AESObfuscator.ValidationException e) {
+            StoreUtils.LogError(mTag, e.getMessage());
+        } catch (VirtualItemNotFoundException e) {
+            StoreUtils.LogError(mTag, "The current upgrade's itemId from the DB is not found in StoreInfo.");
+        } catch (ClassCastException e) {
+            StoreUtils.LogError(mTag, "The current upgrade's itemId from the DB is not an UpgradeVG.");
+        }
+
+        return null;
+    }
+
+    /**
+     * Check the equipping status of the given EquippableVG.
+     * @param good the EquippableVG to check the status for.
+     * @return the equipping status of the given EquippableVG.
+     */
+    public boolean isEquipped(EquippableVG good){
         StoreUtils.LogDebug(mTag, "checking if virtual good with itemId: " + good.getItemId() + " is equipped.");
 
         String itemId = good.getItemId();
@@ -50,10 +126,18 @@ public class VirtualGoodsStorage extends VirtualItemStorage{
         return val != null;
     }
 
+    /**
+     * Equip the given EquippableVG.
+     * @param good the EquippableVG to equip.
+     */
     public void equip(EquippableVG good) {
         equipPriv(good, true);
     }
 
+    /**
+     * UnEquip the given EquippableVG.
+     * @param good the EquippableVG to unequip.
+     */
     public void unequip(EquippableVG good) {
         equipPriv(good, false);
     }

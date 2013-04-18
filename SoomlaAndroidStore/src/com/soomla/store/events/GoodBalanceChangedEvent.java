@@ -17,6 +17,9 @@ package com.soomla.store.events;
 
 import com.soomla.store.domain.virtualGoods.VirtualGood;
 
+/**
+ * This event is fired when the balance of a specific VirtualGood has changed.
+ */
 public class GoodBalanceChangedEvent {
 
     private VirtualGood mGood;

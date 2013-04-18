@@ -17,6 +17,9 @@ package com.soomla.store.events;
 
 import com.soomla.store.domain.PurchasableVirtualItem;
 
+/**
+ * This event is fired when a Google Play refund was issued.
+ */
 public class PlayRefundEvent {
 
     private PurchasableVirtualItem mPurchasableVirtualItem;

@@ -28,37 +28,52 @@ public class NonConsumableItem extends PurchasableVirtualItem {
 
     /** Constructor
      *
-     * @param mName is the name of the non consumable.
-     * @param mDescription is the description of the non consumable.
-     * @param mItemId is the id of the non consumable.
+     * @param mName see parent
+     * @param mDescription see parent
+     * @param mItemId see parent
+     * @param purchaseType see parent
      */
     public NonConsumableItem(String mName, String mDescription, String mItemId, PurchaseWithMarket purchaseType) {
         super(mName, mDescription, mItemId, purchaseType);
     }
 
+    /** Constructor
+     *
+     * see parent
+     */
     public NonConsumableItem(JSONObject jsonObject) throws JSONException {
         super(jsonObject);
     }
 
     /**
-     * Converts the current {@link NonConsumableItem} to a JSONObject.
-     * @return a JSONObject representation of the current {@link NonConsumableItem}.
+     * see parent
      */
     @Override
     public JSONObject toJSONObject(){
         return super.toJSONObject();
     }
 
+    /**
+     * see parent
+     * @param amount the amount of the specific item to be given.
+     */
     @Override
     public void give(int amount) {
         StorageManager.getNonConsumableItemsStorage().add(this);
     }
 
+    /**
+     * see parent
+     * @param amount the amount of the specific item to be taken.
+     */
     @Override
     public void take(int amount) {
         StorageManager.getNonConsumableItemsStorage().remove(this);
     }
 
+    /**
+     * see parent
+     */
     @Override
     protected boolean canBuy() {
         if (StorageManager.getNonConsumableItemsStorage().nonConsumableItemExists(this)) {

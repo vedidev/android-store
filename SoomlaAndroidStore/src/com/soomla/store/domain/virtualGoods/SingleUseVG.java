@@ -21,31 +21,70 @@ import com.soomla.store.purchaseTypes.PurchaseType;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+/**
+ * SingleUse virtual goods are the most common type of VirtualGood.
+ *
+ * The SingleUseVG's characteristics are:
+ *  1. Can be purchased unlimited number of times.
+ *  2. Has a balance and saved in the database. Its balance goes up when you "give" it or "buy" it. The balance goes
+ *      down when it's taken or refunded (in case of an unfriendly refund).
+ *
+ * - Usage Examples: 'Hat', 'Sword'
+ *
+ * This VirtualItem is purchasable.
+ * In case you purchase this item in Google Play (PurchaseWithMarket), You need to define the google item in Google
+ * Play Developer Console. (https://play.google.com/apps/publish)
+ */
 public class SingleUseVG extends VirtualGood{
 
+    /** Constructor
+     *
+     * @param mName see parent
+     * @param mDescription see parent
+     * @param mItemId see parent
+     * @param purchaseType see parent
+     */
     public SingleUseVG(String mName, String mDescription, String mItemId, PurchaseType purchaseType) {
         super(mName, mDescription, mItemId, purchaseType);
     }
 
+    /** Constructor
+     *
+     * see parent
+     */
     public SingleUseVG(JSONObject jsonObject) throws JSONException {
         super(jsonObject);
     }
 
+    /**
+     * see parent
+     */
     @Override
     public JSONObject toJSONObject() {
         return super.toJSONObject();
     }
 
+    /**
+     * see parent
+     * @param amount the amount of the specific item to be given.
+     */
     @Override
     public void give(int amount) {
         StorageManager.getVirtualGoodsStorage().add(this, amount);
     }
 
+    /**
+     * see parent
+     * @param amount the amount of the specific item to be taken.
+     */
     @Override
     public void take(int amount) {
         StorageManager.getVirtualGoodsStorage().remove(this, amount);
     }
 
+    /**
+     * see parent
+     */
     @Override
     protected boolean canBuy() {
         return true;

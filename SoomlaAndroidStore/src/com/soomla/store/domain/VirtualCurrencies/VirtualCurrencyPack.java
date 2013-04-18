@@ -30,36 +30,36 @@ import org.json.JSONObject;
 import java.util.Iterator;
 
 /**
- * This class represents a pack of the game's virtual currency.
- * For example: If you have a "Coin" as a virtual currency, you might
- * want to sell packs of "Coins". e.g. "10 Coins Set" or "Super Saver Pack".
- * The currency pack usually has a google item related to it. As a developer,
- * you'll define the google item in Google's in-app purchase dashboard.
+ * Every game has its VirtualCurrencies. Here you represent a pack of a specific VirtualCurrency.
+ * For example: If you have a "Coin" as a virtual currency, you will
+ * sell packs of "Coins". e.g. "10 Coins Set" or "Super Saver Pack".
+ *
+ * This VirtualItem is purchasable.
+ * In case you purchase this item in Google Play (PurchaseWithMarket), You need to define the google item in Google
+ * Play Developer Console. (https://play.google.com/apps/publish)
  */
 public class VirtualCurrencyPack extends PurchasableVirtualItem {
 
-    /** Constructor
+    /**
      *
-     * @param mName is the name of the virtual currency pack.
-     * @param mDescription is the description of the virtual currency pack. This will show up
-     *                       in the store in the description section.
-     * @param mItemId is the id of the virtual currency pack.
-     * @param mCurrencyAmout is the amount of currency in the pack.
+     * @param mName see parent
+     * @param mDescription see parent
+     * @param mItemId see parent
+     * @param mCurrencyAmount is the amount of currency in the pack.
      * @param mCurrency is the currency associated with this pack.
+     * @param purchaseType see parent
      */
     public VirtualCurrencyPack(String mName, String mDescription, String mItemId,
-                               int mCurrencyAmout,
+                               int mCurrencyAmount,
                                VirtualCurrency mCurrency, PurchaseType purchaseType) {
         super(mName, mDescription, mItemId, purchaseType);
         this.mCurrency = mCurrency;
-        this.mCurrencyAmount = mCurrencyAmout;
+        this.mCurrencyAmount = mCurrencyAmount;
     }
 
     /** Constructor
      *
-     * Generates an instance of {@link VirtualCurrencyPack} from a JSONObject.
-     * @param jsonObject is a JSONObject representation of the wanted {@link VirtualCurrencyPack}.
-     * @throws JSONException
+     * see parent
      */
     public VirtualCurrencyPack(JSONObject jsonObject) throws JSONException {
         super(jsonObject);
@@ -74,8 +74,7 @@ public class VirtualCurrencyPack extends PurchasableVirtualItem {
     }
 
     /**
-     * Converts the current {@link VirtualCurrencyPack} to a JSONObject.
-     * @return a JSONObject representation of the current {@link VirtualCurrencyPack}.
+     * see parent
      */
     public JSONObject toJSONObject(){
         JSONObject parentJsonObject = super.toJSONObject();
@@ -100,16 +99,27 @@ public class VirtualCurrencyPack extends PurchasableVirtualItem {
         return jsonObject;
     }
 
+    /**
+     * see parent
+     * @param amount the amount of the specific item to be given.
+     */
     @Override
     public void give(int amount) {
         StorageManager.getVirtualCurrencyStorage().add(mCurrency, mCurrencyAmount*amount);
     }
 
+    /**
+     * see parent
+     * @param amount the amount of the specific item to be taken.
+     */
     @Override
     public void take(int amount) {
         StorageManager.getVirtualCurrencyStorage().remove(mCurrency, mCurrencyAmount*amount);
     }
 
+    /**
+     * see parent
+     */
     @Override
     protected boolean canBuy() {
         return true;
@@ -121,7 +131,7 @@ public class VirtualCurrencyPack extends PurchasableVirtualItem {
         return mCurrencyAmount;
     }
 
-    public VirtualCurrency getVirtualCurrency() {
+    public VirtualCurrency getCurrency() {
         return mCurrency;
     }
 

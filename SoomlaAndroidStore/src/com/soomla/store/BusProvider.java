@@ -16,8 +16,6 @@ package com.soomla.store;
  * limitations under the License.
  */
 
-import com.squareup.otto.Bus;
-
 /**
  * Maintains a singleton instance for obtaining the bus. Ideally this would be replaced with a more efficient means
  * such as through injection directly into interested classes.

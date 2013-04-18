@@ -20,6 +20,8 @@ package com.soomla.store.domain.virtualGoods;
 import com.soomla.store.StoreUtils;
 import com.soomla.store.data.JSONConsts;
 import com.soomla.store.data.StorageManager;
+import com.soomla.store.data.StoreInfo;
+import com.soomla.store.domain.VirtualCategory;
 import com.soomla.store.exceptions.NotEnoughGoodsException;
 import com.soomla.store.purchaseTypes.PurchaseType;
 import org.json.JSONException;
@@ -27,9 +29,40 @@ import org.json.JSONObject;
 
 import java.util.EnumSet;
 import java.util.Iterator;
+import java.util.List;
 
+/**
+ * An Equippable virtual good is a special type of Lifetime Virtual good.
+ * In addition to the fact that this virtual good can be purchased once, it can be equipped by your users.
+ * - Equipping means that the user decides to currently use a specific virtual good.
+ *
+ * The EquippableVG's characteristics are:
+ *  1. Can be purchased only once.
+ *  2. Can be equipped by the user.
+ *  3. Inherits the definition of LifetimeVG.
+ *
+ * There are 3 ways to equip an EquippableVG:
+ *  1. LOCAL    - The current EquippableVG's equipping status doesn't affect any other EquippableVG.
+ *  2. CATEGORY - In the containing category, if this EquippableVG is equipped, all other EquippableVGs are unequipped.
+ *  3. GLOBAL   - In the whole game, if this EquippableVG is equipped, all other EquippableVGs are unequipped.
+ *
+ * - Example Usage: different characters (play with a specific character),
+ *                  'binoculars' (users might only want to take them at night)
+ *
+ * This VirtualItem is purchasable.
+ * In case you purchase this item in Google Play (PurchaseWithMarket), You need to define the google item in Google
+ * Play Developer Console. (https://play.google.com/apps/publish)
+ */
 public class EquippableVG extends LifetimeVG{
 
+    /** Constructor
+     *
+     * @param equippingModel is the way this EquippableVG is equipped.
+     * @param mName see parent
+     * @param mDescription see parent
+     * @param mItemId see parent
+     * @param purchaseType see parent
+     */
     public EquippableVG(EquippingModel equippingModel,
                         String mName, String mDescription,
                         String mItemId,
@@ -39,6 +72,10 @@ public class EquippableVG extends LifetimeVG{
         mEquippingModel = equippingModel;
     }
 
+    /**
+     *
+     * see parent
+     */
     public EquippableVG(JSONObject jsonObject) throws JSONException {
         super(jsonObject);
 
@@ -52,6 +89,9 @@ public class EquippableVG extends LifetimeVG{
         }
     }
 
+    /**
+     * see parent
+     */
     @Override
     public JSONObject toJSONObject() {
         JSONObject parentJsonObject = super.toJSONObject();
@@ -72,27 +112,47 @@ public class EquippableVG extends LifetimeVG{
         return jsonObject;
     }
 
+    /**
+     * This function equips the current EquippableVG
+     * @throws NotEnoughGoodsException
+     */
     public void equip() throws NotEnoughGoodsException {
         // only if the user has bought this EquippableVG, the EquippableVG is equipped.
         if (StorageManager.getVirtualGoodsStorage().getBalance(this) > 0){
             StorageManager.getVirtualGoodsStorage().equip(this);
 
             if (mEquippingModel == EquippingModel.CATEGORY) {
-
+                VirtualCategory category = StoreInfo.getCategory(getItemId());
+                if (category != null) {
+                    for(VirtualGood good : category.getGoods()) {
+                        if (good != this &&
+                            good instanceof EquippableVG) {
+                            ((EquippableVG)good).unequip();
+                        }
+                    }
+                } else {
+                    StoreUtils.LogError(TAG, "Tried to unequip all other category VirtualGoods but there was no " +
+                            "associated category. virtual good itemId: " + getItemId());
+                }
             } else if (mEquippingModel == EquippingModel.GLOBAL) {
-
+                for(VirtualGood good : StoreInfo.getVirtualGoods()) {
+                    if (good != this &&
+                        good instanceof EquippableVG) {
+                        ((EquippableVG)good).unequip();
+                    }
+                }
             }
-//            if (getCategory().getEquippingModel() == VirtualCategory.EquippingModel.SINGLE) {
-//                for(VirtualGood g : StoreInfo.getVirtualGoods()) {
-//                    if (g.getCategory().equals(good.getCategory()) && !g.equals(good)) {
-//                        StorageManager.getVirtualGoodsStorage().equip(g, false);
-//                    }
-//                }
-//            }
         }
         else {
             throw new NotEnoughGoodsException(getItemId());
         }
+    }
+
+    /**
+     * This function unequips the current EquippableVG
+     */
+    public void unequip() {
+        StorageManager.getVirtualGoodsStorage().unequip(this);
     }
 
     /**

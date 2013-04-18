@@ -7,6 +7,7 @@ import com.soomla.store.domain.PurchasableVirtualItem;
 import com.soomla.store.domain.VirtualItem;
 import com.soomla.store.domain.virtualCurrencies.VirtualCurrency;
 import com.soomla.store.domain.virtualGoods.EquippableVG;
+import com.soomla.store.domain.virtualGoods.UpgradeVG;
 import com.soomla.store.domain.virtualGoods.VirtualGood;
 import com.soomla.store.exceptions.InsufficientFundsException;
 import com.soomla.store.exceptions.VirtualItemNotFoundException;
@@ -56,6 +57,16 @@ public class StoreInventory {
         EquippableVG good = (EquippableVG) StoreInfo.getVirtualItem(goodItemId);
 
         return StorageManager.getVirtualGoodsStorage().isEquipped(good);
+    }
+
+    public static int goodUpgradeLevel(String goodItemId) throws VirtualItemNotFoundException {
+        VirtualGood good = (VirtualGood) StoreInfo.getVirtualItem(goodItemId);
+        UpgradeVG upgradeVG = StorageManager.getVirtualGoodsStorage().getCurrentUpgrade(good);
+        if (upgradeVG == null) {
+            return 0;
+        }
+
+        return upgradeVG.getLevel();
     }
 
     /** NonConsumables **/

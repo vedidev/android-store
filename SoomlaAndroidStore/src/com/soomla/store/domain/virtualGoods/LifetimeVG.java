@@ -22,22 +22,55 @@ import com.soomla.store.purchaseTypes.PurchaseType;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+
+/**
+ * A Lifetime virtual good is a special time that allows you to offer virtual goods that are bought only once.
+ *
+ * The LifetimeVG's characteristics are:
+ *  1. Can only be purchased once.
+ *  2. Your users can't have more than one of this item. In other words, (0 <= [LifetimeVG's balance] <= 1) == true.
+ *
+ * - Example usage: 'No Ads', 'Double Coins'
+ *
+ * This VirtualItem is purchasable.
+ * In case you purchase this item in Google Play (PurchaseWithMarket), You need to define the google item in Google
+ * Play Developer Console. (https://play.google.com/apps/publish)
+ */
 public class LifetimeVG extends VirtualGood{
+
+    /** Constructor
+     *
+     * @param mName see parent
+     * @param mDescription see parent
+     * @param mItemId see parent
+     * @param purchaseType see parent
+     */
     public LifetimeVG(String mName, String mDescription,
                       String mItemId,
                       PurchaseType purchaseType) {
         super(mName, mDescription, mItemId, purchaseType);
     }
 
+    /** Constructor
+     *
+     * see parent
+     */
     public LifetimeVG(JSONObject jsonObject) throws JSONException {
         super(jsonObject);
     }
 
+    /**
+     * see parent
+     */
     @Override
     public JSONObject toJSONObject() {
         return super.toJSONObject();
     }
 
+    /**
+     * see parent
+     * @param amount the amount of the specific item to be given.
+     */
     @Override
     public void give(int amount) {
         if(amount > 1) {
@@ -52,6 +85,10 @@ public class LifetimeVG extends VirtualGood{
         }
     }
 
+    /**
+     * see parent
+     * @param amount the amount of the specific item to be taken.
+     */
     @Override
     public void take(int amount) {
         if (amount > 1) {
@@ -65,6 +102,9 @@ public class LifetimeVG extends VirtualGood{
         }
     }
 
+    /**
+     * see parent
+     */
     @Override
     protected boolean canBuy() {
         int balance = StorageManager.getVirtualGoodsStorage().getBalance(this);

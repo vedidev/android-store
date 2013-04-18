@@ -20,19 +20,14 @@ import com.soomla.store.domain.VirtualItem;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-
 /**
- * This is a representation of the game's virtual currency.
+ * This is a representation of a game's virtual currency.
  * Each game can have multiple instances of a virtual currency, all kept in {@link com.soomla.store.data.StoreInfo};
  */
 public class VirtualCurrency extends VirtualItem {
 
     /** Constructor
-     *
-     * @param mName is the name of the virtual currency. For example: "Coin", "Clam", "Gem" ...
-     * @param mDescription is the description of the virtual currency. This will show up
-     *                       in the store in the description section.
-     * @param itemId is the id of the virtual currency.
+     * see parent
      */
     public VirtualCurrency(String mName, String mDescription, String itemId) {
         super(mName, mDescription, itemId);
@@ -40,27 +35,32 @@ public class VirtualCurrency extends VirtualItem {
 
     /** Constructor
      *
-     * Generates an instance of {@link VirtualCurrency} from a JSONObject.
-     * @param jsonObject is a JSONObject representation of the wanted {@link VirtualCurrency}.
-     * @throws org.json.JSONException
+     * see parent
      */
     public VirtualCurrency(JSONObject jsonObject) throws JSONException {
         super(jsonObject);
     }
 
     /**
-     * Converts the current {@link VirtualCurrency} to a JSONObject.
-     * @return a JSONObject representation of the current {@link VirtualCurrency}.
+     * see parent
      */
     public JSONObject toJSONObject(){
         return super.toJSONObject();
     }
 
+    /**
+     * see parent
+     * @param amount the amount of the specific item to be given.
+     */
     @Override
     public void give(int amount) {
         StorageManager.getVirtualCurrencyStorage().add(this, amount);
     }
 
+    /**
+     * see parent
+     * @param amount the amount of the specific item to be taken.
+     */
     @Override
     public void take(int amount) {
         StorageManager.getVirtualCurrencyStorage().remove(this, amount);

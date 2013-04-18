@@ -15,17 +15,20 @@
  */
 package com.soomla.store.events;
 
-import com.soomla.store.domain.virtualGoods.VirtualGood;
+import com.soomla.store.domain.virtualGoods.EquippableVG;
 
+/**
+ * This event is fired when the balance of a specific EquippableVG has been equipped.
+ */
 public class GoodEquippedEvent {
 
-    private VirtualGood mGood;
+    private EquippableVG mGood;
 
-    public GoodEquippedEvent(VirtualGood good) {
+    public GoodEquippedEvent(EquippableVG good) {
         mGood = good;
     }
 
-    public VirtualGood getGood() {
+    public EquippableVG getGood() {
         return mGood;
     }
 }

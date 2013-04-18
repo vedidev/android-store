@@ -15,6 +15,8 @@
  */
 package com.soomla.store.events;
 
-
+/**
+ * This event is fired when a restore transactions process has started.
+ */
 public class RestoreTransactionsStartedEvent {
 }

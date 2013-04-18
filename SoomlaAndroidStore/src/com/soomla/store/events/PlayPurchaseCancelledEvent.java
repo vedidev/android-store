@@ -17,6 +17,9 @@ package com.soomla.store.events;
 
 import com.soomla.store.domain.PurchasableVirtualItem;
 
+/**
+ * This event is fired when a Google Play purchase was cancelled by the user.
+ */
 public class PlayPurchaseCancelledEvent {
 
     private PurchasableVirtualItem mPurchasableVirtualItem;

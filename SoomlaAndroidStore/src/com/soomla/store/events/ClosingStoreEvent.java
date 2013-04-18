@@ -15,6 +15,8 @@
  */
 package com.soomla.store.events;
 
-
+/**
+ * This event is fired when the store is about to close.
+ */
 public class ClosingStoreEvent {
 }

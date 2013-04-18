@@ -30,8 +30,7 @@ import com.soomla.store.domain.virtualGoods.VirtualGood;
 
 /**
  * This is the place where all the relevant storage classes are created.
- * This is a singleton class and you can call it from your application in order
- * to get the instances of the Virtual goods/currency storages.
+ * This class contains static methods for you to retrieve the various storages.
  *
  * You will usually need the storage in order to get/set the amounts of virtual goods/currency.
  */
@@ -68,12 +67,10 @@ public class StorageManager {
             int mt_ver = prefs.getInt("MT_VER", 0);
             int sa_ver_old = prefs.getInt("SA_VER_OLD", -1);
             int sa_ver_new = prefs.getInt("SA_VER_NEW", 0);
-//            boolean mt_override = prefs.getBoolean("MT_FORCE_DELETE", false);
-            if (mt_ver < StoreConfig.METADATA_VERSION || sa_ver_old < sa_ver_new) {// || mt_override) {
+            if (mt_ver < StoreConfig.METADATA_VERSION || sa_ver_old < sa_ver_new) {
                 SharedPreferences.Editor edit = prefs.edit();
                 edit.putInt("MT_VER", StoreConfig.METADATA_VERSION);
                 edit.putInt("SA_VER_OLD", sa_ver_new);
-//                edit.putBoolean("MT_FORCE_DELETE", false);
                 edit.commit();
 
                 mKvDatabase.deleteKeyVal(KeyValDatabase.keyMetaStorefrontInfo());
@@ -110,10 +107,10 @@ public class StorageManager {
 
     private static boolean mOldDataMigrated = false;
 
-    private static VirtualGoodsStorage     mVirtualGoodsStorage        = new VirtualGoodsStorage();
-    private static VirtualCurrencyStorage  mVirtualCurrencyStorage     = new VirtualCurrencyStorage();
+    private static VirtualGoodsStorage     mVirtualGoodsStorage         = new VirtualGoodsStorage();
+    private static VirtualCurrencyStorage  mVirtualCurrencyStorage      = new VirtualCurrencyStorage();
     private static NonConsumableItemsStorage mNonConsumableItemsStorage = new NonConsumableItemsStorage();
-    private static KeyValueStorage         mKeyValueStorage            = new KeyValueStorage();
+    private static KeyValueStorage         mKeyValueStorage             = new KeyValueStorage();
     private static AESObfuscator           mObfuscator;
     private static KeyValDatabase          mKvDatabase;
 

@@ -30,10 +30,17 @@ import org.json.JSONObject;
 import java.util.Iterator;
 
 /**
- * A representation of an AbstractVirtualItem you can actually purchase.
+ * A representation of an VirtualItem you can actually purchase.
  */
 public abstract class PurchasableVirtualItem extends VirtualItem {
 
+    /** Constructor
+     *
+     * @param mName see parent
+     * @param mDescription see parent
+     * @param mItemId see parent
+     * @param purchaseType is the way this item is purchased.
+     */
     public PurchasableVirtualItem(String mName, String mDescription, String mItemId, PurchaseType purchaseType) {
         super(mName, mDescription, mItemId);
 
@@ -42,6 +49,9 @@ public abstract class PurchasableVirtualItem extends VirtualItem {
         mPurchaseType.setAssociatedItem(this);
     }
 
+    /**
+     * see parent
+     */
     public PurchasableVirtualItem(JSONObject jsonObject) throws JSONException {
         super(jsonObject);
 
@@ -70,6 +80,9 @@ public abstract class PurchasableVirtualItem extends VirtualItem {
         }
     }
 
+    /**
+     * see parent
+     */
     @Override
     public JSONObject toJSONObject(){
         JSONObject parentJsonObject = super.toJSONObject();
@@ -104,17 +117,25 @@ public abstract class PurchasableVirtualItem extends VirtualItem {
         return jsonObject;
     }
 
+    /**
+     * Use this function to buy a Virtual Item. This action uses the associated PurchaseType to perform the purchase.
+     * @param amount is the number of the specific VirtualItem you want to buy.
+     * @throws InsufficientFundsException
+     */
     public void buy(int amount) throws InsufficientFundsException {
         if (!canBuy()) return;
 
         mPurchaseType.buy(amount);
     }
 
-    protected abstract boolean canBuy();
-
     public PurchaseType getPurchaseType() {
         return mPurchaseType;
     }
+
+    /**
+     * Determines if you are in a states that allows you to buy a specific VirtualItem.
+     */
+    protected abstract boolean canBuy();
 
     private static final String TAG = "SOOMLA PurchasableVirtualItem";
 

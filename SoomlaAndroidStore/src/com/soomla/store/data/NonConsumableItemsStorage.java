@@ -34,7 +34,7 @@ public class NonConsumableItemsStorage {
 
     /**
      * Figure out if the given non-consumable {@link NonConsumableItem} exists.
-     * @param nonConsumableItem the required non-consumable {@link NonConsumableItem}.
+     * @param nonConsumableItem is the required non-consumable {@link NonConsumableItem}.
      * @return whether the given item exists or not.
      */
     public boolean nonConsumableItemExists(NonConsumableItem nonConsumableItem){
