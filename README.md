@@ -1,6 +1,6 @@
 *This project is a part of [The SOOMLA Project](http://project.soom.la) which is a series of open source initiatives with a joint goal to help mobile game developers get better stores and more in-app purchases.*
 
-Looking for testers for the new economy model
+Looking for testers - new economy model
 ----
 
 **If you want to help, you can clone our new branch 'modelV3' and help us test it. We generally need people to test the new types of virtual goods and the overall operation of the Store and StoreInventory.**  
