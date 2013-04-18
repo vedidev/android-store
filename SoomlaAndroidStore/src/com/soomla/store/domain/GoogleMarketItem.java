@@ -15,8 +15,7 @@
  */
 package com.soomla.store.domain;
 
-import android.util.Log;
-import com.soomla.store.StoreConfig;
+import com.soomla.store.StoreUtils;
 import com.soomla.store.data.JSONConsts;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -63,9 +62,7 @@ public class GoogleMarketItem {
             jsonObject.put(JSONConsts.MARKETITEM_PRODUCT_ID, mProductId);
             jsonObject.put(JSONConsts.MARKETITEM_PRICE, new Double(mPrice));
         } catch (JSONException e) {
-            if (StoreConfig.debug){
-                Log.d(TAG, "An error occured while generating JSON object.");
-            }
+            StoreUtils.LogError(TAG, "An error occured while generating JSON object.");
         }
 
         return jsonObject;

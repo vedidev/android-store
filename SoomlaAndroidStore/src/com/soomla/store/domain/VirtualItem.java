@@ -15,8 +15,7 @@
  */
 package com.soomla.store.domain;
 
-import android.util.Log;
-import com.soomla.store.StoreConfig;
+import com.soomla.store.StoreUtils;
 import com.soomla.store.data.JSONConsts;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -62,9 +61,7 @@ public abstract class VirtualItem {
             jsonObject.put(JSONConsts.ITEM_DESCRIPTION, mDescription);
             jsonObject.put(JSONConsts.ITEM_ITEMID, mItemId);
         } catch (JSONException e) {
-            if (StoreConfig.debug){
-                Log.d(TAG, "An error occured while generating JSON object.");
-            }
+            StoreUtils.LogError(TAG, "An error occurred while generating JSON object.");
         }
 
         return jsonObject;

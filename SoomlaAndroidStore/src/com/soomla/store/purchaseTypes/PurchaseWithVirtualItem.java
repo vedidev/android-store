@@ -20,9 +20,7 @@ import com.soomla.store.BusProvider;
 import com.soomla.store.StoreUtils;
 import com.soomla.store.data.StorageManager;
 import com.soomla.store.data.VirtualItemStorage;
-import com.soomla.store.domain.PurchasableVirtualItem;
 import com.soomla.store.domain.VirtualItem;
-
 import com.soomla.store.events.ItemPurchaseStartedEvent;
 import com.soomla.store.events.ItemPurchasedEvent;
 import com.soomla.store.exceptions.InsufficientFundsException;

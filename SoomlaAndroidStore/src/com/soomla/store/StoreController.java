@@ -18,26 +18,17 @@ package com.soomla.store;
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.util.Log;
 import com.soomla.billing.BillingService;
 import com.soomla.billing.Consts;
 import com.soomla.billing.PurchaseObserver;
 import com.soomla.billing.ResponseHandler;
 import com.soomla.store.data.ObscuredSharedPreferences;
-import com.soomla.store.data.StorageManager;
 import com.soomla.store.data.StoreInfo;
-import com.soomla.store.domain.*;
-import com.soomla.store.domain.virtualCurrencies.VirtualCurrency;
-import com.soomla.store.domain.virtualCurrencies.VirtualCurrencyPack;
-import com.soomla.store.domain.virtualGoods.VirtualGood;
+import com.soomla.store.domain.GoogleMarketItem;
+import com.soomla.store.domain.PurchasableVirtualItem;
 import com.soomla.store.events.*;
-import com.soomla.store.exceptions.InsufficientFundsException;
-import com.soomla.store.exceptions.NotEnoughGoodsException;
 import com.soomla.store.exceptions.VirtualItemNotFoundException;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -76,13 +67,13 @@ public class StoreController extends PurchaseObserver {
         if (publicKey != null && !publicKey.isEmpty()) {
             edit.putString(StoreConfig.PUBLIC_KEY, publicKey);
         } else if (prefs.getString(StoreConfig.PUBLIC_KEY, "").isEmpty()) {
-            Log.e(TAG, "publicKey is null or empty. can't initialize store !!");
+            StoreUtils.LogError(TAG, "publicKey is null or empty. can't initialize store !!");
             return;
         }
         if (customSecret != null && !customSecret.isEmpty()) {
             edit.putString(StoreConfig.CUSTOM_SEC, customSecret);
         } else if (prefs.getString(StoreConfig.CUSTOM_SEC, "").isEmpty()) {
-            Log.e(TAG, "customSecret is null or empty. can't initialize store !!");
+            StoreUtils.LogError(TAG, "customSecret is null or empty. can't initialize store !!");
             return;
         }
         edit.putInt("SA_VER_NEW", storeAssets.getVersion());
@@ -113,7 +104,7 @@ public class StoreController extends PurchaseObserver {
         SharedPreferences prefs = new ObscuredSharedPreferences(SoomlaApp.getAppContext(), SoomlaApp.getAppContext().getSharedPreferences(StoreConfig.PREFS_NAME, Context.MODE_PRIVATE));
         String publicKey = prefs.getString(StoreConfig.PUBLIC_KEY, "");
         if (publicKey.isEmpty() || publicKey.equals("[YOUR PUBLIC KEY FROM GOOGLE PLAY]")) {
-            Log.e(TAG, "You didn't provide a public key! You can't make purchases.");
+            StoreUtils.LogError(TAG, "You didn't provide a public key! You can't make purchases.");
             return false;
         }
 
@@ -137,7 +128,7 @@ public class StoreController extends PurchaseObserver {
 
         mLock.lock();
         if (mStoreOpen) {
-            Log.e(TAG, "Store is already open !");
+            StoreUtils.LogError(TAG, "Store is already open !");
             mLock.unlock();
             return;
         }
@@ -187,16 +178,14 @@ public class StoreController extends PurchaseObserver {
     public void onBillingSupported(boolean supported, String type) {
         if (type == null || type.equals(Consts.ITEM_TYPE_INAPP)) {
             if (supported) {
-                if (StoreConfig.debug){
-                    Log.d(TAG, "billing is supported !");
-                }
+                StoreUtils.LogDebug(TAG, "billing is supported !");
+
                 BusProvider.getInstance().post(new BillingSupportedEvent());
             } else {
                 // purchase is not supported. just send a message to JS to disable the "get more ..." button.
 
-                if (StoreConfig.debug){
-                    Log.d(TAG, "billing is not supported !");
-                }
+                StoreUtils.LogDebug(TAG, "billing is not supported !");
+
                 BusProvider.getInstance().post(new BillingNotSupportedEvent());
             }
         } else if (type.equals(Consts.ITEM_TYPE_SUBSCRIPTION)) {
@@ -253,7 +242,7 @@ public class StoreController extends PurchaseObserver {
             try {
                 BusProvider.getInstance().post(new PlayPurchaseCancelledEvent(StoreInfo.getPurchasableItem(request.mProductId)));
             } catch (VirtualItemNotFoundException e) {
-                Log.e(TAG, "ERROR : Couldn't find the CANCELLED VirtualCurrencyPack OR GoogleMarketItem  with productId: " + request.mProductId +
+                StoreUtils.LogError(TAG, "ERROR : Couldn't find the CANCELLED VirtualCurrencyPack OR GoogleMarketItem  with productId: " + request.mProductId +
                         ". It's unexpected so an unexpected error is being emitted.");
                 BusProvider.getInstance().post(new UnexpectedStoreErrorEvent());
             }
@@ -262,7 +251,7 @@ public class StoreController extends PurchaseObserver {
             // purchase failed !
 
             BusProvider.getInstance().post(new UnexpectedStoreErrorEvent());
-            Log.e(TAG, "ERROR : Purchase failed for productId: " + request.mProductId);
+            StoreUtils.LogError(TAG, "ERROR : Purchase failed for productId: " + request.mProductId);
         }
     }
 
@@ -273,9 +262,7 @@ public class StoreController extends PurchaseObserver {
     public void onRestoreTransactionsResponse(BillingService.RestoreTransactions request, Consts.ResponseCode responseCode) {
 
         if (responseCode == Consts.ResponseCode.RESULT_OK) {
-            if (StoreConfig.debug){
-                Log.d(TAG, "RestoreTransactions succeeded");
-            }
+            StoreUtils.LogDebug(TAG, "RestoreTransactions succeeded");
 
             // Update the shared preferences so that we don't perform
             // a RestoreTransactions again.
@@ -316,9 +303,7 @@ public class StoreController extends PurchaseObserver {
             mBillingService.setContext(SoomlaApp.getAppContext());
 
             if (!mBillingService.checkBillingSupported(Consts.ITEM_TYPE_INAPP)){
-                if (StoreConfig.debug){
-                    Log.d(TAG, "There's no connectivity with the billing service.");
-                }
+                StoreUtils.LogDebug(TAG, "There's no connectivity with the billing service.");
 
                 mLock.unlock();
                 return false;

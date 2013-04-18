@@ -29,7 +29,6 @@ import org.json.JSONObject;
 
 import java.util.EnumSet;
 import java.util.Iterator;
-import java.util.List;
 
 /**
  * An Equippable virtual good is a special type of Lifetime Virtual good.

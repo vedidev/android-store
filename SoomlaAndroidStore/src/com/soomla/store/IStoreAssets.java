@@ -15,7 +15,8 @@
  */
 package com.soomla.store;
 
-import com.soomla.store.domain.*;
+import com.soomla.store.domain.NonConsumableItem;
+import com.soomla.store.domain.VirtualCategory;
 import com.soomla.store.domain.virtualCurrencies.VirtualCurrency;
 import com.soomla.store.domain.virtualCurrencies.VirtualCurrencyPack;
 import com.soomla.store.domain.virtualGoods.VirtualGood;

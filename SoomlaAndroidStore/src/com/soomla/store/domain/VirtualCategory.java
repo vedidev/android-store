@@ -15,8 +15,6 @@
  */
 package com.soomla.store.domain;
 
-import android.util.Log;
-import com.soomla.store.StoreConfig;
 import com.soomla.store.StoreUtils;
 import com.soomla.store.data.JSONConsts;
 import com.soomla.store.data.StoreInfo;

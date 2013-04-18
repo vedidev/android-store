@@ -24,11 +24,11 @@ import android.content.Intent;
 import android.content.IntentSender;
 import android.os.Handler;
 import android.os.Looper;
-import android.util.Log;
 import com.soomla.billing.BillingService.RequestPurchase;
 import com.soomla.billing.BillingService.RestoreTransactions;
 import com.soomla.billing.Consts.PurchaseState;
 import com.soomla.billing.Consts.ResponseCode;
+import com.soomla.store.StoreUtils;
 
 import java.lang.reflect.Method;
 
@@ -117,7 +117,7 @@ public abstract class PurchaseObserver {
                 mStartIntentSenderArgs[4] = Integer.valueOf(0);
                 mStartIntentSender.invoke(mActivity, mStartIntentSenderArgs);
             } catch (Exception e) {
-                Log.e(TAG, "error starting activity", e);
+                StoreUtils.LogError(TAG, "error starting activity" + e.getMessage());
             }
         } else {
             // This is on Android version 1.6. The in-app buy page activity must be on its
@@ -126,7 +126,7 @@ public abstract class PurchaseObserver {
             try {
                 pendingIntent.send(mActivity, 0 /* code */, intent);
             } catch (CanceledException e) {
-                Log.e(TAG, "error starting activity", e);
+                StoreUtils.LogError(TAG, "error starting activity" + e.getMessage());
             }
         }
     }

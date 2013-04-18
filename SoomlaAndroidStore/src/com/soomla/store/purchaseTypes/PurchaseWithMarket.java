@@ -21,7 +21,8 @@ import android.content.SharedPreferences;
 import com.soomla.store.*;
 import com.soomla.store.data.ObscuredSharedPreferences;
 import com.soomla.store.domain.GoogleMarketItem;
-import com.soomla.store.events.*;
+import com.soomla.store.events.ItemPurchaseStartedEvent;
+import com.soomla.store.events.UnexpectedStoreErrorEvent;
 import com.soomla.store.exceptions.InsufficientFundsException;
 
 /**
