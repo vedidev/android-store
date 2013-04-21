@@ -45,6 +45,13 @@ public class KeyValDatabase {
     }
 
     /**
+     * Deletes the database completely !
+     */
+    public void purgeDatabase(Context context) {
+        context.deleteDatabase(DATABASE_NAME);
+    }
+
+    /**
      * Sets the given value to the given key
      * @param key the key of the key-val pair.
      * @param val the val of the key-val pair.

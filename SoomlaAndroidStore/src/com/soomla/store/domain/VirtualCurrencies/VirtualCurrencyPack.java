@@ -15,15 +15,13 @@
  */
 package com.soomla.store.domain.virtualCurrencies;
 
-import android.util.Log;
-import com.soomla.store.StoreConfig;
 import com.soomla.store.StoreUtils;
 import com.soomla.store.data.JSONConsts;
 import com.soomla.store.data.StorageManager;
 import com.soomla.store.data.StoreInfo;
 import com.soomla.store.domain.PurchasableVirtualItem;
-import com.soomla.store.purchaseTypes.PurchaseType;
 import com.soomla.store.exceptions.VirtualItemNotFoundException;
+import com.soomla.store.purchaseTypes.PurchaseType;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -91,9 +89,7 @@ public class VirtualCurrencyPack extends PurchasableVirtualItem {
             }
 
         } catch (JSONException e) {
-            if (StoreConfig.debug){
-                Log.d(TAG, "An error occured while generating JSON object.");
-            }
+            StoreUtils.LogError(TAG, "An error occured while generating JSON object.");
         }
 
         return jsonObject;
@@ -114,7 +110,7 @@ public class VirtualCurrencyPack extends PurchasableVirtualItem {
      */
     @Override
     public void take(int amount) {
-        StorageManager.getVirtualCurrencyStorage().remove(mCurrency, mCurrencyAmount*amount);
+        StorageManager.getVirtualCurrencyStorage().remove(mCurrency, mCurrencyAmount * amount);
     }
 
     /**
