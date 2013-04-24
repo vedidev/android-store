@@ -61,7 +61,7 @@ public class StoreGoodsActivity extends Activity {
 
                 VirtualGood good = StoreInfo.getVirtualGoods().get(i);
                 try {
-                    good.buy(1);
+                    good.buy();
                 } catch (InsufficientFundsException e) {
                     AlertDialog ad = new AlertDialog.Builder(activity).create();
                     ad.setCancelable(false);

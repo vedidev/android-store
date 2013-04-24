@@ -133,9 +133,6 @@ public class StoreController extends PurchaseObserver {
             return;
         }
 
-        mStoreOpen = true;
-        mLock.unlock();
-
         initCompatibilityLayer(activity);
 
         /* Initialize StoreInfo from database in case any changes were done to it while the store was closed */
@@ -145,12 +142,17 @@ public class StoreController extends PurchaseObserver {
         startBillingService();
 
         BusProvider.getInstance().post(new OpeningStoreEvent());
+
+        mStoreOpen = true;
+        mLock.unlock();
     }
 
     /**
      * Call this function when you close the actual store window.
      */
     public void storeClosing(){
+        if (!mStoreOpen) return;
+
         mStoreOpen = false;
 
         BusProvider.getInstance().post(new ClosingStoreEvent());
@@ -159,6 +161,9 @@ public class StoreController extends PurchaseObserver {
 //        ResponseHandler.unregister(this);
     }
 
+    /**
+     * Initiate the restoreTransactions process
+     */
     public void restoreTransactions() {
         if (!checkInit()) return;
 
@@ -207,17 +212,13 @@ public class StoreController extends PurchaseObserver {
 
             BusProvider.getInstance().post(new PlayPurchaseEvent(purchasableVirtualItem, developerPayload));
 
-            int amount = 1;
-            try {
-                amount = Integer.parseInt(developerPayload);
-            } catch (Exception ignored) {}
             if (purchaseState == Consts.PurchaseState.PURCHASED) {
-                purchasableVirtualItem.give(amount);
+                purchasableVirtualItem.give(1);
             }
 
             if (purchaseState == Consts.PurchaseState.REFUNDED){
                 if (!StoreConfig.friendlyRefunds) {
-                    purchasableVirtualItem.take(amount);
+                    purchasableVirtualItem.take(1);
                 }
             }
 
@@ -263,13 +264,6 @@ public class StoreController extends PurchaseObserver {
 
         if (responseCode == Consts.ResponseCode.RESULT_OK) {
             StoreUtils.LogDebug(TAG, "RestoreTransactions succeeded");
-
-            // Update the shared preferences so that we don't perform
-            // a RestoreTransactions again.
-//            SharedPreferences prefs = new ObscuredSharedPreferences(SoomlaApp.getAppContext(), SoomlaApp.getAppContext().getSharedPreferences(StoreConfig.PREFS_NAME, Context.MODE_PRIVATE));
-//            SharedPreferences.Editor edit = prefs.edit();
-//            edit.putBoolean(StoreConfig.DB_INITIALIZED, true);
-//            edit.commit();
 
             BusProvider.getInstance().post(new RestoreTransactionsEvent(true));
         } else {

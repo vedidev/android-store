@@ -45,22 +45,22 @@ public interface IStoreAssets {
     /**
      * Your game's virtual currencies.
      */
-    VirtualCurrency[] getVirtualCurrencies();
+    VirtualCurrency[] getCurrencies();
 
     /**
-     * An array of all virtual goods served by your store. (all kinds in one array)
+     * An array of all virtual goods served by your store (all kinds in one array). If you have UpgradeVGs, they must appear in the order of levels.
      */
-    VirtualGood[] getVirtualGoods();
+    VirtualGood[] getGoods();
 
     /**
      * An array of all virtual currency packs served by your store.
      */
-    VirtualCurrencyPack[] getVirtualCurrencyPacks();
+    VirtualCurrencyPack[] getCurrencyPacks();
 
     /**
      * An array of all virtual categories handled in your store.
      */
-    VirtualCategory[] getVirtualCategories();
+    VirtualCategory[] getCategories();
 
     /**
      * You can define non consumable items that you'd like to use for your needs.

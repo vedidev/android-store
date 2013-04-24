@@ -119,13 +119,13 @@ public abstract class PurchasableVirtualItem extends VirtualItem {
 
     /**
      * Use this function to buy a Virtual Item. This action uses the associated PurchaseType to perform the purchase.
-     * @param amount is the number of the specific VirtualItem you want to buy.
+     *
      * @throws InsufficientFundsException
      */
-    public void buy(int amount) throws InsufficientFundsException {
+    public void buy() throws InsufficientFundsException {
         if (!canBuy()) return;
 
-        mPurchaseType.buy(amount);
+        mPurchaseType.buy();
     }
 
     public PurchaseType getPurchaseType() {
@@ -133,7 +133,7 @@ public abstract class PurchasableVirtualItem extends VirtualItem {
     }
 
     /**
-     * Determines if you are in a states that allows you to buy a specific VirtualItem.
+     * Determines if you are in a state that allows you to buy a specific VirtualItem.
      */
     protected abstract boolean canBuy();
 

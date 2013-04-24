@@ -80,7 +80,6 @@ public class UpgradeVG extends VirtualGood {
         super(jsonObject);
 
         String goodItemId = jsonObject.getString(JSONConsts.VGU_GOOD_ITEMID);
-        String nextItemId = jsonObject.getString(JSONConsts.VGU_NEXT_ITEMID);
         String prevItemId = jsonObject.getString(JSONConsts.VGU_PREV_ITEMID);
         mLevel = jsonObject.getInt(JSONConsts.VGU_LEVEL);
 
@@ -156,7 +155,7 @@ public class UpgradeVG extends VirtualGood {
     public void take(int amount) {
         UpgradeVG upgradeVG = StorageManager.getVirtualGoodsStorage().getCurrentUpgrade(mGood);
         if (upgradeVG != this) {
-            StoreUtils.LogError(TAG, "You can't give what's not yours. The UpgradeVG " + getName() + " is not assigned to " +
+            StoreUtils.LogError(TAG, "You can't take what's not yours. The UpgradeVG " + getName() + " is not assigned to " +
                     "the VirtualGood: " + mGood.getName());
             return;
         }

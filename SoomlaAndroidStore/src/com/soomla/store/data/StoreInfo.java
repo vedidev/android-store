@@ -66,7 +66,6 @@ public class StoreInfo {
 
         // we prefer initialization from the database (storeAssets are only set on the first time the game is loaded)!
         if (!initializeFromDB()){
-
             initializeWithStoreAssets(storeAssets);
         }
     }
@@ -105,7 +104,7 @@ public class StoreInfo {
             return true;
         } catch (JSONException e) {
             StoreUtils.LogDebug(TAG, "Can't parse metadata json. Going to return false and make " +
-                    "StoreInfo load from static data.: " + val);
+                    "StoreInfo load from static data: " + val);
         }
 
         return false;
@@ -118,7 +117,12 @@ public class StoreInfo {
      * @throws VirtualItemNotFoundException when the given itemId was not found.
      */
     public static VirtualItem getVirtualItem(String itemId) throws VirtualItemNotFoundException{
-        return mVirtualItems.get(itemId);
+        VirtualItem item = mVirtualItems.get(itemId);
+        if (item == null) {
+            throw new VirtualItemNotFoundException("itemId", itemId);
+        }
+
+        return item;
     }
 
     /**
@@ -128,10 +132,15 @@ public class StoreInfo {
      * (This is why we fetch here with productId)
      *
      * @param productId the productId of the required PurchasableVirtualItem.
-     * @throws VirtualItemNotFoundException when the given itemId was not found.
+     * @throws VirtualItemNotFoundException when the given productId was not found.
      */
     public static PurchasableVirtualItem getPurchasableItem(String productId) throws VirtualItemNotFoundException{
-        return mPurchasableItems.get(productId);
+        PurchasableVirtualItem item = mPurchasableItems.get(productId);
+        if (item == null) {
+            throw new VirtualItemNotFoundException("productId", productId);
+        }
+
+        return item;
     }
 
     /**
@@ -139,14 +148,21 @@ public class StoreInfo {
      *
      * @param goodItemId the virtualGood in the category.
      * @return a VirtualCategory for the given VirtualGood.
+     *
+     * @throws VirtualItemNotFoundException when the given goodItemId was not found.
      */
-    public static VirtualCategory getCategory(String goodItemId) {
-        return mGoodsCategories.get(goodItemId);
+    public static VirtualCategory getCategory(String goodItemId) throws VirtualItemNotFoundException {
+        VirtualCategory item = mGoodsCategories.get(goodItemId);
+        if (item == null) {
+            throw new VirtualItemNotFoundException("goodItemId", goodItemId);
+        }
+
+        return item;
     }
 
     /** Getters **/
 
-    public static List<VirtualCurrency> getVirtualCurrencies(){
+    public static List<VirtualCurrency> getCurrencies(){
         return mCurrencies;
     }
 
@@ -154,12 +170,16 @@ public class StoreInfo {
         return mCurrencyPacks;
     }
 
-    public static List<VirtualGood> getVirtualGoods() {
+    public static List<VirtualGood> getGoods() {
         return mGoods;
     }
 
     public static List<NonConsumableItem> getNonConsumableItems() {
         return mNonConsumables;
+    }
+
+    public static List<VirtualCategory> getCategories() {
+        return mCategories;
     }
 
     /** Private functions **/
@@ -329,7 +349,7 @@ public class StoreInfo {
             jsonObject.put(JSONConsts.STORE_CURRENCYPACKS, currencyPacks);
             jsonObject.put(JSONConsts.STORE_NONCONSUMABLES, nonConsumableItems);
         } catch (JSONException e) {
-            StoreUtils.LogDebug(TAG, "An error occurred while generating JSON object.");
+            StoreUtils.LogError(TAG, "An error occurred while generating JSON object.");
         }
 
         return jsonObject;
@@ -337,10 +357,10 @@ public class StoreInfo {
 
     private static void initializeWithStoreAssets(IStoreAssets storeAssets) {
         /// fall-back here if the json doesn't exist, we load the store from the given {@link IStoreAssets}.
-        mCurrencies = Arrays.asList(storeAssets.getVirtualCurrencies());
-        mCurrencyPacks = Arrays.asList(storeAssets.getVirtualCurrencyPacks());
-        mGoods = Arrays.asList(storeAssets.getVirtualGoods());
-        mCategories = Arrays.asList(storeAssets.getVirtualCategories());
+        mCurrencies = Arrays.asList(storeAssets.getCurrencies());
+        mCurrencyPacks = Arrays.asList(storeAssets.getCurrencyPacks());
+        mGoods = Arrays.asList(storeAssets.getGoods());
+        mCategories = Arrays.asList(storeAssets.getCategories());
         mNonConsumables = Arrays.asList(storeAssets.getNonConsumableItems());
 
         mVirtualItems = new HashMap<String, VirtualItem>();

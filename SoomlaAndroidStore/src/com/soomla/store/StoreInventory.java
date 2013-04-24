@@ -15,7 +15,7 @@ public class StoreInventory {
 
     public static void buy(String itemId) throws InsufficientFundsException, VirtualItemNotFoundException {
         PurchasableVirtualItem pvi = (PurchasableVirtualItem) StoreInfo.getVirtualItem(itemId);
-        pvi.buy(1);
+        pvi.buy();
     }
 
     /** Virtual Items **/

@@ -51,7 +51,7 @@ public class PurchaseWithMarket extends PurchaseType {
      * see parent
      */
     @Override
-    public void buy(int amount) throws InsufficientFundsException {
+    public void buy() throws InsufficientFundsException {
         SharedPreferences prefs = new ObscuredSharedPreferences(
                 SoomlaApp.getAppContext(),
                 SoomlaApp.getAppContext().getSharedPreferences(StoreConfig.PREFS_NAME, Context.MODE_PRIVATE));
@@ -64,7 +64,7 @@ public class PurchaseWithMarket extends PurchaseType {
 
         StoreUtils.LogDebug(TAG, "Starting in-app purchase for productId: " + mGoogleMarketItem.getProductId());
 
-        if (!StoreController.getInstance().buyWithGooglePlay(mGoogleMarketItem, ""+amount)) {
+        if (!StoreController.getInstance().buyWithGooglePlay(mGoogleMarketItem, "")) {
             BusProvider.getInstance().post(new UnexpectedStoreErrorEvent());
             return;
         }

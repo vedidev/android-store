@@ -51,7 +51,7 @@ public class StorefrontInfo {
         if (!initializeFromDB()) {
             // if the json doesn't already exist in the database, we load it into the DB here.
 
-            String storefrontJSON = fetchTemeJsonFromFile();
+            String storefrontJSON = fetchThemeJsonFromFile();
             if (TextUtils.isEmpty(storefrontJSON)){
                 StoreUtils.LogError(TAG, "Couldn't find storefront in the DB AND the filesystem. Something is totally wrong !");
                 return;
@@ -101,7 +101,7 @@ public class StorefrontInfo {
      * Read 'theme.json' and return it.
      * @return theme.json's content as String.
      */
-    public String fetchTemeJsonFromFile() {
+    public String fetchThemeJsonFromFile() {
         String storefrontJSON = "";
         try {
             InputStream in = SoomlaApp.getAppContext().getAssets().open("soomla/theme.json");

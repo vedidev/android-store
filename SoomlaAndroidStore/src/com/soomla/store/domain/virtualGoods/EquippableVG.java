@@ -23,6 +23,7 @@ import com.soomla.store.data.StorageManager;
 import com.soomla.store.data.StoreInfo;
 import com.soomla.store.domain.VirtualCategory;
 import com.soomla.store.exceptions.NotEnoughGoodsException;
+import com.soomla.store.exceptions.VirtualItemNotFoundException;
 import com.soomla.store.purchaseTypes.PurchaseType;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -121,20 +122,21 @@ public class EquippableVG extends LifetimeVG{
             StorageManager.getVirtualGoodsStorage().equip(this);
 
             if (mEquippingModel == EquippingModel.CATEGORY) {
-                VirtualCategory category = StoreInfo.getCategory(getItemId());
-                if (category != null) {
+                try {
+                    VirtualCategory category = StoreInfo.getCategory(getItemId());
+
                     for(VirtualGood good : category.getGoods()) {
                         if (good != this &&
-                            good instanceof EquippableVG) {
+                                good instanceof EquippableVG) {
                             ((EquippableVG)good).unequip();
                         }
                     }
-                } else {
+                } catch (VirtualItemNotFoundException e) {
                     StoreUtils.LogError(TAG, "Tried to unequip all other category VirtualGoods but there was no " +
                             "associated category. virtual good itemId: " + getItemId());
                 }
             } else if (mEquippingModel == EquippingModel.GLOBAL) {
-                for(VirtualGood good : StoreInfo.getVirtualGoods()) {
+                for(VirtualGood good : StoreInfo.getGoods()) {
                     if (good != this &&
                         good instanceof EquippableVG) {
                         ((EquippableVG)good).unequip();

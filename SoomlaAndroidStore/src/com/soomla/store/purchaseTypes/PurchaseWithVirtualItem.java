@@ -44,9 +44,9 @@ public class PurchaseWithVirtualItem extends PurchaseType {
      * see parent
      */
     @Override
-    public void buy(int amount) throws InsufficientFundsException{
+    public void buy() throws InsufficientFundsException{
 
-        StoreUtils.LogDebug(TAG, "Trying to buy " + mAmount + " pieces of " + mItem.getName());
+        StoreUtils.LogDebug(TAG, "Trying to buy a " + getAssociatedItem().getName() + " with " + mAmount + " pieces of " + mItem.getName());
         BusProvider.getInstance().post(new ItemPurchaseStartedEvent(getAssociatedItem()));
 
         VirtualItemStorage storage = StorageManager.getVirtualItemStorage(mItem);
@@ -59,7 +59,7 @@ public class PurchaseWithVirtualItem extends PurchaseType {
 
         storage.remove(mItem, mAmount);
 
-        getAssociatedItem().give(amount);
+        getAssociatedItem().give(1);
         BusProvider.getInstance().post(new ItemPurchasedEvent(getAssociatedItem()));
     }
 

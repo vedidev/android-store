@@ -84,7 +84,7 @@ public abstract class VirtualItemStorage {
      * @param amount is the amount of items to add.
      */
     public int add(VirtualItem item, int amount){
-        StoreUtils.LogDebug(mTag, "adding " + amount + " " + item.getName() + ".");
+        StoreUtils.LogDebug(mTag, "adding " + amount + " " + item.getName());
 
         String itemId = item.getItemId();
         int balance = getBalance(item);

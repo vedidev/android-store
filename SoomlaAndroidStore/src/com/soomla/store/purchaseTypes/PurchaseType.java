@@ -25,7 +25,7 @@ import com.soomla.store.exceptions.InsufficientFundsException;
  */
 public abstract class PurchaseType {
 
-    public abstract void buy(int amount) throws InsufficientFundsException;
+    public abstract void buy() throws InsufficientFundsException;
 
     public void setAssociatedItem(PurchasableVirtualItem associatedItem) {
         mAssociatedItem = associatedItem;

@@ -94,9 +94,9 @@ public class StorageManager {
 
 
         if (item instanceof VirtualGood) {
-            storage = StorageManager.getVirtualGoodsStorage();
+            storage = getVirtualGoodsStorage();
         } else if (item instanceof VirtualCurrency) {
-            storage = StorageManager.getVirtualCurrencyStorage();
+            storage = getVirtualCurrencyStorage();
         }
         return storage;
     }

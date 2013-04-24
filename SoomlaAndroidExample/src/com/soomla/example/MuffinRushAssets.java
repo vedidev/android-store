@@ -136,7 +136,9 @@ public class MuffinRushAssets implements IStoreAssets {
             new PurchaseWithVirtualItem(MUFFIN_CURRENCY, 50));  // the way this virtual good is purchased
 
 
+
     /** Virtual Categories **/
+
     // The muffin rush theme doesn't support categories, so we just put everything under a general category.
     // In case you're using Soomla' storefront, the order of the virtual goods in this array matters!
     public static final VirtualCategory GENERAL_CATEGORY = new VirtualCategory(

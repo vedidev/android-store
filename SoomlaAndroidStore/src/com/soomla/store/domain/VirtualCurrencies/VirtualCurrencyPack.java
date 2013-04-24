@@ -28,7 +28,7 @@ import org.json.JSONObject;
 import java.util.Iterator;
 
 /**
- * Every game has its VirtualCurrencies. Here you represent a pack of a specific VirtualCurrency.
+ * Every game has its virtualCurrencies. Here you represent a pack of a specific VirtualCurrency.
  * For example: If you have a "Coin" as a virtual currency, you will
  * sell packs of "Coins". e.g. "10 Coins Set" or "Super Saver Pack".
  *
@@ -38,7 +38,7 @@ import java.util.Iterator;
  */
 public class VirtualCurrencyPack extends PurchasableVirtualItem {
 
-    /**
+    /** Constructor
      *
      * @param mName see parent
      * @param mDescription see parent
