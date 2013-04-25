@@ -29,6 +29,7 @@ import com.soomla.billing.util.Base64;
 import com.soomla.billing.util.Base64DecoderException;
 import com.soomla.store.SoomlaApp;
 import com.soomla.store.StoreConfig;
+import com.soomla.store.StoreController;
 import com.soomla.store.StoreUtils;
 import com.soomla.store.data.ObscuredSharedPreferences;
 import org.json.JSONArray;
@@ -128,9 +129,9 @@ public class Security {
 
         boolean verified = false;
         // TODO: check this out... we might not want to verify when debugging.
-        if (!StoreConfig.debug) {
+        if (StoreController.getInstance().isTestMode()) {
             if (TextUtils.isEmpty(signature)) {
-                Log.w(TAG, "Empty signature. Stopping verification.");
+                StoreUtils.LogWarning(TAG, "Empty signature. Stopping verification.");
                 return null;
             }
             SharedPreferences prefs = new ObscuredSharedPreferences(SoomlaApp.getAppContext(), SoomlaApp.getAppContext().getSharedPreferences(StoreConfig.PREFS_NAME, Context.MODE_PRIVATE));
@@ -236,9 +237,7 @@ public class Security {
      * @return true if the data and signature match
      */
     public static boolean verify(PublicKey publicKey, String signedData, String signature) {
-        if (StoreConfig.debug) {
-            Log.i(TAG, "signature: " + signature);
-        }
+        StoreUtils.LogDebug(TAG, "signature: " + signature);
         Signature sig;
         try {
             sig = Signature.getInstance(SIGNATURE_ALGORITHM);

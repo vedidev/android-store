@@ -164,9 +164,7 @@ public class BillingService extends Service implements ServiceConnection {
         protected void logResponseCode(String method, Bundle response) {
             Consts.ResponseCode responseCode = Consts.ResponseCode.valueOf(
                     response.getInt(Consts.BILLING_RESPONSE_RESPONSE_CODE));
-            if (StoreConfig.debug) {
-                StoreUtils.LogError(TAG, method + " received " + responseCode.toString());
-            }
+            StoreUtils.LogError(TAG, method + " received " + responseCode.toString());
         }
     }
 
@@ -204,10 +202,8 @@ public class BillingService extends Service implements ServiceConnection {
             }
             Bundle response = mService.sendBillingRequest(request);
             int responseCode = response.getInt(Consts.BILLING_RESPONSE_RESPONSE_CODE);
-            if (StoreConfig.debug) {
-                Log.i(TAG, "CheckBillingSupported response code: " +
-                        Consts.ResponseCode.valueOf(responseCode));
-            }
+            StoreUtils.LogDebug(TAG, "CheckBillingSupported response code: " + Consts.ResponseCode.valueOf(responseCode));
+
             boolean billingSupported = (responseCode == Consts.ResponseCode.RESULT_OK.ordinal());
             ResponseHandler.checkBillingSupportedResponse(billingSupported, mProductType);
             return Consts.BILLING_RESPONSE_INVALID_REQUEST_ID;
@@ -418,9 +414,8 @@ public class BillingService extends Service implements ServiceConnection {
      */
     public void handleCommand(Intent intent, int startId) {
         String action = intent.getAction();
-        if (StoreConfig.debug) {
-            Log.i(TAG, "handleCommand() action: " + action);
-        }
+        StoreUtils.LogDebug(TAG, "handleCommand() action: " + action);
+
         if (Consts.ACTION_CONFIRM_NOTIFICATION.equals(action)) {
             String[] notifyIds = intent.getStringArrayExtra(Consts.NOTIFICATION_ID);
             confirmNotifications(startId, notifyIds);
@@ -447,9 +442,7 @@ public class BillingService extends Service implements ServiceConnection {
      */
     private boolean bindToMarketBillingService() {
         try {
-            if (StoreConfig.debug) {
-                Log.i(TAG, "binding to Market billing service");
-            }
+            StoreUtils.LogDebug(TAG, "binding to Market billing service");
             boolean bindResult = bindService(
                     new Intent(Consts.MARKET_BILLING_SERVICE_ACTION),
                     this,  // ServiceConnection.
@@ -614,9 +607,7 @@ public class BillingService extends Service implements ServiceConnection {
         // is not -1, then one of the requests started the service, so we can
         // stop it now.
         if (maxStartId >= 0) {
-            if (StoreConfig.debug) {
-                Log.i(TAG, "stopping service, startId: " + maxStartId);
-            }
+            StoreUtils.LogDebug(TAG, "stopping service, startId: " + maxStartId);
             stopSelf(maxStartId);
         }
     }

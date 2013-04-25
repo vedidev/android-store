@@ -22,6 +22,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 import com.soomla.store.StoreConfig;
+import com.soomla.store.StoreUtils;
 
 /**
  * This class implements the broadcast receiver for in-app billing. All asynchronous messages from
@@ -51,9 +52,7 @@ public class BillingReceiver extends BroadcastReceiver {
             purchaseStateChanged(context, signedData, signature);
         } else if (Consts.ACTION_NOTIFY.equals(action)) {
             String notifyId = intent.getStringExtra(Consts.NOTIFICATION_ID);
-            if (StoreConfig.debug) {
-                Log.i(TAG, "notifyId: " + notifyId);
-            }
+            StoreUtils.LogDebug(TAG, "notifyId: " + notifyId);
             notify(context, notifyId);
         } else if (Consts.ACTION_RESPONSE_CODE.equals(action)) {
             long requestId = intent.getLongExtra(Consts.INAPP_REQUEST_ID, -1);

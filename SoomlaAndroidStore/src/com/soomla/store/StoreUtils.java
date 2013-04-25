@@ -21,9 +21,13 @@ import android.util.Log;
 public class StoreUtils {
 
     public static void LogDebug(String tag, String message) {
-        if (StoreConfig.debug) {
+        if (StoreConfig.logDebug) {
             Log.d(tag, message);
         }
+    }
+
+    public static void LogWarning(String tag, String message) {
+        Log.w(tag, message);
     }
 
     public static void LogError(String tag, String message) {

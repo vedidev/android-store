@@ -278,6 +278,13 @@ public class StoreController extends PurchaseObserver {
         }
     }
 
+    public boolean isTestMode() {
+        return mTestMode;
+    }
+
+    public void setTestMode(boolean mTestMode) {
+        this.mTestMode = mTestMode;
+    }
 
     /** Private methods **/
 
@@ -343,6 +350,7 @@ public class StoreController extends PurchaseObserver {
 
     private boolean mStoreOpen            = false;
     private boolean mInitialized          = false;
+    private boolean mTestMode             = false;
 
     private BillingService mBillingService;
     private Lock    mLock = new ReentrantLock();
