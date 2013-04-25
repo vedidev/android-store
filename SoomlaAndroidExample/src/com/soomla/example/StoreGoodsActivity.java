@@ -59,7 +59,7 @@ public class StoreGoodsActivity extends Activity {
                 * have enough than an InsufficientFundsException will be thrown.
                 */
 
-                VirtualGood good = StoreInfo.getVirtualGoods().get(i);
+                VirtualGood good = StoreInfo.getGoods().get(i);
                 try {
                     good.buy();
                 } catch (InsufficientFundsException e) {
@@ -89,7 +89,7 @@ public class StoreGoodsActivity extends Activity {
         /* fetching the currency balance and placing it in the balance label */
         TextView muffinsBalance = (TextView)findViewById(R.id.balance);
         muffinsBalance.setText("" + StorageManager.getVirtualCurrencyStorage().
-                getBalance(StoreInfo.getVirtualCurrencies().get(0)));
+                getBalance(StoreInfo.getCurrencies().get(0)));
     }
 
     @Override
@@ -126,8 +126,8 @@ public class StoreGoodsActivity extends Activity {
     public void onGoodBalanceChanged(GoodBalanceChangedEvent goodBalanceChangedEvent) {
         VirtualGood good = goodBalanceChangedEvent.getGood();
         int id = 0;
-        for(int i=0; i<StoreInfo.getVirtualGoods().size(); i++) {
-            if (StoreInfo.getVirtualGoods().get(i).getItemId().equals(good.getItemId())) {
+        for(int i=0; i<StoreInfo.getGoods().size(); i++) {
+            if (StoreInfo.getGoods().get(i).getItemId().equals(good.getItemId())) {
                 id = i;
                 break;
             }
@@ -168,7 +168,7 @@ public class StoreGoodsActivity extends Activity {
             ImageView thumb_image=(ImageView)vi.findViewById(R.id.list_image);
             TextView info = (TextView)vi.findViewById(R.id.item_info);
 
-            VirtualGood good = StoreInfo.getVirtualGoods().get(position);//VirtualGood) data.get(position).get(StoreGoodsActivity.KEY_GOOD);
+            VirtualGood good = StoreInfo.getGoods().get(position);//VirtualGood) data.get(position).get(StoreGoodsActivity.KEY_GOOD);
 
             // Setting all values in listview
             vi.setTag(good.getItemId());

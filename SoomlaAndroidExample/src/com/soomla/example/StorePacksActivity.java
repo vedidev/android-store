@@ -82,7 +82,7 @@ public class StorePacksActivity extends Activity {
                 /* fetching the currency balance and placing it in the balance label */
                 TextView muffinsBalance = (TextView)activity.findViewById(R.id.balance);
                 muffinsBalance.setText("" + StorageManager.getVirtualCurrencyStorage().
-                        getBalance(StoreInfo.getVirtualCurrencies().get(0)));
+                        getBalance(StoreInfo.getCurrencies().get(0)));
             }
         });
 
@@ -97,7 +97,7 @@ public class StorePacksActivity extends Activity {
         /* fetching the currency balance and placing it in the balance label */
         TextView muffinsBalance = (TextView)findViewById(R.id.balance);
         muffinsBalance.setText("" + StorageManager.getVirtualCurrencyStorage().
-                getBalance(StoreInfo.getVirtualCurrencies().get(0)));
+                getBalance(StoreInfo.getCurrencies().get(0)));
     }
 
     @Override

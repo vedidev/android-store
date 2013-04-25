@@ -26,16 +26,14 @@ public class StoreInventory {
         return StorageManager.getVirtualItemStorage(item).getBalance(item);
     }
 
-    // The itemId must be of a VirtualCurrency or SingleUseVG or LifetimeVG or EquippableVG
-    public static int addVirtualItemAmount(String itemId, int amount) throws VirtualItemNotFoundException{
+    public static void giveVirtualItem(String itemId, int amount) throws VirtualItemNotFoundException  {
         VirtualItem item = StoreInfo.getVirtualItem(itemId);
-        return StorageManager.getVirtualItemStorage(item).add(item, amount);
+        item.give(amount);
     }
 
-    // The itemId must be of a VirtualCurrency or SingleUseVG or LifetimeVG or EquippableVG
-    public static int removeVirtualItemAmount(String itemId, int amount) throws VirtualItemNotFoundException{
+    public static void takeVirtualItem(String itemId, int amount) throws VirtualItemNotFoundException  {
         VirtualItem item = StoreInfo.getVirtualItem(itemId);
-        return StorageManager.getVirtualItemStorage(item).remove(item, amount);
+        item.take(amount);
     }
 
     /** Virtual Goods **/

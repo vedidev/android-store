@@ -17,14 +17,14 @@ public class MuffinRushAssets implements IStoreAssets {
     }
 
     @Override
-    public VirtualCurrency[] getVirtualCurrencies(){
+    public VirtualCurrency[] getCurrencies(){
         return  new VirtualCurrency[] {
                 MUFFIN_CURRENCY
         };
     }
 
     @Override
-    public VirtualGood[] getVirtualGoods(){
+    public VirtualGood[] getGoods(){
         return new VirtualGood[] {
                 MUFFINCAKE_GOOD, PAVLOVA_GOOD,
                 CHOCLATECAKE_GOOD, CREAMCUP_GOOD
@@ -32,14 +32,14 @@ public class MuffinRushAssets implements IStoreAssets {
     }
 
     @Override
-    public VirtualCurrencyPack[] getVirtualCurrencyPacks(){
+    public VirtualCurrencyPack[] getCurrencyPacks(){
         return new VirtualCurrencyPack[] {
                 TENMUFF_PACK, FIFTYMUFF_PACK, FORHUNDMUFF_PACK, THOUSANDMUFF_PACK
         };
     }
 
     @Override
-    public VirtualCategory[] getVirtualCategories() {
+    public VirtualCategory[] getCategories() {
         return new VirtualCategory[]{
                 GENERAL_CATEGORY
         };
