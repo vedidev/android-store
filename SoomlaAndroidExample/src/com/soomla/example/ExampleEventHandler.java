@@ -109,7 +109,7 @@ public class ExampleEventHandler {
     }
 
     private void showToastIfDebug(final String msg) {
-        if (StoreConfig.debug){
+        if (StoreConfig.logDebug){
             mHandler.post(new Runnable() {
                 @Override
                 public void run() {

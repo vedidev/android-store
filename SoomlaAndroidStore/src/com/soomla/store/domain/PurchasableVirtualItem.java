@@ -18,9 +18,7 @@ package com.soomla.store.domain;
 
 import com.soomla.store.StoreUtils;
 import com.soomla.store.data.JSONConsts;
-import com.soomla.store.data.StoreInfo;
 import com.soomla.store.exceptions.InsufficientFundsException;
-import com.soomla.store.exceptions.VirtualItemNotFoundException;
 import com.soomla.store.purchaseTypes.PurchaseType;
 import com.soomla.store.purchaseTypes.PurchaseWithMarket;
 import com.soomla.store.purchaseTypes.PurchaseWithVirtualItem;
@@ -66,11 +64,7 @@ public abstract class PurchasableVirtualItem extends VirtualItem {
             String itemId = purchasableObj.getString(JSONConsts.PURCHASE_VI_ITEMID);
             int amount = purchasableObj.getInt(JSONConsts.PURCHASE_VI_AMOUNT);
 
-            try {
-                mPurchaseType = new PurchaseWithVirtualItem(StoreInfo.getVirtualItem(itemId), amount);
-            } catch (VirtualItemNotFoundException e) {
-                StoreUtils.LogError(TAG, "Tried to fetch virtual item with itemId '" + itemId + "' but it didn't exist.");
-            }
+            mPurchaseType = new PurchaseWithVirtualItem(itemId, amount);
         } else {
             StoreUtils.LogError(TAG, "Purchase type not recognized !");
         }
@@ -105,7 +99,7 @@ public abstract class PurchasableVirtualItem extends VirtualItem {
             } else if(mPurchaseType instanceof PurchaseWithVirtualItem) {
                 purchasableObj.put(JSONConsts.PURCHASE_TYPE, JSONConsts.PURCHASE_TYPE_VI);
 
-                purchasableObj.put(JSONConsts.PURCHASE_VI_ITEMID, ((PurchaseWithVirtualItem) mPurchaseType).getItem().getItemId());
+                purchasableObj.put(JSONConsts.PURCHASE_VI_ITEMID, ((PurchaseWithVirtualItem) mPurchaseType).getTargetItemId());
                 purchasableObj.put(JSONConsts.PURCHASE_VI_AMOUNT, ((PurchaseWithVirtualItem) mPurchaseType).getAmount());
             }
 

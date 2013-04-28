@@ -47,19 +47,19 @@ public class SingleUsePackVG extends VirtualGood {
 
     /** Constructor
      *
-     * @param good is the SingleUseVG associated with this pack.
-     * @param amount is the number of SingleUseVG in the pack.
+     * @param goodItemId is the itemId of the SingleUseVG associated with this pack.
+     * @param amount is the number of SingleUseVGs in the pack.
      * @param name see parent
      * @param description see parent
      * @param itemId see parent
      * @param purchaseType see parent
      */
-    public SingleUsePackVG(SingleUseVG good, int amount,
+    public SingleUsePackVG(String goodItemId, int amount,
                            String name, String description,
                            String itemId, PurchaseType purchaseType) {
         super(name, description, itemId, purchaseType);
 
-        mGood = good;
+        mGoodItemId = goodItemId;
         mGoodAmount = amount;
     }
 
@@ -70,14 +70,8 @@ public class SingleUsePackVG extends VirtualGood {
     public SingleUsePackVG(JSONObject jsonObject) throws JSONException {
         super(jsonObject);
 
-        String goodItemId = jsonObject.getString(JSONConsts.VGP_GOOD_ITEMID);
+        mGoodItemId = jsonObject.getString(JSONConsts.VGP_GOOD_ITEMID);
         mGoodAmount = jsonObject.getInt(JSONConsts.VGP_GOOD_AMOUNT);
-
-        try {
-            mGood = (SingleUseVG) StoreInfo.getVirtualItem(goodItemId);
-        } catch (VirtualItemNotFoundException e) {
-            StoreUtils.LogError(TAG, "Tried to fetch single use VG with itemId '" + goodItemId + "' but it didn't exist.");
-        }
     }
 
     /**
@@ -95,7 +89,7 @@ public class SingleUsePackVG extends VirtualGood {
                 jsonObject.put(key, parentJsonObject.get(key));
             }
 
-            jsonObject.put(JSONConsts.VGP_GOOD_ITEMID, mGood.getItemId());
+            jsonObject.put(JSONConsts.VGP_GOOD_ITEMID, mGoodItemId);
             jsonObject.put(JSONConsts.VGP_GOOD_AMOUNT, mGoodAmount);
         } catch (JSONException e) {
             StoreUtils.LogError(TAG, "An error occurred while generating JSON object.");
@@ -110,7 +104,14 @@ public class SingleUsePackVG extends VirtualGood {
      */
     @Override
     public void give(int amount) {
-        StorageManager.getVirtualGoodsStorage().add(mGood, mGoodAmount*amount);
+        SingleUseVG good = null;
+        try {
+            good = (SingleUseVG)StoreInfo.getVirtualItem(mGoodItemId);
+        } catch (VirtualItemNotFoundException e) {
+            StoreUtils.LogError(TAG, "SingleUseVG with itemId: " + mGoodItemId + " doesn't exist! Can't give this pack.");
+            return;
+        }
+        StorageManager.getVirtualGoodsStorage().add(good, mGoodAmount*amount);
     }
 
     /**
@@ -119,7 +120,14 @@ public class SingleUsePackVG extends VirtualGood {
      */
     @Override
     public void take(int amount) {
-        StorageManager.getVirtualGoodsStorage().remove(mGood, mGoodAmount*amount);
+        SingleUseVG good = null;
+        try {
+            good = (SingleUseVG)StoreInfo.getVirtualItem(mGoodItemId);
+        } catch (VirtualItemNotFoundException e) {
+            StoreUtils.LogError(TAG, "SingleUseVG with itemId: " + mGoodItemId + " doesn't exist! Can't take this pack.");
+            return;
+        }
+        StorageManager.getVirtualGoodsStorage().remove(good, mGoodAmount*amount);
     }
 
     /**
@@ -132,6 +140,6 @@ public class SingleUsePackVG extends VirtualGood {
 
     private static final String TAG = "SOOMLA SingleUsePackVG";
 
-    private SingleUseVG mGood;
+    private String      mGoodItemId;
     private int         mGoodAmount;
 }

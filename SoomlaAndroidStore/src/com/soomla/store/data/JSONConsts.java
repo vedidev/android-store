@@ -39,7 +39,7 @@ public class JSONConsts {
     public static final String CATEGORY_GOODSITEMIDS    = "goods_itemIds";
 
     public static final String MARKETITEM_PRODUCT_ID    = "productId";
-    public static final String MARKETITEM_MANAGED       = "managed";
+    public static final String MARKETITEM_MANAGED       = "consumable";
     public static final String MARKETITEM_PRICE         = "price";
 
     public static final String EQUIPPABLE_EQUIPPING     = "equipping";

@@ -17,15 +17,11 @@ package com.soomla.store.domain;
 
 import com.soomla.store.StoreUtils;
 import com.soomla.store.data.JSONConsts;
-import com.soomla.store.data.StoreInfo;
-import com.soomla.store.domain.virtualGoods.VirtualGood;
-import com.soomla.store.exceptions.VirtualItemNotFoundException;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * This class is a definition of a category. A single category can be associated with many virtual goods.
@@ -38,11 +34,11 @@ public class VirtualCategory {
     /** Constructor
      *
      * @param name is the category's name.
-     * @param goods is the list of VirtualGoods in this category.
+     * @param goodsItemIds is the list of itemIds of the VirtualGoods in this category.
      */
-    public VirtualCategory(String name, ArrayList<VirtualGood> goods) {
+    public VirtualCategory(String name, ArrayList<String> goodsItemIds) {
         mName = name;
-        mGoods = goods;
+        mGoodsItemIds = goodsItemIds;
     }
 
     /** Constructor
@@ -57,12 +53,7 @@ public class VirtualCategory {
         JSONArray goodsArr = jsonObject.getJSONArray(JSONConsts.CATEGORY_GOODSITEMIDS);
         for(int i=0; i<goodsArr.length(); i++) {
             String goodItemId = goodsArr.getString(i);
-            try {
-                VirtualGood good = (VirtualGood) StoreInfo.getVirtualItem(goodItemId);
-                mGoods.add(good);
-            } catch (VirtualItemNotFoundException e) {
-                StoreUtils.LogError(TAG, "Tried to fetch virtual good with itemId '" + goodItemId + "' but it didn't exist.");
-            }
+            mGoodsItemIds.add(goodItemId);
         }
     }
 
@@ -76,8 +67,8 @@ public class VirtualCategory {
             jsonObject.put(JSONConsts.CATEGORY_NAME, mName);
 
             JSONArray goodsArr = new JSONArray();
-            for(VirtualGood good : mGoods) {
-                goodsArr.put(good.getItemId());
+            for(String goodItemId : mGoodsItemIds) {
+                goodsArr.put(goodItemId);
             }
 
             jsonObject.put(JSONConsts.CATEGORY_GOODSITEMIDS, goodsArr);
@@ -94,22 +85,14 @@ public class VirtualCategory {
         return mName;
     }
 
-    public List<VirtualGood> getGoods() {
-        return mGoods;
-    }
-
-    public void addGood(VirtualGood good) {
-        mGoods.add(good);
-    }
-
-    public void removeGood(VirtualGood good) {
-        mGoods.remove(good);
+    public ArrayList<String> getGoodsItemIds() {
+        return mGoodsItemIds;
     }
 
     /** Private members **/
 
     private static final String TAG = "SOOMLA VirtualCategory";
 
-    private ArrayList<VirtualGood> mGoods = new ArrayList<VirtualGood>();
+    private ArrayList<String> mGoodsItemIds = new ArrayList<String>();
     private String  mName;
 }

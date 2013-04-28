@@ -19,11 +19,13 @@ package com.soomla.store.purchaseTypes;
 import com.soomla.store.BusProvider;
 import com.soomla.store.StoreUtils;
 import com.soomla.store.data.StorageManager;
+import com.soomla.store.data.StoreInfo;
 import com.soomla.store.data.VirtualItemStorage;
 import com.soomla.store.domain.VirtualItem;
 import com.soomla.store.events.ItemPurchaseStartedEvent;
 import com.soomla.store.events.ItemPurchasedEvent;
 import com.soomla.store.exceptions.InsufficientFundsException;
+import com.soomla.store.exceptions.VirtualItemNotFoundException;
 
 /**
  * This type of Purchase allows users to purchase PurchasableVirtualItems with other VirtualItems.
@@ -32,11 +34,11 @@ public class PurchaseWithVirtualItem extends PurchaseType {
 
     /** Constructor
      *
-     * @param item is the VirtualItem that is used to "pay" in order to make the purchase.
+     * @param targetItemId is the itemId of the VirtualItem that is used to "pay" in order to make the purchase.
      * @param amount is the number of items to purchase.
      */
-    public PurchaseWithVirtualItem(VirtualItem item, int amount) {
-        mItem = item;
+    public PurchaseWithVirtualItem(String targetItemId, int amount) {
+        mTargetItemId = targetItemId;
         mAmount = amount;
     }
 
@@ -46,25 +48,34 @@ public class PurchaseWithVirtualItem extends PurchaseType {
     @Override
     public void buy() throws InsufficientFundsException{
 
-        StoreUtils.LogDebug(TAG, "Trying to buy a " + getAssociatedItem().getName() + " with " + mAmount + " pieces of " + mItem.getName());
-        BusProvider.getInstance().post(new ItemPurchaseStartedEvent(getAssociatedItem()));
+        StoreUtils.LogDebug(TAG, "Trying to buy a " + getAssociatedItem().getName() + " with " + mAmount + " pieces of " + mTargetItemId);
 
-        VirtualItemStorage storage = StorageManager.getVirtualItemStorage(mItem);
-
-        assert storage != null;
-        int balance = storage.getBalance(mItem);
-        if (balance < mAmount){
-            throw new InsufficientFundsException(mItem.getItemId());
+        VirtualItem item = null;
+        try {
+            item = StoreInfo.getVirtualItem(mTargetItemId);
+        } catch (VirtualItemNotFoundException e) {
+            StoreUtils.LogError(TAG, "Target virtual item doesn't exist !");
+            return;
         }
 
-        storage.remove(mItem, mAmount);
+        BusProvider.getInstance().post(new ItemPurchaseStartedEvent(getAssociatedItem()));
+
+        VirtualItemStorage storage = StorageManager.getVirtualItemStorage(item);
+
+        assert storage != null;
+        int balance = storage.getBalance(item);
+        if (balance < mAmount){
+            throw new InsufficientFundsException(mTargetItemId);
+        }
+
+        storage.remove(item, mAmount);
 
         getAssociatedItem().give(1);
         BusProvider.getInstance().post(new ItemPurchasedEvent(getAssociatedItem()));
     }
 
-    public VirtualItem getItem() {
-        return mItem;
+    public String getTargetItemId() {
+        return mTargetItemId;
     }
 
     public int getAmount() {
@@ -73,6 +84,6 @@ public class PurchaseWithVirtualItem extends PurchaseType {
 
     private static final String TAG = "SOOMLA PurchaseWithVirtualItem";
 
-    private VirtualItem mItem;
+    private String      mTargetItemId;
     private int         mAmount;
 }

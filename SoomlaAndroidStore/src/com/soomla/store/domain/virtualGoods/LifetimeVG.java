@@ -36,7 +36,7 @@ import org.json.JSONObject;
  * In case you purchase this item in Google Play (PurchaseWithMarket), You need to define the google item in Google
  * Play Developer Console. (https://play.google.com/apps/publish)
  */
-public class LifetimeVG extends VirtualGood{
+    public class LifetimeVG extends VirtualGood{
 
     /** Constructor
      *

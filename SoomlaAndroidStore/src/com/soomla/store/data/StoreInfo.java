@@ -256,8 +256,8 @@ public class StoreInfo {
             JSONObject o = virtualCategories.getJSONObject(i);
             VirtualCategory category = new VirtualCategory(o);
             mCategories.add(category);
-            for(VirtualGood good : category.getGoods()) {
-                mGoodsCategories.put(good.getItemId(), category);
+            for(String goodItemId : category.getGoodsItemIds()) {
+                mGoodsCategories.put(goodItemId, category);
             }
         }
 
@@ -399,8 +399,8 @@ public class StoreInfo {
         }
 
         for(VirtualCategory category : mCategories) {
-            for(VirtualGood good : category.getGoods()) {
-                mGoodsCategories.put(good.getItemId(), category);
+            for(String goodItemId : category.getGoodsItemIds()) {
+                mGoodsCategories.put(goodItemId, category);
             }
         }
 

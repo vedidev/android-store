@@ -53,24 +53,24 @@ public class UpgradeVG extends VirtualGood {
 
     /** Constructor
      *
-     * @param good is the VirtualGood associated with this upgrade.
+     * @param goodItemId is the itemId of the VirtualGood associated with this upgrade.
      * @param level is the level of the current UpgradeVG.
-     * @param prev is the UpgradeVG before or if this is the first UpgradeVG in the scale then the value is null.
+     * @param prevItemId is the itemId of the  UpgradeVG before or if this is the first UpgradeVG in the scale then the value is null.
      * @param mName see parent
      * @param mDescription see parent
      * @param mItemId see parent
      * @param purchaseType see parent
      */
-    public UpgradeVG(VirtualGood good, int level,
-                     UpgradeVG prev,
+    public UpgradeVG(String goodItemId, int level,
+                     String prevItemId,
                      String mName, String mDescription,
                      String mItemId,
                      PurchaseType purchaseType) {
         super(mName, mDescription, mItemId, purchaseType);
 
-        mGood = good;
+        mGoodItemId = goodItemId;
         mLevel = level;
-        mPrev = prev;
+        mPrevItemId = prevItemId;
     }
 
     /** Constructor
@@ -79,16 +79,10 @@ public class UpgradeVG extends VirtualGood {
     public UpgradeVG(JSONObject jsonObject) throws JSONException {
         super(jsonObject);
 
-        String goodItemId = jsonObject.getString(JSONConsts.VGU_GOOD_ITEMID);
-        String prevItemId = jsonObject.getString(JSONConsts.VGU_PREV_ITEMID);
+        mGoodItemId = jsonObject.getString(JSONConsts.VGU_GOOD_ITEMID);
+        mPrevItemId = jsonObject.getString(JSONConsts.VGU_PREV_ITEMID);
         mLevel = jsonObject.getInt(JSONConsts.VGU_LEVEL);
 
-        try {
-            mGood = (VirtualGood) StoreInfo.getVirtualItem(goodItemId);
-            mPrev = TextUtils.isEmpty(prevItemId) ? null : (UpgradeVG) StoreInfo.getVirtualItem(prevItemId);
-        } catch (VirtualItemNotFoundException e) {
-            StoreUtils.LogError(TAG, "The wanted virtual good was not found.");
-        }
     }
 
     /**
@@ -106,9 +100,9 @@ public class UpgradeVG extends VirtualGood {
                 jsonObject.put(key, parentJsonObject.get(key));
             }
 
-            jsonObject.put(JSONConsts.VGU_GOOD_ITEMID, mGood.getItemId());
+            jsonObject.put(JSONConsts.VGU_GOOD_ITEMID, mGoodItemId);
 
-            jsonObject.put(JSONConsts.VGU_PREV_ITEMID, mPrev == null ? "" : mPrev.getItemId());
+            jsonObject.put(JSONConsts.VGU_PREV_ITEMID, TextUtils.isEmpty(mPrevItemId) ? "" : mPrevItemId);
             jsonObject.put(JSONConsts.VGU_LEVEL, mLevel);
         } catch (JSONException e) {
             StoreUtils.LogError(TAG, "An error occurred while generating JSON object.");
@@ -119,16 +113,16 @@ public class UpgradeVG extends VirtualGood {
 
     /** Getters **/
 
-    public VirtualGood getGood() {
-        return mGood;
+    public String getGoodItemId() {
+        return mGoodItemId;
     }
 
     public int getLevel() {
         return mLevel;
     }
 
-    public UpgradeVG getPrev() {
-        return mPrev;
+    public String getPrevItemId() {
+        return mPrevItemId;
     }
 
     /**
@@ -139,8 +133,17 @@ public class UpgradeVG extends VirtualGood {
      */
     @Override
     public void give(int amount) {
-        StoreUtils.LogDebug(TAG, "Assigning " + getName() + " to: " + mGood.getName());
-        StorageManager.getVirtualGoodsStorage().assignCurrentUpgrade(mGood, this);
+        StoreUtils.LogDebug(TAG, "Assigning " + getName() + " to: " + mGoodItemId);
+
+        VirtualGood good = null;
+        try {
+            good = (VirtualGood)StoreInfo.getVirtualItem(mGoodItemId);
+        } catch (VirtualItemNotFoundException e) {
+            StoreUtils.LogError(TAG, "VirtualGood with itemId: " + mGoodItemId + " doesn't exist! Can't upgrade.");
+            return;
+        }
+
+        StorageManager.getVirtualGoodsStorage().assignCurrentUpgrade(good, this);
     }
 
     /**
@@ -153,32 +156,58 @@ public class UpgradeVG extends VirtualGood {
      */
     @Override
     public void take(int amount) {
-        UpgradeVG upgradeVG = StorageManager.getVirtualGoodsStorage().getCurrentUpgrade(mGood);
-        if (upgradeVG != this) {
-            StoreUtils.LogError(TAG, "You can't take what's not yours. The UpgradeVG " + getName() + " is not assigned to " +
-                    "the VirtualGood: " + mGood.getName());
+        VirtualGood good = null;
+        try {
+            good = (VirtualGood)StoreInfo.getVirtualItem(mGoodItemId);
+        } catch (VirtualItemNotFoundException e) {
+            StoreUtils.LogError(TAG, "VirtualGood with itemId: " + mGoodItemId + " doesn't exist! Can't downgrade.");
             return;
         }
 
-        if (mPrev != null) {
-            StoreUtils.LogDebug(TAG, "Downgrading " + mGood.getName() + " to: " + mPrev.getName());
-            StorageManager.getVirtualGoodsStorage().assignCurrentUpgrade(mGood, mPrev);
+        UpgradeVG upgradeVG = StorageManager.getVirtualGoodsStorage().getCurrentUpgrade(good);
+        if (upgradeVG != this) {
+            StoreUtils.LogError(TAG, "You can't take what's not yours. The UpgradeVG " + getName() + " is not assigned to " +
+                    "the VirtualGood: " + good.getName());
+            return;
+        }
+
+
+        if (!TextUtils.isEmpty(mPrevItemId)) {
+            UpgradeVG prevUpgradeVG = null;
+
+            try {
+                prevUpgradeVG = (UpgradeVG)StoreInfo.getVirtualItem(mPrevItemId);
+            } catch (VirtualItemNotFoundException e) {
+                StoreUtils.LogError(TAG, "Previous UpgradeVG with itemId: " + mPrevItemId + " doesn't exist! Can't downgrade.");
+                return;
+            }
+
+            StoreUtils.LogDebug(TAG, "Downgrading " + good.getName() + " to: " + prevUpgradeVG.getName());
+            StorageManager.getVirtualGoodsStorage().assignCurrentUpgrade(good, prevUpgradeVG);
         } else {
-            StoreUtils.LogDebug(TAG, "Downgrading " + mGood.getName() + " to NO-UPGRADE");
-            StorageManager.getVirtualGoodsStorage().removeUpgrades(mGood);
+            StoreUtils.LogDebug(TAG, "Downgrading " + good.getName() + " to NO-UPGRADE");
+            StorageManager.getVirtualGoodsStorage().removeUpgrades(good);
         }
     }
 
     @Override
     protected boolean canBuy() {
-        UpgradeVG upgradeVG = StorageManager.getVirtualGoodsStorage().getCurrentUpgrade(mGood);
+        VirtualGood good = null;
+        try {
+            good = (VirtualGood)StoreInfo.getVirtualItem(mGoodItemId);
+        } catch (VirtualItemNotFoundException e) {
+            StoreUtils.LogError(TAG, "VirtualGood with itemId: " + mGoodItemId + " doesn't exist! Returning NO (can't buy).");
+            return false;
+        }
+
+        UpgradeVG upgradeVG = StorageManager.getVirtualGoodsStorage().getCurrentUpgrade(good);
         return (upgradeVG == null && mLevel == 1) ||
                (upgradeVG != null && ((upgradeVG.getLevel() == (mLevel-1)) || (upgradeVG.getLevel() == (mLevel+1))));
     }
 
     private static final String TAG = "SOOMLA UpgradeVG";
 
-    private VirtualGood mGood;
-    private int         mLevel;
-    private UpgradeVG   mPrev;
+    private String   mGoodItemId;
+    private int      mLevel;
+    private String   mPrevItemId;
 }

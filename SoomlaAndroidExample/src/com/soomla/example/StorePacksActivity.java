@@ -113,7 +113,7 @@ public class StorePacksActivity extends Activity {
         images.put(MuffinRushAssets.NO_ADDS_NONCONS_PRODUCT_ID, R.drawable.no_ads);
         images.put(MuffinRushAssets.TENMUFF_PACK_PRODUCT_ID, R.drawable.muffins01);
         images.put(MuffinRushAssets.FIFTYMUFF_PACK_PRODUCT_ID, R.drawable.muffins02);
-        images.put(MuffinRushAssets.FORHUNDMUFF_PACK_PRODUCT_ID, R.drawable.muffins03);
+        images.put(MuffinRushAssets.FOURHUNDMUFF_PACK_PRODUCT_ID, R.drawable.muffins03);
         images.put(MuffinRushAssets.THOUSANDMUFF_PACK_PRODUCT_ID, R.drawable.muffins04);
 
         return images;
