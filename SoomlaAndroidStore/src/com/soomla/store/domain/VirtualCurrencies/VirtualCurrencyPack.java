@@ -44,14 +44,14 @@ public class VirtualCurrencyPack extends PurchasableVirtualItem {
      * @param mDescription see parent
      * @param mItemId see parent
      * @param mCurrencyAmount is the amount of currency in the pack.
-     * @param mCurrency is the currency associated with this pack.
+     * @param mCurrencyItemId is the itemId of the currency associated with this pack.
      * @param purchaseType see parent
      */
     public VirtualCurrencyPack(String mName, String mDescription, String mItemId,
                                int mCurrencyAmount,
-                               VirtualCurrency mCurrency, PurchaseType purchaseType) {
+                               String mCurrencyItemId, PurchaseType purchaseType) {
         super(mName, mDescription, mItemId, purchaseType);
-        this.mCurrency = mCurrency;
+        this.mCurrencyItemId = mCurrencyItemId;
         this.mCurrencyAmount = mCurrencyAmount;
     }
 
@@ -63,12 +63,7 @@ public class VirtualCurrencyPack extends PurchasableVirtualItem {
         super(jsonObject);
         this.mCurrencyAmount = jsonObject.getInt(JSONConsts.CURRENCYPACK_CURRENCYAMOUNT);
 
-        String currencyItemId = jsonObject.getString(JSONConsts.CURRENCYPACK_CURRENCYITEMID);
-        try{
-            this.mCurrency = (VirtualCurrency) StoreInfo.getVirtualItem(currencyItemId);
-        } catch (VirtualItemNotFoundException e) {
-            StoreUtils.LogError(TAG, "Couldn't find the associated currency");
-        }
+        this.mCurrencyItemId = jsonObject.getString(JSONConsts.CURRENCYPACK_CURRENCYITEMID);
     }
 
     /**
@@ -79,7 +74,7 @@ public class VirtualCurrencyPack extends PurchasableVirtualItem {
         JSONObject jsonObject = new JSONObject();
         try {
             jsonObject.put(JSONConsts.CURRENCYPACK_CURRENCYAMOUNT, mCurrencyAmount);
-            jsonObject.put(JSONConsts.CURRENCYPACK_CURRENCYITEMID, mCurrency.getItemId());
+            jsonObject.put(JSONConsts.CURRENCYPACK_CURRENCYITEMID, mCurrencyItemId);
 
             Iterator<?> keys = parentJsonObject.keys();
             while(keys.hasNext())
@@ -101,7 +96,14 @@ public class VirtualCurrencyPack extends PurchasableVirtualItem {
      */
     @Override
     public void give(int amount) {
-        StorageManager.getVirtualCurrencyStorage().add(mCurrency, mCurrencyAmount*amount);
+        VirtualCurrency currency = null;
+        try {
+            currency = (VirtualCurrency)StoreInfo.getVirtualItem(mCurrencyItemId);
+        } catch (VirtualItemNotFoundException e) {
+            StoreUtils.LogError(TAG, "VirtualCurrency with itemId: " + mCurrencyItemId + " doesn't exist! Can't give this pack.");
+            return;
+        }
+        StorageManager.getVirtualCurrencyStorage().add(currency, mCurrencyAmount*amount);
     }
 
     /**
@@ -110,7 +112,14 @@ public class VirtualCurrencyPack extends PurchasableVirtualItem {
      */
     @Override
     public void take(int amount) {
-        StorageManager.getVirtualCurrencyStorage().remove(mCurrency, mCurrencyAmount * amount);
+        VirtualCurrency currency = null;
+        try {
+            currency = (VirtualCurrency)StoreInfo.getVirtualItem(mCurrencyItemId);
+        } catch (VirtualItemNotFoundException e) {
+            StoreUtils.LogError(TAG, "VirtualCurrency with itemId: " + mCurrencyItemId + " doesn't exist! Can't take this pack.");
+            return;
+        }
+        StorageManager.getVirtualCurrencyStorage().remove(currency, mCurrencyAmount * amount);
     }
 
     /**
@@ -127,8 +136,8 @@ public class VirtualCurrencyPack extends PurchasableVirtualItem {
         return mCurrencyAmount;
     }
 
-    public VirtualCurrency getCurrency() {
-        return mCurrency;
+    public String getCurrencyItemId() {
+        return mCurrencyItemId;
     }
 
     /** Private members **/
@@ -136,5 +145,5 @@ public class VirtualCurrencyPack extends PurchasableVirtualItem {
     private static final String TAG = "SOOMLA VirtualCurrencyPack";
 
     private int              mCurrencyAmount;
-    private VirtualCurrency  mCurrency;
+    private String           mCurrencyItemId;
 }
