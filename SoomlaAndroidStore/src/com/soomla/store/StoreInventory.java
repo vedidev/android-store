@@ -57,7 +57,7 @@ public class StoreInventory {
         return StorageManager.getVirtualGoodsStorage().isEquipped(good);
     }
 
-    public static int goodUpgradeLevel(String goodItemId) throws VirtualItemNotFoundException {
+    public static int getGoodUpgradeLevel(String goodItemId) throws VirtualItemNotFoundException {
         VirtualGood good = (VirtualGood) StoreInfo.getVirtualItem(goodItemId);
         UpgradeVG upgradeVG = StorageManager.getVirtualGoodsStorage().getCurrentUpgrade(good);
         if (upgradeVG == null) {
@@ -74,7 +74,7 @@ public class StoreInventory {
         return level;
     }
 
-    public static String goodCurrentUpgrade(String goodItemId) throws VirtualItemNotFoundException {
+    public static String getGoodCurrentUpgrade(String goodItemId) throws VirtualItemNotFoundException {
         VirtualGood good = (VirtualGood) StoreInfo.getVirtualItem(goodItemId);
         UpgradeVG upgradeVG = StorageManager.getVirtualGoodsStorage().getCurrentUpgrade(good);
         if (upgradeVG == null) {
