@@ -54,23 +54,23 @@ public class UpgradeVG extends VirtualGood {
     /** Constructor
      *
      * @param goodItemId is the itemId of the VirtualGood associated with this upgrade.
-     * @param level is the level of the current UpgradeVG.
-     * @param prevItemId is the itemId of the  UpgradeVG before or if this is the first UpgradeVG in the scale then the value is null.
+     * @param prevItemId is the itemId of the UpgradeVG before or if this is the first UpgradeVG in the scale then the value is null.
+     * @param nextItemId is the itemId of the UpgradeVG after or if this is the last UpgradeVG in the scale then the value is null.
      * @param mName see parent
      * @param mDescription see parent
      * @param mItemId see parent
      * @param purchaseType see parent
      */
-    public UpgradeVG(String goodItemId, int level,
-                     String prevItemId,
+    public UpgradeVG(String goodItemId,
+                     String prevItemId, String nextItemId,
                      String mName, String mDescription,
                      String mItemId,
                      PurchaseType purchaseType) {
         super(mName, mDescription, mItemId, purchaseType);
 
         mGoodItemId = goodItemId;
-        mLevel = level;
         mPrevItemId = prevItemId;
+        mNextItemId = nextItemId;
     }
 
     /** Constructor
@@ -81,8 +81,7 @@ public class UpgradeVG extends VirtualGood {
 
         mGoodItemId = jsonObject.getString(JSONConsts.VGU_GOOD_ITEMID);
         mPrevItemId = jsonObject.getString(JSONConsts.VGU_PREV_ITEMID);
-        mLevel = jsonObject.getInt(JSONConsts.VGU_LEVEL);
-
+        mNextItemId = jsonObject.getString(JSONConsts.VGU_NEXT_ITEMID);
     }
 
     /**
@@ -101,9 +100,8 @@ public class UpgradeVG extends VirtualGood {
             }
 
             jsonObject.put(JSONConsts.VGU_GOOD_ITEMID, mGoodItemId);
-
             jsonObject.put(JSONConsts.VGU_PREV_ITEMID, TextUtils.isEmpty(mPrevItemId) ? "" : mPrevItemId);
-            jsonObject.put(JSONConsts.VGU_LEVEL, mLevel);
+            jsonObject.put(JSONConsts.VGU_NEXT_ITEMID, TextUtils.isEmpty(mNextItemId) ? "" : mNextItemId);
         } catch (JSONException e) {
             StoreUtils.LogError(TAG, "An error occurred while generating JSON object.");
         }
@@ -117,12 +115,12 @@ public class UpgradeVG extends VirtualGood {
         return mGoodItemId;
     }
 
-    public int getLevel() {
-        return mLevel;
-    }
-
     public String getPrevItemId() {
         return mPrevItemId;
+    }
+
+    public String getNextItemId() {
+        return mNextItemId;
     }
 
     /**
@@ -190,6 +188,10 @@ public class UpgradeVG extends VirtualGood {
         }
     }
 
+    /**
+     * We want to enforce the logic of allowing/rejecting upgrades here so users won't buy when they are not supposed to.
+     * If you want to give your users upgrades for free, use the "give" function.
+     */
     @Override
     protected boolean canBuy() {
         VirtualGood good = null;
@@ -201,13 +203,13 @@ public class UpgradeVG extends VirtualGood {
         }
 
         UpgradeVG upgradeVG = StorageManager.getVirtualGoodsStorage().getCurrentUpgrade(good);
-        return (upgradeVG == null && mLevel == 1) ||
-               (upgradeVG != null && ((upgradeVG.getLevel() == (mLevel-1)) || (upgradeVG.getLevel() == (mLevel+1))));
+        return (upgradeVG == null && TextUtils.isEmpty(mPrevItemId)) ||
+               (upgradeVG != null && ((upgradeVG.getNextItemId().equals(getItemId())) || (upgradeVG.getPrevItemId().equals(getItemId()))));
     }
 
     private static final String TAG = "SOOMLA UpgradeVG";
 
     private String   mGoodItemId;
-    private int      mLevel;
     private String   mPrevItemId;
+    private String   mNextItemId;
 }

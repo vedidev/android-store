@@ -49,9 +49,9 @@ public class JSONConsts {
     public static final String VGP_GOOD_AMOUNT          = "good_amount";
 
     // VGU = UpgradeVG
-    public static final String VGU_LEVEL                = "level";
     public static final String VGU_GOOD_ITEMID          = "good_itemId";
     public static final String VGU_PREV_ITEMID          = "prev_itemId";
+    public static final String VGU_NEXT_ITEMID          = "next_itemId";
 
     public static final String CURRENCYPACK_CURRENCYAMOUNT = "currency_amount";
     public static final String CURRENCYPACK_CURRENCYITEMID = "currency_itemId";

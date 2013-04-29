@@ -47,7 +47,7 @@ public class GoogleMarketItem {
      */
     public GoogleMarketItem(JSONObject jsonObject) throws JSONException {
         if (jsonObject.has(JSONConsts.MARKETITEM_MANAGED)) {
-            this.mManaged = Managed.valueOf(jsonObject.getString(JSONConsts.MARKETITEM_MANAGED));
+            this.mManaged = Managed.values()[jsonObject.getInt(JSONConsts.MARKETITEM_MANAGED)];
         } else {
             this.mManaged = Managed.UNMANAGED;
         }
@@ -58,7 +58,7 @@ public class GoogleMarketItem {
     public JSONObject toJSONObject(){
         JSONObject jsonObject = new JSONObject();
         try {
-            jsonObject.put(JSONConsts.MARKETITEM_MANAGED, mManaged.name());
+            jsonObject.put(JSONConsts.MARKETITEM_MANAGED, mManaged.ordinal());
             jsonObject.put(JSONConsts.MARKETITEM_PRODUCT_ID, mProductId);
             jsonObject.put(JSONConsts.MARKETITEM_PRICE, new Double(mPrice));
         } catch (JSONException e) {

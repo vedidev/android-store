@@ -33,17 +33,14 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 /**
  * This class holds the store's meta data including:
  * - Virtual Currencies
  * - Virtual Currency Packs
- * - All kinds of Virtual Goods
- * - Virtual Categories
+ * - All kinds of Virtual goods
+ * - Virtual categories
  * - NonConsumables
  */
 public class StoreInfo {
@@ -160,6 +157,48 @@ public class StoreInfo {
         return item;
     }
 
+    /**
+     * A utility function to retrieve a first UpgradeVG for a given VirtualGood itemId.
+     * @param goodItemId is the VirtualGood we're searching the upgrade for.
+     * @return the first upgrade for the given VirtualGood or null if there are no upgrades.
+     */
+    public static UpgradeVG getGoodFirstUpgrade(String goodItemId) {
+        List<UpgradeVG> upgrades = mGoodsUpgrades.get(goodItemId);
+        if (upgrades != null) {
+            for(UpgradeVG upgradeVG : upgrades) {
+                if (TextUtils.isEmpty(upgradeVG.getPrevItemId())) {
+                    return upgradeVG;
+                }
+            }
+        }
+        return null;
+    }
+
+    /**
+     * A utility function to retrieve a last UpgradeVG for a given VirtualGood itemId.
+     * @param goodItemId is the VirtualGood we're searching the upgrade for.
+     * @return the last upgrade for the given VirtualGood or null if there are no upgrades.
+     */
+    public static UpgradeVG getGoodLastUpgrade(String goodItemId) {
+        List<UpgradeVG> upgrades = mGoodsUpgrades.get(goodItemId);
+        if (upgrades != null) {
+            for(UpgradeVG upgradeVG : upgrades) {
+                if (TextUtils.isEmpty(upgradeVG.getNextItemId())) {
+                    return upgradeVG;
+                }
+            }
+        }
+        return null;
+    }
+
+    /**
+     * A utility function to retrieve all UpgradeVGs for a given VirtualGood itemId.
+     * @param goodItemId is the VirtualGood we're searching the upgrades for.
+     */
+    public static List<UpgradeVG> getGoodUpgrades(String goodItemId) {
+        return mGoodsUpgrades.get(goodItemId);
+    }
+
     /** Getters **/
 
     public static List<VirtualCurrency> getCurrencies(){
@@ -188,6 +227,7 @@ public class StoreInfo {
         mVirtualItems = new HashMap<String, VirtualItem>();
         mPurchasableItems = new HashMap<String, PurchasableVirtualItem>();
         mGoodsCategories = new HashMap<String, VirtualCategory>();
+        mGoodsUpgrades = new HashMap<String, List<UpgradeVG>>();
 
         JSONArray virtualCurrencies = jsonObject.getJSONArray(JSONConsts.STORE_CURRENCIES);
         mCurrencies = new LinkedList<VirtualCurrency>();
@@ -247,6 +287,13 @@ public class StoreInfo {
             JSONObject o = upGoods.getJSONObject(i);
             UpgradeVG g = new UpgradeVG(o);
             addVG(g);
+
+            List<UpgradeVG> upgrades = mGoodsUpgrades.get(g.getGoodItemId());
+            if (upgrades == null) {
+                upgrades = new ArrayList<UpgradeVG>();
+                mGoodsUpgrades.put(g.getGoodItemId(), upgrades);
+            }
+            upgrades.add(g);
         }
 
         // Categories depend on virtual goods. That's why the have to be initialized after!
@@ -366,6 +413,7 @@ public class StoreInfo {
         mVirtualItems = new HashMap<String, VirtualItem>();
         mPurchasableItems = new HashMap<String, PurchasableVirtualItem>();
         mGoodsCategories = new HashMap<String, VirtualCategory>();
+        mGoodsUpgrades = new HashMap<String, List<UpgradeVG>>();
 
         for(VirtualCurrency vi : mCurrencies) {
             mVirtualItems.put(vi.getItemId(), vi);
@@ -382,6 +430,15 @@ public class StoreInfo {
 
         for(VirtualGood vi : mGoods) {
             mVirtualItems.put(vi.getItemId(), vi);
+
+            if (vi instanceof UpgradeVG) {
+                List<UpgradeVG> upgrades = mGoodsUpgrades.get(((UpgradeVG) vi).getGoodItemId());
+                if (upgrades == null) {
+                    upgrades = new ArrayList<UpgradeVG>();
+                    mGoodsUpgrades.put(((UpgradeVG) vi).getGoodItemId(), upgrades);
+                }
+                upgrades.add((UpgradeVG) vi);
+            }
 
             PurchaseType purchaseType = vi.getPurchaseType();
             if (purchaseType instanceof PurchaseWithMarket) {
@@ -420,6 +477,7 @@ public class StoreInfo {
     private static HashMap<String, VirtualItem>             mVirtualItems;
     private static HashMap<String, PurchasableVirtualItem>  mPurchasableItems;
     private static HashMap<String, VirtualCategory>         mGoodsCategories;
+    private static HashMap<String, List<UpgradeVG>>         mGoodsUpgrades;
 
     private static List<VirtualCurrency>                mCurrencies;
     private static List<VirtualCurrencyPack>            mCurrencyPacks;

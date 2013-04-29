@@ -138,6 +138,14 @@ public class SingleUsePackVG extends VirtualGood {
         return true;
     }
 
+    public String getGoodItemId() {
+        return mGoodItemId;
+    }
+
+    public int getGoodAmount() {
+        return mGoodAmount;
+    }
+
     private static final String TAG = "SOOMLA SingleUsePackVG";
 
     private String      mGoodItemId;
