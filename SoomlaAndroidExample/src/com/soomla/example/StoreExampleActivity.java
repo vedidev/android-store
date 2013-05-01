@@ -9,7 +9,6 @@ import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
-import android.util.Log;
 import android.view.DragEvent;
 import android.view.MotionEvent;
 import android.view.View;
@@ -67,12 +66,12 @@ public class StoreExampleActivity extends Activity {
         boolean initialized = prefs.getBoolean(FIRST_RUN, false);
         if (!initialized) {
             try {
-                StoreInventory.addCurrencyAmount(storeAssets.getVirtualCurrencies()[0].getItemId(), 10000);
+                StoreInventory.giveVirtualItem(storeAssets.getCurrencies()[0].getItemId(), 10000);
                 SharedPreferences.Editor edit = prefs.edit();
                 edit.putBoolean(FIRST_RUN, true);
                 edit.commit();
             } catch (VirtualItemNotFoundException e) {
-                Log.e("Example Activity", "Couldn't add first 10000 currencies.");
+                StoreUtils.LogError("Example Activity", "Couldn't add first 10000 currencies.");
             }
         }
 

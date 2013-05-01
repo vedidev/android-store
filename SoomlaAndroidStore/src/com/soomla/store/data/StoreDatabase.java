@@ -21,9 +21,9 @@ import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.util.Log;
 import com.soomla.store.SoomlaApp;
 import com.soomla.store.StoreConfig;
+import com.soomla.store.StoreUtils;
 
 /**
  * The StoreDatabase provides basic SQLite database io functions for specific needs around the SDK.
@@ -41,9 +41,7 @@ public class StoreDatabase {
      * @return true if it exists, false if it doesn't
      */
     public static boolean checkDataBaseExists(Context context) {
-        if (StoreConfig.debug) {
-            Log.d(TAG, "Checking if database exists");
-        }
+        StoreUtils.LogDebug(TAG, "Checking if database exists");
 
         return context.getDatabasePath(DATABASE_NAME).exists();
     }

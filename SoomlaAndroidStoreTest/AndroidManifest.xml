@@ -1,14 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-          package="com.soomla.store"
+          package="com.soomla.test"
           android:versionCode="1"
           android:versionName="1.0">
-    <uses-sdk android:minSdkVersion="8" android:targetSdkVersion="15"/>
+    <uses-sdk android:minSdkVersion="4" android:targetSdkVersion="15"/>
+
     <uses-permission android:name="com.android.vending.BILLING" />
-    <!--<instrumentation android:targetPackage="com.soomla.store.test" android:name="android.test.InstrumentationTestRunner" />-->
-    <application android:label="@string/app_name">
-        <uses-library android:name="android.test.runner" />
+
+    <application android:label="@string/app_name" android:icon="@drawable/icon"
+                 android:theme="@android:style/Theme.NoTitleBar.Fullscreen"
+                 android:hardwareAccelerated="true"
+                 android:name="com.soomla.store.SoomlaApp">
+
         <service android:name="com.soomla.billing.BillingService" />
+
         <receiver android:name="com.soomla.billing.BillingReceiver">
             <intent-filter>
                 <action android:name="com.android.vending.billing.IN_APP_NOTIFY" />
@@ -16,9 +21,13 @@
                 <action android:name="com.android.vending.billing.PURCHASE_STATE_CHANGED" />
             </intent-filter>
         </receiver>
-        <!--<activity-->
-                <!--android:name="com.soomla.store.SoomlaStoreActivity" />-->
-        <activity android:name="com.android.vending.billing.test.TestPaymentScreenActivity" />
-        <activity android:name="com.soomla.store.StoreActivity" />
+
+        <activity android:name=".MyActivity"
+                  android:label="@string/app_name">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+                <category android:name="android.intent.category.LAUNCHER"/>
+            </intent-filter>
+        </activity>
     </application>
 </manifest>

@@ -12,11 +12,12 @@ import com.soomla.store.BusProvider;
 import com.soomla.store.StoreController;
 import com.soomla.store.data.StorageManager;
 import com.soomla.store.data.StoreInfo;
-import com.soomla.store.domain.data.VirtualGood;
+import com.soomla.store.domain.virtualGoods.VirtualGood;
 import com.soomla.store.events.CurrencyBalanceChangedEvent;
 import com.soomla.store.events.GoodBalanceChangedEvent;
 import com.soomla.store.exceptions.InsufficientFundsException;
 import com.soomla.store.exceptions.VirtualItemNotFoundException;
+import com.soomla.store.purchaseTypes.PurchaseWithVirtualItem;
 import com.squareup.otto.Subscribe;
 
 import java.io.IOException;
@@ -58,9 +59,9 @@ public class StoreGoodsActivity extends Activity {
                 * have enough than an InsufficientFundsException will be thrown.
                 */
 
-                VirtualGood good = StoreInfo.getVirtualGoods().get(i);
+                VirtualGood good = StoreInfo.getGoods().get(i);
                 try {
-                    StoreController.getInstance().buyVirtualGood(good.getItemId());
+                    good.buy();
                 } catch (InsufficientFundsException e) {
                     AlertDialog ad = new AlertDialog.Builder(activity).create();
                     ad.setCancelable(false);
@@ -73,8 +74,6 @@ public class StoreGoodsActivity extends Activity {
                     });
                     ad.show();
 
-                } catch (VirtualItemNotFoundException e) {
-                    e.printStackTrace();
                 }
             }
         });
@@ -90,7 +89,7 @@ public class StoreGoodsActivity extends Activity {
         /* fetching the currency balance and placing it in the balance label */
         TextView muffinsBalance = (TextView)findViewById(R.id.balance);
         muffinsBalance.setText("" + StorageManager.getVirtualCurrencyStorage().
-                getBalance(StoreInfo.getVirtualCurrencies().get(0)));
+                getBalance(StoreInfo.getCurrencies().get(0)));
     }
 
     @Override
@@ -127,17 +126,17 @@ public class StoreGoodsActivity extends Activity {
     public void onGoodBalanceChanged(GoodBalanceChangedEvent goodBalanceChangedEvent) {
         VirtualGood good = goodBalanceChangedEvent.getGood();
         int id = 0;
-        for(int i=0; i<StoreInfo.getVirtualGoods().size(); i++) {
-            if (StoreInfo.getVirtualGoods().get(i).getItemId().equals(good.getItemId())) {
+        for(int i=0; i<StoreInfo.getGoods().size(); i++) {
+            if (StoreInfo.getGoods().get(i).getItemId().equals(good.getItemId())) {
                 id = i;
                 break;
             }
         }
 
         ListView list = (ListView) findViewById(R.id.list);
-        HashMap<String, Integer> currencyValues = good.getCurrencyValues();
         TextView info = (TextView)list.getChildAt(id).findViewById(R.id.item_info);
-        info.setText("price: " + currencyValues.get(StoreInfo.getVirtualCurrencies().get(0).getItemId()) +
+        PurchaseWithVirtualItem pwvi = (PurchaseWithVirtualItem) good.getPurchaseType();
+        info.setText("price: " + pwvi.getAmount() +
                 " balance: " + goodBalanceChangedEvent.getBalance());
     }
 
@@ -169,15 +168,15 @@ public class StoreGoodsActivity extends Activity {
             ImageView thumb_image=(ImageView)vi.findViewById(R.id.list_image);
             TextView info = (TextView)vi.findViewById(R.id.item_info);
 
-            VirtualGood good = StoreInfo.getVirtualGoods().get(position);//VirtualGood) data.get(position).get(StoreGoodsActivity.KEY_GOOD);
+            VirtualGood good = StoreInfo.getGoods().get(position);//VirtualGood) data.get(position).get(StoreGoodsActivity.KEY_GOOD);
 
             // Setting all values in listview
             vi.setTag(good.getItemId());
             title.setText(good.getName());
             content.setText(good.getDescription());
             thumb_image.setImageResource((Integer)mImages.get(good.getItemId()));
-            HashMap<String, Integer> currencyValues = good.getCurrencyValues();
-            info.setText("price: " + currencyValues.get(StoreInfo.getVirtualCurrencies().get(0).getItemId()) +
+            PurchaseWithVirtualItem pwvi = (PurchaseWithVirtualItem) good.getPurchaseType();
+            info.setText("price: " + pwvi.getAmount() +
                     " balance: " + StorageManager.getVirtualGoodsStorage().getBalance(good));
 
             return vi;
@@ -188,5 +187,9 @@ public class StoreGoodsActivity extends Activity {
 
         Intent intent = new Intent(getApplicationContext(), StorePacksActivity.class);
         startActivity(intent);
+    }
+
+    public void restoreTransactions(View v) throws IOException{
+        StoreController.getInstance().restoreTransactions();
     }
 }

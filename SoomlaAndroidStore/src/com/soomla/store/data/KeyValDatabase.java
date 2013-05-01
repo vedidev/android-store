@@ -20,7 +20,6 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-
 import com.soomla.store.StoreConfig;
 
 /**
@@ -43,6 +42,13 @@ public class KeyValDatabase {
      */
     public synchronized void close() {
         mDatabaseHelper.close();
+    }
+
+    /**
+     * Deletes the database completely !
+     */
+    public void purgeDatabase(Context context) {
+        context.deleteDatabase(DATABASE_NAME);
     }
 
     /**
@@ -122,6 +128,10 @@ public class KeyValDatabase {
         return "good." + itemId + ".equipped";
     }
 
+    public static String keyGoodUpgrade(String itemId) {
+        return "good." + itemId + ".currentUpgrade";
+    }
+
     public static String keyCurrencyBalance(String itemId) {
         return "currency." + itemId + ".balance";
     }
@@ -150,8 +160,8 @@ public class KeyValDatabase {
 
     /** Private Members**/
 
-    private static final String TAG = "KeyValDatabase";
-    private static final String DATABASE_NAME               = "store.kv.db";
+    private static final String TAG            = "KeyValDatabase";
+    private static final String DATABASE_NAME  = "store.kv.db";
 
     private SQLiteDatabase mStoreDB;
     private DatabaseHelper mDatabaseHelper;

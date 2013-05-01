@@ -29,6 +29,7 @@ import android.os.RemoteException;
 import android.util.Log;
 import com.android.vending.billing.IMarketBillingService;
 import com.soomla.store.StoreConfig;
+import com.soomla.store.StoreUtils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -106,15 +107,14 @@ public class BillingService extends Service implements ServiceConnection {
          * is not connected or there was an error when trying to use it
          */
         public boolean runIfConnected() {
-            if (StoreConfig.debug) {
-                Log.d(TAG, getClass().getSimpleName());
-            }
+            StoreUtils.LogDebug(TAG, getClass().getSimpleName());
+
             if (mService != null) {
                 try {
                     mRequestId = run();
-                    if (StoreConfig.debug) {
-                        Log.d(TAG, "request id: " + mRequestId);
-                    }
+
+                    StoreUtils.LogDebug(TAG, "request id: " + mRequestId);
+
                     if (mRequestId >= 0) {
                         mSentRequests.put(mRequestId, this);
                     }
@@ -164,9 +164,7 @@ public class BillingService extends Service implements ServiceConnection {
         protected void logResponseCode(String method, Bundle response) {
             Consts.ResponseCode responseCode = Consts.ResponseCode.valueOf(
                     response.getInt(Consts.BILLING_RESPONSE_RESPONSE_CODE));
-            if (StoreConfig.debug) {
-                Log.e(TAG, method + " received " + responseCode.toString());
-            }
+            StoreUtils.LogError(TAG, method + " received " + responseCode.toString());
         }
     }
 
@@ -204,10 +202,8 @@ public class BillingService extends Service implements ServiceConnection {
             }
             Bundle response = mService.sendBillingRequest(request);
             int responseCode = response.getInt(Consts.BILLING_RESPONSE_RESPONSE_CODE);
-            if (StoreConfig.debug) {
-                Log.i(TAG, "CheckBillingSupported response code: " +
-                        Consts.ResponseCode.valueOf(responseCode));
-            }
+            StoreUtils.LogDebug(TAG, "CheckBillingSupported response code: " + Consts.ResponseCode.valueOf(responseCode));
+
             boolean billingSupported = (responseCode == Consts.ResponseCode.RESULT_OK.ordinal());
             ResponseHandler.checkBillingSupportedResponse(billingSupported, mProductType);
             return Consts.BILLING_RESPONSE_INVALID_REQUEST_ID;
@@ -274,7 +270,7 @@ public class BillingService extends Service implements ServiceConnection {
             PendingIntent pendingIntent
                     = response.getParcelable(Consts.BILLING_RESPONSE_PURCHASE_INTENT);
             if (pendingIntent == null) {
-                Log.e(TAG, "Error with requestPurchase");
+                StoreUtils.LogError(TAG, "Error with requestPurchase");
                 return Consts.BILLING_RESPONSE_INVALID_REQUEST_ID;
             }
 
@@ -418,9 +414,8 @@ public class BillingService extends Service implements ServiceConnection {
      */
     public void handleCommand(Intent intent, int startId) {
         String action = intent.getAction();
-        if (StoreConfig.debug) {
-            Log.i(TAG, "handleCommand() action: " + action);
-        }
+        StoreUtils.LogDebug(TAG, "handleCommand() action: " + action);
+
         if (Consts.ACTION_CONFIRM_NOTIFICATION.equals(action)) {
             String[] notifyIds = intent.getStringArrayExtra(Consts.NOTIFICATION_ID);
             confirmNotifications(startId, notifyIds);
@@ -447,9 +442,7 @@ public class BillingService extends Service implements ServiceConnection {
      */
     private boolean bindToMarketBillingService() {
         try {
-            if (StoreConfig.debug) {
-                Log.i(TAG, "binding to Market billing service");
-            }
+            StoreUtils.LogDebug(TAG, "binding to Market billing service");
             boolean bindResult = bindService(
                     new Intent(Consts.MARKET_BILLING_SERVICE_ACTION),
                     this,  // ServiceConnection.
@@ -458,10 +451,10 @@ public class BillingService extends Service implements ServiceConnection {
             if (bindResult) {
                 return true;
             } else {
-                Log.e(TAG, "Could not bind to service.");
+                StoreUtils.LogError(TAG, "Could not bind to service.");
             }
         } catch (SecurityException e) {
-            Log.e(TAG, "Security exception: " + e);
+            StoreUtils.LogError(TAG, "Security exception: " + e);
         }
         return false;
     }
@@ -579,9 +572,7 @@ public class BillingService extends Service implements ServiceConnection {
     private void checkResponseCode(long requestId, Consts.ResponseCode responseCode) {
         BillingRequest request = mSentRequests.get(requestId);
         if (request != null) {
-            if (StoreConfig.debug) {
-                Log.d(TAG, request.getClass().getSimpleName() + ": " + responseCode);
-            }
+            StoreUtils.LogDebug(TAG, request.getClass().getSimpleName() + ": " + responseCode);
             request.responseCodeReceived(responseCode);
         }
         mSentRequests.remove(requestId);
@@ -616,9 +607,7 @@ public class BillingService extends Service implements ServiceConnection {
         // is not -1, then one of the requests started the service, so we can
         // stop it now.
         if (maxStartId >= 0) {
-            if (StoreConfig.debug) {
-                Log.i(TAG, "stopping service, startId: " + maxStartId);
-            }
+            StoreUtils.LogDebug(TAG, "stopping service, startId: " + maxStartId);
             stopSelf(maxStartId);
         }
     }
@@ -629,15 +618,13 @@ public class BillingService extends Service implements ServiceConnection {
      */
     @Override
     public void onServiceConnected(ComponentName name, IBinder service) {
-        if (StoreConfig.debug) {
-            Log.d(TAG, "Billing service connected");
-        }
+        StoreUtils.LogDebug(TAG, "Billing service connected");
         mService = IMarketBillingService.Stub.asInterface(service);
         if (mService != null){
             runPendingRequests();
         }
         else{
-            Log.e(TAG, "Failed to bind MarketBillingService.");
+            StoreUtils.LogError(TAG, "Failed to bind MarketBillingService.");
         }
     }
 

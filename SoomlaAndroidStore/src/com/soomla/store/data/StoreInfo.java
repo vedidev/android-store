@@ -16,26 +16,32 @@
 package com.soomla.store.data;
 
 import android.text.TextUtils;
-import android.util.Log;
 import com.soomla.billing.util.AESObfuscator;
 import com.soomla.store.IStoreAssets;
-import com.soomla.store.StoreConfig;
-import com.soomla.store.domain.data.*;
+import com.soomla.store.StoreUtils;
+import com.soomla.store.domain.NonConsumableItem;
+import com.soomla.store.domain.PurchasableVirtualItem;
+import com.soomla.store.domain.VirtualCategory;
+import com.soomla.store.domain.VirtualItem;
+import com.soomla.store.domain.virtualCurrencies.VirtualCurrency;
+import com.soomla.store.domain.virtualCurrencies.VirtualCurrencyPack;
+import com.soomla.store.domain.virtualGoods.*;
 import com.soomla.store.exceptions.VirtualItemNotFoundException;
+import com.soomla.store.purchaseTypes.PurchaseType;
+import com.soomla.store.purchaseTypes.PurchaseWithMarket;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 /**
  * This class holds the store's meta data including:
- * - Virtual Currencies definitions
- * - Virtual Currency Packs definitions
- * - Virtual Goods definitions
- * - Virtual Categories definitions
+ * - Virtual Currencies
+ * - Virtual Currency Packs
+ * - All kinds of Virtual goods
+ * - Virtual categories
+ * - NonConsumables
  */
 public class StoreInfo {
 
@@ -44,70 +50,58 @@ public class StoreInfo {
      * database doesn't have any previous version of the store metadata, StoreInfo
      * is being loaded from the given {@link IStoreAssets}. After the first initialization,
      * StoreInfo will be initialized from the database.
-     * NOTE: If you want to override the current StoreInfo, you'll have to bump the
-     * database version (the old database will be destroyed) OR just bump the version of your implementation of IStoreAssets
-     * in order to remove the metadata when the application loads.
+     *
+     * IMPORTANT: If you want to override the current StoreInfo, you'll have to bump the version of your
+     * implementation of IStoreAssets in order to remove the metadata when the application loads.
+     * (bumping the version is done by returning a higher number in {@link com.soomla.store.IStoreAssets#getVersion()}.
      */
     public static void setStoreAssets(IStoreAssets storeAssets){
         if (storeAssets == null){
-            Log.e(TAG, "The given store assets can't be null !");
+            StoreUtils.LogError(TAG, "The given store assets can't be null !");
             return;
         }
 
         // we prefer initialization from the database (storeAssets are only set on the first time the game is loaded)!
         if (!initializeFromDB()){
-
-            /// fall-back here if the json doesn't exist, we load the store from the given {@link IStoreAssets}.
-            mVirtualCategories    = Arrays.asList(storeAssets.getVirtualCategories());
-            mVirtualCurrencies    = Arrays.asList(storeAssets.getVirtualCurrencies());
-            mVirtualCurrencyPacks = Arrays.asList(storeAssets.getVirtualCurrencyPacks());
-            mVirtualGoods         = Arrays.asList(storeAssets.getVirtualGoods());
-            mNonConsumableItems   = Arrays.asList(storeAssets.getNonConsumableItems());
-
-            // put StoreInfo in the database as JSON
-            String store_json = toJSONObject().toString();
-            String key = KeyValDatabase.keyMetaStoreInfo();
-            store_json = StorageManager.getAESObfuscator().obfuscateString(store_json);
-            key = StorageManager.getAESObfuscator().obfuscateString(key);
-            StorageManager.getDatabase().setKeyVal(key, store_json);
+            initializeWithStoreAssets(storeAssets);
         }
     }
 
+    /**
+     * Initializes StoreInfo from the database. This action should be performed only once during the lifetime of
+     * a session of the game. StoreController automatically initializes StoreInfo. Don't do it if you don't know what
+     * you're doing.
+     * @return success.
+     */
     public static boolean initializeFromDB() {
-        // first, trying to load StoreInfo from the local DB.
         String key = KeyValDatabase.keyMetaStoreInfo();
         key = StorageManager.getAESObfuscator().obfuscateString(key);
         String val = StorageManager.getDatabase().getKeyVal(key);
 
         if (val == null && TextUtils.isEmpty(val)){
-            if (StoreConfig.debug){
-                Log.d(TAG, "store json is not in DB yet ");
-            }
+            StoreUtils.LogDebug(TAG, "store json is not in DB yet.");
             return false;
         }
 
         try {
             val = StorageManager.getAESObfuscator().unobfuscateToString(val);
         } catch (AESObfuscator.ValidationException e) {
-            Log.e(TAG, e.getMessage());
+            StoreUtils.LogError(TAG, e.getMessage());
             return false;
         }
 
-        if (StoreConfig.debug){
-            Log.d(TAG, "the metadata-economy json (from DB) is " + val);
-        }
+        StoreUtils.LogDebug(TAG, "the metadata-economy json (from DB) is " + val);
 
         try {
             fromJSONObject(new JSONObject(val));
 
             // everything went well... StoreInfo is initialized from the local DB.
             // it's ok to return now.
+
             return true;
         } catch (JSONException e) {
-            if (StoreConfig.debug){
-                Log.d(TAG, "Can't parse metadata json. Going to return false and make " +
-                        "StoreInfo load from static data.: " + val);
-            }
+            StoreUtils.LogDebug(TAG, "Can't parse metadata json. Going to return false and make " +
+                    "StoreInfo load from static data: " + val);
         }
 
         return false;
@@ -115,236 +109,229 @@ public class StoreInfo {
     }
 
     /**
-     * Use this function if you need to know the definition of a specific virtual currency pack.
-     * @param productId is the requested pack's product id.
-     * @return the definition of the virtual pack requested.
-     * @throws VirtualItemNotFoundException
+     * A utility function to retrieve a single VirtualItem that resides in the meta data.
+     * @param itemId the itemId of the required VirtualItem.
+     * @throws VirtualItemNotFoundException when the given itemId was not found.
      */
-    public static VirtualCurrencyPack getPackByGoogleProductId(String productId) throws VirtualItemNotFoundException {
-        if (mVirtualCurrencyPacks == null) {
-            if (!initializeFromDB()) {
-                Log.e(TAG, "Can't initialize StoreInfo !");
-                return null;
-            }
+    public static VirtualItem getVirtualItem(String itemId) throws VirtualItemNotFoundException{
+        VirtualItem item = mVirtualItems.get(itemId);
+        if (item == null) {
+            throw new VirtualItemNotFoundException("itemId", itemId);
         }
 
-        for(VirtualCurrencyPack p : mVirtualCurrencyPacks){
-            if (p.getProductId().equals(productId)){
-                return p;
-            }
-        }
-
-        throw new VirtualItemNotFoundException("productId", productId);
+        return item;
     }
 
     /**
-     * Use this function if you need to know the definition of a specific virtual currency pack.
-     * @param itemId is the requested pack's item id.
-     * @return the definition of the virtual pack requested.
-     * @throws VirtualItemNotFoundException
+     * A utility function to retrieve a single PurchasableVirtualItem that resides in the meta data.
+     *
+     * IMPORTANT: The retrieved PurchasableVirtualItems are only those which has a purchaseType of PurchaseWithMarket.
+     * (This is why we fetch here with productId)
+     *
+     * @param productId the productId of the required PurchasableVirtualItem.
+     * @throws VirtualItemNotFoundException when the given productId was not found.
      */
-    public static VirtualCurrencyPack getPackByItemId(String itemId) throws VirtualItemNotFoundException {
-        if (mVirtualCurrencyPacks == null) {
-            if (!initializeFromDB()) {
-                Log.e(TAG, "Can't initialize StoreInfo !");
-                return null;
-            }
+    public static PurchasableVirtualItem getPurchasableItem(String productId) throws VirtualItemNotFoundException{
+        PurchasableVirtualItem item = mPurchasableItems.get(productId);
+        if (item == null) {
+            throw new VirtualItemNotFoundException("productId", productId);
         }
 
-        for(VirtualCurrencyPack p : mVirtualCurrencyPacks){
-            if (p.getItemId().equals(itemId)){
-                return p;
-            }
-        }
-
-        throw new VirtualItemNotFoundException("itemId", itemId);
+        return item;
     }
 
     /**
-     * Use this function if you need to know the definition of a specific virtual good.
-     * @param itemId is the requested good's item id.
-     * @return the definition of the virtual good requested.
-     * @throws VirtualItemNotFoundException
+     * A utility function to retrieve a single VirtualCategory for a given VirtualGood itemId.
+     *
+     * @param goodItemId the virtualGood in the category.
+     * @return a VirtualCategory for the given VirtualGood.
+     *
+     * @throws VirtualItemNotFoundException when the given goodItemId was not found.
      */
-    public static VirtualGood getVirtualGoodByItemId(String itemId) throws VirtualItemNotFoundException {
-        if (mVirtualGoods == null) {
-            if (!initializeFromDB()) {
-                Log.e(TAG, "Can't initialize StoreInfo !");
-                return null;
-            }
+    public static VirtualCategory getCategory(String goodItemId) throws VirtualItemNotFoundException {
+        VirtualCategory item = mGoodsCategories.get(goodItemId);
+        if (item == null) {
+            throw new VirtualItemNotFoundException("goodItemId", goodItemId);
         }
 
-        for(VirtualGood g : mVirtualGoods){
-            if (g.getItemId().equals(itemId)){
-                return g;
-            }
-        }
-
-        throw new VirtualItemNotFoundException("itemId", itemId);
+        return item;
     }
 
     /**
-     * Use this function if you need to know the definition of a specific virtual category.
-     * @param id is the requested category's id.
-     * @return the definition of the requested category.
-     * @throws VirtualItemNotFoundException
+     * A utility function to retrieve a first UpgradeVG for a given VirtualGood itemId.
+     * @param goodItemId is the VirtualGood we're searching the upgrade for.
+     * @return the first upgrade for the given VirtualGood or null if there are no upgrades.
      */
-    public static VirtualCategory getVirtualCategoryById(int id) throws VirtualItemNotFoundException {
-        if (mVirtualCategories == null) {
-            if (!initializeFromDB()) {
-                Log.e(TAG, "Can't initialize StoreInfo !");
-                return null;
+    public static UpgradeVG getGoodFirstUpgrade(String goodItemId) {
+        List<UpgradeVG> upgrades = mGoodsUpgrades.get(goodItemId);
+        if (upgrades != null) {
+            for(UpgradeVG upgradeVG : upgrades) {
+                if (TextUtils.isEmpty(upgradeVG.getPrevItemId())) {
+                    return upgradeVG;
+                }
             }
         }
-
-        for(VirtualCategory c : mVirtualCategories){
-            if (c.getId() == id){
-                return c;
-            }
-        }
-
-        throw new VirtualItemNotFoundException("id", "" + id);
+        return null;
     }
 
     /**
-     * Use this function if you need to know the definition of a specific virtual currency.
-     * @param itemId is the requested currency's item id.
-     * @return the definition of the virtual currency requested.
-     * @throws VirtualItemNotFoundException
+     * A utility function to retrieve a last UpgradeVG for a given VirtualGood itemId.
+     * @param goodItemId is the VirtualGood we're searching the upgrade for.
+     * @return the last upgrade for the given VirtualGood or null if there are no upgrades.
      */
-    public static VirtualCurrency getVirtualCurrencyByItemId(String itemId) throws VirtualItemNotFoundException {
-        if (mVirtualCurrencies == null) {
-            if (!initializeFromDB()) {
-                Log.e(TAG, "Can't initialize StoreInfo !");
-                return null;
+    public static UpgradeVG getGoodLastUpgrade(String goodItemId) {
+        List<UpgradeVG> upgrades = mGoodsUpgrades.get(goodItemId);
+        if (upgrades != null) {
+            for(UpgradeVG upgradeVG : upgrades) {
+                if (TextUtils.isEmpty(upgradeVG.getNextItemId())) {
+                    return upgradeVG;
+                }
             }
         }
-
-        for(VirtualCurrency c : mVirtualCurrencies){
-            if (c.getItemId().equals(itemId)){
-                return c;
-            }
-        }
-
-        throw new VirtualItemNotFoundException("itemId", itemId);
+        return null;
     }
 
     /**
-     * Use this function if you need to know the definition of a specific google MANAGED item.
-     * @param productId is the requested MANAGED item's product id.
-     * @return the definition of the MANAGED item requested.
-     * @throws VirtualItemNotFoundException
+     * A utility function to retrieve all UpgradeVGs for a given VirtualGood itemId.
+     * @param goodItemId is the VirtualGood we're searching the upgrades for.
      */
-    public static NonConsumableItem getNonConsumableByProductId(String productId) throws VirtualItemNotFoundException {
-        if (mNonConsumableItems == null) {
-            if (!initializeFromDB()) {
-                Log.e(TAG, "Can't initialize StoreInfo !");
-                return null;
-            }
-        }
-
-        for (NonConsumableItem non : mNonConsumableItems){
-            if (non.getProductId().equals(productId)){
-                return non;
-            }
-        }
-
-        throw new VirtualItemNotFoundException("productId", productId);
+    public static List<UpgradeVG> getGoodUpgrades(String goodItemId) {
+        return mGoodsUpgrades.get(goodItemId);
     }
 
     /** Getters **/
 
-    public static List<VirtualCurrency> getVirtualCurrencies(){
-        if (mVirtualCurrencies == null) {
-            if (!initializeFromDB()) {
-                Log.e(TAG, "Can't initialize StoreInfo !");
-                return null;
-            }
-        }
-
-        return mVirtualCurrencies;
+    public static List<VirtualCurrency> getCurrencies(){
+        return mCurrencies;
     }
 
     public static List<VirtualCurrencyPack> getCurrencyPacks() {
-        if (mVirtualCurrencyPacks == null) {
-            if (!initializeFromDB()) {
-                Log.e(TAG, "Can't initialize StoreInfo !");
-                return null;
-            }
-        }
-
-        return mVirtualCurrencyPacks;
+        return mCurrencyPacks;
     }
 
-    public static List<VirtualGood> getVirtualGoods() {
-        if (mVirtualGoods == null) {
-            if (!initializeFromDB()) {
-                Log.e(TAG, "Can't initialize StoreInfo !");
-                return null;
-            }
-        }
-
-        return mVirtualGoods;
-    }
-
-    public static List<VirtualCategory> getVirtualCategories() {
-        if (mVirtualCategories == null) {
-            if (!initializeFromDB()) {
-                Log.e(TAG, "Can't initialize StoreInfo !");
-                return null;
-            }
-        }
-
-        return mVirtualCategories;
+    public static List<VirtualGood> getGoods() {
+        return mGoods;
     }
 
     public static List<NonConsumableItem> getNonConsumableItems() {
-        if (mNonConsumableItems == null) {
-            if (!initializeFromDB()) {
-                Log.e(TAG, "Can't initialize StoreInfo !");
-                return null;
-            }
-        }
+        return mNonConsumables;
+    }
 
-        return mNonConsumableItems;
+    public static List<VirtualCategory> getCategories() {
+        return mCategories;
     }
 
     /** Private functions **/
 
     private static void fromJSONObject(JSONObject jsonObject) throws JSONException{
-        JSONArray virtualCategories = jsonObject.getJSONArray(JSONConsts.STORE_VIRTUALCATEGORIES);
-        mVirtualCategories = new LinkedList<VirtualCategory>();
-        for(int i=0; i<virtualCategories.length(); i++){
-            JSONObject o = virtualCategories.getJSONObject(i);
-            mVirtualCategories.add(new VirtualCategory(o));
-        }
+        mVirtualItems = new HashMap<String, VirtualItem>();
+        mPurchasableItems = new HashMap<String, PurchasableVirtualItem>();
+        mGoodsCategories = new HashMap<String, VirtualCategory>();
+        mGoodsUpgrades = new HashMap<String, List<UpgradeVG>>();
 
-        JSONArray virtualCurrencies = jsonObject.getJSONArray(JSONConsts.STORE_VIRTUALCURRENCIES);
-        mVirtualCurrencies = new LinkedList<VirtualCurrency>();
+        JSONArray virtualCurrencies = jsonObject.getJSONArray(JSONConsts.STORE_CURRENCIES);
+        mCurrencies = new LinkedList<VirtualCurrency>();
         for (int i=0; i<virtualCurrencies.length(); i++){
             JSONObject o = virtualCurrencies.getJSONObject(i);
-            mVirtualCurrencies.add(new VirtualCurrency(o));
+            VirtualCurrency c = new VirtualCurrency(o);
+            mCurrencies.add(c);
+
+            mVirtualItems.put(c.getItemId(), c);
         }
 
         JSONArray currencyPacks = jsonObject.getJSONArray(JSONConsts.STORE_CURRENCYPACKS);
-        mVirtualCurrencyPacks = new LinkedList<VirtualCurrencyPack>();
+        mCurrencyPacks = new LinkedList<VirtualCurrencyPack>();
         for (int i=0; i<currencyPacks.length(); i++){
             JSONObject o = currencyPacks.getJSONObject(i);
-            mVirtualCurrencyPacks.add(new VirtualCurrencyPack(o));
+            VirtualCurrencyPack pack = new VirtualCurrencyPack(o);
+            mCurrencyPacks.add(pack);
+
+            mVirtualItems.put(pack.getItemId(), pack);
+
+            PurchaseType purchaseType = pack.getPurchaseType();
+            if (purchaseType instanceof PurchaseWithMarket) {
+                mPurchasableItems.put(((PurchaseWithMarket) purchaseType).getGoogleMarketItem().getProductId(), pack);
+            }
         }
 
-        JSONArray virtualGoods = jsonObject.getJSONArray(JSONConsts.STORE_VIRTUALGOODS);
-        mVirtualGoods = new LinkedList<VirtualGood>();
-        for (int i=0; i<virtualGoods.length(); i++){
-            JSONObject o = virtualGoods.getJSONObject(i);
-            mVirtualGoods.add(new VirtualGood(o));
+        // The order in which VirtualGoods are created matters!
+        // For example: VGU and VGP depend on other VGs
+        JSONObject virtualGoods = jsonObject.getJSONObject(JSONConsts.STORE_GOODS);
+        JSONArray suGoods = virtualGoods.getJSONArray(JSONConsts.STORE_GOODS_SU);
+        JSONArray ltGoods = virtualGoods.getJSONArray(JSONConsts.STORE_GOODS_LT);
+        JSONArray eqGoods = virtualGoods.getJSONArray(JSONConsts.STORE_GOODS_EQ);
+        JSONArray upGoods = virtualGoods.getJSONArray(JSONConsts.STORE_GOODS_UP);
+        JSONArray paGoods = virtualGoods.getJSONArray(JSONConsts.STORE_GOODS_PA);
+        mGoods = new LinkedList<VirtualGood>();
+        for (int i=0; i<suGoods.length(); i++){
+            JSONObject o = suGoods.getJSONObject(i);
+            SingleUseVG g = new SingleUseVG(o);
+            addVG(g);
+        }
+        for (int i=0; i<ltGoods.length(); i++){
+            JSONObject o = ltGoods.getJSONObject(i);
+            LifetimeVG g = new LifetimeVG(o);
+            addVG(g);
+        }
+        for (int i=0; i<eqGoods.length(); i++){
+            JSONObject o = eqGoods.getJSONObject(i);
+            EquippableVG g = new EquippableVG(o);
+            addVG(g);
+        }
+        for (int i=0; i<paGoods.length(); i++){
+            JSONObject o = paGoods.getJSONObject(i);
+            SingleUsePackVG g = new SingleUsePackVG(o);
+            addVG(g);
+        }
+        for (int i=0; i<upGoods.length(); i++){
+            JSONObject o = upGoods.getJSONObject(i);
+            UpgradeVG g = new UpgradeVG(o);
+            addVG(g);
+
+            List<UpgradeVG> upgrades = mGoodsUpgrades.get(g.getGoodItemId());
+            if (upgrades == null) {
+                upgrades = new ArrayList<UpgradeVG>();
+                mGoodsUpgrades.put(g.getGoodItemId(), upgrades);
+            }
+            upgrades.add(g);
         }
 
-        JSONArray googleManagedItems = jsonObject.getJSONArray(JSONConsts.STORE_GOOGLEMANAGED);
-        mNonConsumableItems = new LinkedList<NonConsumableItem>();
-        for (int i=0; i<googleManagedItems.length(); i++){
-            JSONObject o = googleManagedItems.getJSONObject(i);
-            mNonConsumableItems.add(new NonConsumableItem(o));
+        // Categories depend on virtual goods. That's why the have to be initialized after!
+        JSONArray virtualCategories = jsonObject.getJSONArray(JSONConsts.STORE_CATEGORIES);
+        mCategories = new LinkedList<VirtualCategory>();
+        for(int i=0; i<virtualCategories.length(); i++){
+            JSONObject o = virtualCategories.getJSONObject(i);
+            VirtualCategory category = new VirtualCategory(o);
+            mCategories.add(category);
+            for(String goodItemId : category.getGoodsItemIds()) {
+                mGoodsCategories.put(goodItemId, category);
+            }
+        }
+
+        JSONArray nonConsumables = jsonObject.getJSONArray(JSONConsts.STORE_NONCONSUMABLES);
+        mNonConsumables = new LinkedList<NonConsumableItem>();
+        for (int i=0; i<nonConsumables.length(); i++){
+            JSONObject o = nonConsumables.getJSONObject(i);
+            NonConsumableItem non = new NonConsumableItem(o);
+            mNonConsumables.add(non);
+
+            mVirtualItems.put(non.getItemId(), non);
+
+            PurchaseType purchaseType = non.getPurchaseType();
+            if (purchaseType instanceof PurchaseWithMarket) {
+                mPurchasableItems.put(((PurchaseWithMarket) purchaseType).getGoogleMarketItem().getProductId(), non);
+            }
+        }
+    }
+
+    private static void addVG(VirtualGood g) {
+        mGoods.add(g);
+
+        mVirtualItems.put(g.getItemId(), g);
+
+        PurchaseType purchaseType = g.getPurchaseType();
+        if (purchaseType instanceof PurchaseWithMarket) {
+            mPurchasableItems.put(((PurchaseWithMarket) purchaseType).getGoogleMarketItem().getProductId(), g);
         }
     }
 
@@ -353,61 +340,148 @@ public class StoreInfo {
      * @return a JSONObject representation of the StoreInfo.
      */
     public static JSONObject toJSONObject(){
-        if (mVirtualGoods == null) {
-            if (!initializeFromDB()) {
-                Log.e(TAG, "Can't initialize StoreInfo !");
-                return null;
-            }
-        }
 
-        JSONArray virtualCategories = new JSONArray();
-        for (VirtualCategory cat : mVirtualCategories){
-            virtualCategories.put(cat.toJSONObject());
-        }
-
-        JSONArray virtualCurrencies = new JSONArray();
-        for(VirtualCurrency c : mVirtualCurrencies){
-            virtualCurrencies.put(c.toJSONObject());
+        JSONArray currencies = new JSONArray();
+        for(VirtualCurrency c : mCurrencies){
+            currencies.put(c.toJSONObject());
         }
 
         JSONArray currencyPacks = new JSONArray();
-        for(VirtualCurrencyPack pack : mVirtualCurrencyPacks){
+        for(VirtualCurrencyPack pack : mCurrencyPacks){
             currencyPacks.put(pack.toJSONObject());
         }
 
-        JSONArray virtualGoods = new JSONArray();
-        for(VirtualGood good : mVirtualGoods){
-            virtualGoods.put(good.toJSONObject());
+        JSONObject goods = new JSONObject();
+        JSONArray suGoods = new JSONArray();
+        JSONArray ltGoods = new JSONArray();
+        JSONArray eqGoods = new JSONArray();
+        JSONArray paGoods = new JSONArray();
+        JSONArray upGoods = new JSONArray();
+        for(VirtualGood good : mGoods){
+            if (good instanceof SingleUseVG) {
+                suGoods.put(good.toJSONObject());
+            }  else if (good instanceof EquippableVG) {
+                eqGoods.put(good.toJSONObject());
+            } else if (good instanceof LifetimeVG) {
+                ltGoods.put(good.toJSONObject());
+            } else if (good instanceof SingleUsePackVG) {
+                paGoods.put(good.toJSONObject());
+            } else if (good instanceof UpgradeVG) {
+                upGoods.put(good.toJSONObject());
+            }
+        }
+
+
+        JSONArray categories = new JSONArray();
+        for (VirtualCategory cat : mCategories){
+            categories.put(cat.toJSONObject());
         }
 
         JSONArray nonConsumableItems = new JSONArray();
-        for(NonConsumableItem non : mNonConsumableItems){
+        for(NonConsumableItem non : mNonConsumables){
             nonConsumableItems.put(non.toJSONObject());
         }
 
         JSONObject jsonObject = new JSONObject();
         try {
-            jsonObject.put(JSONConsts.STORE_VIRTUALCATEGORIES, virtualCategories);
-            jsonObject.put(JSONConsts.STORE_VIRTUALCURRENCIES, virtualCurrencies);
-            jsonObject.put(JSONConsts.STORE_VIRTUALGOODS, virtualGoods);
+            goods.put(JSONConsts.STORE_GOODS_SU, suGoods);
+            goods.put(JSONConsts.STORE_GOODS_LT, ltGoods);
+            goods.put(JSONConsts.STORE_GOODS_EQ, eqGoods);
+            goods.put(JSONConsts.STORE_GOODS_PA, paGoods);
+            goods.put(JSONConsts.STORE_GOODS_UP, upGoods);
+
+            jsonObject.put(JSONConsts.STORE_CATEGORIES, categories);
+            jsonObject.put(JSONConsts.STORE_CURRENCIES, currencies);
+            jsonObject.put(JSONConsts.STORE_GOODS, goods);
             jsonObject.put(JSONConsts.STORE_CURRENCYPACKS, currencyPacks);
-            jsonObject.put(JSONConsts.STORE_GOOGLEMANAGED, nonConsumableItems);
+            jsonObject.put(JSONConsts.STORE_NONCONSUMABLES, nonConsumableItems);
         } catch (JSONException e) {
-            if (StoreConfig.debug){
-                Log.d(TAG, "An error occurred while generating JSON object.");
-            }
+            StoreUtils.LogError(TAG, "An error occurred while generating JSON object.");
         }
 
         return jsonObject;
+    }
+
+    private static void initializeWithStoreAssets(IStoreAssets storeAssets) {
+        /// fall-back here if the json doesn't exist, we load the store from the given {@link IStoreAssets}.
+        mCurrencies = Arrays.asList(storeAssets.getCurrencies());
+        mCurrencyPacks = Arrays.asList(storeAssets.getCurrencyPacks());
+        mGoods = Arrays.asList(storeAssets.getGoods());
+        mCategories = Arrays.asList(storeAssets.getCategories());
+        mNonConsumables = Arrays.asList(storeAssets.getNonConsumableItems());
+
+        mVirtualItems = new HashMap<String, VirtualItem>();
+        mPurchasableItems = new HashMap<String, PurchasableVirtualItem>();
+        mGoodsCategories = new HashMap<String, VirtualCategory>();
+        mGoodsUpgrades = new HashMap<String, List<UpgradeVG>>();
+
+        for(VirtualCurrency vi : mCurrencies) {
+            mVirtualItems.put(vi.getItemId(), vi);
+        }
+
+        for(VirtualCurrencyPack vi : mCurrencyPacks) {
+            mVirtualItems.put(vi.getItemId(), vi);
+
+            PurchaseType purchaseType = vi.getPurchaseType();
+            if (purchaseType instanceof PurchaseWithMarket) {
+                mPurchasableItems.put(((PurchaseWithMarket) purchaseType).getGoogleMarketItem().getProductId(), vi);
+            }
+        }
+
+        for(VirtualGood vi : mGoods) {
+            mVirtualItems.put(vi.getItemId(), vi);
+
+            if (vi instanceof UpgradeVG) {
+                List<UpgradeVG> upgrades = mGoodsUpgrades.get(((UpgradeVG) vi).getGoodItemId());
+                if (upgrades == null) {
+                    upgrades = new ArrayList<UpgradeVG>();
+                    mGoodsUpgrades.put(((UpgradeVG) vi).getGoodItemId(), upgrades);
+                }
+                upgrades.add((UpgradeVG) vi);
+            }
+
+            PurchaseType purchaseType = vi.getPurchaseType();
+            if (purchaseType instanceof PurchaseWithMarket) {
+                mPurchasableItems.put(((PurchaseWithMarket) purchaseType).getGoogleMarketItem().getProductId(), vi);
+            }
+        }
+
+        for(NonConsumableItem vi : mNonConsumables) {
+            mVirtualItems.put(vi.getItemId(), vi);
+
+            PurchaseType purchaseType = vi.getPurchaseType();
+            if (purchaseType instanceof PurchaseWithMarket) {
+                mPurchasableItems.put(((PurchaseWithMarket) purchaseType).getGoogleMarketItem().getProductId(), vi);
+            }
+        }
+
+        for(VirtualCategory category : mCategories) {
+            for(String goodItemId : category.getGoodsItemIds()) {
+                mGoodsCategories.put(goodItemId, category);
+            }
+        }
+
+        // put StoreInfo in the database as JSON
+        String store_json = toJSONObject().toString();
+        String key = KeyValDatabase.keyMetaStoreInfo();
+        store_json = StorageManager.getAESObfuscator().obfuscateString(store_json);
+        key = StorageManager.getAESObfuscator().obfuscateString(key);
+        StorageManager.getDatabase().setKeyVal(key, store_json);
     }
 
     /** Private members **/
 
     private static final String TAG = "SOOMLA StoreInfo";
 
-    private static List<VirtualCurrency>                   mVirtualCurrencies;
-    private static List<VirtualCurrencyPack>               mVirtualCurrencyPacks;
-    private static List<VirtualGood>                       mVirtualGoods;
-    private static List<VirtualCategory>                   mVirtualCategories;
-    private static List<NonConsumableItem>                 mNonConsumableItems;
+    // convenient hash to retrieve virtual items
+    private static HashMap<String, VirtualItem>             mVirtualItems;
+    private static HashMap<String, PurchasableVirtualItem>  mPurchasableItems;
+    private static HashMap<String, VirtualCategory>         mGoodsCategories;
+    private static HashMap<String, List<UpgradeVG>>         mGoodsUpgrades;
+
+    private static List<VirtualCurrency>                mCurrencies;
+    private static List<VirtualCurrencyPack>            mCurrencyPacks;
+    private static List<VirtualGood>                    mGoods;
+    private static List<VirtualCategory>                mCategories;
+    private static List<NonConsumableItem>              mNonConsumables;
 }

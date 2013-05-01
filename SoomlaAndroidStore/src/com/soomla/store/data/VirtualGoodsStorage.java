@@ -15,133 +15,110 @@
  */
 package com.soomla.store.data;
 
-import android.util.Log;
 import com.soomla.billing.util.AESObfuscator;
 import com.soomla.store.BusProvider;
-import com.soomla.store.StoreConfig;
-import com.soomla.store.domain.data.VirtualGood;
+import com.soomla.store.StoreUtils;
+import com.soomla.store.domain.VirtualItem;
+import com.soomla.store.domain.virtualGoods.EquippableVG;
+import com.soomla.store.domain.virtualGoods.UpgradeVG;
+import com.soomla.store.domain.virtualGoods.VirtualGood;
 import com.soomla.store.events.GoodBalanceChangedEvent;
-import com.soomla.store.events.VirtualGoodEquippedEvent;
-import com.soomla.store.events.VirtualGoodUnEquippedEvent;
+import com.soomla.store.events.GoodEquippedEvent;
+import com.soomla.store.events.GoodUnEquippedEvent;
+import com.soomla.store.events.GoodUpgradeEvent;
+import com.soomla.store.exceptions.VirtualItemNotFoundException;
 
 /**
  * This class provide basic storage operations on VirtualGoods.
  */
-public class VirtualGoodsStorage {
+public class VirtualGoodsStorage extends VirtualItemStorage{
 
     /** Constructor
      *
      */
     public VirtualGoodsStorage() {
+        mTag = "SOOMLA VirtualGoodsStorage";
     }
 
 
     /** Public functions **/
 
     /**
-     * Fetch the balance of the given virtual good.
-     * @param virtualGood is the required virtual good.
-     * @return the balance of the required virtual currency.
+     * This function removes any upgrade associated with the given VirtualGood.
+     * @param good the VirtualGood to remove upgrade from.
      */
-    public int getBalance(VirtualGood virtualGood){
-        if (StoreConfig.debug){
-            Log.d(TAG, "trying to fetch balance for virtual good with itemId: " + virtualGood.getItemId());
-        }
-        String itemId = virtualGood.getItemId();
-        String key = KeyValDatabase.keyGoodBalance(itemId);
+    public void removeUpgrades(VirtualGood good) {
+        StoreUtils.LogDebug(mTag, "Removing upgrade information from virtual good: " + good.getName());
+
+        String itemId = good.getItemId();
+        String key = KeyValDatabase.keyGoodUpgrade(itemId);
         key = StorageManager.getAESObfuscator().obfuscateString(key);
-        String val = StorageManager.getDatabase().getKeyVal(key);
 
-        int balance = 0;
-        if (val != null) {
-            try {
-                balance = StorageManager.getAESObfuscator().unobfuscateToInt(val);
-            } catch (AESObfuscator.ValidationException e) {
-                Log.e(TAG, e.getMessage());
-            }
-        }
+        StorageManager.getDatabase().deleteKeyVal(key);
 
-        if (StoreConfig.debug){
-            Log.d(TAG, "the balance for " + virtualGood.getItemId() + " is " + balance);
-        }
-        return balance;
-	}
-
-    public int setBalance(VirtualGood virtualGood, int balance) {
-        if (StoreConfig.debug){
-            Log.d(TAG, "setting balance " + balance + " to " + virtualGood.getName() + ".");
-        }
-
-        int oldBalance = getBalance(virtualGood);
-        if (oldBalance == balance) {
-            return balance;
-        }
-
-        String itemId = virtualGood.getItemId();
-
-        String balanceStr = "" + balance;
-        String key = KeyValDatabase.keyGoodBalance(itemId);
-        balanceStr = StorageManager.getAESObfuscator().obfuscateString(balanceStr);
-        key      = StorageManager.getAESObfuscator().obfuscateString(key);
-        StorageManager.getDatabase().setKeyVal(key, balanceStr);
-
-        BusProvider.getInstance().post(new GoodBalanceChangedEvent(virtualGood, balance, 0));
-
-        return balance;
+        BusProvider.getInstance().post(new GoodUpgradeEvent(good, null));
     }
 
     /**
-    * Adds the given amount of goods to the storage.
-    * @param virtualGood is the required virtual good.
-    * @param amount is the amount of goods to add.
-    */
-    public int add(VirtualGood virtualGood, int amount){
-        if (StoreConfig.debug){
-            Log.d(TAG, "adding " + amount + " " + virtualGood.getName() + ".");
-        }
+     * Assigns a specific upgrade to the given VirtualGood.
+     * @param good the VirtualGood to upgrade.
+     * @param upgradeVG the upgrade to assign.
+     */
+    public void assignCurrentUpgrade(VirtualGood good, UpgradeVG upgradeVG) {
+        StoreUtils.LogDebug(mTag, "Assigning upgrade " + upgradeVG.getName() + " to virtual good: " + good.getName());
 
-        String itemId = virtualGood.getItemId();
-        int balance = getBalance(virtualGood);
-        String balanceStr = "" + (balance + amount);
-        String key = KeyValDatabase.keyGoodBalance(itemId);
-        balanceStr = StorageManager.getAESObfuscator().obfuscateString(balanceStr);
-        key      = StorageManager.getAESObfuscator().obfuscateString(key);
-        StorageManager.getDatabase().setKeyVal(key, balanceStr);
+        String itemId = good.getItemId();
+        String key = KeyValDatabase.keyGoodUpgrade(itemId);
+        key = StorageManager.getAESObfuscator().obfuscateString(key);
 
-        BusProvider.getInstance().post(new GoodBalanceChangedEvent(virtualGood, balance+amount, amount));
+        String upItemId =  StorageManager.getAESObfuscator().obfuscateString(upgradeVG.getItemId());
+        StorageManager.getDatabase().setKeyVal(key, upItemId);
 
-        return balance + amount;
-	}
+        BusProvider.getInstance().post(new GoodUpgradeEvent(good, upgradeVG));
+    }
 
     /**
-     * Removes the given amount from the given virtual good's balance.
-     * @param virtualGood is the virtual good to remove the given amount from.
-     * @param amount is the amount to remove.
+     * Retrieves the current upgrade for the given VirtualGood.
+     * @param good the VirtualGood to retrieve upgrade for.
+     * @return the current upgrade for the given VirtualGood.
      */
-    public int remove(VirtualGood virtualGood, int amount){
-        if (StoreConfig.debug){
-            Log.d(TAG, "removing " + amount + " " + virtualGood.getName() + ".");
+    public UpgradeVG getCurrentUpgrade(VirtualGood good) {
+        StoreUtils.LogDebug(mTag, "Fetching upgrade to virtual good: " + good.getName());
+
+        String itemId = good.getItemId();
+        String key = KeyValDatabase.keyGoodUpgrade(itemId);
+        key = StorageManager.getAESObfuscator().obfuscateString(key);
+
+        String upItemId = StorageManager.getDatabase().getKeyVal(key);
+
+        if (upItemId == null) {
+            StoreUtils.LogError(mTag, "You tried to fetch the current upgrade of " + good.getName() + " but there's not upgrade to it.");
+            return null;
         }
 
-        String itemId = virtualGood.getItemId();
-        int balance = getBalance(virtualGood) - amount;
-        balance = balance > 0 ? balance : 0;
-        String balanceStr = "" + balance;
-        String key = KeyValDatabase.keyGoodBalance(itemId);
-        balanceStr = StorageManager.getAESObfuscator().obfuscateString(balanceStr);
-        key      = StorageManager.getAESObfuscator().obfuscateString(key);
-        StorageManager.getDatabase().setKeyVal(key, balanceStr);
-
-        BusProvider.getInstance().post(new GoodBalanceChangedEvent(virtualGood, balance, -1*amount));
-
-        return balance;
-	}
-
-    public boolean isEquipped(VirtualGood virtualGood){
-        if (StoreConfig.debug){
-            Log.d(TAG, "checking if virtual good with itemId: " + virtualGood.getItemId() + " is equipped.");
+        try {
+            upItemId = StorageManager.getAESObfuscator().unobfuscateToString(upItemId);
+            return (UpgradeVG) StoreInfo.getVirtualItem(upItemId);
+        } catch (AESObfuscator.ValidationException e) {
+            StoreUtils.LogError(mTag, e.getMessage());
+        } catch (VirtualItemNotFoundException e) {
+            StoreUtils.LogError(mTag, "The current upgrade's itemId from the DB is not found in StoreInfo.");
+        } catch (ClassCastException e) {
+            StoreUtils.LogError(mTag, "The current upgrade's itemId from the DB is not an UpgradeVG.");
         }
-        String itemId = virtualGood.getItemId();
+
+        return null;
+    }
+
+    /**
+     * Check the equipping status of the given EquippableVG.
+     * @param good the EquippableVG to check the status for.
+     * @return the equipping status of the given EquippableVG.
+     */
+    public boolean isEquipped(EquippableVG good){
+        StoreUtils.LogDebug(mTag, "checking if virtual good with itemId: " + good.getItemId() + " is equipped.");
+
+        String itemId = good.getItemId();
         String key = KeyValDatabase.keyGoodEquipped(itemId);
         key = StorageManager.getAESObfuscator().obfuscateString(key);
         String val = StorageManager.getDatabase().getKeyVal(key);
@@ -149,24 +126,46 @@ public class VirtualGoodsStorage {
         return val != null;
     }
 
-    public void equip(VirtualGood virtualGood, boolean equip){
-        if (StoreConfig.debug){
-            Log.d(TAG, (!equip ? "unequipping " : "equipping ") + virtualGood.getName() + ".");
-        }
+    /**
+     * Equip the given EquippableVG.
+     * @param good the EquippableVG to equip.
+     */
+    public void equip(EquippableVG good) {
+        equipPriv(good, true);
+    }
 
-        String itemId = virtualGood.getItemId();
+    /**
+     * UnEquip the given EquippableVG.
+     * @param good the EquippableVG to unequip.
+     */
+    public void unequip(EquippableVG good) {
+        equipPriv(good, false);
+    }
+
+    private void equipPriv(EquippableVG good, boolean equip){
+        StoreUtils.LogDebug(mTag, (!equip ? "unequipping " : "equipping ") + good.getName() + ".");
+
+        String itemId = good.getItemId();
         String key = KeyValDatabase.keyGoodEquipped(itemId);
         key = StorageManager.getAESObfuscator().obfuscateString(key);
 
         if (equip) {
             StorageManager.getDatabase().setKeyVal(key, "");
-            BusProvider.getInstance().post(new VirtualGoodEquippedEvent(virtualGood));
+            BusProvider.getInstance().post(new GoodEquippedEvent(good));
         } else {
             StorageManager.getDatabase().deleteKeyVal(key);
-            BusProvider.getInstance().post(new VirtualGoodUnEquippedEvent(virtualGood));
+            BusProvider.getInstance().post(new GoodUnEquippedEvent(good));
         }
     }
 
-    /** Private members **/
-    private static final String TAG = "SOOMLA VirtualGoodsStorage";
+    @Override
+    protected String keyBalance(String itemId) {
+        return KeyValDatabase.keyGoodBalance(itemId);
+    }
+
+    @Override
+    protected void postBalanceChangeEvent(VirtualItem item, int balance, int amountAdded) {
+        BusProvider.getInstance().post(new GoodBalanceChangedEvent((VirtualGood) item, balance, amountAdded));
+    }
+
 }

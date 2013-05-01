@@ -16,10 +16,9 @@
 package com.soomla.store.data;
 
 import android.text.TextUtils;
-import android.util.Log;
 import com.soomla.billing.util.AESObfuscator;
 import com.soomla.store.SoomlaApp;
-import com.soomla.store.StoreConfig;
+import com.soomla.store.StoreUtils;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -27,6 +26,8 @@ import java.io.InputStream;
 
 /**
  * This class is used to retrieve the storefront JSON when it's needed.
+ *
+ * This class is relevant only to users who created a storefront using the SOOMLA designer.
  */
 public class StorefrontInfo {
 
@@ -41,7 +42,7 @@ public class StorefrontInfo {
     /**
      * This function initializes StorefrontInfo. On first initialization, when the
      * database doesn't have any previous version of the store metadata (JSON), StorefrontInfo
-     * saves the given JSON to the DB. After the first initialization,
+     * saves the JSON from 'theme.json' to the DB. After the first initialization,
      * StorefrontInfo will load the JSON metadata when needed.
      * NOTE: If you want to override the current StorefrontInfo metadata JSON file, you'll have to bump the
      * database version (the old database will be destroyed but balances will be saved!!).
@@ -50,9 +51,9 @@ public class StorefrontInfo {
         if (!initializeFromDB()) {
             // if the json doesn't already exist in the database, we load it into the DB here.
 
-            String storefrontJSON = fetchTemeJsonFromFile();
+            String storefrontJSON = fetchThemeJsonFromFile();
             if (TextUtils.isEmpty(storefrontJSON)){
-                Log.e(TAG, "Couldn't find storefront in the DB AND the filesystem. Something is totally wrong !");
+                StoreUtils.LogError(TAG, "Couldn't find storefront in the DB AND the filesystem. Something is totally wrong !");
                 return;
             }
 
@@ -66,6 +67,10 @@ public class StorefrontInfo {
         }
     }
 
+    /**
+     * Initializes StorefrontInfo from the database.
+     * @return true on success and false on failure (probably when the database doesn't contain the JSON).
+     */
     public boolean initializeFromDB() {
 
         String key = KeyValDatabase.keyMetaStorefrontInfo();
@@ -74,29 +79,29 @@ public class StorefrontInfo {
         String val = StorageManager.getDatabase().getKeyVal(key);
 
         if (val == null && TextUtils.isEmpty(val)){
-            if (StoreConfig.debug){
-                Log.d(TAG, "storefront json is not in DB yet ");
-            }
+            StoreUtils.LogDebug(TAG, "storefront json is not in DB yet ");
             return false;
         }
 
         try {
             mStorefrontJSON = StorageManager.getAESObfuscator().unobfuscateToString(val);
         } catch (AESObfuscator.ValidationException e) {
-            Log.e(TAG, e.getMessage());
+            StoreUtils.LogError(TAG, e.getMessage());
             return false;
         }
 
-        if (StoreConfig.debug){
-            Log.d(TAG, "the metadata-design json (from DB) is " + mStorefrontJSON);
-        }
+        StoreUtils.LogDebug(TAG, "the metadata-design json (from DB) is " + mStorefrontJSON);
 
         mInitialized = true;
         return true;
 
     }
 
-    public String fetchTemeJsonFromFile() {
+    /**
+     * Read 'theme.json' and return it.
+     * @return theme.json's content as String.
+     */
+    public String fetchThemeJsonFromFile() {
         String storefrontJSON = "";
         try {
             InputStream in = SoomlaApp.getAppContext().getAssets().open("soomla/theme.json");
@@ -110,16 +115,19 @@ public class StorefrontInfo {
 
             storefrontJSON = out.toString();
         } catch (IOException e) {
-            Log.e(TAG, "Can't read JSON storefront file. Please add theme.json to your 'assets' folder.");
+            StoreUtils.LogError(TAG, "Can't read JSON storefront file. Please add theme.json to your 'assets' folder.");
         }
 
         return storefrontJSON;
     }
 
+    /**
+     * Singleton getter!
+     */
     public String getStorefrontJSON() {
         if (!mInitialized) {
             if (!initializeFromDB()) {
-                Log.e(TAG, "Couldn't initialize StoreFrontInfo. Can't fetch the JSON!");
+                StoreUtils.LogError(TAG, "Couldn't initialize StoreFrontInfo. Can't fetch the JSON!");
                 return "";
             }
         }
@@ -132,9 +140,9 @@ public class StorefrontInfo {
 
     /** Private members **/
 
-    private static final String TAG = "SOOMLA StorefrontInfo";
-    private static StorefrontInfo sInstance = null;
-    private static boolean mInitialized = false;
+    private static final String TAG             = "SOOMLA StorefrontInfo";
+    private static StorefrontInfo sInstance     = null;
+    private static boolean mInitialized         = false;
 
     private String  mStorefrontJSON;
 }

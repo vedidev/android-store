@@ -16,9 +16,8 @@
 
 package com.soomla.store.data;
 
-import android.util.Log;
-import com.soomla.store.StoreConfig;
-import com.soomla.store.domain.data.NonConsumableItem;
+import com.soomla.store.StoreUtils;
+import com.soomla.store.domain.NonConsumableItem;
 
 /**
  * This class provide basic storage operations on Google Play's MANAGED items.
@@ -35,17 +34,15 @@ public class NonConsumableItemsStorage {
 
     /**
      * Figure out if the given non-consumable {@link NonConsumableItem} exists.
-     * @param nonConsumableItem the required non-consumable {@link NonConsumableItem}.
+     * @param nonConsumableItem is the required non-consumable {@link NonConsumableItem}.
      * @return whether the given item exists or not.
      */
     public boolean nonConsumableItemExists(NonConsumableItem nonConsumableItem){
 
-        if (StoreConfig.debug){
-            Log.d(TAG, "trying to figure out if the given MANAGED item exists.");
-        }
+        StoreUtils.LogDebug(TAG, "trying to figure out if the given MANAGED item exists.");
 
-        String productId = nonConsumableItem.getProductId();
-        String key = KeyValDatabase.keyNonConsExists(productId);
+        String itemId = nonConsumableItem.getItemId();
+        String key = KeyValDatabase.keyNonConsExists(itemId);
         key = StorageManager.getAESObfuscator().obfuscateString(key);
 
         String val = StorageManager.getDatabase().getKeyVal(key);
@@ -58,12 +55,10 @@ public class NonConsumableItemsStorage {
      * @param nonConsumableItem is the required google non-consumable item.
      */
     public void add(NonConsumableItem nonConsumableItem){
-        if (StoreConfig.debug){
-            Log.d(TAG, "adding " + nonConsumableItem.getProductId());
-        }
+        StoreUtils.LogDebug(TAG, "adding " + nonConsumableItem.getItemId());
 
-        String productId = nonConsumableItem.getProductId();
-        String key = KeyValDatabase.keyNonConsExists(productId);
+        String itemId = nonConsumableItem.getItemId();
+        String key = KeyValDatabase.keyNonConsExists(itemId);
         key = StorageManager.getAESObfuscator().obfuscateString(key);
         StorageManager.getDatabase().setKeyVal(key, "");
     }
@@ -73,12 +68,10 @@ public class NonConsumableItemsStorage {
      * @param nonConsumableItem is the required google non-consumable item.
      */
     public void remove(NonConsumableItem nonConsumableItem){
-        if (StoreConfig.debug){
-            Log.d(TAG, "removing " + nonConsumableItem.getProductId());
-        }
+        StoreUtils.LogDebug(TAG, "removing " + nonConsumableItem.getName());
 
-        String productId = nonConsumableItem.getProductId();
-        String key = KeyValDatabase.keyNonConsExists(productId);
+        String itemId = nonConsumableItem.getItemId();
+        String key = KeyValDatabase.keyNonConsExists(itemId);
         key = StorageManager.getAESObfuscator().obfuscateString(key);
         StorageManager.getDatabase().deleteKeyVal(key);
     }

@@ -29,6 +29,8 @@ import com.soomla.billing.util.Base64;
 import com.soomla.billing.util.Base64DecoderException;
 import com.soomla.store.SoomlaApp;
 import com.soomla.store.StoreConfig;
+import com.soomla.store.StoreController;
+import com.soomla.store.StoreUtils;
 import com.soomla.store.data.ObscuredSharedPreferences;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -119,17 +121,17 @@ public class Security {
      */
     public static ArrayList<VerifiedPurchase> verifyPurchase(String signedData, String signature) {
         if (signedData == null) {
-            Log.e(TAG, "data is null");
+            StoreUtils.LogError(TAG, "data is null");
             return null;
-        } else if (StoreConfig.debug) {
-            Log.d(TAG, "signedData: " + signedData);
         }
+
+        StoreUtils.LogDebug(TAG, "signedData: " + signedData);
 
         boolean verified = false;
         // TODO: check this out... we might not want to verify when debugging.
-        if (!StoreConfig.debug) {
+        if (StoreController.getInstance().isTestMode()) {
             if (TextUtils.isEmpty(signature)) {
-                Log.w(TAG, "Empty signature. Stopping verification.");
+                StoreUtils.LogWarning(TAG, "Empty signature. Stopping verification.");
                 return null;
             }
             SharedPreferences prefs = new ObscuredSharedPreferences(SoomlaApp.getAppContext(), SoomlaApp.getAppContext().getSharedPreferences(StoreConfig.PREFS_NAME, Context.MODE_PRIVATE));
@@ -195,7 +197,7 @@ public class Security {
                         orderId, purchaseTime, developerPayload));
             }
         } catch (JSONException e) {
-            Log.e(TAG, "JSON exception: ", e);
+            StoreUtils.LogError(TAG, "JSON exception: " + e.getMessage());
             return null;
         }
         removeNonce(nonce);
@@ -217,10 +219,10 @@ public class Security {
         } catch (NoSuchAlgorithmException e) {
             throw new RuntimeException(e);
         } catch (InvalidKeySpecException e) {
-            Log.e(TAG, "Invalid key specification.");
+            StoreUtils.LogError(TAG, "Invalid key specification.");
             throw new IllegalArgumentException(e);
         } catch (Base64DecoderException e) {
-            Log.e(TAG, "Base64 decoding failed.");
+            StoreUtils.LogError(TAG, "Base64 decoding failed.");
             throw new IllegalArgumentException(e);
         }
     }
@@ -235,27 +237,25 @@ public class Security {
      * @return true if the data and signature match
      */
     public static boolean verify(PublicKey publicKey, String signedData, String signature) {
-        if (StoreConfig.debug) {
-            Log.i(TAG, "signature: " + signature);
-        }
+        StoreUtils.LogDebug(TAG, "signature: " + signature);
         Signature sig;
         try {
             sig = Signature.getInstance(SIGNATURE_ALGORITHM);
             sig.initVerify(publicKey);
             sig.update(signedData.getBytes());
             if (!sig.verify(Base64.decode(signature))) {
-                Log.e(TAG, "Signature verification failed.");
+                StoreUtils.LogError(TAG, "Signature verification failed.");
                 return false;
             }
             return true;
         } catch (NoSuchAlgorithmException e) {
-            Log.e(TAG, "NoSuchAlgorithmException.");
+            StoreUtils.LogError(TAG, "NoSuchAlgorithmException.");
         } catch (InvalidKeyException e) {
-            Log.e(TAG, "Invalid key specification.");
+            StoreUtils.LogError(TAG, "Invalid key specification.");
         } catch (SignatureException e) {
-            Log.e(TAG, "Signature exception.");
+            StoreUtils.LogError(TAG, "Signature exception.");
         } catch (Base64DecoderException e) {
-            Log.e(TAG, "Base64 decoding failed.");
+            StoreUtils.LogError(TAG, "Base64 decoding failed.");
         }
         return false;
     }

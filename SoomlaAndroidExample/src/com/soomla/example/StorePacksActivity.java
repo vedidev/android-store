@@ -8,16 +8,15 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.*;
 import com.soomla.store.BusProvider;
-import com.soomla.store.StoreController;
 import com.soomla.store.data.StorageManager;
 import com.soomla.store.data.StoreInfo;
-import com.soomla.store.domain.data.NonConsumableItem;
-import com.soomla.store.domain.data.VirtualCurrencyPack;
+import com.soomla.store.domain.NonConsumableItem;
+import com.soomla.store.domain.virtualCurrencies.VirtualCurrencyPack;
 import com.soomla.store.events.CurrencyBalanceChangedEvent;
-import com.soomla.store.exceptions.VirtualItemNotFoundException;
+import com.soomla.store.exceptions.InsufficientFundsException;
+import com.soomla.store.purchaseTypes.PurchaseWithMarket;
 import com.squareup.otto.Subscribe;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 
 public class StorePacksActivity extends Activity {
@@ -56,45 +55,34 @@ public class StorePacksActivity extends Activity {
                 * have enough than an InsufficientFundsException will be thrown.
                 */
 
+                PurchaseWithMarket pwm = null;
                 if (i == 0) {
                     NonConsumableItem non = StoreInfo.getNonConsumableItems().get(0);
-                    try {
-                        StoreController.getInstance().buyGoogleMarketItem(non.getProductId());
-                    } catch (VirtualItemNotFoundException e) {
-                        AlertDialog ad = new AlertDialog.Builder(activity).create();
-                        ad.setCancelable(false); // This blocks the 'BACK' button
-                        ad.setMessage("Can't continue with purchase (the given product id did not match any actual product... Fix IStoreAssets)");
-                        ad.setButton(DialogInterface.BUTTON_NEGATIVE, "OK", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                dialog.dismiss();
-                            }
-                        });
-                        ad.show();
-                    }
+                    pwm = (PurchaseWithMarket) non.getPurchaseType();
                 } else {
                     VirtualCurrencyPack pack = StoreInfo.getCurrencyPacks().get(i-1);
-                    try {
-                        StoreController.getInstance().buyGoogleMarketItem(pack.getProductId());
-                    } catch (VirtualItemNotFoundException e) {
-                        AlertDialog ad = new AlertDialog.Builder(activity).create();
-                        ad.setCancelable(false); // This blocks the 'BACK' button
-                        ad.setMessage("Can't continue with purchase (the given product id did not match any actual product... Fix IStoreAssets)");
-                        ad.setButton(DialogInterface.BUTTON_NEGATIVE, "OK", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                dialog.dismiss();
-                            }
-                        });
-                        ad.show();
+                    pwm = (PurchaseWithMarket) pack.getPurchaseType();
+                }
 
-                    }
+                try {
+                    pwm.buy();
+                } catch (InsufficientFundsException e) {
+                    AlertDialog ad = new AlertDialog.Builder(activity).create();
+                    ad.setCancelable(false); // This blocks the 'BACK' button
+                    ad.setMessage("Can't continue with purchase (You don't have enough muffins !)");
+                    ad.setButton(DialogInterface.BUTTON_NEGATIVE, "OK", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                        }
+                    });
+                    ad.show();
                 }
 
                 /* fetching the currency balance and placing it in the balance label */
                 TextView muffinsBalance = (TextView)activity.findViewById(R.id.balance);
                 muffinsBalance.setText("" + StorageManager.getVirtualCurrencyStorage().
-                        getBalance(StoreInfo.getVirtualCurrencies().get(0)));
+                        getBalance(StoreInfo.getCurrencies().get(0)));
             }
         });
 
@@ -109,7 +97,7 @@ public class StorePacksActivity extends Activity {
         /* fetching the currency balance and placing it in the balance label */
         TextView muffinsBalance = (TextView)findViewById(R.id.balance);
         muffinsBalance.setText("" + StorageManager.getVirtualCurrencyStorage().
-                getBalance(StoreInfo.getVirtualCurrencies().get(0)));
+                getBalance(StoreInfo.getCurrencies().get(0)));
     }
 
     @Override
@@ -125,7 +113,7 @@ public class StorePacksActivity extends Activity {
         images.put(MuffinRushAssets.NO_ADDS_NONCONS_PRODUCT_ID, R.drawable.no_ads);
         images.put(MuffinRushAssets.TENMUFF_PACK_PRODUCT_ID, R.drawable.muffins01);
         images.put(MuffinRushAssets.FIFTYMUFF_PACK_PRODUCT_ID, R.drawable.muffins02);
-        images.put(MuffinRushAssets.FORTYMUFF_PACK_PRODUCT_ID, R.drawable.muffins03);
+        images.put(MuffinRushAssets.FOURHUNDMUFF_PACK_PRODUCT_ID, R.drawable.muffins03);
         images.put(MuffinRushAssets.THOUSANDMUFF_PACK_PRODUCT_ID, R.drawable.muffins04);
 
         return images;
@@ -172,13 +160,15 @@ public class StorePacksActivity extends Activity {
                 title.setText(nonConsumableItem.getName());
                 content.setText(nonConsumableItem.getDescription());
                 info.setText("");
-                thumb_image.setImageResource((Integer)mImages.get(nonConsumableItem.getProductId()));
+                PurchaseWithMarket pwm = (PurchaseWithMarket) nonConsumableItem.getPurchaseType();
+                thumb_image.setImageResource((Integer)mImages.get(pwm.getGoogleMarketItem().getProductId()));
             } else {
                 VirtualCurrencyPack pack = StoreInfo.getCurrencyPacks().get(position-1);
                 title.setText(pack.getName());
                 content.setText(pack.getDescription());
-                info.setText("price: $" + pack.getPrice());
-                thumb_image.setImageResource((Integer)mImages.get(pack.getProductId()));
+                PurchaseWithMarket pwm = (PurchaseWithMarket) pack.getPurchaseType();
+                info.setText("price: $" + pwm.getGoogleMarketItem().getPrice());
+                thumb_image.setImageResource((Integer)mImages.get(pwm.getGoogleMarketItem().getProductId()));
             }
 
             return vi;

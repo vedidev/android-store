@@ -21,12 +21,11 @@ package com.soomla.billing;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
-import android.util.Log;
 import com.soomla.billing.BillingService.RequestPurchase;
 import com.soomla.billing.BillingService.RestoreTransactions;
 import com.soomla.billing.Consts.PurchaseState;
 import com.soomla.billing.Consts.ResponseCode;
-import com.soomla.store.StoreConfig;
+import com.soomla.store.StoreUtils;
 
 /**
  * This class contains the methods that handle responses from Android Market.
@@ -82,9 +81,8 @@ public class ResponseHandler {
      */
     public static void buyPageIntentResponse(PendingIntent pendingIntent, Intent intent) {
         if (sPurchaseObserver == null) {
-            if (StoreConfig.debug) {
-                Log.d(TAG, "UI is not running");
-            }
+            StoreUtils.LogDebug(TAG, "UI is not running");
+
             return;
         }
         sPurchaseObserver.startBuyPageActivity(pendingIntent, intent);

@@ -16,11 +16,9 @@
 
 package com.soomla.store.data;
 
-import android.database.Cursor;
 import android.text.TextUtils;
-import android.util.Log;
 import com.soomla.billing.util.AESObfuscator;
-import com.soomla.store.StoreConfig;
+import com.soomla.store.StoreUtils;
 
 /**
  * This class provides basic storage operations for a simple key-value store.
@@ -39,9 +37,7 @@ public class KeyValueStorage {
      * @return the value for the given key.
      */
     public String getValue(String key) {
-        if (StoreConfig.debug){
-            Log.d(TAG, "trying to fetch a value for key: " + key);
-        }
+        StoreUtils.LogDebug(TAG, "trying to fetch a value for key: " + key);
 
         key = StorageManager.getAESObfuscator().obfuscateString(key);
 
@@ -51,12 +47,10 @@ public class KeyValueStorage {
             try {
                 val = StorageManager.getAESObfuscator().unobfuscateToString(val);
             } catch (AESObfuscator.ValidationException e) {
-                Log.e(TAG, e.getMessage());
+                StoreUtils.LogError(TAG, e.getMessage());
             }
 
-            if (StoreConfig.debug){
-                Log.d(TAG, "the fetched value is " + val);
-            }
+            StoreUtils.LogDebug(TAG, "the fetched value is " + val);
         }
         return val;
     }
@@ -67,9 +61,7 @@ public class KeyValueStorage {
      * @param val is the val in the key-val pair.
      */
     public void setValue(String key, String val) {
-        if (StoreConfig.debug){
-            Log.d(TAG, "setting " + val + " for key: " + key);
-        }
+        StoreUtils.LogDebug(TAG, "setting " + val + " for key: " + key);
 
         key = StorageManager.getAESObfuscator().obfuscateString(key);
         val = StorageManager.getAESObfuscator().obfuscateString(val);
@@ -77,10 +69,12 @@ public class KeyValueStorage {
         StorageManager.getDatabase().setKeyVal(key, val);
     }
 
+    /**
+     * Deletes a key-val pair with the given key.
+     * @param key is the key in the key-val pair.
+     */
     public void deleteKeyValue(String key) {
-        if (StoreConfig.debug){
-            Log.d(TAG, "deleting " + key);
-        }
+        StoreUtils.LogDebug(TAG, "deleting " + key);
 
         key = StorageManager.getAESObfuscator().obfuscateString(key);
 

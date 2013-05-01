@@ -72,14 +72,16 @@
             android:orientation="horizontal"
             android:background="@color/white">
 
-        <ImageButton
-                android:layout_width="fill_parent"
+        <ImageView
+                android:layout_width="197dp"
                 android:layout_height="wrap_content"
-                android:src="@drawable/get_more"
-                android:background="@color/white"
-                android:layout_gravity="center_horizontal"
-                android:onClick="wantsToBuyPacks"
-                android:contentDescription="get more button"/>
+                android:id="@+id/imageView" android:src="@drawable/get_more" android:clickable="true"
+                android:onClick="wantsToBuyPacks"/>
+        <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Restore Previous Transactions"
+                android:id="@+id/button" android:layout_gravity="center" android:onClick="restoreTransactions"/>
 
     </LinearLayout>
 

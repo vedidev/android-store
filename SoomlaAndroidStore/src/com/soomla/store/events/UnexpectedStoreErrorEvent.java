@@ -15,6 +15,8 @@
  */
 package com.soomla.store.events;
 
-
+/**
+ * This event is fired if there's an unexpected/unrecognized error in store.
+ */
 public class UnexpectedStoreErrorEvent {
 }

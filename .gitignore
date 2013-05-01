@@ -6,6 +6,9 @@ SoomlaAndroidExample/bin
 SoomlaAndroidStore/.idea/
 SoomlaAndroidStore/out/
 SoomlaAndroidStore/gen/
+SoomlaAndroidStore/bin/
+SoomlaAndroidStore/UML2/
+
 
 SoomlaAndroidStoreTest/.idea/
 SoomlaAndroidStoreTest/out/

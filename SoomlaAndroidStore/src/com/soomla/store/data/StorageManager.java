@@ -20,15 +20,17 @@ import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.provider.Settings;
 import android.text.TextUtils;
-import android.util.Log;
 import com.soomla.billing.util.AESObfuscator;
 import com.soomla.store.SoomlaApp;
 import com.soomla.store.StoreConfig;
+import com.soomla.store.StoreUtils;
+import com.soomla.store.domain.VirtualItem;
+import com.soomla.store.domain.virtualCurrencies.VirtualCurrency;
+import com.soomla.store.domain.virtualGoods.VirtualGood;
 
 /**
  * This is the place where all the relevant storage classes are created.
- * This is a singleton class and you can call it from your application in order
- * to get the instances of the Virtual goods/currency storages.
+ * This class contains static methods for you to retrieve the various storages.
  *
  * You will usually need the storage in order to get/set the amounts of virtual goods/currency.
  */
@@ -65,12 +67,10 @@ public class StorageManager {
             int mt_ver = prefs.getInt("MT_VER", 0);
             int sa_ver_old = prefs.getInt("SA_VER_OLD", -1);
             int sa_ver_new = prefs.getInt("SA_VER_NEW", 0);
-//            boolean mt_override = prefs.getBoolean("MT_FORCE_DELETE", false);
-            if (mt_ver < StoreConfig.METADATA_VERSION || sa_ver_old < sa_ver_new) {// || mt_override) {
+            if (mt_ver < StoreConfig.METADATA_VERSION || sa_ver_old < sa_ver_new) {
                 SharedPreferences.Editor edit = prefs.edit();
                 edit.putInt("MT_VER", StoreConfig.METADATA_VERSION);
                 edit.putInt("SA_VER_OLD", sa_ver_new);
-//                edit.putBoolean("MT_FORCE_DELETE", false);
                 edit.commit();
 
                 mKvDatabase.deleteKeyVal(KeyValDatabase.keyMetaStorefrontInfo());
@@ -89,16 +89,28 @@ public class StorageManager {
         return mKeyValueStorage;
     }
 
+    public static VirtualItemStorage getVirtualItemStorage(VirtualItem item) {
+        VirtualItemStorage storage = null;
+
+
+        if (item instanceof VirtualGood) {
+            storage = getVirtualGoodsStorage();
+        } else if (item instanceof VirtualCurrency) {
+            storage = getVirtualCurrencyStorage();
+        }
+        return storage;
+    }
+
 
     /** Private members **/
     private static final String TAG = "SOOMLA StorageManager";
 
     private static boolean mOldDataMigrated = false;
 
-    private static VirtualGoodsStorage     mVirtualGoodsStorage        = new VirtualGoodsStorage();
-    private static VirtualCurrencyStorage  mVirtualCurrencyStorage     = new VirtualCurrencyStorage();
+    private static VirtualGoodsStorage     mVirtualGoodsStorage         = new VirtualGoodsStorage();
+    private static VirtualCurrencyStorage  mVirtualCurrencyStorage      = new VirtualCurrencyStorage();
     private static NonConsumableItemsStorage mNonConsumableItemsStorage = new NonConsumableItemsStorage();
-    private static KeyValueStorage         mKeyValueStorage            = new KeyValueStorage();
+    private static KeyValueStorage         mKeyValueStorage             = new KeyValueStorage();
     private static AESObfuscator           mObfuscator;
     private static KeyValDatabase          mKvDatabase;
 
@@ -126,15 +138,11 @@ public class StorageManager {
         }
 
         if (!StoreDatabase.checkDataBaseExists(SoomlaApp.getAppContext())) {
-            if (StoreConfig.debug) {
-                Log.d(TAG, "Old store database doesn't exist. Nothing to migrate.");
-            }
+            StoreUtils.LogDebug(TAG, "Old store database doesn't exist. Nothing to migrate.");
             return;
         }
 
-        if (StoreConfig.debug) {
-            Log.d(TAG, "Old store database exists. Migrating now!");
-        }
+        StoreUtils.LogDebug(TAG, "Old store database exists. Migrating now!");
 
         StoreDatabase storeDatabase = new StoreDatabase(SoomlaApp.getAppContext());
 
@@ -150,12 +158,12 @@ public class StorageManager {
                     String balanceStr = cursor.getString(balanceColIdx);
 
                     String key = KeyValDatabase.keyCurrencyBalance(itemIdStr);
-                    Log.d(TAG, "currency key: " + key + " val: " + balanceStr);
+                    StoreUtils.LogDebug(TAG, "currency key: " + key + " val: " + balanceStr);
                     key = mObfuscator.obfuscateString(key);
 
                     mKvDatabase.setKeyVal(key, balanceStr);
                 } catch (AESObfuscator.ValidationException e) {
-                    Log.e(TAG, e.getMessage());
+                    StoreUtils.LogError(TAG, e.getMessage());
                 }
             }
         }
@@ -180,7 +188,7 @@ public class StorageManager {
 
                 String key = KeyValDatabase.keyGoodBalance(itemIdStr);
                 try {
-                    Log.d(TAG, "good key: " + key + " val: " + mObfuscator.unobfuscateToString(balanceStr));
+                    StoreUtils.LogDebug(TAG, "good key: " + key + " val: " + mObfuscator.unobfuscateToString(balanceStr));
 
                     key = mObfuscator.obfuscateString(key);
                     mKvDatabase.setKeyVal(key, balanceStr);
@@ -205,14 +213,12 @@ public class StorageManager {
                 String storefrontInfo = cursor.getString(storefrontinfoIdx);
 
                 String key = KeyValDatabase.keyMetaStoreInfo();
-                Log.d(TAG, "meta1 key: " + key + " val: " + storeInfo);
                 key = mObfuscator.obfuscateString(key);
                 if (!TextUtils.isEmpty(storeInfo)) {
                     mKvDatabase.setKeyVal(key, storeInfo);
                 }
 
                 key = KeyValDatabase.keyMetaStorefrontInfo();
-                Log.d(TAG, "meta1 key: " + key + " val: " + storefrontInfo);
                 key = mObfuscator.obfuscateString(key);
                 if (!TextUtils.isEmpty(storefrontInfo)) {
                     mKvDatabase.setKeyVal(key, storefrontInfo);
@@ -235,7 +241,6 @@ public class StorageManager {
                 }
 
                 String key = KeyValDatabase.keyNonConsExists(productIdStr);
-                Log.d(TAG, "gmi key: " + key + " val: " + "");
                 key = mObfuscator.obfuscateString(key);
                 mKvDatabase.setKeyVal(key, "");
             }
@@ -252,7 +257,6 @@ public class StorageManager {
                 String keyStr = cursor.getString(keyColIdx);
                 String valStr = cursor.getString(valColIdx);
 
-                Log.d(TAG, "kv key: " + keyStr + " val: " + valStr);
                 mKvDatabase.setKeyVal(keyStr, valStr);
             }
         }
@@ -265,8 +269,6 @@ public class StorageManager {
 
         mOldDataMigrated = true;
 
-        if (StoreConfig.debug) {
-            Log.d(TAG, "Finished migrating old database.");
-        }
+        StoreUtils.LogDebug(TAG, "Finished migrating old database.");
     }
 }
