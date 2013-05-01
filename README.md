@@ -1,24 +1,14 @@
 *This project is a part of [The SOOMLA Project](http://project.soom.la) which is a series of open source initiatives with a joint goal to help mobile game developers get better stores and more in-app purchases.*
 
-Looking for testers - new economy model
-----
-
-**If you want to help, you can clone our new branch 'modelV3' and help us test it. We generally need people to test the new types of virtual goods and the overall operation of the Store and StoreInventory.**  
-
-
-<br>
-<br>
-<br>
-
 Haven't you ever wanted an in-app purchase one liner that looks like this ?!
 
 ```Java
-    StoreController.getInstance().buyGoogleMarketItem("[Product id here]");
+    StoreInventory.buy("[SOOMLA itemId]");
 ```
 
 android-store
 ---
-**Feb 7th, 2013 - We've just released v2.0 of android-store. The major change is a key-value storage (above SQLite) instead of the previous tables. We've also added code that migrates old data and removes the old database (StorageManager.migrateOldData). When you upgrade your code make sure data is transferred from the old database.**
+**The new Virtual Economy model V3 is merged to master. The new model has many new features and it works better than the old one. Old applications may break b/c of the use in this new model. Already published games with android-store from before May 1st, 2013 needs to clone the project with tag v2.2.**  
 
 
 The android-store is our first open code initiative as part of The SOOMLA Project. It is a Java API that simplifies Google Play's in-app purchasing API and complements it with storage, security and event handling. The project also includes a sample app for reference. 
@@ -84,7 +74,7 @@ Getting Started
   When you show the store call:
 
     ```Java
-    StoreController.getInstance().storeOpening([your application context], [a handler you just created]);
+    StoreController.getInstance().storeOpening([the calling Activity]);
     ```
 
   When you hide the store call:
@@ -99,68 +89,70 @@ And that's it ! You have storage and in-app purchasing capabilities... ALL-IN-ON
 What's next? In App Purchasing.
 ---
 
-android-store provides you with VirtualCurrencyPacks. VirtualCurrencyPack is a representation of a "bag" of currency units that you want to let your users purchase in Google Play. You define VirtualCurrencyPacks in your game specific assets file which is your implementation of `IStoreAssets` ([example](https://github.com/soomla/android-store/blob/master/SoomlaAndroidExample/src/com/soomla/example/MuffinRushAssets.java)). After you do that you can call `StoreController` to make actual purchases and android-store will take care of the rest.
+When we implemented modelV3, we were thinking about ways people buy things inside apps. We figured many ways you can let your users purchase stuff in your game and we designed the new modelV3 to support 2 of them: PurchaseWithMarket and PurchaseWithVirtualItem.
 
-Example:
+**PurchaseWithMarket** is a PurchaseType that allows users to purchase a VirtualItem with Google Play or with the App Store (through their in-app purchase mechanisms).  
+**PurchaseWithVirtualItem** is a PurchaseType that lets your users purchase a VirtualItem with a different VirtualItem. For Example: Buying 1 Sword with 100 Gems.
+
+In order to define the way your various virtual items (Goods, Coins ...) are purchased, you'll need to create your implementation of IStoreAsset (the same one from step 4 in the "Getting Started" above).
+
+Here is an example:
 
 Lets say you have a _VirtualCurrencyPack_ you call `TEN_COINS_PACK` and a _VirtualCurrency_ you call `COIN_CURRENCY`:
 
-
 ```Java
-VirtualCurrencyPack TEN_COINS_PACK = new VirtualCurrencyPack(
-        "10 Coins",                // name
-        "A pack of 10 coins",      // description
-        "10_coins",                // item id
-        "com.soomla.ten_coin_pack",// product id in Google Market
-        1.99,                      // actual price in $$
-        10,                        // number of currency units in the pack
-        COIN_CURRENCY);            // the associated currency
+VirtualCurrencyPack TENMUFF_PACK = new VirtualCurrencyPack(
+        "10 Coins",                                     // name
+        "A pack of 10 coins",                           // description
+        "10_coins",                                     // item id
+        10,                                             // number of currencies in the pack
+        COIN_CURRENCY,                                  // the currency associated with this pack
+        new PurchaseWithMarket("com.soomla.ten_coin_pack", 1.99));
 ```
-     
-Now you can use _StoreController_ to call Google Play's in-app purchasing mechanism:
+ 
+Now you can use _StoreInventory_ to buy this VirtualCurrencyPack:
 
 ```Java
-StoreController.getInstance().buyGoogleMarketItem(TEN_COINS_PACK.getProductId());
+StoreInventory.buy(TEN_COINS_PACK);
 ```
     
-And that's it! android-store knows how to contact Google Play for you and redirect the user to the purchasing mechanism.
+And that's it! android-store knows how to contact Google Play for you and will redirect your users to their purchasing system to complete the transaction.
 Don't forget to define your _IStoreEventHandler_ in order to get the events of successful or failed purchases (see [Event Handling](https://github.com/soomla/android-store#event-handling)).
 
 
 Storage & Meta-Data
 ---
 
-When you initialize _StoreController_, it automatically initializes two other classes: _StorageManager_ and _StoreInfo_. _StorageManager_ is the father of all storage related instances in your game. Use it to access tha balances of virtual currencies and virtual goods (usually, using their itemIds). _StoreInfo_ is the mother of all meta data information about your specific game. It is initialized with your implementation of `IStoreAssets` and you can use it to retrieve information about your specific game.
+When you initialize _StoreController_, it automatically initializes two other classes: _StorageManager_ and _StoreInfo_. _StorageManager_ is the father of all storage related instances in your game. Use it to access tha balances of virtual currencies and virtual goods (usually, using their itemIds). _StoreInfo_ is the mother of all meta data information about your specific game. It is initialized with your implementation of `IStoreAssets` and you can use it to retrieve information about your specific game.  
+We've also added _StoreInventory_ which is a utility class to help you do store related operations even easier.
 
 The on-device storage is encrypted and kept in a SQLite database. SOOMLA is preparing a cloud-based storage service that will allow this SQLite to be synced to a cloud-based repository that you'll define.
 
 **Example Usages**
 
-* Add 10 coins to the virtual currency with itemId "currency_coin":
+* Give the user 10 pieces of a virtual currency with itemId "currency_coin":
 
     ```Java
-    VirtualCurrency coin = StoreInfo.getVirtualCurrencyByItemId("currency_coin");
-    StorageManager.getVirtualCurrencyStorage().add(coin, 10);
+    StoreInventory.giveVirtualItem("currency_coin", 10);
     ```
     
-* Remove 10 virtual goods with itemId "green_hat":
+* Take 10 virtual goods with itemId "green_hat":
 
     ```Java
-    VirtualGood greenHat = StoreInfo.getVirtualGoodByItemId("green_hat");
-    StorageManager.getVirtualGoodsStorage().remove(greenHat, 10);
+    StoreInventory.takeVirtualItem("green_hat", 10);
     ```
     
-* Get the current balance of green hats (virtual goods with itemId "green_hat"):
+* Get the current balance of a virtual good with itemId "green_hat" (here we decided to show you the 'long' way. you can also use StoreInventory):
 
     ```Java
-    VirtualGood greenHat = StoreInfo.getVirtualGoodByItemId("green_hat");
+    VirtualGood greenHat = (VirtualGood)StoreInfo.getVirtualItem("green_hat");
     int greenHatsBalance = StorageManager.getVirtualGoodsStorage().getBalance(greenHat);
     ```
     
 Security
 ---
 
-If you want to protect your application from 'bad people' (and who doesn't?!), you might want to follow some guidelines:
+If you want to protect your game from 'bad people' (and who doesn't?!), you might want to follow some guidelines:
 
 + SOOMLA keeps the game's data in an encrypted database. In order to encrypt your data, SOOMLA generates a private key out of several parts of information. The Custom Secret is one of them. SOOMLA recommends that you provide this value when initializing `StoreController` and before you release your game. BE CAREFUL: You can change this value once! If you try to change it again, old data from the database will become unavailable.
 + Following Google's recommendation, SOOMLA also recommends that you split your public key and construct it on runtime or even use bit manipulation on it in order to hide it. The key itself is not secret information but if someone replaces it, your application might get fake messages that might harm it.
@@ -177,7 +169,7 @@ In order to register for events:
 1. In the class that should receive the event create a function with the annotation '@Subscribe'. Example:
 
     ```Java
-    @Subscribe public void onMarketPurchase(MarketPurchaseEvent marketPurchaseEvent) {
+    @Subscribe public void onPlayPurchaseEvent(PlayPurchaseEvent playPurchaseEvent) {
         ...
     }
     ```
