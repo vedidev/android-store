@@ -8,7 +8,7 @@ Haven't you ever wanted an in-app purchase one liner that looks like this ?!
 
 android-store
 ---
-**The new Virtual Economy model V3 is merged to master. The new model has many new features and it works better than the old one. Old applications may break b/c of the use in this new model. Already published games with android-store from before May 1st, 2013 needs to clone the project with tag v2.2.**  
+**The new Virtual Economy model V3 is merged into master. The new model has many new features and it works better than the old one. Old applications may break if they use in this new model so already published games with android-store from before May 1st, 2013 needs to clone the project with tag 'v2.2' and not 'v3.0'.**
 
 
 The android-store is our first open code initiative as part of The SOOMLA Project. It is a Java API that simplifies Google Play's in-app purchasing API and complements it with storage, security and event handling. The project also includes a sample app for reference. 
@@ -91,7 +91,7 @@ What's next? In App Purchasing.
 
 When we implemented modelV3, we were thinking about ways people buy things inside apps. We figured many ways you can let your users purchase stuff in your game and we designed the new modelV3 to support 2 of them: PurchaseWithMarket and PurchaseWithVirtualItem.
 
-**PurchaseWithMarket** is a PurchaseType that allows users to purchase a VirtualItem with Google Play or with the App Store (through their in-app purchase mechanisms).  
+**PurchaseWithMarket** is a PurchaseType that allows users to purchase a VirtualItem with Google Play.  
 **PurchaseWithVirtualItem** is a PurchaseType that lets your users purchase a VirtualItem with a different VirtualItem. For Example: Buying 1 Sword with 100 Gems.
 
 In order to define the way your various virtual items (Goods, Coins ...) are purchased, you'll need to create your implementation of IStoreAsset (the same one from step 4 in the "Getting Started" above).
@@ -110,7 +110,7 @@ VirtualCurrencyPack TENMUFF_PACK = new VirtualCurrencyPack(
         new PurchaseWithMarket("com.soomla.ten_coin_pack", 1.99));
 ```
  
-Now you can use _StoreInventory_ to buy this VirtualCurrencyPack:
+Now you can use _StoreInventory_ to buy your new VirtualCurrencyPack:
 
 ```Java
 StoreInventory.buy(TEN_COINS_PACK);
