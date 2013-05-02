@@ -11,7 +11,7 @@ android-store
 **The new Virtual Economy model V3 is merged into master. The new model has many new features and it works better than the old one. Old applications may break if they use in this new model so already published games with android-store from before May 1st, 2013 needs to clone the project with tag 'v2.2' and not 'v3.0'.**
 
 Want to learn more about modelV3? Try these:  
-* [Handling Store Operations](https://github.com/soomla/android-store/wiki/Handling-Store-Operations)  
+* [Economy Model Objects](https://github.com/soomla/android-store/wiki/Economy-Model-Objects)  
 * [Handling Store Operations](https://github.com/soomla/android-store/wiki/Handling-Store-Operations)
 
 The android-store is our first open code initiative as part of The SOOMLA Project. It is a Java API that simplifies Google Play's in-app purchasing API and complements it with storage, security and event handling. The project also includes a sample app for reference. 
