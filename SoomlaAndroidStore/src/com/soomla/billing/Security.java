@@ -128,8 +128,10 @@ public class Security {
         StoreUtils.LogDebug(TAG, "signedData: " + signedData);
 
         boolean verified = false;
-        // TODO: check this out... we might not want to verify when debugging.
+
         if (StoreController.getInstance().isTestMode()) {
+            verified = true;
+        } else {
             if (TextUtils.isEmpty(signature)) {
                 StoreUtils.LogWarning(TAG, "Empty signature. Stopping verification.");
                 return null;
@@ -146,8 +148,6 @@ public class Security {
                 Log.w(TAG, "signature does not match data.");
                 return null;
             }
-        } else {
-            verified = true;
         }
 
         JSONObject jObject;

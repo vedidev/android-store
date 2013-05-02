@@ -6,8 +6,8 @@ Haven't you ever wanted an in-app purchase one liner that looks like this ?!
     StoreInventory.buy("[itemId]");
 ```
 
-android-store
----
+## android-store
+
 **The new Virtual Economy model V3 is merged into master. The new model has many new features and it works better than the old one. Old applications may break if they use in this new model so already published games with android-store from before May 1st, 2013 needs to clone the project with tag 'v2.2' and not 'v3.0'.**
 
 Want to learn more about modelV3? Try these:  
@@ -21,8 +21,8 @@ The android-store is our first open code initiative as part of The SOOMLA Projec
 
 Check out our [Wiki] (https://github.com/soomla/android-store/wiki) for more information about the project and how to use it better.
 
-Getting Started
----
+## Getting Started
+
 * Before doing anything, SOOMLA recommends that you go through [Android In-app Billing](http://developer.android.com/guide/google/play/billing/index.html).
 
 1. Clone android-store. Copy all files from android-store/SoomlaAndroidStore subfolders to their equivalent folders in your Android project:
@@ -89,8 +89,8 @@ Getting Started
 And that's it ! You have storage and in-app purchasing capabilities... ALL-IN-ONE.
 
 
-What's next? In App Purchasing.
----
+## What's next? In App Purchasing.
+
 
 When we implemented modelV3, we were thinking about ways people buy things inside apps. We figured many ways you can let your users purchase stuff in your game and we designed the new modelV3 to support 2 of them: PurchaseWithMarket and PurchaseWithVirtualItem.
 
@@ -104,27 +104,38 @@ Here is an example:
 Lets say you have a _VirtualCurrencyPack_ you call `TEN_COINS_PACK` and a _VirtualCurrency_ you call `COIN_CURRENCY`:
 
 ```Java
-VirtualCurrencyPack TENMUFF_PACK = new VirtualCurrencyPack(
+VirtualCurrencyPack TEN_COINS_PACK = new VirtualCurrencyPack(
         "10 Coins",                                     // name
         "A pack of 10 coins",                           // description
         "10_coins",                                     // item id
         10,                                             // number of currencies in the pack
-        COIN_CURRENCY,                                  // the currency associated with this pack
+        COIN_CURRENCY_ITEM_ID,                          // the currency associated with this pack
         new PurchaseWithMarket("com.soomla.ten_coin_pack", 1.99));
 ```
  
 Now you can use _StoreInventory_ to buy your new VirtualCurrencyPack:
 
 ```Java
-StoreInventory.buy(TEN_COINS_PACK);
+StoreInventory.buy(TEN_COINS_PACK.getItemId());
 ```
     
 And that's it! android-store knows how to contact Google Play for you and will redirect your users to their purchasing system to complete the transaction.
 Don't forget to define your _IStoreEventHandler_ in order to get the events of successful or failed purchases (see [Event Handling](https://github.com/soomla/android-store#event-handling)).
 
 
-Storage & Meta-Data
----
+## Debugging
+
+In order to debug android-store, we've added 2 configurations:
+
+* StoreConfig.logDebug - Set it to 'true' when you want to see many multiple debug messages thrown to Logcat.
+* Test Mode - You can 'tell' the SDK to work in test mode. It actually means that it won't verify purchases on the device. This feature will let you buy Google's test products. Test Mode is _off_ by default, to set it on:
+
+``` Java
+StoreController.getInstance().setTestMode(true);
+```
+
+## Storage & Meta-Data
+
 
 When you initialize _StoreController_, it automatically initializes two other classes: _StorageManager_ and _StoreInfo_. _StorageManager_ is the father of all storage related instances in your game. Use it to access tha balances of virtual currencies and virtual goods (usually, using their itemIds). _StoreInfo_ is the mother of all meta data information about your specific game. It is initialized with your implementation of `IStoreAssets` and you can use it to retrieve information about your specific game.  
 We've also added _StoreInventory_ which is a utility class to help you do store related operations even easier.
@@ -152,16 +163,16 @@ The on-device storage is encrypted and kept in a SQLite database. SOOMLA is prep
     int greenHatsBalance = StorageManager.getVirtualGoodsStorage().getBalance(greenHat);
     ```
     
-Security
----
+## Security
+
 
 If you want to protect your game from 'bad people' (and who doesn't?!), you might want to follow some guidelines:
 
 + SOOMLA keeps the game's data in an encrypted database. In order to encrypt your data, SOOMLA generates a private key out of several parts of information. The Custom Secret is one of them. SOOMLA recommends that you provide this value when initializing `StoreController` and before you release your game. BE CAREFUL: You can change this value once! If you try to change it again, old data from the database will become unavailable.
 + Following Google's recommendation, SOOMLA also recommends that you split your public key and construct it on runtime or even use bit manipulation on it in order to hide it. The key itself is not secret information but if someone replaces it, your application might get fake messages that might harm it.
 
-Event Handling
----
+## Event Handling
+
 
 For event handling, we use Square's great open-source project [otto](http://square.github.com/otto/). In ordered to be notified of store related events, you can register for specific events and create your game-specific behaviour to handle them.
 
@@ -195,22 +206,22 @@ You can find a full event handler example [here](https://github.com/soomla/andro
 
 [Full documentation and explanation of otto](http://square.github.com/otto/)
 
-Contribution
----
+## Contribution
+
 
 We want you!
 
 Fork -> Clone -> Implement -> Test -> Pull-Request. We have great RESPECT for contributors.
 
-SOOMLA, Elsewhere ...
----
+## SOOMLA, Elsewhere ...
+
 
 + [Website](http://project.soom.la/)
 + [On Facebook](https://www.facebook.com/pages/The-SOOMLA-Project/389643294427376).
 + [On AngelList](https://angel.co/the-soomla-project)
 
-License
----
+## License
+
 MIT License. Copyright (c) 2012 SOOMLA. http://project.soom.la
 + http://www.opensource.org/licenses/MIT
 
