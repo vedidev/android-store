@@ -108,19 +108,19 @@ public class StoreInventory {
 
     /** NonConsumables **/
 
-    public boolean nonConsumableItemExists(String nonConsItemId) throws VirtualItemNotFoundException, ClassCastException {
+    public static boolean nonConsumableItemExists(String nonConsItemId) throws VirtualItemNotFoundException, ClassCastException {
         NonConsumableItem nonConsumableItem = (NonConsumableItem) StoreInfo.getVirtualItem(nonConsItemId);
 
         return StorageManager.getNonConsumableItemsStorage().nonConsumableItemExists(nonConsumableItem);
     }
 
-    public void addNonConsumableItem(String nonConsItemId) throws VirtualItemNotFoundException, ClassCastException {
+    public static void addNonConsumableItem(String nonConsItemId) throws VirtualItemNotFoundException, ClassCastException {
         NonConsumableItem nonConsumableItem = (NonConsumableItem) StoreInfo.getVirtualItem(nonConsItemId);
 
         StorageManager.getNonConsumableItemsStorage().add(nonConsumableItem);
     }
 
-    public void removeNonConsumableItem(String nonConsItemId) throws VirtualItemNotFoundException, ClassCastException {
+    public static void removeNonConsumableItem(String nonConsItemId) throws VirtualItemNotFoundException, ClassCastException {
         NonConsumableItem nonConsumableItem = (NonConsumableItem) StoreInfo.getVirtualItem(nonConsItemId);
 
         StorageManager.getNonConsumableItemsStorage().remove(nonConsumableItem);
