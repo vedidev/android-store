@@ -43,7 +43,7 @@ import java.util.Iterator;
  *  6. UpgradeVG for strength 'level 5'
  *
  * Now, when the user buys this UpgradeVG, we check and make sure the appropriate conditions are met and buy it for you
- * (which actually means we upgrading the associated VirtualGood).
+ * (which actually means we upgrade the associated VirtualGood).
  *
  * This VirtualItem is purchasable.
  * In case you purchase this item in Google Play (PurchaseWithMarket), You need to define the google item in Google

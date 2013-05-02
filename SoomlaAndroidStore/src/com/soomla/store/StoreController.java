@@ -33,7 +33,7 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 /**
- * This class holds the most basic assets needed to operate the Store.
+ * This class holds the basic assets needed to operate the Store.
  * You can use it to purchase products from Google Play.
  *
  * This is the only class you need to initialize in order to use the SOOMLA SDK.

@@ -3,7 +3,7 @@
 Haven't you ever wanted an in-app purchase one liner that looks like this ?!
 
 ```Java
-    StoreInventory.buy("[SOOMLA itemId]");
+    StoreInventory.buy("[itemId]");
 ```
 
 android-store
@@ -13,7 +13,7 @@ android-store
 
 The android-store is our first open code initiative as part of The SOOMLA Project. It is a Java API that simplifies Google Play's in-app purchasing API and complements it with storage, security and event handling. The project also includes a sample app for reference. 
 
->If you also want to create a **storefront** you can do that using our [Store Designer](http://designer.soom.la).
+>If you also want to create a **storefront** you can do that using SOOMLA's [Store Designer](http://designer.soom.la).
 
 
 Check out our [Wiki] (https://github.com/soomla/android-store/wiki) for more information about the project and how to use it better.
