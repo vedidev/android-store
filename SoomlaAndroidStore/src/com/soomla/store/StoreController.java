@@ -173,6 +173,14 @@ public class StoreController extends PurchaseObserver {
         BusProvider.getInstance().post(new RestoreTransactionsStartedEvent());
     }
 
+    /**
+     * Answers the question: "Were transactions already restored for this game?"
+     */
+    public boolean transactionsAlreadyRestored() {
+        SharedPreferences prefs = new ObscuredSharedPreferences(SoomlaApp.getAppContext(), SoomlaApp.getAppContext().getSharedPreferences(StoreConfig.PREFS_NAME, Context.MODE_PRIVATE));
+        return prefs.getBoolean("RESTORED", false);
+    }
+
 
     /** PurchaseObserver overridden functions**/
 
@@ -264,6 +272,12 @@ public class StoreController extends PurchaseObserver {
 
         if (responseCode == Consts.ResponseCode.RESULT_OK) {
             StoreUtils.LogDebug(TAG, "RestoreTransactions succeeded");
+
+            SharedPreferences prefs = new ObscuredSharedPreferences(SoomlaApp.getAppContext(), SoomlaApp.getAppContext().getSharedPreferences(StoreConfig.PREFS_NAME, Context.MODE_PRIVATE));
+            SharedPreferences.Editor edit = prefs.edit();
+
+            edit.putBoolean("RESTORED", true);
+            edit.commit();
 
             BusProvider.getInstance().post(new RestoreTransactionsEvent(true));
         } else {

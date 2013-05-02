@@ -32,7 +32,8 @@ import com.soomla.store.domain.virtualGoods.VirtualGood;
  * This is the place where all the relevant storage classes are created.
  * This class contains static methods for you to retrieve the various storages.
  *
- * You will usually need the storage in order to get/set the amounts of virtual goods/currency.
+ * s
+ *
  */
 public class StorageManager {
 
