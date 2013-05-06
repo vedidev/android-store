@@ -197,6 +197,10 @@ public class EquippableVG extends LifetimeVG{
         }
     }
 
+    public EquippingModel getEquippingModel() {
+        return mEquippingModel;
+    }
+
     private static final String TAG = "SOOMLA EquippableVG";
 
     private EquippingModel mEquippingModel;
