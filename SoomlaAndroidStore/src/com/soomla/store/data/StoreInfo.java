@@ -199,6 +199,10 @@ public class StoreInfo {
         return mGoodsUpgrades.get(goodItemId);
     }
 
+    public static boolean hasUpgrades(String goodItemId) {
+        return mGoodsUpgrades.containsKey(goodItemId);
+    }
+
     /** Getters **/
 
     public static List<VirtualCurrency> getCurrencies(){
@@ -463,6 +467,7 @@ public class StoreInfo {
 
         // put StoreInfo in the database as JSON
         String store_json = toJSONObject().toString();
+        StoreUtils.LogDebug(TAG, store_json);
         String key = KeyValDatabase.keyMetaStoreInfo();
         store_json = StorageManager.getAESObfuscator().obfuscateString(store_json);
         key = StorageManager.getAESObfuscator().obfuscateString(key);
