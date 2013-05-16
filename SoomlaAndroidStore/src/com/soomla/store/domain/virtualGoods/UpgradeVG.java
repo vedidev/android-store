@@ -144,7 +144,7 @@ public class UpgradeVG extends VirtualGood {
         StorageManager.getVirtualGoodsStorage().assignCurrentUpgrade(good, this);
     }
 
-    /**
+     /**
      * This is actually a downgrade of the associated VirtualGood (mGood).
      * We check if the current Upgrade is really associated with the VirtualGood and:
      *  if YES we downgrade to the previous upgrade (or removing upgrades in case of null).

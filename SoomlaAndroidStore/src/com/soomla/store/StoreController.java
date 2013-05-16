@@ -62,7 +62,7 @@ public class StoreController extends PurchaseObserver {
             return;
         }
 
-        SharedPreferences prefs = new ObscuredSharedPreferences(SoomlaApp.getAppContext(), SoomlaApp.getAppContext().getSharedPreferences(StoreConfig.PREFS_NAME, Context.MODE_PRIVATE));
+        SharedPreferences prefs = new ObscuredSharedPreferences(SoomlaApp.getAppContext().getSharedPreferences(StoreConfig.PREFS_NAME, Context.MODE_PRIVATE));
         SharedPreferences.Editor edit = prefs.edit();
         if (publicKey != null && !publicKey.isEmpty()) {
             edit.putString(StoreConfig.PUBLIC_KEY, publicKey);
@@ -101,7 +101,7 @@ public class StoreController extends PurchaseObserver {
     public boolean buyWithGooglePlay(GoogleMarketItem googleMarketItem, String payload) {
         if (!checkInit()) return false;
 
-        SharedPreferences prefs = new ObscuredSharedPreferences(SoomlaApp.getAppContext(), SoomlaApp.getAppContext().getSharedPreferences(StoreConfig.PREFS_NAME, Context.MODE_PRIVATE));
+        SharedPreferences prefs = new ObscuredSharedPreferences(SoomlaApp.getAppContext().getSharedPreferences(StoreConfig.PREFS_NAME, Context.MODE_PRIVATE));
         String publicKey = prefs.getString(StoreConfig.PUBLIC_KEY, "");
         if (publicKey.isEmpty() || publicKey.equals("[YOUR PUBLIC KEY FROM GOOGLE PLAY]")) {
             StoreUtils.LogError(TAG, "You didn't provide a public key! You can't make purchases.");
@@ -177,7 +177,7 @@ public class StoreController extends PurchaseObserver {
      * Answers the question: "Were transactions already restored for this game?"
      */
     public boolean transactionsAlreadyRestored() {
-        SharedPreferences prefs = new ObscuredSharedPreferences(SoomlaApp.getAppContext(), SoomlaApp.getAppContext().getSharedPreferences(StoreConfig.PREFS_NAME, Context.MODE_PRIVATE));
+        SharedPreferences prefs = new ObscuredSharedPreferences(SoomlaApp.getAppContext().getSharedPreferences(StoreConfig.PREFS_NAME, Context.MODE_PRIVATE));
         return prefs.getBoolean("RESTORED", false);
     }
 
@@ -273,7 +273,7 @@ public class StoreController extends PurchaseObserver {
         if (responseCode == Consts.ResponseCode.RESULT_OK) {
             StoreUtils.LogDebug(TAG, "RestoreTransactions succeeded");
 
-            SharedPreferences prefs = new ObscuredSharedPreferences(SoomlaApp.getAppContext(), SoomlaApp.getAppContext().getSharedPreferences(StoreConfig.PREFS_NAME, Context.MODE_PRIVATE));
+            SharedPreferences prefs = new ObscuredSharedPreferences(SoomlaApp.getAppContext().getSharedPreferences(StoreConfig.PREFS_NAME, Context.MODE_PRIVATE));
             SharedPreferences.Editor edit = prefs.edit();
 
             edit.putBoolean("RESTORED", true);

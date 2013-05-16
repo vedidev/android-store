@@ -51,7 +51,7 @@ public class StoreDatabase {
         mDatabaseHelper = new DatabaseHelper(context);
         mStoreDB = mDatabaseHelper.getWritableDatabase();
 
-        SharedPreferences prefs = new ObscuredSharedPreferences(SoomlaApp.getAppContext(), SoomlaApp.getAppContext().getSharedPreferences(StoreConfig.PREFS_NAME, Context.MODE_PRIVATE));
+        SharedPreferences prefs = new ObscuredSharedPreferences(SoomlaApp.getAppContext().getSharedPreferences(StoreConfig.PREFS_NAME, Context.MODE_PRIVATE));
         int mt_ver = prefs.getInt("MT_VER", 0);
         int sa_ver_old = prefs.getInt("SA_VER_OLD", -1);
         int sa_ver_new = prefs.getInt("SA_VER_NEW", 0);

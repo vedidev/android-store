@@ -53,7 +53,6 @@ public class PurchaseWithMarket extends PurchaseType {
     @Override
     public void buy() throws InsufficientFundsException {
         SharedPreferences prefs = new ObscuredSharedPreferences(
-                SoomlaApp.getAppContext(),
                 SoomlaApp.getAppContext().getSharedPreferences(StoreConfig.PREFS_NAME, Context.MODE_PRIVATE));
         String publicKey = prefs.getString(StoreConfig.PUBLIC_KEY, "");
         if (publicKey.isEmpty() || publicKey.equals("[YOUR PUBLIC KEY FROM GOOGLE PLAY]")) {

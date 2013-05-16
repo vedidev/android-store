@@ -136,7 +136,7 @@ public class Security {
                 StoreUtils.LogWarning(TAG, "Empty signature. Stopping verification.");
                 return null;
             }
-            SharedPreferences prefs = new ObscuredSharedPreferences(SoomlaApp.getAppContext(), SoomlaApp.getAppContext().getSharedPreferences(StoreConfig.PREFS_NAME, Context.MODE_PRIVATE));
+            SharedPreferences prefs = new ObscuredSharedPreferences(SoomlaApp.getAppContext().getSharedPreferences(StoreConfig.PREFS_NAME, Context.MODE_PRIVATE));
             String publicKey = prefs.getString(StoreConfig.PUBLIC_KEY, "");
             if (publicKey.isEmpty()) {
                 Log.w(TAG, "Empty publicKey. Stopping verification.");
@@ -265,13 +265,7 @@ public class Security {
 
     private static AESObfuscator getAesObfuscator(Context context) {
         if (mAesObfuscator == null) {
-            String deviceId = Settings.Secure.getString(context.getContentResolver(), Settings.Secure.ANDROID_ID);
-            if (deviceId == null || TextUtils.isEmpty(deviceId)){
-                // This is a fallback in case the device id cannot be retrieved on the device
-                // (happened on some devices !)
-                deviceId = "123456789";
-            }
-            mAesObfuscator = new AESObfuscator(StoreConfig.obfuscationSalt, context.getPackageName(), deviceId);
+            mAesObfuscator = new AESObfuscator(StoreConfig.obfuscationSalt, context.getPackageName(), StoreUtils.deviceId());
         }
         return mAesObfuscator;
     }

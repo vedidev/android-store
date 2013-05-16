@@ -28,7 +28,6 @@ import android.os.IBinder;
 import android.os.RemoteException;
 import android.util.Log;
 import com.android.vending.billing.IMarketBillingService;
-import com.soomla.store.StoreConfig;
 import com.soomla.store.StoreUtils;
 
 import java.util.ArrayList;

@@ -49,8 +49,7 @@ public class StorageManager {
 
     public static AESObfuscator getAESObfuscator(){
         if (mObfuscator == null) {
-            String deviceId = Settings.Secure.getString(SoomlaApp.getAppContext().getContentResolver(), Settings.Secure.ANDROID_ID);
-            mObfuscator = new AESObfuscator(StoreConfig.obfuscationSalt, SoomlaApp.getAppContext().getPackageName(), deviceId);
+            mObfuscator = new AESObfuscator(StoreConfig.obfuscationSalt, SoomlaApp.getAppContext().getPackageName(), StoreUtils.deviceId());
         }
 
         return mObfuscator;
@@ -63,7 +62,7 @@ public class StorageManager {
 
             migrateOldData();
 
-            SharedPreferences prefs = new ObscuredSharedPreferences(SoomlaApp.getAppContext(),
+            SharedPreferences prefs = new ObscuredSharedPreferences(
                     SoomlaApp.getAppContext().getSharedPreferences(StoreConfig.PREFS_NAME, Context.MODE_PRIVATE));
             int mt_ver = prefs.getInt("MT_VER", 0);
             int sa_ver_old = prefs.getInt("SA_VER_OLD", -1);

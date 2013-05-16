@@ -1,12 +1,12 @@
 package com.soomla.store.data;
 
 
-import android.content.Context;
 import android.content.SharedPreferences;
 import android.provider.Settings;
 import android.util.Base64;
 import com.soomla.store.SoomlaApp;
 import com.soomla.store.StoreConfig;
+import com.soomla.store.StoreUtils;
 
 import javax.crypto.Cipher;
 import javax.crypto.SecretKey;
@@ -21,11 +21,9 @@ public class ObscuredSharedPreferences implements SharedPreferences {
 
 
     protected SharedPreferences delegate;
-    protected Context context;
 
-    public ObscuredSharedPreferences(Context context, SharedPreferences delegate) {
+    public ObscuredSharedPreferences(SharedPreferences delegate) {
         this.delegate = delegate;
-        this.context = context;
     }
 
     public class Editor implements SharedPreferences.Editor {
@@ -161,9 +159,9 @@ public class ObscuredSharedPreferences implements SharedPreferences {
         try {
             final byte[] bytes = value!=null ? value.getBytes(UTF8) : new byte[0];
             SecretKeyFactory keyFactory = SecretKeyFactory.getInstance("PBEWithMD5AndDES");
-            SecretKey key = keyFactory.generateSecret(new PBEKeySpec((StoreConfig.SOOM_SEC + SoomlaApp.getAppContext().getPackageName() + Settings.Secure.getString(context.getContentResolver(), Settings.Secure.ANDROID_ID)).toCharArray()));
+            SecretKey key = keyFactory.generateSecret(new PBEKeySpec((StoreConfig.SOOM_SEC + SoomlaApp.getAppContext().getPackageName() + StoreUtils.deviceId()).toCharArray()));
             Cipher pbeCipher = Cipher.getInstance("PBEWithMD5AndDES");
-            pbeCipher.init(Cipher.ENCRYPT_MODE, key, new PBEParameterSpec(Settings.Secure.getString(context.getContentResolver(),Settings.Secure.ANDROID_ID).getBytes(UTF8), 20));
+            pbeCipher.init(Cipher.ENCRYPT_MODE, key, new PBEParameterSpec(StoreUtils.deviceId().getBytes(UTF8), 20));
             return new String(Base64.encode(pbeCipher.doFinal(bytes), Base64.NO_WRAP),UTF8);
 
         } catch( Exception e ) {
@@ -176,9 +174,9 @@ public class ObscuredSharedPreferences implements SharedPreferences {
         try {
             final byte[] bytes = value!=null ? Base64.decode(value,Base64.DEFAULT) : new byte[0];
             SecretKeyFactory keyFactory = SecretKeyFactory.getInstance("PBEWithMD5AndDES");
-            SecretKey key = keyFactory.generateSecret(new PBEKeySpec((StoreConfig.SOOM_SEC + SoomlaApp.getAppContext().getPackageName() + Settings.Secure.getString(context.getContentResolver(), Settings.Secure.ANDROID_ID)).toCharArray()));
+            SecretKey key = keyFactory.generateSecret(new PBEKeySpec((StoreConfig.SOOM_SEC + SoomlaApp.getAppContext().getPackageName() + StoreUtils.deviceId()).toCharArray()));
             Cipher pbeCipher = Cipher.getInstance("PBEWithMD5AndDES");
-            pbeCipher.init(Cipher.DECRYPT_MODE, key, new PBEParameterSpec(Settings.Secure.getString(context.getContentResolver(),Settings.Secure.ANDROID_ID).getBytes(UTF8), 20));
+            pbeCipher.init(Cipher.DECRYPT_MODE, key, new PBEParameterSpec(StoreUtils.deviceId().getBytes(UTF8), 20));
             return new String(pbeCipher.doFinal(bytes),UTF8);
 
         } catch( Exception e) {

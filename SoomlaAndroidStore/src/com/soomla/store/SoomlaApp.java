@@ -29,6 +29,10 @@ public class SoomlaApp extends Application{
         context = getApplicationContext();
     }
 
+    public static void setExternalContext(Context oContext) {
+        context = oContext;
+    }
+
     public static Context getAppContext() {
         return context;
     }

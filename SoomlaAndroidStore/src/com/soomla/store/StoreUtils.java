@@ -16,6 +16,7 @@
 
 package com.soomla.store;
 
+import android.provider.Settings;
 import android.util.Log;
 
 public class StoreUtils {
@@ -32,6 +33,18 @@ public class StoreUtils {
 
     public static void LogError(String tag, String message) {
         Log.e(tag, message);
+    }
+
+    public static String deviceId() {
+        String androidId = Settings.Secure.getString(SoomlaApp.getAppContext().getContentResolver(), Settings.Secure.ANDROID_ID);
+        if (androidId == null) {
+            // This is a fallback in case the device id cannot be retrieved on the device
+            // (happened on some devices !)
+            StoreUtils.LogError("SOOMLA ObscuredSharedPreferences", "Couldn't fetch ANDROID_ID. using fake id.");
+            androidId = "SOOMFAKE";
+        }
+
+        return androidId;
     }
 
     private static String TAG = "SOOMLA StoreUtils";

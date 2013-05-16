@@ -21,6 +21,7 @@ import android.content.SharedPreferences;
 import android.text.TextUtils;
 import com.soomla.store.SoomlaApp;
 import com.soomla.store.StoreConfig;
+import com.soomla.store.StoreUtils;
 import com.soomla.store.data.ObscuredSharedPreferences;
 
 import javax.crypto.*;
@@ -29,6 +30,8 @@ import javax.crypto.spec.PBEKeySpec;
 import javax.crypto.spec.SecretKeySpec;
 import java.io.UnsupportedEncodingException;
 import java.security.GeneralSecurityException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.security.spec.KeySpec;
 
 /**
@@ -52,20 +55,40 @@ public class AESObfuscator {
      *    create this unique identifier.
      */
     public AESObfuscator(byte[] salt, String applicationId, String deviceId) {
+        SharedPreferences prefs = new ObscuredSharedPreferences(SoomlaApp.getAppContext().getSharedPreferences(StoreConfig.PREFS_NAME, Context.MODE_PRIVATE));
+        byte[] passwordData = null;
         try {
             SecretKeyFactory factory = SecretKeyFactory.getInstance(KEYGEN_ALGORITHM);
-            SharedPreferences prefs = new ObscuredSharedPreferences(SoomlaApp.getAppContext(), SoomlaApp.getAppContext().getSharedPreferences(StoreConfig.PREFS_NAME, Context.MODE_PRIVATE));
             KeySpec keySpec =
                     new PBEKeySpec((applicationId + deviceId + prefs.getString(StoreConfig.CUSTOM_SEC, "SOOMLA_SEC")).toCharArray(), salt, 1024, 256);
-            SecretKey tmp = factory.generateSecret(keySpec);
-            SecretKey secret = new SecretKeySpec(tmp.getEncoded(), "AES");
+            passwordData = factory.generateSecret(keySpec).getEncoded();
+        } catch (GeneralSecurityException e) {
+            StoreUtils.LogDebug("SOOMLA AESObfuscator", "probably an incompatible device. trying different approach.");
+
+            MessageDigest digester = null;
+            try {
+                digester = MessageDigest.getInstance("MD5");
+
+                char[] password = (applicationId + deviceId + prefs.getString(StoreConfig.CUSTOM_SEC, "SOOMLA_SEC")).toCharArray();
+                for (int i = 0; i < password.length; i++) {
+                    digester.update((byte) password[i]);
+                }
+                passwordData = digester.digest();
+            } catch (NoSuchAlgorithmException e1) {
+                // This can't happen on a compatible Android device.
+                throw new RuntimeException("Invalid environment", e1);
+            }
+        }
+
+        SecretKey secret = new SecretKeySpec(passwordData, "AES");
+        try {
             mEncryptor = Cipher.getInstance(CIPHER_ALGORITHM);
             mEncryptor.init(Cipher.ENCRYPT_MODE, secret, new IvParameterSpec(IV));
             mDecryptor = Cipher.getInstance(CIPHER_ALGORITHM);
             mDecryptor.init(Cipher.DECRYPT_MODE, secret, new IvParameterSpec(IV));
         } catch (GeneralSecurityException e) {
             // This can't happen on a compatible Android device.
-            throw new RuntimeException("Invalid environment", e);
+            throw new RuntimeException("Invalid environment 2", e);
         }
     }
 
