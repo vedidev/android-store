@@ -16,7 +16,7 @@ Want to learn more about modelV3? Try these:
 
 The android-store is our first open code initiative as part of The SOOMLA Project. It is a Java API that simplifies Google Play's in-app purchasing API and complements it with storage, security and event handling. The project also includes a sample app for reference. 
 
->If you also want to create a **storefront** you can do that using SOOMLA's [Store Designer](http://designer.soom.la).
+>If you also want to create a **storefront** you can do that using SOOMLA's [In-App Purchase Store Designer](http://soom.la).
 
 
 Check out our [Wiki] (https://github.com/soomla/android-store/wiki) for more information about the project and how to use it better.
@@ -216,7 +216,7 @@ Fork -> Clone -> Implement -> Test -> Pull-Request. We have great RESPECT for co
 ## SOOMLA, Elsewhere ...
 
 
-+ [Website](http://project.soom.la/)
++ [SOOMLA Website](http://soom.la/)
 + [On Facebook](https://www.facebook.com/pages/The-SOOMLA-Project/389643294427376).
 + [On AngelList](https://angel.co/the-soomla-project)
 
