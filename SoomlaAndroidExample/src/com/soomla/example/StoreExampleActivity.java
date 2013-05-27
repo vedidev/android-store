@@ -17,6 +17,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import com.soomla.store.*;
 import com.soomla.store.data.ObscuredSharedPreferences;
+import com.soomla.store.domain.virtualCurrencies.VirtualCurrency;
 import com.soomla.store.exceptions.VirtualItemNotFoundException;
 
 public class StoreExampleActivity extends Activity {
@@ -63,11 +64,13 @@ public class StoreExampleActivity extends Activity {
 
         // Checking if it's a first run and adding 10000 currencies if it is.
         // OFCOURSE... THIS IS JUST FOR TESTING.
-        SharedPreferences prefs = new ObscuredSharedPreferences(SoomlaApp.getAppContext(), SoomlaApp.getAppContext().getSharedPreferences(StoreConfig.PREFS_NAME, Context.MODE_PRIVATE));
+        SharedPreferences prefs = new ObscuredSharedPreferences(SoomlaApp.getAppContext().getSharedPreferences(StoreConfig.PREFS_NAME, Context.MODE_PRIVATE));
         boolean initialized = prefs.getBoolean(FIRST_RUN, false);
         if (!initialized) {
             try {
-                StoreInventory.giveVirtualItem(storeAssets.getCurrencies()[0].getItemId(), 10000);
+                for (VirtualCurrency currency : storeAssets.getCurrencies()) {
+                    StoreInventory.giveVirtualItem(currency.getItemId(), 10000);
+                }
                 SharedPreferences.Editor edit = prefs.edit();
                 edit.putBoolean(FIRST_RUN, true);
                 edit.commit();

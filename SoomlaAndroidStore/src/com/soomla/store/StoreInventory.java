@@ -10,6 +10,7 @@ import com.soomla.store.domain.virtualGoods.EquippableVG;
 import com.soomla.store.domain.virtualGoods.UpgradeVG;
 import com.soomla.store.domain.virtualGoods.VirtualGood;
 import com.soomla.store.exceptions.InsufficientFundsException;
+import com.soomla.store.exceptions.NotEnoughGoodsException;
 import com.soomla.store.exceptions.VirtualItemNotFoundException;
 
 public class StoreInventory {
@@ -39,16 +40,21 @@ public class StoreInventory {
 
     /** Virtual Goods **/
 
-    public static void equipVirtualGood(String goodItemId) throws VirtualItemNotFoundException, ClassCastException{
+    public static void equipVirtualGood(String goodItemId) throws VirtualItemNotFoundException, ClassCastException, NotEnoughGoodsException{
         EquippableVG good = (EquippableVG) StoreInfo.getVirtualItem(goodItemId);
 
-        StorageManager.getVirtualGoodsStorage().equip(good);
+        try {
+            good.equip();
+        } catch (NotEnoughGoodsException e) {
+            StoreUtils.LogError("StoreInventory", "UNEXPECTED! couldn't equip something");
+            throw e;
+        }
     }
 
     public static void unEquipVirtualGood(String goodItemId) throws VirtualItemNotFoundException, ClassCastException{
         EquippableVG good = (EquippableVG) StoreInfo.getVirtualItem(goodItemId);
 
-        StorageManager.getVirtualGoodsStorage().unequip(good);
+        good.unequip();
     }
 
     public static boolean isVirtualGoodEquipped(String goodItemId) throws VirtualItemNotFoundException, ClassCastException{
