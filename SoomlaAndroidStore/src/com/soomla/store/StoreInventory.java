@@ -89,6 +89,7 @@ public class StoreInventory {
         return upgradeVG.getItemId();
     }
 
+    // Just upgrading the given VirtualGood (the 'buy' process will be applied)
     public static void upgradeVirtualGood(String goodItemId) throws VirtualItemNotFoundException, InsufficientFundsException {
         VirtualGood good = (VirtualGood) StoreInfo.getVirtualItem(goodItemId);
         UpgradeVG upgradeVG = StorageManager.getVirtualGoodsStorage().getCurrentUpgrade(good);
@@ -104,6 +105,15 @@ public class StoreInventory {
             if (first != null) {
                 first.buy();
             }
+        }
+    }
+
+    public static void forceUpgrade(String upgradeItemId) throws VirtualItemNotFoundException {
+        try {
+            UpgradeVG upgradeVG = (UpgradeVG) StoreInfo.getVirtualItem(upgradeItemId);
+            upgradeVG.give(1);
+        } catch (ClassCastException ex) {
+            StoreUtils.LogError("SOOMLA StoreInventory", "The given itemId was of a non UpgradeVG VirtualItem. Can't force it.");
         }
     }
 
