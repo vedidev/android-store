@@ -65,4 +65,13 @@ public class VirtualCurrency extends VirtualItem {
     public void take(int amount) {
         StorageManager.getVirtualCurrencyStorage().remove(this, amount);
     }
+
+    /**
+     * see parent
+     * @param balance see parent
+     */
+    @Override
+    public void resetBalance(int balance) {
+        StorageManager.getVirtualCurrencyStorage().setBalance(this, balance);
+    }
 }

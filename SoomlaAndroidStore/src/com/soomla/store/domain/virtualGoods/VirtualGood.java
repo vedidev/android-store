@@ -15,6 +15,7 @@
  */
 package com.soomla.store.domain.virtualGoods;
 
+import com.soomla.store.data.StorageManager;
 import com.soomla.store.domain.PurchasableVirtualItem;
 import com.soomla.store.purchaseTypes.PurchaseType;
 import org.json.JSONException;
@@ -53,6 +54,15 @@ public abstract class VirtualGood extends PurchasableVirtualItem {
     @Override
     public JSONObject toJSONObject(){
         return super.toJSONObject();
+    }
+
+    /**
+     * see parent
+     * @param balance see parent
+     */
+    @Override
+    public void resetBalance(int balance) {
+        StorageManager.getVirtualGoodsStorage().setBalance(this, balance);
     }
 
     /** Private members **/

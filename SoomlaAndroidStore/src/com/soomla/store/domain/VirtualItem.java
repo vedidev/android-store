@@ -46,7 +46,11 @@ public abstract class VirtualItem {
      */
     public VirtualItem(JSONObject jsonObject) throws JSONException{
         mName = jsonObject.getString(JSONConsts.ITEM_NAME);
-        mDescription = jsonObject.getString(JSONConsts.ITEM_DESCRIPTION);
+        try{
+            mDescription = jsonObject.getString(JSONConsts.ITEM_DESCRIPTION);
+        } catch (JSONException ex) {
+            // There's not description ... just catching an exception
+        }
         mItemId = jsonObject.getString(JSONConsts.ITEM_ITEMID);
     }
 
@@ -80,6 +84,12 @@ public abstract class VirtualItem {
      * @param amount the amount of the specific item to be taken.
      */
     public abstract void take(int amount);
+
+    /**
+     * This function resets the balance to the given balance.
+     * @param balance the balance of the current virtual item.
+     */
+    public abstract void resetBalance(int balance);
 
     /**
      * ItemId is the unique id of every VirtualItem. We use it to compare VirtualItems.

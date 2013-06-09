@@ -86,6 +86,19 @@ public class NonConsumableItem extends PurchasableVirtualItem {
         return true;
     }
 
+    /**
+     * see parent
+     * @param balance see parent
+     */
+    @Override
+    public void resetBalance(int balance) {
+        if (balance > 0) {
+            StorageManager.getNonConsumableItemsStorage().add(this);
+        } else {
+            StorageManager.getNonConsumableItemsStorage().remove(this);
+        }
+    }
+
     /** Private members **/
 
     private static final String TAG = "SOOMLA NonConsumableItem";

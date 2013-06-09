@@ -124,6 +124,16 @@ public class VirtualCurrencyPack extends PurchasableVirtualItem {
 
     /**
      * see parent
+     * @param balance see parent
+     */
+    @Override
+    public void resetBalance(int balance) {
+        // Not supported for VirtualCurrencyPacks !
+        StoreUtils.LogError(TAG, "Someone tried to reset balance of CurrencyPack. That's not right.");
+    }
+
+    /**
+     * see parent
      */
     @Override
     protected boolean canBuy() {
