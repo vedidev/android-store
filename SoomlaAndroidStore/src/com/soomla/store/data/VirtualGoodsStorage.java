@@ -65,6 +65,10 @@ public class VirtualGoodsStorage extends VirtualItemStorage{
      * @param upgradeVG the upgrade to assign.
      */
     public void assignCurrentUpgrade(VirtualGood good, UpgradeVG upgradeVG) {
+        if (getCurrentUpgrade(good).getItemId().equals(upgradeVG.getItemId())) {
+            return;
+        }
+
         StoreUtils.LogDebug(mTag, "Assigning upgrade " + upgradeVG.getName() + " to virtual good: " + good.getName());
 
         String itemId = good.getItemId();
@@ -92,7 +96,7 @@ public class VirtualGoodsStorage extends VirtualItemStorage{
         String upItemId = StorageManager.getDatabase().getKeyVal(key);
 
         if (upItemId == null) {
-            StoreUtils.LogError(mTag, "You tried to fetch the current upgrade of " + good.getName() + " but there's not upgrade to it.");
+            StoreUtils.LogDebug(mTag, "You tried to fetch the current upgrade of " + good.getName() + " but there's not upgrade to it.");
             return null;
         }
 
@@ -131,6 +135,10 @@ public class VirtualGoodsStorage extends VirtualItemStorage{
      * @param good the EquippableVG to equip.
      */
     public void equip(EquippableVG good) {
+        if (isEquipped(good)) {
+            return;
+        }
+
         equipPriv(good, true);
     }
 
@@ -139,6 +147,10 @@ public class VirtualGoodsStorage extends VirtualItemStorage{
      * @param good the EquippableVG to unequip.
      */
     public void unequip(EquippableVG good) {
+        if (!isEquipped(good)) {
+            return;
+        }
+
         equipPriv(good, false);
     }
 
