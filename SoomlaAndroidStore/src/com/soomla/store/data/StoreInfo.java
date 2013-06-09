@@ -233,97 +233,127 @@ public class StoreInfo {
         mGoodsCategories = new HashMap<String, VirtualCategory>();
         mGoodsUpgrades = new HashMap<String, List<UpgradeVG>>();
 
-        JSONArray virtualCurrencies = jsonObject.getJSONArray(JSONConsts.STORE_CURRENCIES);
-        mCurrencies = new LinkedList<VirtualCurrency>();
-        for (int i=0; i<virtualCurrencies.length(); i++){
-            JSONObject o = virtualCurrencies.getJSONObject(i);
-            VirtualCurrency c = new VirtualCurrency(o);
-            mCurrencies.add(c);
+        if (jsonObject.has(JSONConsts.STORE_CURRENCIES)) {
+            JSONArray virtualCurrencies = jsonObject.getJSONArray(JSONConsts.STORE_CURRENCIES);
+            mCurrencies = new LinkedList<VirtualCurrency>();
+            for (int i=0; i<virtualCurrencies.length(); i++){
+                JSONObject o = virtualCurrencies.getJSONObject(i);
+                VirtualCurrency c = new VirtualCurrency(o);
+                mCurrencies.add(c);
 
-            mVirtualItems.put(c.getItemId(), c);
+                mVirtualItems.put(c.getItemId(), c);
+            }
         }
 
-        JSONArray currencyPacks = jsonObject.getJSONArray(JSONConsts.STORE_CURRENCYPACKS);
-        mCurrencyPacks = new LinkedList<VirtualCurrencyPack>();
-        for (int i=0; i<currencyPacks.length(); i++){
-            JSONObject o = currencyPacks.getJSONObject(i);
-            VirtualCurrencyPack pack = new VirtualCurrencyPack(o);
-            mCurrencyPacks.add(pack);
+        if (jsonObject.has(JSONConsts.STORE_CURRENCYPACKS)) {
+            JSONArray currencyPacks = jsonObject.getJSONArray(JSONConsts.STORE_CURRENCYPACKS);
+            mCurrencyPacks = new LinkedList<VirtualCurrencyPack>();
+            for (int i=0; i<currencyPacks.length(); i++){
+                JSONObject o = currencyPacks.getJSONObject(i);
+                VirtualCurrencyPack pack = new VirtualCurrencyPack(o);
+                mCurrencyPacks.add(pack);
 
-            mVirtualItems.put(pack.getItemId(), pack);
+                mVirtualItems.put(pack.getItemId(), pack);
 
-            PurchaseType purchaseType = pack.getPurchaseType();
-            if (purchaseType instanceof PurchaseWithMarket) {
-                mPurchasableItems.put(((PurchaseWithMarket) purchaseType).getGoogleMarketItem().getProductId(), pack);
+                PurchaseType purchaseType = pack.getPurchaseType();
+                if (purchaseType instanceof PurchaseWithMarket) {
+                    mPurchasableItems.put(((PurchaseWithMarket) purchaseType).getGoogleMarketItem().getProductId(), pack);
+                }
             }
         }
 
         // The order in which VirtualGoods are created matters!
         // For example: VGU and VGP depend on other VGs
-        JSONObject virtualGoods = jsonObject.getJSONObject(JSONConsts.STORE_GOODS);
-        JSONArray suGoods = virtualGoods.getJSONArray(JSONConsts.STORE_GOODS_SU);
-        JSONArray ltGoods = virtualGoods.getJSONArray(JSONConsts.STORE_GOODS_LT);
-        JSONArray eqGoods = virtualGoods.getJSONArray(JSONConsts.STORE_GOODS_EQ);
-        JSONArray upGoods = virtualGoods.getJSONArray(JSONConsts.STORE_GOODS_UP);
-        JSONArray paGoods = virtualGoods.getJSONArray(JSONConsts.STORE_GOODS_PA);
-        mGoods = new LinkedList<VirtualGood>();
-        for (int i=0; i<suGoods.length(); i++){
-            JSONObject o = suGoods.getJSONObject(i);
-            SingleUseVG g = new SingleUseVG(o);
-            addVG(g);
-        }
-        for (int i=0; i<ltGoods.length(); i++){
-            JSONObject o = ltGoods.getJSONObject(i);
-            LifetimeVG g = new LifetimeVG(o);
-            addVG(g);
-        }
-        for (int i=0; i<eqGoods.length(); i++){
-            JSONObject o = eqGoods.getJSONObject(i);
-            EquippableVG g = new EquippableVG(o);
-            addVG(g);
-        }
-        for (int i=0; i<paGoods.length(); i++){
-            JSONObject o = paGoods.getJSONObject(i);
-            SingleUsePackVG g = new SingleUsePackVG(o);
-            addVG(g);
-        }
-        for (int i=0; i<upGoods.length(); i++){
-            JSONObject o = upGoods.getJSONObject(i);
-            UpgradeVG g = new UpgradeVG(o);
-            addVG(g);
+        if (jsonObject.has(JSONConsts.STORE_GOODS)) {
+            JSONObject virtualGoods = jsonObject.getJSONObject(JSONConsts.STORE_GOODS);
 
-            List<UpgradeVG> upgrades = mGoodsUpgrades.get(g.getGoodItemId());
-            if (upgrades == null) {
-                upgrades = new ArrayList<UpgradeVG>();
-                mGoodsUpgrades.put(g.getGoodItemId(), upgrades);
+            mGoods = new LinkedList<VirtualGood>();
+
+            if (virtualGoods.has(JSONConsts.STORE_GOODS_SU)) {
+                JSONArray suGoods = virtualGoods.getJSONArray(JSONConsts.STORE_GOODS_SU);
+                for (int i=0; i<suGoods.length(); i++){
+                    JSONObject o = suGoods.getJSONObject(i);
+                    SingleUseVG g = new SingleUseVG(o);
+                    addVG(g);
+                }
             }
-            upgrades.add(g);
+
+
+            if (virtualGoods.has(JSONConsts.STORE_GOODS_LT)) {
+                JSONArray ltGoods = virtualGoods.getJSONArray(JSONConsts.STORE_GOODS_LT);
+                for (int i=0; i<ltGoods.length(); i++){
+                    JSONObject o = ltGoods.getJSONObject(i);
+                    LifetimeVG g = new LifetimeVG(o);
+                    addVG(g);
+                }
+            }
+
+
+            if (virtualGoods.has(JSONConsts.STORE_GOODS_EQ)) {
+                JSONArray eqGoods = virtualGoods.getJSONArray(JSONConsts.STORE_GOODS_EQ);
+                for (int i=0; i<eqGoods.length(); i++){
+                    JSONObject o = eqGoods.getJSONObject(i);
+                    EquippableVG g = new EquippableVG(o);
+                    addVG(g);
+                }
+            }
+
+            if (virtualGoods.has(JSONConsts.STORE_GOODS_PA)) {
+                JSONArray paGoods = virtualGoods.getJSONArray(JSONConsts.STORE_GOODS_PA);
+                for (int i=0; i<paGoods.length(); i++){
+                    JSONObject o = paGoods.getJSONObject(i);
+                    SingleUsePackVG g = new SingleUsePackVG(o);
+                    addVG(g);
+                }
+            }
+
+
+            if (virtualGoods.has(JSONConsts.STORE_GOODS_UP)) {
+                JSONArray upGoods = virtualGoods.getJSONArray(JSONConsts.STORE_GOODS_UP);
+                for (int i=0; i<upGoods.length(); i++){
+                    JSONObject o = upGoods.getJSONObject(i);
+                    UpgradeVG g = new UpgradeVG(o);
+                    addVG(g);
+
+                    List<UpgradeVG> upgrades = mGoodsUpgrades.get(g.getGoodItemId());
+                    if (upgrades == null) {
+                        upgrades = new ArrayList<UpgradeVG>();
+                        mGoodsUpgrades.put(g.getGoodItemId(), upgrades);
+                    }
+                    upgrades.add(g);
+                }
+            }
+
         }
 
         // Categories depend on virtual goods. That's why the have to be initialized after!
-        JSONArray virtualCategories = jsonObject.getJSONArray(JSONConsts.STORE_CATEGORIES);
-        mCategories = new LinkedList<VirtualCategory>();
-        for(int i=0; i<virtualCategories.length(); i++){
-            JSONObject o = virtualCategories.getJSONObject(i);
-            VirtualCategory category = new VirtualCategory(o);
-            mCategories.add(category);
-            for(String goodItemId : category.getGoodsItemIds()) {
-                mGoodsCategories.put(goodItemId, category);
+        if (jsonObject.has(JSONConsts.STORE_CATEGORIES)) {
+            JSONArray virtualCategories = jsonObject.getJSONArray(JSONConsts.STORE_CATEGORIES);
+            mCategories = new LinkedList<VirtualCategory>();
+            for(int i=0; i<virtualCategories.length(); i++){
+                JSONObject o = virtualCategories.getJSONObject(i);
+                VirtualCategory category = new VirtualCategory(o);
+                mCategories.add(category);
+                for(String goodItemId : category.getGoodsItemIds()) {
+                    mGoodsCategories.put(goodItemId, category);
+                }
             }
         }
 
-        JSONArray nonConsumables = jsonObject.getJSONArray(JSONConsts.STORE_NONCONSUMABLES);
-        mNonConsumables = new LinkedList<NonConsumableItem>();
-        for (int i=0; i<nonConsumables.length(); i++){
-            JSONObject o = nonConsumables.getJSONObject(i);
-            NonConsumableItem non = new NonConsumableItem(o);
-            mNonConsumables.add(non);
+        if (jsonObject.has(JSONConsts.STORE_NONCONSUMABLES)) {
+            JSONArray nonConsumables = jsonObject.getJSONArray(JSONConsts.STORE_NONCONSUMABLES);
+            mNonConsumables = new LinkedList<NonConsumableItem>();
+            for (int i=0; i<nonConsumables.length(); i++){
+                JSONObject o = nonConsumables.getJSONObject(i);
+                NonConsumableItem non = new NonConsumableItem(o);
+                mNonConsumables.add(non);
 
-            mVirtualItems.put(non.getItemId(), non);
+                mVirtualItems.put(non.getItemId(), non);
 
-            PurchaseType purchaseType = non.getPurchaseType();
-            if (purchaseType instanceof PurchaseWithMarket) {
-                mPurchasableItems.put(((PurchaseWithMarket) purchaseType).getGoogleMarketItem().getProductId(), non);
+                PurchaseType purchaseType = non.getPurchaseType();
+                if (purchaseType instanceof PurchaseWithMarket) {
+                    mPurchasableItems.put(((PurchaseWithMarket) purchaseType).getGoogleMarketItem().getProductId(), non);
+                }
             }
         }
     }
