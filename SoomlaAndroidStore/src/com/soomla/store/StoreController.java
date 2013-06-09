@@ -90,6 +90,7 @@ public class StoreController extends PurchaseObserver {
         }
 
         mInitialized = true;
+        BusProvider.getInstance().post(new StoreControllerInitializedEvent());
     }
 
     /**
