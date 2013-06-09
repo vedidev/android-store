@@ -22,6 +22,9 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import com.soomla.store.StoreConfig;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * The KeyValDatabase provides basic key-value store above SQLite.
  */
@@ -92,6 +95,27 @@ public class KeyValDatabase {
 
     public synchronized void deleteKeyVal(String key) {
         mStoreDB.delete(KEYVAL_TABLE_NAME, KEYVAL_COLUMN_KEY + "=?", new String[] { key });
+    }
+
+    public synchronized ArrayList<String> getQueryVals(String query) {
+        query = query.replace('*', '%');
+        Cursor cursor = mStoreDB.query(KEYVAL_TABLE_NAME, KEYVAL_COLUMNS, KEYVAL_COLUMN_KEY + " LIKE '" + query + "'",
+                null, null, null, null);
+
+        ArrayList<String> ret = new ArrayList<String>();
+        while (cursor != null && cursor.moveToNext()) {
+            try {
+                int valColIdx = cursor.getColumnIndexOrThrow(KEYVAL_COLUMN_VAL);
+                ret.add(cursor.getString(valColIdx));
+            } catch (IllegalArgumentException exx) {
+            }
+        }
+
+        if(cursor != null) {
+            cursor.close();
+        }
+
+        return ret;
     }
 
     private class DatabaseHelper extends SQLiteOpenHelper{

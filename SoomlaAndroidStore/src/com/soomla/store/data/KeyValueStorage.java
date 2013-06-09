@@ -20,6 +20,8 @@ import android.text.TextUtils;
 import com.soomla.billing.util.AESObfuscator;
 import com.soomla.store.StoreUtils;
 
+import java.util.ArrayList;
+
 /**
  * This class provides basic storage operations for a simple key-value store.
  */
@@ -48,11 +50,67 @@ public class KeyValueStorage {
                 val = StorageManager.getAESObfuscator().unobfuscateToString(val);
             } catch (AESObfuscator.ValidationException e) {
                 StoreUtils.LogError(TAG, e.getMessage());
+                val = "";
             }
 
             StoreUtils.LogDebug(TAG, "the fetched value is " + val);
         }
         return val;
+    }
+
+
+    public void setNonEncryptedKeyValue(String key, String val) {
+        StoreUtils.LogDebug(TAG, "setting " + val + " for key: " + key);
+
+        val = StorageManager.getAESObfuscator().obfuscateString(val);
+
+        StorageManager.getDatabase().setKeyVal(key, val);
+    }
+
+
+    public void deleteNonEncryptedKeyValue(String key) {
+        StoreUtils.LogDebug(TAG, "deleting " + key);
+
+        StorageManager.getDatabase().deleteKeyVal(key);
+    }
+
+    public String getNonEncryptedKeyValue(String key) {
+        StoreUtils.LogDebug(TAG, "trying to fetch a value for key: " + key);
+
+        String val = StorageManager.getDatabase().getKeyVal(key);
+
+        if (val != null && !TextUtils.isEmpty(val)) {
+            try {
+                val = StorageManager.getAESObfuscator().unobfuscateToString(val);
+            } catch (AESObfuscator.ValidationException e) {
+                StoreUtils.LogError(TAG, e.getMessage());
+                val = "";
+            }
+
+            StoreUtils.LogDebug(TAG, "the fetched value is " + val);
+        }
+        return val;
+    }
+
+    public ArrayList<String> getNonEncryptedQueryValues(String query) {
+        StoreUtils.LogDebug(TAG, "trying to fetch a values for query: " + query);
+
+        ArrayList<String> vals = StorageManager.getDatabase().getQueryVals(query);
+        ArrayList<String> results = new ArrayList<String>();
+        for(String val : vals) {
+            if (val != null && !TextUtils.isEmpty(val)) {
+                try {
+                    val = StorageManager.getAESObfuscator().unobfuscateToString(val);
+                    results.add(val);
+                } catch (AESObfuscator.ValidationException e) {
+                    StoreUtils.LogError(TAG, e.getMessage());
+                }
+            }
+        }
+
+        StoreUtils.LogDebug(TAG, "fetched " + results.size() + " results");
+
+        return results;
     }
 
     /**
