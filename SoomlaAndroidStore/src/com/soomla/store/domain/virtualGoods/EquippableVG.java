@@ -117,6 +117,9 @@ public class EquippableVG extends LifetimeVG{
      * @throws NotEnoughGoodsException
      */
     public void equip() throws NotEnoughGoodsException {
+        equip(true);
+    }
+    public void equip(boolean notify) throws NotEnoughGoodsException {
         // only if the user has bought this EquippableVG, the EquippableVG is equipped.
         if (StorageManager.getVirtualGoodsStorage().getBalance(this) > 0){
 
@@ -142,19 +145,19 @@ public class EquippableVG extends LifetimeVG{
                         continue;
                     }
                     if (equippableVG != this) {
-                        equippableVG.unequip();
+                        equippableVG.unequip(notify);
                     }
                 }
             } else if (mEquippingModel == EquippingModel.GLOBAL) {
                 for(VirtualGood good : StoreInfo.getGoods()) {
                     if (good != this &&
                         good instanceof EquippableVG) {
-                        ((EquippableVG)good).unequip();
+                        ((EquippableVG)good).unequip(notify);
                     }
                 }
             }
 
-            StorageManager.getVirtualGoodsStorage().equip(this);
+            StorageManager.getVirtualGoodsStorage().equip(this, notify);
         }
         else {
             throw new NotEnoughGoodsException(getItemId());
@@ -165,7 +168,10 @@ public class EquippableVG extends LifetimeVG{
      * This function unequips the current EquippableVG
      */
     public void unequip() {
-        StorageManager.getVirtualGoodsStorage().unequip(this);
+        unequip(true);
+    }
+    public void unequip(boolean notify) {
+        StorageManager.getVirtualGoodsStorage().unequip(this, notify);
     }
 
     /**

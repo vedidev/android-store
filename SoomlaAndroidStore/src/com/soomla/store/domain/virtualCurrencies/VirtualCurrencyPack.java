@@ -95,7 +95,7 @@ public class VirtualCurrencyPack extends PurchasableVirtualItem {
      * @param amount the amount of the specific item to be given.
      */
     @Override
-    public void give(int amount) {
+    public void give(int amount, boolean notify) {
         VirtualCurrency currency = null;
         try {
             currency = (VirtualCurrency)StoreInfo.getVirtualItem(mCurrencyItemId);
@@ -103,7 +103,7 @@ public class VirtualCurrencyPack extends PurchasableVirtualItem {
             StoreUtils.LogError(TAG, "VirtualCurrency with itemId: " + mCurrencyItemId + " doesn't exist! Can't give this pack.");
             return;
         }
-        StorageManager.getVirtualCurrencyStorage().add(currency, mCurrencyAmount*amount);
+        StorageManager.getVirtualCurrencyStorage().add(currency, mCurrencyAmount*amount, notify);
     }
 
     /**
@@ -111,7 +111,7 @@ public class VirtualCurrencyPack extends PurchasableVirtualItem {
      * @param amount the amount of the specific item to be taken.
      */
     @Override
-    public void take(int amount) {
+    public void take(int amount, boolean notify) {
         VirtualCurrency currency = null;
         try {
             currency = (VirtualCurrency)StoreInfo.getVirtualItem(mCurrencyItemId);
@@ -119,7 +119,7 @@ public class VirtualCurrencyPack extends PurchasableVirtualItem {
             StoreUtils.LogError(TAG, "VirtualCurrency with itemId: " + mCurrencyItemId + " doesn't exist! Can't take this pack.");
             return;
         }
-        StorageManager.getVirtualCurrencyStorage().remove(currency, mCurrencyAmount * amount);
+        StorageManager.getVirtualCurrencyStorage().remove(currency, mCurrencyAmount * amount, notify);
     }
 
     /**
@@ -127,7 +127,7 @@ public class VirtualCurrencyPack extends PurchasableVirtualItem {
      * @param balance see parent
      */
     @Override
-    public void resetBalance(int balance) {
+    public void resetBalance(int balance, boolean notify) {
         // Not supported for VirtualCurrencyPacks !
         StoreUtils.LogError(TAG, "Someone tried to reset balance of CurrencyPack. That's not right.");
     }

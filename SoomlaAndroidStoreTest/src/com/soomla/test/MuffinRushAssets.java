@@ -1,3 +1,19 @@
+/*
+ * Copyright (C) 2012 Soomla Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.soomla.test;
 
 import com.soomla.store.IStoreAssets;
@@ -11,16 +27,19 @@ import java.util.Arrays;
 
 public class MuffinRushAssets implements IStoreAssets{
 
+    @Override
     public int getVersion ()
     {
         return 0;
     }
 
+    @Override
     public VirtualCurrency[] getCurrencies ()
     {
         return new VirtualCurrency[] { MUFFIN_CURRENCY };
     }
 
+    @Override
     public VirtualGood[] getGoods ()
     {
         return new VirtualGood[] {
@@ -33,11 +52,13 @@ public class MuffinRushAssets implements IStoreAssets{
         };
     }
 
+    @Override
     public VirtualCurrencyPack[] getCurrencyPacks ()
     {
         return new VirtualCurrencyPack[] { TENMUFF_PACK, FIFTYMUFF_PACK, FOURHUNDMUFF_PACK, THOUSANDMUFF_PACK };
     }
 
+    @Override
     public VirtualCategory[] getCategories ()
     {
         return new VirtualCategory[] {
@@ -45,6 +66,7 @@ public class MuffinRushAssets implements IStoreAssets{
         };
     }
 
+    @Override
     public NonConsumableItem[] getNonConsumableItems ()
     {
         return new NonConsumableItem[] {

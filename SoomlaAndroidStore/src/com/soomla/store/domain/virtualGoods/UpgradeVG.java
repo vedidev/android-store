@@ -130,7 +130,7 @@ public class UpgradeVG extends VirtualGood {
      * @param amount is NOT USED HERE !
      */
     @Override
-    public void give(int amount) {
+    public void give(int amount, boolean notify) {
         StoreUtils.LogDebug(TAG, "Assigning " + getName() + " to: " + mGoodItemId);
 
         VirtualGood good = null;
@@ -141,7 +141,7 @@ public class UpgradeVG extends VirtualGood {
             return;
         }
 
-        StorageManager.getVirtualGoodsStorage().assignCurrentUpgrade(good, this);
+        StorageManager.getVirtualGoodsStorage().assignCurrentUpgrade(good, this, notify);
     }
 
      /**
@@ -153,7 +153,7 @@ public class UpgradeVG extends VirtualGood {
      * @param amount is NOT USED HERE !
      */
     @Override
-    public void take(int amount) {
+    public void take(int amount, boolean notify) {
         VirtualGood good = null;
         try {
             good = (VirtualGood)StoreInfo.getVirtualItem(mGoodItemId);
@@ -181,10 +181,10 @@ public class UpgradeVG extends VirtualGood {
             }
 
             StoreUtils.LogDebug(TAG, "Downgrading " + good.getName() + " to: " + prevUpgradeVG.getName());
-            StorageManager.getVirtualGoodsStorage().assignCurrentUpgrade(good, prevUpgradeVG);
+            StorageManager.getVirtualGoodsStorage().assignCurrentUpgrade(good, prevUpgradeVG, notify);
         } else {
             StoreUtils.LogDebug(TAG, "Downgrading " + good.getName() + " to NO-UPGRADE");
-            StorageManager.getVirtualGoodsStorage().removeUpgrades(good);
+            StorageManager.getVirtualGoodsStorage().removeUpgrades(good, notify);
         }
     }
 

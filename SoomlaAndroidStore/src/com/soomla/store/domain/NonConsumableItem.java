@@ -61,7 +61,7 @@ public class NonConsumableItem extends PurchasableVirtualItem {
      * @param amount the amount of the specific item to be given.
      */
     @Override
-    public void give(int amount) {
+    public void give(int amount, boolean notify) {
         StorageManager.getNonConsumableItemsStorage().add(this);
     }
 
@@ -70,7 +70,7 @@ public class NonConsumableItem extends PurchasableVirtualItem {
      * @param amount the amount of the specific item to be taken.
      */
     @Override
-    public void take(int amount) {
+    public void take(int amount, boolean notify) {
         StorageManager.getNonConsumableItemsStorage().remove(this);
     }
 
@@ -91,7 +91,7 @@ public class NonConsumableItem extends PurchasableVirtualItem {
      * @param balance see parent
      */
     @Override
-    public void resetBalance(int balance) {
+    public void resetBalance(int balance, boolean notify) {
         if (balance > 0) {
             StorageManager.getNonConsumableItemsStorage().add(this);
         } else {

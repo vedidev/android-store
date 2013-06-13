@@ -48,6 +48,10 @@ public class VirtualGoodsStorage extends VirtualItemStorage{
      * @param good the VirtualGood to remove upgrade from.
      */
     public void removeUpgrades(VirtualGood good) {
+        removeUpgrades(good, true);
+    }
+
+    public void removeUpgrades(VirtualGood good, boolean notify) {
         StoreUtils.LogDebug(mTag, "Removing upgrade information from virtual good: " + good.getName());
 
         String itemId = good.getItemId();
@@ -56,7 +60,9 @@ public class VirtualGoodsStorage extends VirtualItemStorage{
 
         StorageManager.getDatabase().deleteKeyVal(key);
 
-        BusProvider.getInstance().post(new GoodUpgradeEvent(good, null));
+        if (notify) {
+            BusProvider.getInstance().post(new GoodUpgradeEvent(good, null));
+        }
     }
 
     /**
@@ -65,6 +71,9 @@ public class VirtualGoodsStorage extends VirtualItemStorage{
      * @param upgradeVG the upgrade to assign.
      */
     public void assignCurrentUpgrade(VirtualGood good, UpgradeVG upgradeVG) {
+        assignCurrentUpgrade(good, upgradeVG, true);
+    }
+    public void assignCurrentUpgrade(VirtualGood good, UpgradeVG upgradeVG, boolean notify) {
         if (getCurrentUpgrade(good).getItemId().equals(upgradeVG.getItemId())) {
             return;
         }
@@ -78,8 +87,12 @@ public class VirtualGoodsStorage extends VirtualItemStorage{
         String upItemId =  StorageManager.getAESObfuscator().obfuscateString(upgradeVG.getItemId());
         StorageManager.getDatabase().setKeyVal(key, upItemId);
 
-        BusProvider.getInstance().post(new GoodUpgradeEvent(good, upgradeVG));
+        if (notify) {
+            BusProvider.getInstance().post(new GoodUpgradeEvent(good, upgradeVG));
+        }
     }
+
+
 
     /**
      * Retrieves the current upgrade for the given VirtualGood.
@@ -135,11 +148,14 @@ public class VirtualGoodsStorage extends VirtualItemStorage{
      * @param good the EquippableVG to equip.
      */
     public void equip(EquippableVG good) {
+        equip(good, true);
+    }
+    public void equip(EquippableVG good, boolean notify) {
         if (isEquipped(good)) {
             return;
         }
 
-        equipPriv(good, true);
+        equipPriv(good, true, notify);
     }
 
     /**
@@ -147,14 +163,17 @@ public class VirtualGoodsStorage extends VirtualItemStorage{
      * @param good the EquippableVG to unequip.
      */
     public void unequip(EquippableVG good) {
+        unequip(good, true);
+    }
+    public void unequip(EquippableVG good, boolean notify) {
         if (!isEquipped(good)) {
             return;
         }
 
-        equipPriv(good, false);
+        equipPriv(good, false, notify);
     }
 
-    private void equipPriv(EquippableVG good, boolean equip){
+    private void equipPriv(EquippableVG good, boolean equip, boolean notify){
         StoreUtils.LogDebug(mTag, (!equip ? "unequipping " : "equipping ") + good.getName() + ".");
 
         String itemId = good.getItemId();
@@ -163,10 +182,14 @@ public class VirtualGoodsStorage extends VirtualItemStorage{
 
         if (equip) {
             StorageManager.getDatabase().setKeyVal(key, "");
-            BusProvider.getInstance().post(new GoodEquippedEvent(good));
+            if (notify) {
+                BusProvider.getInstance().post(new GoodEquippedEvent(good));
+            }
         } else {
             StorageManager.getDatabase().deleteKeyVal(key);
-            BusProvider.getInstance().post(new GoodUnEquippedEvent(good));
+            if (notify) {
+                BusProvider.getInstance().post(new GoodUnEquippedEvent(good));
+            }
         }
     }
 

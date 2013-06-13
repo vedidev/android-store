@@ -77,19 +77,28 @@ public abstract class VirtualItem {
      * nothing in return.
      * @param amount the amount of the specific item to be given.
      */
-    public abstract void give(int amount);
+    public void give(int amount) {
+        give(amount, true);
+    }
+    public abstract void give(int amount, boolean notify);
 
     /**
      * By performing this action, you take curtain amount of the specific VirtualItem from your user.
      * @param amount the amount of the specific item to be taken.
      */
-    public abstract void take(int amount);
+    public void take(int amount) {
+        take(amount, true);
+    }
+    public abstract void take(int amount, boolean notify);
 
     /**
      * This function resets the balance to the given balance.
      * @param balance the balance of the current virtual item.
      */
-    public abstract void resetBalance(int balance);
+    public void resetBalance(int balance) {
+        resetBalance(balance, true);
+    }
+    public abstract void resetBalance(int balance, boolean notify);
 
     /**
      * ItemId is the unique id of every VirtualItem. We use it to compare VirtualItems.

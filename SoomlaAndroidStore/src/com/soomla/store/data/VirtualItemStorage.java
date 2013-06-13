@@ -58,6 +58,9 @@ public abstract class VirtualItemStorage {
      * @return the balance of the required virtual item.
      */
     public int setBalance(VirtualItem item, int balance) {
+        return setBalance(item, balance, true);
+    }
+    public int setBalance(VirtualItem item, int balance, boolean notify) {
         StoreUtils.LogDebug(mTag, "setting balance " + balance + " to " + item.getName() + ".");
 
         int oldBalance = getBalance(item);
@@ -73,7 +76,9 @@ public abstract class VirtualItemStorage {
         key      = StorageManager.getAESObfuscator().obfuscateString(key);
         StorageManager.getDatabase().setKeyVal(key, balanceStr);
 
-        postBalanceChangeEvent(item, balance, 0);
+        if (notify) {
+            postBalanceChangeEvent(item, balance, 0);
+        }
 
         return balance;
     }
@@ -84,6 +89,9 @@ public abstract class VirtualItemStorage {
      * @param amount is the amount of items to add.
      */
     public int add(VirtualItem item, int amount){
+        return add(item, amount, true);
+    }
+    public int add(VirtualItem item, int amount, boolean notify){
         StoreUtils.LogDebug(mTag, "adding " + amount + " " + item.getName());
 
         String itemId = item.getItemId();
@@ -94,7 +102,9 @@ public abstract class VirtualItemStorage {
         key      = StorageManager.getAESObfuscator().obfuscateString(key);
         StorageManager.getDatabase().setKeyVal(key, balanceStr);
 
-        postBalanceChangeEvent(item, balance+amount, amount);
+        if (notify) {
+            postBalanceChangeEvent(item, balance+amount, amount);
+        }
 
         return balance + amount;
     }
@@ -105,6 +115,9 @@ public abstract class VirtualItemStorage {
      * @param amount is the amount to remove.
      */
     public int remove(VirtualItem item, int amount){
+        return remove(item, amount, true);
+    }
+    public int remove(VirtualItem item, int amount, boolean notify){
         StoreUtils.LogDebug(mTag, "removing " + amount + " " + item.getName() + ".");
 
         String itemId = item.getItemId();
@@ -116,7 +129,9 @@ public abstract class VirtualItemStorage {
         key      = StorageManager.getAESObfuscator().obfuscateString(key);
         StorageManager.getDatabase().setKeyVal(key, balanceStr);
 
-        postBalanceChangeEvent(item, balance, -1*amount);
+        if (notify) {
+            postBalanceChangeEvent(item, balance, -1*amount);
+        }
 
         return balance;
     }

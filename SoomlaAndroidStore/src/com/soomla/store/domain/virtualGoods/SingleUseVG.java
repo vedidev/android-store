@@ -69,8 +69,8 @@ public class SingleUseVG extends VirtualGood{
      * @param amount the amount of the specific item to be given.
      */
     @Override
-    public void give(int amount) {
-        StorageManager.getVirtualGoodsStorage().add(this, amount);
+    public void give(int amount, boolean notify) {
+        StorageManager.getVirtualGoodsStorage().add(this, amount, notify);
     }
 
     /**
@@ -78,8 +78,8 @@ public class SingleUseVG extends VirtualGood{
      * @param amount the amount of the specific item to be taken.
      */
     @Override
-    public void take(int amount) {
-        StorageManager.getVirtualGoodsStorage().remove(this, amount);
+    public void take(int amount, boolean notify) {
+        StorageManager.getVirtualGoodsStorage().remove(this, amount, notify);
     }
 
     /**

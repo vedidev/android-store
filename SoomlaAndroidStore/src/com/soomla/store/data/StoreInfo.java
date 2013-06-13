@@ -233,9 +233,14 @@ public class StoreInfo {
         mGoodsCategories = new HashMap<String, VirtualCategory>();
         mGoodsUpgrades = new HashMap<String, List<UpgradeVG>>();
 
+        mCurrencyPacks = new LinkedList<VirtualCurrencyPack>();
+        mGoods = new LinkedList<VirtualGood>();
+        mCategories = new LinkedList<VirtualCategory>();
+        mCurrencies = new LinkedList<VirtualCurrency>();
+        mNonConsumables = new LinkedList<NonConsumableItem>();
+
         if (jsonObject.has(JSONConsts.STORE_CURRENCIES)) {
             JSONArray virtualCurrencies = jsonObject.getJSONArray(JSONConsts.STORE_CURRENCIES);
-            mCurrencies = new LinkedList<VirtualCurrency>();
             for (int i=0; i<virtualCurrencies.length(); i++){
                 JSONObject o = virtualCurrencies.getJSONObject(i);
                 VirtualCurrency c = new VirtualCurrency(o);
@@ -247,7 +252,6 @@ public class StoreInfo {
 
         if (jsonObject.has(JSONConsts.STORE_CURRENCYPACKS)) {
             JSONArray currencyPacks = jsonObject.getJSONArray(JSONConsts.STORE_CURRENCYPACKS);
-            mCurrencyPacks = new LinkedList<VirtualCurrencyPack>();
             for (int i=0; i<currencyPacks.length(); i++){
                 JSONObject o = currencyPacks.getJSONObject(i);
                 VirtualCurrencyPack pack = new VirtualCurrencyPack(o);
@@ -266,8 +270,6 @@ public class StoreInfo {
         // For example: VGU and VGP depend on other VGs
         if (jsonObject.has(JSONConsts.STORE_GOODS)) {
             JSONObject virtualGoods = jsonObject.getJSONObject(JSONConsts.STORE_GOODS);
-
-            mGoods = new LinkedList<VirtualGood>();
 
             if (virtualGoods.has(JSONConsts.STORE_GOODS_SU)) {
                 JSONArray suGoods = virtualGoods.getJSONArray(JSONConsts.STORE_GOODS_SU);
@@ -329,7 +331,6 @@ public class StoreInfo {
         // Categories depend on virtual goods. That's why the have to be initialized after!
         if (jsonObject.has(JSONConsts.STORE_CATEGORIES)) {
             JSONArray virtualCategories = jsonObject.getJSONArray(JSONConsts.STORE_CATEGORIES);
-            mCategories = new LinkedList<VirtualCategory>();
             for(int i=0; i<virtualCategories.length(); i++){
                 JSONObject o = virtualCategories.getJSONObject(i);
                 VirtualCategory category = new VirtualCategory(o);
@@ -342,7 +343,6 @@ public class StoreInfo {
 
         if (jsonObject.has(JSONConsts.STORE_NONCONSUMABLES)) {
             JSONArray nonConsumables = jsonObject.getJSONArray(JSONConsts.STORE_NONCONSUMABLES);
-            mNonConsumables = new LinkedList<NonConsumableItem>();
             for (int i=0; i<nonConsumables.length(); i++){
                 JSONObject o = nonConsumables.getJSONObject(i);
                 NonConsumableItem non = new NonConsumableItem(o);
