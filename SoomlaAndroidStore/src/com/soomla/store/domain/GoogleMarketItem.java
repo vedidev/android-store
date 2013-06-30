@@ -51,7 +51,11 @@ public class GoogleMarketItem {
         } else {
             this.mManaged = Managed.UNMANAGED;
         }
-        this.mProductId = jsonObject.getString(JSONConsts.MARKETITEM_PRODUCT_ID);
+        if (jsonObject.has(JSONConsts.MARKETITEM_ANDROID_ID)) {
+            this.mProductId = jsonObject.getString(JSONConsts.MARKETITEM_ANDROID_ID);
+        } else {
+            this.mProductId = jsonObject.getString(JSONConsts.MARKETITEM_PRODUCT_ID);
+        }
         this.mPrice = jsonObject.getDouble(JSONConsts.MARKETITEM_PRICE);
     }
 
@@ -59,7 +63,7 @@ public class GoogleMarketItem {
         JSONObject jsonObject = new JSONObject();
         try {
             jsonObject.put(JSONConsts.MARKETITEM_MANAGED, mManaged.ordinal());
-            jsonObject.put(JSONConsts.MARKETITEM_PRODUCT_ID, mProductId);
+            jsonObject.put(JSONConsts.MARKETITEM_ANDROID_ID, mProductId);
             jsonObject.put(JSONConsts.MARKETITEM_PRICE, new Double(mPrice));
         } catch (JSONException e) {
             StoreUtils.LogError(TAG, "An error occured while generating JSON object.");
