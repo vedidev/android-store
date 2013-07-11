@@ -74,7 +74,7 @@ public class VirtualGoodsStorage extends VirtualItemStorage{
         assignCurrentUpgrade(good, upgradeVG, true);
     }
     public void assignCurrentUpgrade(VirtualGood good, UpgradeVG upgradeVG, boolean notify) {
-        if (getCurrentUpgrade(good).getItemId().equals(upgradeVG.getItemId())) {
+        if (getCurrentUpgrade(good) != null && getCurrentUpgrade(good).getItemId().equals(upgradeVG.getItemId())) {
             return;
         }
 
