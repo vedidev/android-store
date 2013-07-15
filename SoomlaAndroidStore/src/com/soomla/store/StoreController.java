@@ -100,7 +100,6 @@ public class StoreController extends PurchaseObserver {
      * @param payload a payload to get back when this purchase is finished.
      */
     public boolean buyWithGooglePlay(GoogleMarketItem googleMarketItem, String payload) {
-        if (!checkInit()) return false;
 
         SharedPreferences prefs = new ObscuredSharedPreferences(SoomlaApp.getAppContext().getSharedPreferences(StoreConfig.PREFS_NAME, Context.MODE_PRIVATE));
         String publicKey = prefs.getString(StoreConfig.PUBLIC_KEY, "");
@@ -125,7 +124,6 @@ public class StoreController extends PurchaseObserver {
      * @param activity is the activity being opened (or the activity that contains the store)/
      */
     public void storeOpening(Activity activity){
-        if (!checkInit()) return;
 
         mLock.lock();
         if (mStoreOpen) {
@@ -166,8 +164,6 @@ public class StoreController extends PurchaseObserver {
      * Initiate the restoreTransactions process
      */
     public void restoreTransactions() {
-        if (!checkInit()) return;
-
         StoreUtils.LogDebug(TAG, "Sending restore transaction request");
         mBillingService.restoreTransactions();
 
@@ -302,14 +298,6 @@ public class StoreController extends PurchaseObserver {
     }
 
     /** Private methods **/
-
-    private boolean checkInit() {
-        if (!mInitialized) {
-            StoreUtils.LogDebug(TAG, "You can't perform any of StoreController's actions before it was initialized. Initialize it once when your game loads.");
-            return false;
-        }
-        return true;
-    }
 
     private boolean startBillingService() {
         mLock.lock();
