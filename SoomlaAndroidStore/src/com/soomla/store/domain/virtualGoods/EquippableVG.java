@@ -137,15 +137,14 @@ public class EquippableVG extends LifetimeVG{
                     EquippableVG equippableVG = null;
                     try {
                         equippableVG = (EquippableVG) StoreInfo.getVirtualItem(goodItemId);
+
+                        if (equippableVG != null && equippableVG != this) {
+                            equippableVG.unequip(notify);
+                        }
                     } catch (VirtualItemNotFoundException e) {
                         StoreUtils.LogError(TAG, "On equip, couldn't find one of the itemIds in the category. Continuing to the next one. itemId: " + goodItemId);
-                        continue;
                     } catch (ClassCastException ex) {
                         StoreUtils.LogDebug(TAG, "On equip, an error occurred. It's a debug message b/c the VirtualGood may just not be an EquippableVG. itemId: " + goodItemId);
-                        continue;
-                    }
-                    if (equippableVG != this) {
-                        equippableVG.unequip(notify);
                     }
                 }
             } else if (mEquippingModel == EquippingModel.GLOBAL) {

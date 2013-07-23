@@ -394,14 +394,14 @@ public class StoreInfo {
         for(VirtualGood good : mGoods){
             if (good instanceof SingleUseVG) {
                 suGoods.put(good.toJSONObject());
-            }  else if (good instanceof EquippableVG) {
-                eqGoods.put(good.toJSONObject());
-            } else if (good instanceof LifetimeVG) {
-                ltGoods.put(good.toJSONObject());
-            } else if (good instanceof SingleUsePackVG) {
-                paGoods.put(good.toJSONObject());
             } else if (good instanceof UpgradeVG) {
                 upGoods.put(good.toJSONObject());
+            } else if (good instanceof EquippableVG) {
+                eqGoods.put(good.toJSONObject());
+            } else if (good instanceof SingleUsePackVG) {
+                paGoods.put(good.toJSONObject());
+            } else if (good instanceof LifetimeVG) {
+                ltGoods.put(good.toJSONObject());
             }
         }
 
