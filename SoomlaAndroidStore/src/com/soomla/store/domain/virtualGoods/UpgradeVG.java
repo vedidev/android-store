@@ -49,7 +49,7 @@ import java.util.Iterator;
  * In case you purchase this item in Google Play (PurchaseWithMarket), You need to define the google item in Google
  * Play Developer Console. (https://play.google.com/apps/publish)
  */
-public class UpgradeVG extends VirtualGood {
+public class UpgradeVG extends LifetimeVG {
 
     /** Constructor
      *
@@ -142,6 +142,8 @@ public class UpgradeVG extends VirtualGood {
         }
 
         StorageManager.getVirtualGoodsStorage().assignCurrentUpgrade(good, this, notify);
+
+        super.give(amount, notify);
     }
 
      /**
@@ -164,7 +166,7 @@ public class UpgradeVG extends VirtualGood {
 
         UpgradeVG upgradeVG = StorageManager.getVirtualGoodsStorage().getCurrentUpgrade(good);
         if (upgradeVG != this) {
-            StoreUtils.LogError(TAG, "You can't take what's not yours. The UpgradeVG " + getName() + " is not assigned to " +
+            StoreUtils.LogError(TAG, "You can't take an upgrade that's not currently assigned. The UpgradeVG " + getName() + " is not assigned to " +
                     "the VirtualGood: " + good.getName());
             return;
         }
@@ -186,6 +188,8 @@ public class UpgradeVG extends VirtualGood {
             StoreUtils.LogDebug(TAG, "Downgrading " + good.getName() + " to NO-UPGRADE");
             StorageManager.getVirtualGoodsStorage().removeUpgrades(good, notify);
         }
+
+        super.take(amount, notify);
     }
 
     /**
@@ -203,8 +207,9 @@ public class UpgradeVG extends VirtualGood {
         }
 
         UpgradeVG upgradeVG = StorageManager.getVirtualGoodsStorage().getCurrentUpgrade(good);
-        return (upgradeVG == null && TextUtils.isEmpty(mPrevItemId)) ||
-               (upgradeVG != null && ((upgradeVG.getNextItemId().equals(getItemId())) || (upgradeVG.getPrevItemId().equals(getItemId()))));
+        return ((upgradeVG == null && TextUtils.isEmpty(mPrevItemId)) ||
+               (upgradeVG != null && ((upgradeVG.getNextItemId().equals(getItemId())) || (upgradeVG.getPrevItemId().equals(getItemId())))))
+                && super.canBuy();
     }
 
     private static final String TAG = "SOOMLA UpgradeVG";
