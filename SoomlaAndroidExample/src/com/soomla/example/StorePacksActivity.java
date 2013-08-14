@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.*;
 import com.soomla.store.BusProvider;
+import com.soomla.store.StoreActivity;
 import com.soomla.store.data.StorageManager;
 import com.soomla.store.data.StoreInfo;
 import com.soomla.store.domain.NonConsumableItem;
@@ -19,7 +20,7 @@ import com.squareup.otto.Subscribe;
 
 import java.util.HashMap;
 
-public class StorePacksActivity extends Activity {
+public class StorePacksActivity extends StoreActivity {
 
     private StoreAdapter mStoreAdapter;
     private HashMap<String, Object> mImages;

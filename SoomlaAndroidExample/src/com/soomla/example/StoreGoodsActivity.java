@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.*;
 import com.soomla.store.BusProvider;
+import com.soomla.store.StoreActivity;
 import com.soomla.store.StoreController;
 import com.soomla.store.data.StorageManager;
 import com.soomla.store.data.StoreInfo;
@@ -23,7 +24,7 @@ import com.squareup.otto.Subscribe;
 import java.io.IOException;
 import java.util.HashMap;
 
-public class StoreGoodsActivity extends Activity {
+public class StoreGoodsActivity extends StoreActivity {
 
     private StoreAdapter mStoreAdapter;
     private HashMap<String, Object> mImages;
@@ -32,8 +33,6 @@ public class StoreGoodsActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.listview);
-
-        StoreController.getInstance().storeOpening(this);
 
         TextView title = (TextView)findViewById(R.id.title);
 
@@ -102,8 +101,6 @@ public class StoreGoodsActivity extends Activity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-
-        StoreController.getInstance().storeClosing();
     }
 
     private HashMap<String, Object> generateImagesHash() {

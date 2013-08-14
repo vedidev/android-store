@@ -107,4 +107,6 @@ public class Consts {
     public static final String ITEM_TYPE_INAPP = "inapp";
     public static final String ITEM_TYPE_SUBSCRIPTION = "subs";
 
+    // (arbitrary) request code for the purchase flow
+    public static final int RC_REQUEST = 10001;
 }
