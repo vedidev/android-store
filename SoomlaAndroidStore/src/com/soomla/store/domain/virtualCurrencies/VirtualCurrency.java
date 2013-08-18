@@ -53,8 +53,8 @@ public class VirtualCurrency extends VirtualItem {
      * @param amount the amount of the specific item to be given.
      */
     @Override
-    public void give(int amount, boolean notify) {
-        StorageManager.getVirtualCurrencyStorage().add(this, amount, notify);
+    public int give(int amount, boolean notify) {
+        return StorageManager.getVirtualCurrencyStorage().add(this, amount, notify);
     }
 
     /**
@@ -62,8 +62,8 @@ public class VirtualCurrency extends VirtualItem {
      * @param amount the amount of the specific item to be taken.
      */
     @Override
-    public void take(int amount, boolean notify) {
-        StorageManager.getVirtualCurrencyStorage().remove(this, amount, notify);
+    public int take(int amount, boolean notify) {
+        return StorageManager.getVirtualCurrencyStorage().remove(this, amount, notify);
     }
 
     /**
@@ -71,7 +71,7 @@ public class VirtualCurrency extends VirtualItem {
      * @param balance see parent
      */
     @Override
-    public void resetBalance(int balance, boolean notify) {
-        StorageManager.getVirtualCurrencyStorage().setBalance(this, balance, notify);
+    public int resetBalance(int balance, boolean notify) {
+        return StorageManager.getVirtualCurrencyStorage().setBalance(this, balance, notify);
     }
 }
