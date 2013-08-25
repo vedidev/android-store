@@ -135,7 +135,7 @@ public class StoreController extends PurchaseObserver {
         initCompatibilityLayer(activity);
 
         /* Initialize StoreInfo from database in case any changes were done to it while the store was closed */
-        StoreInfo.initializeFromDB();
+        // StoreInfo.initializeFromDB();
 
         /* Billing */
         startBillingService();
