@@ -13,6 +13,8 @@ import com.soomla.store.exceptions.InsufficientFundsException;
 import com.soomla.store.exceptions.NotEnoughGoodsException;
 import com.soomla.store.exceptions.VirtualItemNotFoundException;
 
+import java.util.List;
+
 public class StoreInventory {
 
     public static void buy(String itemId) throws InsufficientFundsException, VirtualItemNotFoundException {
@@ -118,6 +120,10 @@ public class StoreInventory {
     }
 
     public static void removeUpgrades(String goodItemId) throws VirtualItemNotFoundException {
+        List<UpgradeVG> upgrades = StoreInfo.getGoodUpgrades(goodItemId);
+        for (UpgradeVG upgrade : upgrades) {
+            StorageManager.getVirtualGoodsStorage().remove(upgrade, 1, true);
+        }
         VirtualGood good = (VirtualGood) StoreInfo.getVirtualItem(goodItemId);
         StorageManager.getVirtualGoodsStorage().removeUpgrades(good);
     }
