@@ -96,6 +96,10 @@ public abstract class VirtualItemStorage {
 
         String itemId = item.getItemId();
         int balance = getBalance(item);
+        if (balance < 0) { /* in case the user "adds" a negative value */
+            balance = 0;
+            amount = 0;
+        }
         String balanceStr = "" + (balance + amount);
         String key = keyBalance(itemId);
         balanceStr = StorageManager.getAESObfuscator().obfuscateString(balanceStr);
