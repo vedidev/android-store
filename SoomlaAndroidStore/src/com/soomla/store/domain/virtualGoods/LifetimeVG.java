@@ -70,9 +70,10 @@ import org.json.JSONObject;
     /**
      * see parent
      * @param amount the amount of the specific item to be given.
+     * @return 1 if the user was given the good, 0 otherwise
      */
     @Override
-    public void give(int amount, boolean notify) {
+    public int give(int amount, boolean notify) {
         if(amount > 1) {
             StoreUtils.LogDebug(TAG, "You tried to give more than one LifetimeVG. Will try to give one anyway.");
             amount = 1;
@@ -81,16 +82,18 @@ import org.json.JSONObject;
         int balance = StorageManager.getVirtualGoodsStorage().getBalance(this);
 
         if (balance < 1) {
-            StorageManager.getVirtualGoodsStorage().add(this, amount, notify);
+            return StorageManager.getVirtualGoodsStorage().add(this, amount, notify);
         }
+        return 1;
     }
 
     /**
      * see parent
      * @param amount the amount of the specific item to be taken.
+     * @return balance after taking process, should be 0
      */
     @Override
-    public void take(int amount, boolean notify) {
+    public int take(int amount, boolean notify) {
         if (amount > 1) {
             amount = 1;
         }
@@ -98,8 +101,9 @@ import org.json.JSONObject;
         int balance = StorageManager.getVirtualGoodsStorage().getBalance(this);
 
         if (balance > 0) {
-            StorageManager.getVirtualGoodsStorage().remove(this, amount, notify);
+            return StorageManager.getVirtualGoodsStorage().remove(this, amount, notify);
         }
+        return 0;
     }
 
     /**

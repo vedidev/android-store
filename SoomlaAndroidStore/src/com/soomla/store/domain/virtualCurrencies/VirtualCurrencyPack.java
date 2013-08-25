@@ -93,33 +93,35 @@ public class VirtualCurrencyPack extends PurchasableVirtualItem {
     /**
      * see parent
      * @param amount the amount of the specific item to be given.
+     * @return balance after the giving process
      */
     @Override
-    public void give(int amount, boolean notify) {
+    public int give(int amount, boolean notify) {
         VirtualCurrency currency = null;
         try {
             currency = (VirtualCurrency)StoreInfo.getVirtualItem(mCurrencyItemId);
         } catch (VirtualItemNotFoundException e) {
             StoreUtils.LogError(TAG, "VirtualCurrency with itemId: " + mCurrencyItemId + " doesn't exist! Can't give this pack.");
-            return;
+            return 0;
         }
-        StorageManager.getVirtualCurrencyStorage().add(currency, mCurrencyAmount*amount, notify);
+        return StorageManager.getVirtualCurrencyStorage().add(currency, mCurrencyAmount*amount, notify);
     }
 
     /**
      * see parent
      * @param amount the amount of the specific item to be taken.
+     * @return balance after the taking process
      */
     @Override
-    public void take(int amount, boolean notify) {
+    public int take(int amount, boolean notify) {
         VirtualCurrency currency = null;
         try {
             currency = (VirtualCurrency)StoreInfo.getVirtualItem(mCurrencyItemId);
         } catch (VirtualItemNotFoundException e) {
             StoreUtils.LogError(TAG, "VirtualCurrency with itemId: " + mCurrencyItemId + " doesn't exist! Can't take this pack.");
-            return;
+            return 0;
         }
-        StorageManager.getVirtualCurrencyStorage().remove(currency, mCurrencyAmount * amount, notify);
+        return StorageManager.getVirtualCurrencyStorage().remove(currency, mCurrencyAmount * amount, notify);
     }
 
     /**
@@ -127,9 +129,10 @@ public class VirtualCurrencyPack extends PurchasableVirtualItem {
      * @param balance see parent
      */
     @Override
-    public void resetBalance(int balance, boolean notify) {
+    public int resetBalance(int balance, boolean notify) {
         // Not supported for VirtualCurrencyPacks !
         StoreUtils.LogError(TAG, "Someone tried to reset balance of CurrencyPack. That's not right.");
+        return 0;
     }
 
     /**

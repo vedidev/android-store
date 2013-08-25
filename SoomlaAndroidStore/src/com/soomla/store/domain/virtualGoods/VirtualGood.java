@@ -59,10 +59,11 @@ public abstract class VirtualGood extends PurchasableVirtualItem {
     /**
      * see parent
      * @param balance see parent
+     * @return see parent
      */
     @Override
-    public void resetBalance(int balance, boolean notify) {
-        StorageManager.getVirtualGoodsStorage().setBalance(this, balance, notify);
+    public int resetBalance(int balance, boolean notify) {
+        return StorageManager.getVirtualGoodsStorage().setBalance(this, balance, notify);
     }
 
     /** Private members **/

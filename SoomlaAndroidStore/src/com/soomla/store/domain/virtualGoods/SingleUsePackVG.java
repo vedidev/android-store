@@ -101,33 +101,35 @@ public class SingleUsePackVG extends VirtualGood {
     /**
      * see parent
      * @param amount the amount of the specific item to be given.
+     * @return balance after the giving process
      */
     @Override
-    public void give(int amount, boolean notify) {
+    public int give(int amount, boolean notify) {
         SingleUseVG good = null;
         try {
             good = (SingleUseVG)StoreInfo.getVirtualItem(mGoodItemId);
         } catch (VirtualItemNotFoundException e) {
             StoreUtils.LogError(TAG, "SingleUseVG with itemId: " + mGoodItemId + " doesn't exist! Can't give this pack.");
-            return;
+            return 0;
         }
-        StorageManager.getVirtualGoodsStorage().add(good, mGoodAmount*amount, notify);
+        return StorageManager.getVirtualGoodsStorage().add(good, mGoodAmount*amount, notify);
     }
 
     /**
      * see parent
      * @param amount the amount of the specific item to be taken.
+     * @return balance after the taking process
      */
     @Override
-    public void take(int amount, boolean notify) {
+    public int take(int amount, boolean notify) {
         SingleUseVG good = null;
         try {
             good = (SingleUseVG)StoreInfo.getVirtualItem(mGoodItemId);
         } catch (VirtualItemNotFoundException e) {
             StoreUtils.LogError(TAG, "SingleUseVG with itemId: " + mGoodItemId + " doesn't exist! Can't take this pack.");
-            return;
+            return 0;
         }
-        StorageManager.getVirtualGoodsStorage().remove(good, mGoodAmount*amount, notify);
+        return StorageManager.getVirtualGoodsStorage().remove(good, mGoodAmount*amount, notify);
     }
 
     /**

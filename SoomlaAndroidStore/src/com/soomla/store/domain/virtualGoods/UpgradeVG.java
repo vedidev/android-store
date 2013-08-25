@@ -128,9 +128,10 @@ public class UpgradeVG extends LifetimeVG {
      *
      * This action doesn't check nothing!! It just assigns the current UpgradeVG to the associated mGood.
      * @param amount is NOT USED HERE !
+     * @return 1 if the user was given the good, 0 otherwise
      */
     @Override
-    public void give(int amount, boolean notify) {
+    public int give(int amount, boolean notify) {
         StoreUtils.LogDebug(TAG, "Assigning " + getName() + " to: " + mGoodItemId);
 
         VirtualGood good = null;
@@ -138,12 +139,12 @@ public class UpgradeVG extends LifetimeVG {
             good = (VirtualGood)StoreInfo.getVirtualItem(mGoodItemId);
         } catch (VirtualItemNotFoundException e) {
             StoreUtils.LogError(TAG, "VirtualGood with itemId: " + mGoodItemId + " doesn't exist! Can't upgrade.");
-            return;
+            return 0;
         }
 
         StorageManager.getVirtualGoodsStorage().assignCurrentUpgrade(good, this, notify);
 
-        super.give(amount, notify);
+        return super.give(amount, notify);
     }
 
      /**
@@ -155,20 +156,20 @@ public class UpgradeVG extends LifetimeVG {
      * @param amount is NOT USED HERE !
      */
     @Override
-    public void take(int amount, boolean notify) {
+    public int take(int amount, boolean notify) {
         VirtualGood good = null;
         try {
             good = (VirtualGood)StoreInfo.getVirtualItem(mGoodItemId);
         } catch (VirtualItemNotFoundException e) {
             StoreUtils.LogError(TAG, "VirtualGood with itemId: " + mGoodItemId + " doesn't exist! Can't downgrade.");
-            return;
+            return 0;
         }
 
         UpgradeVG upgradeVG = StorageManager.getVirtualGoodsStorage().getCurrentUpgrade(good);
         if (upgradeVG != this) {
             StoreUtils.LogError(TAG, "You can't take an upgrade that's not currently assigned. The UpgradeVG " + getName() + " is not assigned to " +
                     "the VirtualGood: " + good.getName());
-            return;
+            return 0;
         }
 
 
@@ -179,7 +180,7 @@ public class UpgradeVG extends LifetimeVG {
                 prevUpgradeVG = (UpgradeVG)StoreInfo.getVirtualItem(mPrevItemId);
             } catch (VirtualItemNotFoundException e) {
                 StoreUtils.LogError(TAG, "Previous UpgradeVG with itemId: " + mPrevItemId + " doesn't exist! Can't downgrade.");
-                return;
+                return 0;
             }
 
             StoreUtils.LogDebug(TAG, "Downgrading " + good.getName() + " to: " + prevUpgradeVG.getName());
@@ -189,7 +190,7 @@ public class UpgradeVG extends LifetimeVG {
             StorageManager.getVirtualGoodsStorage().removeUpgrades(good, notify);
         }
 
-        super.take(amount, notify);
+        return super.take(amount, notify);
     }
 
     /**
