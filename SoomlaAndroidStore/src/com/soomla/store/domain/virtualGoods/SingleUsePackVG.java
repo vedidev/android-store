@@ -101,6 +101,7 @@ public class SingleUsePackVG extends VirtualGood {
     /**
      * see parent
      * @param amount the amount of the specific item to be given.
+     * @return balance after the giving process
      */
     @Override
     public int give(int amount, boolean notify) {
@@ -117,6 +118,7 @@ public class SingleUsePackVG extends VirtualGood {
     /**
      * see parent
      * @param amount the amount of the specific item to be taken.
+     * @return balance after the taking process
      */
     @Override
     public int take(int amount, boolean notify) {

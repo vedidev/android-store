@@ -76,6 +76,7 @@ public abstract class VirtualItem {
      * The giving process is different from the "buy" process. You just give your user something and you get
      * nothing in return.
      * @param amount the amount of the specific item to be given.
+     * @return balance after the giving process
      */
     public int give(int amount) {
         return give(amount, true);
@@ -85,6 +86,7 @@ public abstract class VirtualItem {
     /**
      * By performing this action, you take curtain amount of the specific VirtualItem from your user.
      * @param amount the amount of the specific item to be taken.
+     * @return balance after the taking process
      */
     public int take(int amount) {
         return take(amount, true);
@@ -94,6 +96,7 @@ public abstract class VirtualItem {
     /**
      * This function resets the balance to the given balance.
      * @param balance the balance of the current virtual item.
+     * @return balance after the reset process
      */
     public int resetBalance(int balance) {
         return resetBalance(balance, true);

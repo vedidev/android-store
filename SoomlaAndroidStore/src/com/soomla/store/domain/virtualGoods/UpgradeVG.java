@@ -128,6 +128,7 @@ public class UpgradeVG extends LifetimeVG {
      *
      * This action doesn't check nothing!! It just assigns the current UpgradeVG to the associated mGood.
      * @param amount is NOT USED HERE !
+     * @return 1 if the user was given the good, 0 otherwise
      */
     @Override
     public int give(int amount, boolean notify) {

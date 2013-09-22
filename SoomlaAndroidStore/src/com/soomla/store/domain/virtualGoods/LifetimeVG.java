@@ -70,6 +70,7 @@ import org.json.JSONObject;
     /**
      * see parent
      * @param amount the amount of the specific item to be given.
+     * @return 1 if the user was given the good, 0 otherwise
      */
     @Override
     public int give(int amount, boolean notify) {
@@ -89,6 +90,7 @@ import org.json.JSONObject;
     /**
      * see parent
      * @param amount the amount of the specific item to be taken.
+     * @return balance after taking process, should be 0
      */
     @Override
     public int take(int amount, boolean notify) {

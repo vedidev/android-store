@@ -53,8 +53,9 @@ public class NonConsumableItemsStorage {
     /**
      * Adds the given google non-consumable item to the storage.
      * @param nonConsumableItem is the required google non-consumable item.
+     * @return true
      */
-    public int add(NonConsumableItem nonConsumableItem){
+    public boolean add(NonConsumableItem nonConsumableItem){
         StoreUtils.LogDebug(TAG, "adding " + nonConsumableItem.getItemId());
 
         String itemId = nonConsumableItem.getItemId();
@@ -62,14 +63,15 @@ public class NonConsumableItemsStorage {
         key = StorageManager.getAESObfuscator().obfuscateString(key);
         StorageManager.getDatabase().setKeyVal(key, "");
 
-        return 1;
+        return true;
     }
 
     /**
      * Removes the given google non-consumable item from the storage.
      * @param nonConsumableItem is the required google non-consumable item.
+     * @return false
      */
-    public int remove(NonConsumableItem nonConsumableItem){
+    public boolean remove(NonConsumableItem nonConsumableItem){
         StoreUtils.LogDebug(TAG, "removing " + nonConsumableItem.getName());
 
         String itemId = nonConsumableItem.getItemId();
@@ -77,7 +79,7 @@ public class NonConsumableItemsStorage {
         key = StorageManager.getAESObfuscator().obfuscateString(key);
         StorageManager.getDatabase().deleteKeyVal(key);
 
-        return 0;
+        return false;
     }
 
     /** Private members **/

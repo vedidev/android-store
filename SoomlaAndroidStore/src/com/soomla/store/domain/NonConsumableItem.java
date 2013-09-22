@@ -59,19 +59,21 @@ public class NonConsumableItem extends PurchasableVirtualItem {
     /**
      * see parent
      * @param amount the amount of the specific item to be given.
+     * @return balance after the giving process, can be either 0 or 1
      */
     @Override
     public int give(int amount, boolean notify) {
-        return StorageManager.getNonConsumableItemsStorage().add(this);
+        return StorageManager.getNonConsumableItemsStorage().add(this) ? 1 : 0;
     }
 
     /**
      * see parent
      * @param amount the amount of the specific item to be taken.
+     * @return balance after the taking process, can be either 0 or 1
      */
     @Override
     public int take(int amount, boolean notify) {
-        return StorageManager.getNonConsumableItemsStorage().remove(this);
+        return StorageManager.getNonConsumableItemsStorage().remove(this) ? 1 : 0;
     }
 
     /**
@@ -89,13 +91,14 @@ public class NonConsumableItem extends PurchasableVirtualItem {
     /**
      * see parent
      * @param balance see parent
+     * @return balance after the resetting process, can be either 0 or 1
      */
     @Override
     public int resetBalance(int balance, boolean notify) {
         if (balance > 0) {
-            return StorageManager.getNonConsumableItemsStorage().add(this);
+            return StorageManager.getNonConsumableItemsStorage().add(this) ? 1 : 0;
         } else {
-            return StorageManager.getNonConsumableItemsStorage().remove(this);
+            return StorageManager.getNonConsumableItemsStorage().remove(this) ? 1 : 0;
         }
     }
 
