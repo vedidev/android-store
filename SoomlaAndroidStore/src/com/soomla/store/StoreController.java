@@ -18,6 +18,7 @@ package com.soomla.store;
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.text.TextUtils;
 import com.soomla.billing.BillingService;
 import com.soomla.billing.Consts;
 import com.soomla.billing.PurchaseObserver;
@@ -64,15 +65,15 @@ public class StoreController extends PurchaseObserver {
 
         SharedPreferences prefs = new ObscuredSharedPreferences(SoomlaApp.getAppContext().getSharedPreferences(StoreConfig.PREFS_NAME, Context.MODE_PRIVATE));
         SharedPreferences.Editor edit = prefs.edit();
-        if (publicKey != null && !publicKey.isEmpty()) {
+        if (publicKey != null && !TextUtils.isEmpty(publicKey)) {
             edit.putString(StoreConfig.PUBLIC_KEY, publicKey);
-        } else if (prefs.getString(StoreConfig.PUBLIC_KEY, "").isEmpty()) {
+        } else if (TextUtils.isEmpty(prefs.getString(StoreConfig.PUBLIC_KEY, ""))) {
             StoreUtils.LogError(TAG, "publicKey is null or empty. can't initialize store !!");
             return;
         }
-        if (customSecret != null && !customSecret.isEmpty()) {
+        if (customSecret != null && !TextUtils.isEmpty(customSecret)) {
             edit.putString(StoreConfig.CUSTOM_SEC, customSecret);
-        } else if (prefs.getString(StoreConfig.CUSTOM_SEC, "").isEmpty()) {
+        } else if (TextUtils.isEmpty(prefs.getString(StoreConfig.CUSTOM_SEC, ""))) {
             StoreUtils.LogError(TAG, "customSecret is null or empty. can't initialize store !!");
             return;
         }
@@ -103,7 +104,7 @@ public class StoreController extends PurchaseObserver {
 
         SharedPreferences prefs = new ObscuredSharedPreferences(SoomlaApp.getAppContext().getSharedPreferences(StoreConfig.PREFS_NAME, Context.MODE_PRIVATE));
         String publicKey = prefs.getString(StoreConfig.PUBLIC_KEY, "");
-        if (publicKey.isEmpty() || publicKey.equals("[YOUR PUBLIC KEY FROM GOOGLE PLAY]")) {
+        if (TextUtils.isEmpty(publicKey) || publicKey.equals("[YOUR PUBLIC KEY FROM GOOGLE PLAY]")) {
             StoreUtils.LogError(TAG, "You didn't provide a public key! You can't make purchases.");
             return false;
         }
