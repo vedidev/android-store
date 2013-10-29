@@ -63,6 +63,8 @@ public class StoreController extends PurchaseObserver {
             return;
         }
 
+        StoreUtils.LogDebug(TAG, "StoreController Initializing ...");
+
         SharedPreferences prefs = new ObscuredSharedPreferences(SoomlaApp.getAppContext().getSharedPreferences(StoreConfig.PREFS_NAME, Context.MODE_PRIVATE));
         SharedPreferences.Editor edit = prefs.edit();
         if (publicKey != null && !TextUtils.isEmpty(publicKey)) {
