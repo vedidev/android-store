@@ -54,13 +54,13 @@ public class StoreController extends PurchaseObserver {
      * @param publicKey is the public key given to you from Google.
      * @param customSecret is your encryption secret (it's used to encrypt your data in the database)
      */
-    public void initialize(IStoreAssets storeAssets,
+    public boolean initialize(IStoreAssets storeAssets,
                           String publicKey,
                           String customSecret){
 
         if (mInitialized) {
             StoreUtils.LogError(TAG, "StoreController is already initialized. You can't initialize it twice!");
-            return;
+            return false;
         }
 
         StoreUtils.LogDebug(TAG, "StoreController Initializing ...");
@@ -71,13 +71,13 @@ public class StoreController extends PurchaseObserver {
             edit.putString(StoreConfig.PUBLIC_KEY, publicKey);
         } else if (TextUtils.isEmpty(prefs.getString(StoreConfig.PUBLIC_KEY, ""))) {
             StoreUtils.LogError(TAG, "publicKey is null or empty. can't initialize store !!");
-            return;
+            return false;
         }
         if (customSecret != null && !TextUtils.isEmpty(customSecret)) {
             edit.putString(StoreConfig.CUSTOM_SEC, customSecret);
         } else if (TextUtils.isEmpty(prefs.getString(StoreConfig.CUSTOM_SEC, ""))) {
             StoreUtils.LogError(TAG, "customSecret is null or empty. can't initialize store !!");
-            return;
+            return false;
         }
         edit.putInt("SA_VER_NEW", storeAssets.getVersion());
         edit.commit();
@@ -94,6 +94,8 @@ public class StoreController extends PurchaseObserver {
 
         mInitialized = true;
         BusProvider.getInstance().post(new StoreControllerInitializedEvent());
+
+        return true;
     }
 
     /**
