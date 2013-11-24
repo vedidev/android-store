@@ -19,7 +19,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-
 import com.soomla.billing.Consts;
 import com.soomla.billing.IabHelper;
 import com.soomla.billing.IabResult;
@@ -69,6 +68,8 @@ public class StoreController {
             StoreUtils.LogError(TAG, "StoreController is already initialized. You can't initialize it twice!");
             return;
         }
+
+        StoreUtils.LogDebug(TAG, "StoreController Initializing ...");
 
         SharedPreferences prefs = new ObscuredSharedPreferences(SoomlaApp.getAppContext().getSharedPreferences(StoreConfig.PREFS_NAME, Context.MODE_PRIVATE));
         SharedPreferences.Editor edit = prefs.edit();

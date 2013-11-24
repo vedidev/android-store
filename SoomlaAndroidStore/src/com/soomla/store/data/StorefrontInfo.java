@@ -20,6 +20,9 @@ import com.soomla.billing.util.AESObfuscator;
 import com.soomla.store.SoomlaApp;
 import com.soomla.store.StoreUtils;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -63,6 +66,14 @@ public class StorefrontInfo {
             key = StorageManager.getAESObfuscator().obfuscateString(key);
             StorageManager.getDatabase().setKeyVal(key, storefrontJSON);
 
+			try {
+				JSONObject temp = new JSONObject(this.mStorefrontJSON);
+				this.mOrientationLandscape = ((JSONObject)temp.get("template")).getString("orientation").equals("landscape");
+			} catch (JSONException e) {
+				StoreUtils.LogError(TAG, "There was a problem parsing the given storefront JSON.");
+				return;
+			}
+			
             mInitialized = true;
         }
     }
@@ -89,6 +100,14 @@ public class StorefrontInfo {
             StoreUtils.LogError(TAG, e.getMessage());
             return false;
         }
+
+		try {
+			JSONObject temp = new JSONObject(this.mStorefrontJSON);
+			this.mOrientationLandscape = ((JSONObject)temp.get("template")).getString("orientation").equals("landscape");
+		} catch (JSONException e) {
+			StoreUtils.LogError(TAG, "There was a problem parsing the given storefront JSON.");
+			return true;
+		}
 
         StoreUtils.LogDebug(TAG, "the metadata-design json (from DB) is " + mStorefrontJSON);
 
@@ -134,6 +153,14 @@ public class StorefrontInfo {
         return mStorefrontJSON;
     }
 
+    public boolean isOrientationLandscape() {
+        return mOrientationLandscape;
+    }
+
+    public void setOrientationLandscape(boolean orientationLandscape) {
+        this.mOrientationLandscape = orientationLandscape;
+    }
+
     /** Private functions **/
 
     private StorefrontInfo() { }
@@ -143,6 +170,7 @@ public class StorefrontInfo {
     private static final String TAG             = "SOOMLA StorefrontInfo";
     private static StorefrontInfo sInstance     = null;
     private static boolean mInitialized         = false;
+    private boolean mOrientationLandscape       = false;
 
     private String  mStorefrontJSON;
 }

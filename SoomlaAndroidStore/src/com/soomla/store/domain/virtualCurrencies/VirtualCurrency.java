@@ -51,27 +51,30 @@ public class VirtualCurrency extends VirtualItem {
     /**
      * see parent
      * @param amount the amount of the specific item to be given.
+     * @return balance after the giving process
      */
     @Override
-    public void give(int amount, boolean notify) {
-        StorageManager.getVirtualCurrencyStorage().add(this, amount, notify);
+    public int give(int amount, boolean notify) {
+        return StorageManager.getVirtualCurrencyStorage().add(this, amount, notify);
     }
 
     /**
      * see parent
      * @param amount the amount of the specific item to be taken.
+     * @return balance after the taking process
      */
     @Override
-    public void take(int amount, boolean notify) {
-        StorageManager.getVirtualCurrencyStorage().remove(this, amount, notify);
+    public int take(int amount, boolean notify) {
+        return StorageManager.getVirtualCurrencyStorage().remove(this, amount, notify);
     }
 
     /**
      * see parent
      * @param balance see parent
+     * @return balance after the resetting process
      */
     @Override
-    public void resetBalance(int balance, boolean notify) {
-        StorageManager.getVirtualCurrencyStorage().setBalance(this, balance, notify);
+    public int resetBalance(int balance, boolean notify) {
+        return StorageManager.getVirtualCurrencyStorage().setBalance(this, balance, notify);
     }
 }
