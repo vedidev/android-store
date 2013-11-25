@@ -53,8 +53,8 @@ import java.util.List;
  * that listener will be notified when setup is complete, after which (and not before)
  * you may call other methods.
  *
- * After setup is complete, you will typically want to request an inventory of owned 
- * items and subscriptions. See {@link #queryInventory}, {@link #queryInventoryAsync} 
+ * After setup is complete, you will typically want to request an inventory of owned
+ * items and subscriptions. See {@link #queryInventory}, {@link #queryInventoryAsync}
  * and related methods.
  *
  * When you are done with this object, don't forget to call {@link #dispose}
@@ -82,8 +82,8 @@ public class IabHelper {
     boolean mSetupDone = false;
 
     // Are subscriptions supported?
-    boolean mSubscriptionsSupported = false; 
-    
+    boolean mSubscriptionsSupported = false;
+
     // Is an asynchronous operation in progress?
     // (only one at a time can be in progress)
     boolean mAsyncInProgress = false;
@@ -98,7 +98,7 @@ public class IabHelper {
 
     // The request code used to launch purchase flow
     int mRequestCode;
-    
+
     // The item type of the current purchase flow
     String mPurchasingItemType;
 
@@ -155,7 +155,7 @@ public class IabHelper {
     public IabHelper() {
         logDebug("IAB helper created.");
     }
-    
+
     /**
      * Enables or disable debug logging through LogCat.
      */
@@ -163,7 +163,7 @@ public class IabHelper {
         mDebugLog = enable;
         mDebugTag = tag;
     }
-    
+
     public void enableDebugLogging(boolean enable) {
         mDebugLog = enable;
     }
@@ -208,7 +208,7 @@ public class IabHelper {
                 String packageName = SoomlaApp.getAppContext().getPackageName();
                 try {
                     logDebug("Checking for in-app billing 3 support.");
-                    
+
                     // check for in-app billing v3 support
                     int response = mService.isBillingSupported(3, packageName, ITEM_TYPE_INAPP);
                     if (response != BILLING_RESPONSE_RESULT_OK) {
@@ -232,7 +232,7 @@ public class IabHelper {
                     else {
                         logDebug("Subscriptions NOT AVAILABLE. Response: " + response);
                     }
-                    
+
                     mSetupDone = true;
                 }
                 catch (RemoteException e) {
@@ -249,7 +249,7 @@ public class IabHelper {
                 }
             }
         };
-        
+
         Intent serviceIntent = new Intent("com.android.vending.billing.InAppBillingService.BIND");
         if (!SoomlaApp.getAppContext().getPackageManager().queryIntentServices(serviceIntent, 0).isEmpty()) {
             // service available to handle that Intent
@@ -260,7 +260,7 @@ public class IabHelper {
             if (listener != null) {
                 listener.onIabSetupFinished(
                         new IabResult(BILLING_RESPONSE_RESULT_BILLING_UNAVAILABLE,
-                        "Billing service unavailable on device.")); 
+                        "Billing service unavailable on device."));
             }
         }
     }
@@ -282,7 +282,7 @@ public class IabHelper {
             mPurchaseListener = null;
         }
     }
-    
+
     /** Returns whether subscriptions are supported. */
     public boolean subscriptionsSupported() {
         return mSubscriptionsSupported;
@@ -312,20 +312,20 @@ public class IabHelper {
     public void launchPurchaseFlow(Activity act, String sku, int requestCode, OnIabPurchaseFinishedListener listener) {
         launchPurchaseFlow(act, sku, requestCode, listener, "");
     }
-    
-    public void launchPurchaseFlow(Activity act, String sku, int requestCode, 
+
+    public void launchPurchaseFlow(Activity act, String sku, int requestCode,
             OnIabPurchaseFinishedListener listener, String extraData) {
-        launchPurchaseFlow(act, sku, ITEM_TYPE_INAPP, requestCode, listener, extraData); 
+        launchPurchaseFlow(act, sku, ITEM_TYPE_INAPP, requestCode, listener, extraData);
     }
-    
-    public void launchSubscriptionPurchaseFlow(Activity act, String sku, int requestCode, 
+
+    public void launchSubscriptionPurchaseFlow(Activity act, String sku, int requestCode,
             OnIabPurchaseFinishedListener listener) {
         launchSubscriptionPurchaseFlow(act, sku, requestCode, listener, "");
     }
-    
-    public void launchSubscriptionPurchaseFlow(Activity act, String sku, int requestCode, 
+
+    public void launchSubscriptionPurchaseFlow(Activity act, String sku, int requestCode,
             OnIabPurchaseFinishedListener listener, String extraData) {
-        launchPurchaseFlow(act, sku, ITEM_TYPE_SUBS, requestCode, listener, extraData); 
+        launchPurchaseFlow(act, sku, ITEM_TYPE_SUBS, requestCode, listener, extraData);
     }
 
     /**
@@ -353,7 +353,7 @@ public class IabHelper {
         IabResult result;
 
         if (itemType.equals(ITEM_TYPE_SUBS) && !mSubscriptionsSupported) {
-            IabResult r = new IabResult(IABHELPER_SUBSCRIPTIONS_NOT_AVAILABLE, 
+            IabResult r = new IabResult(IABHELPER_SUBSCRIPTIONS_NOT_AVAILABLE,
                     "Subscriptions are not available.");
             if (listener != null) listener.onIabPurchaseFinished(r, null);
             return;
@@ -371,6 +371,7 @@ public class IabHelper {
                 if (listener != null) listener.onIabPurchaseFinished(result, null);
                 // make sure to end the async operation...
                 flagEndAsync();
+                act.finish();
                 return;
             }
 
@@ -512,7 +513,7 @@ public class IabHelper {
     public Inventory queryInventory(boolean querySkuDetails, List<String> moreSkus) throws IabException {
         return queryInventory(querySkuDetails, moreSkus, null);
     }
-    
+
     /**
      * Queries the inventory. This will query all owned items from the server, as well as
      * information on additional skus, if specified. This method may block or take long to execute.
@@ -520,13 +521,13 @@ public class IabHelper {
      *
      * @param querySkuDetails if true, SKU details (price, description, etc) will be queried as well
      *     as purchase information.
-     * @param moreItemSkus additional PRODUCT skus to query information on, regardless of ownership. 
+     * @param moreItemSkus additional PRODUCT skus to query information on, regardless of ownership.
      *     Ignored if null or if querySkuDetails is false.
-     * @param moreSubsSkus additional SUBSCRIPTIONS skus to query information on, regardless of ownership. 
+     * @param moreSubsSkus additional SUBSCRIPTIONS skus to query information on, regardless of ownership.
      *     Ignored if null or if querySkuDetails is false.
      * @throws IabException if a problem occurs while refreshing the inventory.
      */
-    public Inventory queryInventory(boolean querySkuDetails, List<String> moreItemSkus, 
+    public Inventory queryInventory(boolean querySkuDetails, List<String> moreItemSkus,
                                         List<String> moreSubsSkus) throws IabException {
         checkSetupDone("queryInventory");
         try {
@@ -542,22 +543,22 @@ public class IabHelper {
                     throw new IabException(r, "Error refreshing inventory (querying prices of items).");
                 }
             }
-            
+
             // if subscriptions are supported, then also query for subscriptions
             if (mSubscriptionsSupported) {
                 r = queryPurchases(inv, ITEM_TYPE_SUBS);
                 if (r != BILLING_RESPONSE_RESULT_OK) {
                     throw new IabException(r, "Error refreshing inventory (querying owned subscriptions).");
                 }
-                
+
                 if (querySkuDetails) {
                     r = querySkuDetails(ITEM_TYPE_SUBS, inv, moreItemSkus);
                     if (r != BILLING_RESPONSE_RESULT_OK) {
                         throw new IabException(r, "Error refreshing inventory (querying prices of subscriptions).");
                     }
-                }                
+                }
             }
-            
+
             return inv;
         }
         catch (RemoteException e) {
@@ -642,12 +643,12 @@ public class IabHelper {
      */
      void consume(Purchase itemInfo) throws IabException {
         checkSetupDone("consume");
-        
+
         if (!itemInfo.mItemType.equals(ITEM_TYPE_INAPP)) {
-            throw new IabException(IABHELPER_INVALID_CONSUMPTION, 
+            throw new IabException(IABHELPER_INVALID_CONSUMPTION,
                     "Items of type '" + itemInfo.mItemType + "' can't be consumed.");
         }
-        
+
         try {
             String token = itemInfo.getToken();
             String sku = itemInfo.getSku();
@@ -879,7 +880,7 @@ public class IabHelper {
         return verificationFailed ? IABHELPER_VERIFICATION_FAILED : BILLING_RESPONSE_RESULT_OK;
     }
 
-    int querySkuDetails(String itemType, Inventory inv, List<String> moreSkus) 
+    int querySkuDetails(String itemType, Inventory inv, List<String> moreSkus)
                                 throws RemoteException, JSONException {
         logDebug("Querying SKU details.");
         ArrayList<String> skuList = new ArrayList<String>();
@@ -895,7 +896,7 @@ public class IabHelper {
         querySkus.putStringArrayList(GET_SKU_DETAILS_ITEM_LIST, skuList);
         Bundle skuDetails = mService.getSkuDetails(3, SoomlaApp.getAppContext().getPackageName(),
                 itemType, querySkus);
-        
+
         if (!skuDetails.containsKey(RESPONSE_GET_SKU_DETAILS_LIST)) {
         	int response = getResponseCodeFromBundle(skuDetails);
             if (response != BILLING_RESPONSE_RESULT_OK) {
@@ -963,11 +964,11 @@ public class IabHelper {
     void logDebug(String msg) {
         if (mDebugLog) Log.d(mDebugTag, msg);
     }
-    
+
     void logError(String msg) {
         Log.e(mDebugTag, "In-app billing error: " + msg);
     }
-    
+
     void logWarn(String msg) {
         Log.w(mDebugTag, "In-app billing warning: " + msg);
     }
