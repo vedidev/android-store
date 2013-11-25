@@ -16,14 +16,11 @@
 
 package com.soomla.store.purchaseTypes;
 
-import android.content.Context;
-import android.content.SharedPreferences;
-import android.text.TextUtils;
-import com.soomla.store.*;
-import com.soomla.store.data.ObscuredSharedPreferences;
+import com.soomla.store.BusProvider;
+import com.soomla.store.StoreController;
+import com.soomla.store.StoreUtils;
 import com.soomla.store.domain.GoogleMarketItem;
 import com.soomla.store.events.ItemPurchaseStartedEvent;
-import com.soomla.store.events.UnexpectedStoreErrorEvent;
 import com.soomla.store.exceptions.InsufficientFundsException;
 
 /**
@@ -53,20 +50,12 @@ public class PurchaseWithMarket extends PurchaseType {
      */
     @Override
     public void buy() throws InsufficientFundsException {
-        SharedPreferences prefs = new ObscuredSharedPreferences(
-                SoomlaApp.getAppContext().getSharedPreferences(StoreConfig.PREFS_NAME, Context.MODE_PRIVATE));
-        String publicKey = prefs.getString(StoreConfig.PUBLIC_KEY, "");
-        if (TextUtils.isEmpty(publicKey) || publicKey.equals("[YOUR PUBLIC KEY FROM GOOGLE PLAY]")) {
-            StoreUtils.LogError(TAG, "You didn't provide a public key! You can't make purchases.");
-            BusProvider.getInstance().post(new UnexpectedStoreErrorEvent());
-            return;
-        }
-
         StoreUtils.LogDebug(TAG, "Starting in-app purchase for productId: " + mGoogleMarketItem.getProductId());
 
-        if (!StoreController.getInstance().buyWithGooglePlay(mGoogleMarketItem, "")) {
-            BusProvider.getInstance().post(new UnexpectedStoreErrorEvent());
-            return;
+        try {
+            StoreController.getInstance().buyWithGooglePlay(mGoogleMarketItem, "");
+        } catch (IllegalStateException e) {
+            StoreUtils.LogError(TAG, "Error when purchasing item");
         }
 
         BusProvider.getInstance().post(new ItemPurchaseStartedEvent(getAssociatedItem()));
