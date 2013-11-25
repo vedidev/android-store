@@ -103,6 +103,7 @@ public class StoreGoodsActivity extends Activity {
 
     @Override
     protected void onDestroy() {
+        StoreController.getInstance().storeClosing();
         super.onDestroy();
     }
 
