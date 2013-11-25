@@ -7,9 +7,13 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.*;
+import android.widget.AdapterView;
+import android.widget.BaseAdapter;
+import android.widget.ImageView;
+import android.widget.ListView;
+import android.widget.TextView;
+
 import com.soomla.store.BusProvider;
-import com.soomla.store.StoreActivity;
 import com.soomla.store.StoreController;
 import com.soomla.store.data.StorageManager;
 import com.soomla.store.data.StoreInfo;
@@ -17,14 +21,13 @@ import com.soomla.store.domain.virtualGoods.VirtualGood;
 import com.soomla.store.events.CurrencyBalanceChangedEvent;
 import com.soomla.store.events.GoodBalanceChangedEvent;
 import com.soomla.store.exceptions.InsufficientFundsException;
-import com.soomla.store.exceptions.VirtualItemNotFoundException;
 import com.soomla.store.purchaseTypes.PurchaseWithVirtualItem;
 import com.squareup.otto.Subscribe;
 
 import java.io.IOException;
 import java.util.HashMap;
 
-public class StoreGoodsActivity extends StoreActivity {
+public class StoreGoodsActivity extends Activity {
 
     private StoreAdapter mStoreAdapter;
     private HashMap<String, Object> mImages;
