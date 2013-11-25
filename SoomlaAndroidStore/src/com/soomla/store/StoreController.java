@@ -167,31 +167,31 @@ public class StoreController {
      *
      * @param googleMarketItem is the item to purchase. This item has to be defined EXACTLY the same in Google Play.
      * @param payload a payload to get back when this purchase is finished.
-     * @return if the purchase succeeded.
      */
-    public boolean buyWithGooglePlay(GoogleMarketItem googleMarketItem, String payload) {
+    public void buyWithGooglePlay(GoogleMarketItem googleMarketItem, String payload) throws IllegalStateException {
+        consumeOwnedItems();
         SharedPreferences prefs = new ObscuredSharedPreferences(SoomlaApp.getAppContext().getSharedPreferences(StoreConfig.PREFS_NAME, Context.MODE_PRIVATE));
         String publicKey = prefs.getString(StoreConfig.PUBLIC_KEY, "");
         if (publicKey.length() == 0 || publicKey.equals("[YOUR PUBLIC KEY FROM GOOGLE PLAY]")) {
             StoreUtils.LogError(TAG, "You didn't provide a public key! You can't make purchases.");
-            return false;
+            throw new IllegalStateException();
         }
 
-        if (mActivity == null) {
-            StoreUtils.LogError(TAG, "You did not run this from inside a StoreActivity.");
-            return false;
-        }
+        Intent intent = new Intent(SoomlaApp.getAppContext(), StoreActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.putExtra(PROD_ID, googleMarketItem.getProductId());
+        intent.putExtra(EXTRA_DATA, payload);
+        SoomlaApp.getAppContext().startActivity(intent);
+    }
 
-        try {
-            startIabHelperIfNull();
-            mHelper.launchPurchaseFlow(mActivity, googleMarketItem.getProductId(), Consts.RC_REQUEST, mPurchaseFinishedListener, payload);
-            BusProvider.getInstance().post(new PlayPurchaseStartedEvent(StoreInfo.getPurchasableItem(googleMarketItem.getProductId())));
-        } catch (IllegalStateException e) {
-            StoreUtils.LogError(TAG, "Error purchasing item " + e.getMessage());
-        } catch (VirtualItemNotFoundException e) {
-            StoreUtils.LogError(TAG, "Couldn't find a purchasable item with productId: " + googleMarketItem.getProductId());
-        }
-        return true;
+    /**
+     *  Used for internal starting of purchase with Google Play. Do *NOT* call this on your own.
+     *
+     */
+    public void buyWithGooglePlayInner(Activity activity, String sku, String payload) throws IllegalStateException, VirtualItemNotFoundException {
+        startIabHelperIfNull();
+        mHelper.launchPurchaseFlow(activity, sku, Consts.RC_REQUEST, mPurchaseFinishedListener, payload);
+        BusProvider.getInstance().post(new PlayPurchaseStartedEvent(StoreInfo.getPurchasableItem(sku)));
     }
 
     /**
@@ -421,7 +421,7 @@ public class StoreController {
             List<String> itemSkus = inventory.getAllOwnedSkus(IabHelper.ITEM_TYPE_INAPP);
             for (String sku: itemSkus) {
                 try {
-                    VirtualItem v = StoreInfo.getVirtualItem(sku);
+                    VirtualItem v = StoreInfo.getPurchasableItem(sku);
                     if ( (v instanceof NonConsumableItem) ) {
                         continue;
                     }
@@ -461,14 +461,6 @@ public class StoreController {
         return mTestMode;
     }
 
-    public void setCurrentActivity(Activity activity) {
-        mActivity = activity;
-    }
-
-    public Activity getCurrentActivity() {
-        return mActivity;
-    }
-
     public boolean isInitialized() {
         return mInitialized;
     }
@@ -488,13 +480,15 @@ public class StoreController {
 
 
     /* Private Members */
+    public static final String PROD_ID    = "PRD#ID";
+    public static final String EXTRA_DATA = "EXTR#DT";
+
     private static final String TAG = "SOOMLA StoreController";
 
     private boolean mInitialized = false;
     private boolean mTestMode    = false;
 
     private static IabHelper mHelper;
-    private Activity mActivity;
 
     private Lock mLock = new ReentrantLock();
 }
