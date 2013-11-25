@@ -19,6 +19,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+
 import com.soomla.billing.Consts;
 import com.soomla.billing.IabHelper;
 import com.soomla.billing.IabResult;
@@ -32,7 +33,9 @@ import com.soomla.store.domain.PurchasableVirtualItem;
 import com.soomla.store.domain.VirtualItem;
 import com.soomla.store.events.BillingNotSupportedEvent;
 import com.soomla.store.events.BillingSupportedEvent;
+import com.soomla.store.events.ClosingStoreEvent;
 import com.soomla.store.events.ItemPurchasedEvent;
+import com.soomla.store.events.OpeningStoreEvent;
 import com.soomla.store.events.PlayPurchaseCancelledEvent;
 import com.soomla.store.events.PlayPurchaseEvent;
 import com.soomla.store.events.PlayPurchaseStartedEvent;
@@ -63,10 +66,10 @@ public class StoreController {
      * @param publicKey is the public key given to you from Google.
      * @param customSecret is your encryption secret (it's used to encrypt your data in the database)
      */
-    public void initialize(IStoreAssets storeAssets, String publicKey, String customSecret) {
+    public boolean initialize(IStoreAssets storeAssets, String publicKey, String customSecret) {
         if (mInitialized) {
             StoreUtils.LogError(TAG, "StoreController is already initialized. You can't initialize it twice!");
-            return;
+            return false;
         }
 
         StoreUtils.LogDebug(TAG, "StoreController Initializing ...");
@@ -78,14 +81,14 @@ public class StoreController {
             edit.putString(StoreConfig.PUBLIC_KEY, publicKey);
         } else if (prefs.getString(StoreConfig.PUBLIC_KEY, "").length() == 0) {
             StoreUtils.LogError(TAG, "publicKey is null or empty. Can't initialize store !!");
-            return;
+            return false;
         }
 
         if (customSecret != null && customSecret.length() != 0) {
             edit.putString(StoreConfig.CUSTOM_SEC, customSecret);
         } else if (prefs.getString(StoreConfig.CUSTOM_SEC, "").length() == 0) {
             StoreUtils.LogError(TAG, "customSecret is null or empty. Can't initialize store !!");
-            return;
+            return false;
         }
         edit.putInt("SA_VER_NEW", storeAssets.getVersion());
         edit.commit();
@@ -94,14 +97,42 @@ public class StoreController {
             StoreInfo.setStoreAssets(storeAssets);
         }
 
-        // Billing
-        startIabHelper();
-
         // Update SOOMLA store from DB
         StoreInfo.initializeFromDB();
 
         mInitialized = true;
         BusProvider.getInstance().post(new StoreControllerInitializedEvent());
+        return true;
+    }
+
+    public void storeOpening(){
+        mLock.lock();
+        if (mStoreOpen) {
+            StoreUtils.LogError(TAG, "Store is already open !");
+            mLock.unlock();
+            return;
+        }
+
+        /* Billing */
+        startIabHelper();
+
+        BusProvider.getInstance().post(new OpeningStoreEvent());
+
+        mStoreOpen = true;
+        mLock.unlock();
+    }
+
+    /**
+     * Call this function when you close the actual store window.
+     */
+    public void storeClosing(){
+        if (!mStoreOpen) return;
+
+        mStoreOpen = false;
+
+        BusProvider.getInstance().post(new ClosingStoreEvent());
+
+        stopIabHelper();
     }
 
     /**
@@ -177,7 +208,7 @@ public class StoreController {
             throw new IllegalStateException();
         }
 
-        Intent intent = new Intent(SoomlaApp.getAppContext(), StoreActivity.class);
+        Intent intent = new Intent(SoomlaApp.getAppContext(), IabActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         intent.putExtra(PROD_ID, googleMarketItem.getProductId());
         intent.putExtra(EXTRA_DATA, payload);
@@ -186,7 +217,6 @@ public class StoreController {
 
     /**
      *  Used for internal starting of purchase with Google Play. Do *NOT* call this on your own.
-     *
      */
     public void buyWithGooglePlayInner(Activity activity, String sku, String payload) throws IllegalStateException, VirtualItemNotFoundException {
         startIabHelperIfNull();
@@ -461,10 +491,6 @@ public class StoreController {
         return mTestMode;
     }
 
-    public boolean isInitialized() {
-        return mInitialized;
-    }
-
     /* Singleton */
     private static StoreController sInstance = null;
 
@@ -486,9 +512,42 @@ public class StoreController {
     private static final String TAG = "SOOMLA StoreController";
 
     private boolean mInitialized = false;
+    private boolean mStoreOpen   = false;
     private boolean mTestMode    = false;
 
     private static IabHelper mHelper;
 
     private Lock mLock = new ReentrantLock();
+
+//    public class IabActivity extends Activity {
+//        @Override
+//        protected void onCreate(Bundle savedInstanceState) {
+//            super.onCreate(savedInstanceState);
+//
+//            Intent intent = getIntent();
+//            String productId = intent.getStringExtra(StoreController.PROD_ID);
+//            String payload = intent.getStringExtra(StoreController.EXTRA_DATA);
+//
+//            try {
+//                buyWithGooglePlayInner(this, productId, payload);
+//            } catch (IllegalStateException e) {
+//                StoreUtils.LogError(TAG, "Error purchasing item " + e.getMessage());
+//                BusProvider.getInstance().post(new UnexpectedStoreErrorEvent());
+//                finish();
+//            } catch (VirtualItemNotFoundException e) {
+//                StoreUtils.LogError(TAG, "Couldn't find a purchasable item with productId: " + productId);
+//                BusProvider.getInstance().post(new UnexpectedStoreErrorEvent());
+//                finish();
+//            }
+//        }
+//
+//        @Override
+//        protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+//            if (!handleActivityResult(requestCode, resultCode, data)) {
+//                super.onActivityResult(requestCode, resultCode, data);
+//            } else {
+//                finish();
+//            }
+//        }
+//    }
 }
