@@ -1,12 +1,17 @@
 *This project is a part of [The SOOMLA Project](http://project.soom.la) which is a series of open source initiatives with a joint goal to help mobile game developers get better stores and more in-app purchases.*
 
-Haven't you ever wanted an in-app purchase one liner that looks like this ?!
+Haven't you ever wanted an in-app purchase one liner that looks like this!?
 
 ```Java
     StoreInventory.buy("[itemId]");
 ```
 
 ## android-store
+
+**November ??, 2013**: _android-store_ has been updated to use Google's In-App Billing version 3. There is no need to use our _test mode_ to make static response purchases, everything is handled by Google now. Furthermore, you can now test **real** purchases using test accounts in the [Google Developer Console](https://play.google.com/apps/publish).
+
+> - We removed the `set/isTestMode()` functions as they are not needed anymore
+> - `StoreController.storeOpening()` does not take an activity as a parameter anymore.
 
 **The new Virtual Economy model V3 is merged into master. The new model has many new features and it works better than the old one. Old applications may break if they use in this new model so already published games with android-store from before May 1st, 2013 needs to clone the project with tag 'v2.2' and not 'v3.0'.**
 
@@ -31,7 +36,7 @@ Check out our [Wiki] (https://github.com/soomla/android-store/wiki) for more inf
 
 2. Make the following changes to your AndroidManifest.xml:
 
-  Add `SoomlaApp` as the main Application by placing it in the `application` tag:
+  Set `SoomlaApp` as the main Application by placing it in the `application` tag:
 
     ```xml
     <application ...
@@ -44,18 +49,11 @@ Check out our [Wiki] (https://github.com/soomla/android-store/wiki) for more inf
     <uses-permission android:name="com.android.vending.BILLING" />
     ```
 
-  Add the following code into your `application` element:
+  Add the activity to your `application` element, android-store needs to spawn a transparent activity to make purchases:
 
     ```xml
-    <service android:name="com.soomla.billing.BillingService" />
-
-    <receiver android:name="com.soomla.billing.BillingReceiver">
-        <intent-filter>
-            <action android:name="com.android.vending.billing.IN_APP_NOTIFY" />
-            <action android:name="com.android.vending.billing.RESPONSE_CODE" />
-            <action android:name="com.android.vending.billing.PURCHASE_STATE_CHANGED" />
-        </intent-filter>
-    </receiver>
+        <activity android:name="com.soomla.store.StoreController$IabActivity"
+                  android:theme="@android:style/Theme.Translucent.NoTitleBar.Fullscreen"/>
     ```
 3. Change the value of `StoreConfig.SOOM_SEC` to a secret of you choice. Do this now!
    **You can't change this value after you publish your game!**
@@ -77,7 +75,7 @@ Check out our [Wiki] (https://github.com/soomla/android-store/wiki) for more inf
   When you show the store call:
 
     ```Java
-    StoreController.getInstance().storeOpening([the calling Activity]);
+    StoreController.getInstance().storeOpening();
     ```
 
   When you hide the store call:
@@ -125,14 +123,7 @@ Don't forget to define your _IStoreEventHandler_ in order to get the events of s
 
 ## Debugging
 
-In order to debug android-store, we've added 2 configurations:
-
-* StoreConfig.logDebug - Set it to 'true' when you want to see many multiple debug messages thrown to Logcat.
-* Test Mode - You can 'tell' the SDK to work in test mode. It actually means that it won't verify purchases on the device. This feature will let you buy Google's test products. Test Mode is _off_ by default, to set it on:
-
-``` Java
-StoreController.getInstance().setTestMode(true);
-```
+In order to debug android-store, set `StoreConfig.logDebug` to `true`. This will print all of _android-store's_ debugging messages to logcat.
 
 ## Storage & Meta-Data
 
