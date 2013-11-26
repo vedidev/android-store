@@ -19,6 +19,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Bundle;
 
 import com.soomla.billing.Consts;
 import com.soomla.billing.IabHelper;
@@ -218,7 +219,7 @@ public class StoreController {
     /**
      *  Used for internal starting of purchase with Google Play. Do *NOT* call this on your own.
      */
-    public void buyWithGooglePlayInner(Activity activity, String sku, String payload) throws IllegalStateException, VirtualItemNotFoundException {
+    private void buyWithGooglePlayInner(Activity activity, String sku, String payload) throws IllegalStateException, VirtualItemNotFoundException {
         startIabHelperIfNull();
         mHelper.launchPurchaseFlow(activity, sku, Consts.RC_REQUEST, mPurchaseFinishedListener, payload);
         BusProvider.getInstance().post(new PlayPurchaseStartedEvent(StoreInfo.getPurchasableItem(sku)));
@@ -519,35 +520,35 @@ public class StoreController {
 
     private Lock mLock = new ReentrantLock();
 
-//    public class IabActivity extends Activity {
-//        @Override
-//        protected void onCreate(Bundle savedInstanceState) {
-//            super.onCreate(savedInstanceState);
-//
-//            Intent intent = getIntent();
-//            String productId = intent.getStringExtra(StoreController.PROD_ID);
-//            String payload = intent.getStringExtra(StoreController.EXTRA_DATA);
-//
-//            try {
-//                buyWithGooglePlayInner(this, productId, payload);
-//            } catch (IllegalStateException e) {
-//                StoreUtils.LogError(TAG, "Error purchasing item " + e.getMessage());
-//                BusProvider.getInstance().post(new UnexpectedStoreErrorEvent());
-//                finish();
-//            } catch (VirtualItemNotFoundException e) {
-//                StoreUtils.LogError(TAG, "Couldn't find a purchasable item with productId: " + productId);
-//                BusProvider.getInstance().post(new UnexpectedStoreErrorEvent());
-//                finish();
-//            }
-//        }
-//
-//        @Override
-//        protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-//            if (!handleActivityResult(requestCode, resultCode, data)) {
-//                super.onActivityResult(requestCode, resultCode, data);
-//            } else {
-//                finish();
-//            }
-//        }
-//    }
+    public static class IabActivity extends Activity {
+        @Override
+        protected void onCreate(Bundle savedInstanceState) {
+            super.onCreate(savedInstanceState);
+
+            Intent intent = getIntent();
+            String productId = intent.getStringExtra(StoreController.PROD_ID);
+            String payload = intent.getStringExtra(StoreController.EXTRA_DATA);
+
+            try {
+                StoreController.getInstance().buyWithGooglePlayInner(this, productId, payload);
+            } catch (IllegalStateException e) {
+                StoreUtils.LogError(TAG, "Error purchasing item " + e.getMessage());
+                BusProvider.getInstance().post(new UnexpectedStoreErrorEvent());
+                finish();
+            } catch (VirtualItemNotFoundException e) {
+                StoreUtils.LogError(TAG, "Couldn't find a purchasable item with productId: " + productId);
+                BusProvider.getInstance().post(new UnexpectedStoreErrorEvent());
+                finish();
+            }
+        }
+
+        @Override
+        protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+            if (!StoreController.getInstance().handleActivityResult(requestCode, resultCode, data)) {
+                super.onActivityResult(requestCode, resultCode, data);
+            } else {
+                finish();
+            }
+        }
+    }
 }
