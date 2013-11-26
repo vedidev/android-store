@@ -508,6 +508,11 @@ public class StoreController {
 
     private Lock mLock = new ReentrantLock();
 
+    /**
+     * Android In-App Billing v3 requires and activity to receive the result of the billing process.
+     * This activity's job is to do just that, it also contains the white/green IAB window.  Please
+     * Do not start it on your own.
+     */
     public static class IabActivity extends Activity {
         @Override
         protected void onCreate(Bundle savedInstanceState) {
