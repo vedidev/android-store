@@ -21,6 +21,8 @@ import com.soomla.billing.util.AESObfuscator;
 import com.soomla.store.StoreUtils;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
 
 /**
  * This class provides basic storage operations for a simple key-value store.
@@ -92,16 +94,17 @@ public class KeyValueStorage {
         return val;
     }
 
-    public ArrayList<String> getNonEncryptedQueryValues(String query) {
+    public HashMap<String, String> getNonEncryptedQueryValues(String query) {
         StoreUtils.LogDebug(TAG, "trying to fetch a values for query: " + query);
 
-        ArrayList<String> vals = StorageManager.getDatabase().getQueryVals(query);
-        ArrayList<String> results = new ArrayList<String>();
-        for(String val : vals) {
+        HashMap<String, String> vals = StorageManager.getDatabase().getQueryVals(query);
+        HashMap<String, String> results = new HashMap<String, String>();
+        for(String key : vals.keySet()) {
+            String val = vals.get(key);
             if (val != null && !TextUtils.isEmpty(val)) {
                 try {
                     val = StorageManager.getAESObfuscator().unobfuscateToString(val);
-                    results.add(val);
+                    results.put(key, val);
                 } catch (AESObfuscator.ValidationException e) {
                     StoreUtils.LogError(TAG, e.getMessage());
                 }
