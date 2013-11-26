@@ -23,6 +23,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 import com.soomla.store.StoreConfig;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -97,16 +98,17 @@ public class KeyValDatabase {
         mStoreDB.delete(KEYVAL_TABLE_NAME, KEYVAL_COLUMN_KEY + "=?", new String[] { key });
     }
 
-    public synchronized ArrayList<String> getQueryVals(String query) {
+    public synchronized HashMap<String, String> getQueryVals(String query) {
         query = query.replace('*', '%');
         Cursor cursor = mStoreDB.query(KEYVAL_TABLE_NAME, KEYVAL_COLUMNS, KEYVAL_COLUMN_KEY + " LIKE '" + query + "'",
                 null, null, null, null);
 
-        ArrayList<String> ret = new ArrayList<String>();
+        HashMap<String, String> ret = new HashMap<String, String>();
         while (cursor != null && cursor.moveToNext()) {
             try {
                 int valColIdx = cursor.getColumnIndexOrThrow(KEYVAL_COLUMN_VAL);
-                ret.add(cursor.getString(valColIdx));
+                int keyColIdx = cursor.getColumnIndexOrThrow(KEYVAL_COLUMN_KEY);
+                ret.put(cursor.getString(keyColIdx), cursor.getString(valColIdx));
             } catch (IllegalArgumentException exx) {
             }
         }
