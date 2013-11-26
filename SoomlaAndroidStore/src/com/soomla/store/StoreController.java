@@ -106,13 +106,7 @@ public class StoreController {
         return true;
     }
 
-    /** No need to open the store with an activity anymore. */
-    @Deprecated
-    public void storeOpening(Activity activity) {
-        storeOpening();
-    }
-
-    public void storeOpening(){
+    public void storeOpening() {
         mLock.lock();
         if (mStoreOpen) {
             StoreUtils.LogError(TAG, "Store is already open !");
@@ -132,7 +126,7 @@ public class StoreController {
     /**
      * Call this function when you close the actual store window.
      */
-    public void storeClosing(){
+    public void storeClosing() {
         if (!mStoreOpen) return;
 
         mStoreOpen = false;
@@ -177,19 +171,6 @@ public class StoreController {
     }
 
     /**
-     * Regenerate the IAB helper if the old one was garbage collected.
-     *
-     * @return if a new helper was indeed created.
-     */
-    private boolean startIabHelperIfNull() {
-        if (mHelper == null) {
-            startIabHelper();
-            return true;
-        }
-        return false;
-    }
-
-    /**
      * Dispose of the helper to prevent memory leaks
      */
     private void stopIabHelper() {
@@ -225,7 +206,7 @@ public class StoreController {
      *  Used for internal starting of purchase with Google Play. Do *NOT* call this on your own.
      */
     private void buyWithGooglePlayInner(Activity activity, String sku, String payload) throws IllegalStateException, VirtualItemNotFoundException {
-        startIabHelperIfNull();
+        if (mHelper == null) startIabHelper();
         mHelper.launchPurchaseFlow(activity, sku, Consts.RC_REQUEST, mPurchaseFinishedListener, payload);
         BusProvider.getInstance().post(new PlayPurchaseStartedEvent(StoreInfo.getPurchasableItem(sku)));
     }
@@ -239,7 +220,7 @@ public class StoreController {
         if (!transactionsAlreadyRestored()) {
             try {
                 BusProvider.getInstance().post(new RestoreTransactionsStartedEvent());
-                startIabHelperIfNull();
+                if (mHelper == null) startIabHelper();
                 mHelper.queryInventoryAsync(mRestoreTransactionsListener);
             } catch (IllegalStateException e) {
                 StoreUtils.LogError(TAG, "Error restoring transactions " + e.getMessage());
@@ -471,16 +452,6 @@ public class StoreController {
         return mHelper.handleActivityResult(requestCode, resultCode, data);
     }
 
-    /* Getters and setters */
-
-    /** With In-App Billing v3 there is no need for test mode */
-    @Deprecated
-    public void setTestMode(boolean mTestMode) { }
-
-    /** With In-App Billing v3 there is no need for test mode */
-    @Deprecated
-    public boolean isTestMode() { return true; }
-
     /* Singleton */
     private static StoreController sInstance = null;
 
@@ -504,7 +475,7 @@ public class StoreController {
     private boolean mInitialized = false;
     private boolean mStoreOpen   = false;
 
-    private static IabHelper mHelper;
+    private IabHelper mHelper;
 
     private Lock mLock = new ReentrantLock();
 
