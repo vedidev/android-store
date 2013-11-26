@@ -145,8 +145,7 @@ public class StoreController {
         StoreUtils.LogDebug(TAG, "Creating IAB helper.");
         mHelper = new IabHelper();
 
-        // Enable debugging TODO: disable debugging
-        mHelper.enableDebugLogging(true);
+        mHelper.enableDebugLogging(false);
 
         // Start the setup and call the listener when the setup is over
         StoreUtils.LogDebug(TAG, "Starting setup.");
