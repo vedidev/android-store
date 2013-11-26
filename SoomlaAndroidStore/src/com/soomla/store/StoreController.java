@@ -161,10 +161,10 @@ public class StoreController {
             }
 
             BusProvider.getInstance().post(new BillingSupportedEvent());
-            /* The following lines execute blocking code for debugging purposes,
-               do not uncomment */
+
+            // The following lines execute blocking code for debugging purposes, do not uncomment
 //          StoreUtils.LogDebug(TAG, "Setup successful, consuming unconsumed items");
-//          consumeOwnedItems();
+//          mHelper.queryInventoryAsync(mConsumeOwnedItemsListener);
             }
         });
         mLock.unlock();
@@ -201,7 +201,6 @@ public class StoreController {
      * @param payload a payload to get back when this purchase is finished.
      */
     public void buyWithGooglePlay(GoogleMarketItem googleMarketItem, String payload) throws IllegalStateException {
-        consumeOwnedItems();
         SharedPreferences prefs = new ObscuredSharedPreferences(SoomlaApp.getAppContext().getSharedPreferences(StoreConfig.PREFS_NAME, Context.MODE_PRIVATE));
         String publicKey = prefs.getString(StoreConfig.PUBLIC_KEY, "");
         if (publicKey.length() == 0 || publicKey.equals("[YOUR PUBLIC KEY FROM GOOGLE PLAY]")) {
@@ -251,23 +250,6 @@ public class StoreController {
     public boolean transactionsAlreadyRestored() {
         SharedPreferences prefs = new ObscuredSharedPreferences(SoomlaApp.getAppContext().getSharedPreferences(StoreConfig.PREFS_NAME, Context.MODE_PRIVATE));
         return prefs.getBoolean("RESTORED", false);
-    }
-
-    /**
-     * Check if public key is valid.
-     * @param publicKey the public key
-     * @return if public key is valid.
-     */
-    public boolean checkPublicKey(String publicKey) {
-        return (publicKey != null && publicKey.length() != 0 && !publicKey.equals("[YOUR PUBLIC KEY FROM GOOGLE PLAY]"));
-    }
-
-    /**
-     * Consume any owned items that may not have been consumed
-     */
-    public void consumeOwnedItems() {
-        StoreUtils.LogDebug(TAG, "Consuming owned items if any");
-        mHelper.queryInventoryAsync(mConsumeOwnedItemsListener);
     }
 
     /* actions to take depending on billing result */
@@ -484,13 +466,14 @@ public class StoreController {
     }
 
     /* Getters and setters */
-    public void setTestMode(boolean mTestMode) {
-        this.mTestMode = mTestMode;
-    }
 
-    public boolean isTestMode() {
-        return mTestMode;
-    }
+    /** With In-App Billing v3 there is no need for test mode */
+    @Deprecated
+    public void setTestMode(boolean mTestMode) { }
+
+    /** With In-App Billing v3 there is no need for test mode */
+    @Deprecated
+    public boolean isTestMode() { return true; }
 
     /* Singleton */
     private static StoreController sInstance = null;
@@ -514,7 +497,6 @@ public class StoreController {
 
     private boolean mInitialized = false;
     private boolean mStoreOpen   = false;
-    private boolean mTestMode    = false;
 
     private static IabHelper mHelper;
 
