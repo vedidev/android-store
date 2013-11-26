@@ -106,6 +106,12 @@ public class StoreController {
         return true;
     }
 
+    /** No need to open the store with an activity anymore. */
+    @Deprecated
+    public void storeOpening(Activity activity) {
+        storeOpening();
+    }
+
     public void storeOpening(){
         mLock.lock();
         if (mStoreOpen) {
