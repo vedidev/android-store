@@ -40,7 +40,6 @@ import com.soomla.store.events.OpeningStoreEvent;
 import com.soomla.store.events.PlayPurchaseCancelledEvent;
 import com.soomla.store.events.PlayPurchaseEvent;
 import com.soomla.store.events.PlayPurchaseStartedEvent;
-import com.soomla.store.events.PlayRefundEvent;
 import com.soomla.store.events.RestoreTransactionsEvent;
 import com.soomla.store.events.RestoreTransactionsStartedEvent;
 import com.soomla.store.events.StoreControllerInitializedEvent;
@@ -268,11 +267,12 @@ public class StoreController {
                     BusProvider.getInstance().post(new PlayPurchaseCancelledEvent(v));
                     break;
                 case 2:
-                    StoreUtils.LogDebug(TAG, "Purchase refunded.");
-                    if (!StoreConfig.friendlyRefunds) {
-                        v.take(1);
-                    }
-                    BusProvider.getInstance().post(new PlayRefundEvent(v, developerPayload));
+//                    REFUNDS are not supported by Google as of IABv3
+
+//                    StoreUtils.LogDebug(TAG, "Purchase refunded.");
+//                    if (!StoreConfig.friendlyRefunds) {
+//                        v.take(1);
+//                    }
                     break;
             }
         } catch (VirtualItemNotFoundException e) {
