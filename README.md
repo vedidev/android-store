@@ -8,7 +8,7 @@ Haven't you ever wanted an in-app purchase one liner that looks like this!?
 
 ## android-store
 
-**November ??, 2013**: _android-store_ has been updated to use Google's In-App Billing version 3. There is no need to use our _test mode_ to make static response purchases, everything is handled by Google now. Furthermore, you can now test **real** purchases using test accounts in the [Google Developer Console](https://play.google.com/apps/publish).
+**December 1, 2013**: _android-store_ has been updated to use Google's In-App Billing version 3. There is no need to use our _test mode_ to make static response purchases, everything is handled by Google now. Furthermore, you can now test **real** purchases using test accounts in the [Google Developer Console](https://play.google.com/apps/publish).
 
 > - We removed the `set/isTestMode()` functions as they are not needed anymore
 > - `StoreController.storeOpening()` does not take an activity as a parameter anymore.
