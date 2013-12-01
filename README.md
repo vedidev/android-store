@@ -13,13 +13,11 @@ Haven't you ever wanted an in-app purchase one liner that looks like this!?
 > - Functions removed: `setTestMode()` & `isTestMode()` - not needed anymore
 > - `StoreController.storeOpening()` does not take an activity as a parameter anymore.
 
-**The new Virtual Economy model V3 is merged into master. The new model has many new features and it works better than the old one. Old applications may break if they use in this new model so already published games with android-store from before May 1st, 2013 needs to clone the project with tag 'v2.2' and not 'v3.0'.**
-
-Want to learn more about modelV3? Try these:  
+The current virtual economny model is called **modelV3**. Want to learn more about it? Try these:  
 * [Economy Model Objects](https://github.com/soomla/android-store/wiki/Economy-Model-Objects)  
 * [Handling Store Operations](https://github.com/soomla/android-store/wiki/Handling-Store-Operations)
 
-The android-store is our first open code initiative as part of The SOOMLA Project. It is a Java API that simplifies Google Play's in-app purchasing API and complements it with storage, security and event handling. The project also includes a sample app for reference. 
+android-store is an open code initiative as part of The SOOMLA Project. It is a Java API that simplifies Google Play's in-app purchasing API and compliments it with storage, security and event handling. The project also includes a sample app for reference. 
 
 >If you also want to create a **storefront** you can do that using SOOMLA's [In-App Purchase Store Designer](http://soom.la).
 
