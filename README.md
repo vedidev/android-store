@@ -10,7 +10,7 @@ Haven't you ever wanted an in-app purchase one liner that looks like this!?
 
 **December 1, 2013**: _android-store_ has been updated to use Google's In-App Billing version 3. There is no need to use our _test mode_ to make static response purchases, everything is handled by Google now. Furthermore, you can now test **real** purchases using test accounts in the [Google Developer Console](https://play.google.com/apps/publish).
 
-> - We removed the `set/isTestMode()` functions as they are not needed anymore
+> - Functions removed: `setTestMode()` & `isTestMode()` - not needed anymore
 > - `StoreController.storeOpening()` does not take an activity as a parameter anymore.
 
 **The new Virtual Economy model V3 is merged into master. The new model has many new features and it works better than the old one. Old applications may break if they use in this new model so already published games with android-store from before May 1st, 2013 needs to clone the project with tag 'v2.2' and not 'v3.0'.**
