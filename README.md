@@ -11,6 +11,7 @@ Haven't you ever wanted an in-app purchase one liner that looks like this!?
 **December 1, 2013**: _android-store_ has been updated to use Google's In-App Billing version 3. There is no need to use our _test mode_ to make static response purchases, everything is handled by Google now. Furthermore, you can now test **real** purchases using test accounts in the [Google Developer Console](https://play.google.com/apps/publish).
 
 > - Functions removed: `setTestMode()` & `isTestMode()` - not needed anymore
+> - Events removed: `onMarketRefund` - as of IAB version 3 Google does not support refunds anymore.
 > - `StoreController.storeOpening()` does not take an activity as a parameter anymore.
 
 The current virtual economny model is called **modelV3**. Want to learn more about it? Try these:  
