@@ -40,6 +40,7 @@ import com.soomla.store.events.OpeningStoreEvent;
 import com.soomla.store.events.PlayPurchaseCancelledEvent;
 import com.soomla.store.events.PlayPurchaseEvent;
 import com.soomla.store.events.PlayPurchaseStartedEvent;
+import com.soomla.store.events.PlayRefundEvent;
 import com.soomla.store.events.RestoreTransactionsEvent;
 import com.soomla.store.events.RestoreTransactionsStartedEvent;
 import com.soomla.store.events.StoreControllerInitializedEvent;
@@ -144,25 +145,28 @@ public class StoreController {
         StoreUtils.LogDebug(TAG, "Creating IAB helper.");
         mHelper = new IabHelper();
 
-        mHelper.enableDebugLogging(false);
+        mHelper.enableDebugLogging(true);
 
         // Start the setup and call the listener when the setup is over
         StoreUtils.LogDebug(TAG, "Starting setup.");
         mHelper.startSetup(new IabHelper.OnIabSetupFinishedListener() {
-        public void onIabSetupFinished(IabResult result) {
-            StoreUtils.LogDebug(TAG, "Setup finished.");
-            if (result.isFailure()) {
-                StoreUtils.LogDebug(TAG, "There's no connectivity with the billing service.");
-                BusProvider.getInstance().post(new BillingNotSupportedEvent());
-                mLock.unlock();
-                return;
-            }
+            public void onIabSetupFinished(IabResult result) {
+                StoreUtils.LogDebug(TAG, "Setup finished.");
+                if (result.isFailure()) {
+                    StoreUtils.LogDebug(TAG, "There's no connectivity with the billing service.");
+                    BusProvider.getInstance().post(new BillingNotSupportedEvent());
+                    mLock.unlock();
+                    return;
+                }
 
-            BusProvider.getInstance().post(new BillingSupportedEvent());
+                BusProvider.getInstance().post(new BillingSupportedEvent());
 
-            // The following lines execute blocking code for debugging purposes, do not uncomment
-//          StoreUtils.LogDebug(TAG, "Setup successful, consuming unconsumed items");
-//          mHelper.queryInventoryAsync(mConsumeOwnedItemsListener);
+                // The following lines execute blocking code for debugging purposes, do not uncomment TODO: make this non-blocking and not clash with refund handling
+//                StoreUtils.LogDebug(TAG, "Setup successful, consuming unconsumed items");
+//                mHelper.queryInventoryAsync(mConsumeOwnedItemsListener);
+
+                StoreUtils.LogDebug(TAG, "Setup successful, handling refunds.");
+                mHelper.queryInventoryAsync(mHandleRefundsListener);
             }
         });
         mLock.unlock();
@@ -255,7 +259,7 @@ public class StoreController {
                 case 0:
                     StoreUtils.LogDebug(TAG, "Purchase successful.");
                     if ( !(v instanceof NonConsumableItem)) {
-                        mHelper.consumeAsync(purchase, mConsumeFinishedListener);
+//                        mHelper.consumeAsync(purchase, mConsumeFinishedListener);
                     } else {
                         BusProvider.getInstance().post(new PlayPurchaseEvent(v, developerPayload));
                         v.give(1);
@@ -398,12 +402,61 @@ public class StoreController {
                             " VirtualCurrencyPack OR GoogleMarketItem  with productId: " + sku +
                             ". It's unexpected so an unexpected error is being emitted");
                     BusProvider.getInstance().post(new UnexpectedStoreErrorEvent());
-                    continue;
                 }
             }
-            StoreUtils.LogDebug(TAG, "Done consuming restored transactions");
+            StoreUtils.LogDebug(TAG, "Done restoring transactions");
             BusProvider.getInstance().post(new RestoreTransactionsEvent(true));
         }
+    };
+
+    /**
+     * Handle refunds, take away any owned items that have been refunded
+     */
+    IabHelper.QueryInventoryFinishedListener mHandleRefundsListener = new IabHelper.QueryInventoryFinishedListener() {
+        public void onQueryInventoryFinished(IabResult result, Inventory inventory) {
+            if (result.isFailure()) {
+                StoreUtils.LogDebug(TAG, "Handle refunds error: " + result.getMessage());
+                return;
+            }
+            StoreUtils.LogDebug(TAG, "Handle refunds succeeded");
+
+            mPurchasesLeft = inventory.getAllPurchases();
+            consumeAll();
+
+            StoreUtils.LogDebug(TAG, "Done handling refunds");
+        }
+
+        IabHelper.OnConsumeFinishedListener consumeCallback = new IabHelper.OnConsumeFinishedListener() {
+            public void onConsumeFinished(Purchase purchase, IabResult result) {
+                String sku = purchase.getSku();
+                try {
+                    PurchasableVirtualItem v = StoreInfo.getPurchasableItem(sku);
+                    StoreUtils.LogDebug(TAG, "Purchase refunded.");
+                    if (!StoreConfig.friendlyRefunds) {
+                        v.take(1);
+                    }
+                    BusProvider.getInstance().post(new PlayRefundEvent(v, purchase.getDeveloperPayload()));
+                } catch (VirtualItemNotFoundException e) {
+                    StoreUtils.LogError(TAG, "ERROR : Couldn't find the PURCHASED" +
+                            " VirtualCurrencyPack OR GoogleMarketItem  with productId: " + sku +
+                            ". It's unexpected so an unexpected error is being emitted");
+                    BusProvider.getInstance().post(new UnexpectedStoreErrorEvent());
+                }
+                consumeAll();
+            }
+        };
+
+        // Continue consuming recursively until we've checked all items
+        void consumeAll () {
+            if (mPurchasesLeft.size() == 0) return; // exit recursion when we have no purchases left
+            Purchase purchase = mPurchasesLeft.remove(0);
+            if (purchase != null && purchase.getPurchaseState() == 2) { // Purchase state is 2, item has been refunded
+                mHelper.consumeAsync(purchase, consumeCallback);
+            } else {
+                consumeAll();
+            }
+        }
+        List<Purchase> mPurchasesLeft;
     };
 
     /**

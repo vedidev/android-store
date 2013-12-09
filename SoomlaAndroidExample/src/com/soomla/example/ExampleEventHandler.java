@@ -27,6 +27,11 @@ public class ExampleEventHandler {
     }
 
     @Subscribe
+    public void onMarketRefund(PlayRefundEvent marketRefundEvent) {
+        showToastIfDebug(marketRefundEvent.getPurchasableVirtualItem().getName() + " was just refunded");
+    }
+
+    @Subscribe
     public void onVirtualItemPurchased(ItemPurchasedEvent itemPurchasedEvent) {
         showToastIfDebug(itemPurchasedEvent.getPurchasableVirtualItem().getName() + " was just purchased");
     }
