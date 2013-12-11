@@ -145,7 +145,7 @@ public class StoreController {
         StoreUtils.LogDebug(TAG, "Creating IAB helper.");
         mHelper = new IabHelper();
 
-        mHelper.enableDebugLogging(true);
+        mHelper.enableDebugLogging(false);
 
         // Start the setup and call the listener when the setup is over
         StoreUtils.LogDebug(TAG, "Starting setup.");
@@ -161,12 +161,8 @@ public class StoreController {
 
                 BusProvider.getInstance().post(new BillingSupportedEvent());
 
-                // The following lines execute blocking code for debugging purposes, do not uncomment TODO: make this non-blocking and not clash with refund handling
-//                StoreUtils.LogDebug(TAG, "Setup successful, consuming unconsumed items");
-//                mHelper.queryInventoryAsync(mConsumeOwnedItemsListener);
-
-                StoreUtils.LogDebug(TAG, "Setup successful, handling refunds.");
-                mHelper.queryInventoryAsync(mHandleRefundsListener);
+                StoreUtils.LogDebug(TAG, "Setup successful, consuming unconsumed items and handling refunds");
+                mHelper.queryInventoryAsync(mPostInitQueryListener);
             }
         });
         mLock.unlock();
@@ -259,7 +255,7 @@ public class StoreController {
                 case 0:
                     StoreUtils.LogDebug(TAG, "Purchase successful.");
                     if ( !(v instanceof NonConsumableItem)) {
-//                        mHelper.consumeAsync(purchase, mConsumeFinishedListener);
+                        mHelper.consumeAsync(purchase, mConsumeFinishedListener);
                     } else {
                         BusProvider.getInstance().post(new PlayPurchaseEvent(v, developerPayload));
                         v.give(1);
@@ -271,12 +267,10 @@ public class StoreController {
                     BusProvider.getInstance().post(new PlayPurchaseCancelledEvent(v));
                     break;
                 case 2:
-//                    REFUNDS are not supported by Google as of IABv3
-
-//                    StoreUtils.LogDebug(TAG, "Purchase refunded.");
-//                    if (!StoreConfig.friendlyRefunds) {
-//                        v.take(1);
-//                    }
+                    StoreUtils.LogDebug(TAG, "Purchase refunded.");
+                    if (!StoreConfig.friendlyRefunds) {
+                        v.take(1);
+                    }
                     break;
             }
         } catch (VirtualItemNotFoundException e) {
@@ -410,23 +404,46 @@ public class StoreController {
     };
 
     /**
-     * Handle refunds, take away any owned items that have been refunded
+     * Handle refunds and unconsumed items
      */
-    IabHelper.QueryInventoryFinishedListener mHandleRefundsListener = new IabHelper.QueryInventoryFinishedListener() {
+    IabHelper.QueryInventoryFinishedListener mPostInitQueryListener = new IabHelper.QueryInventoryFinishedListener() {
         public void onQueryInventoryFinished(IabResult result, Inventory inventory) {
             if (result.isFailure()) {
-                StoreUtils.LogDebug(TAG, "Handle refunds error: " + result.getMessage());
+                StoreUtils.LogDebug(TAG, "Query inventory error: " + result.getMessage());
                 return;
             }
-            StoreUtils.LogDebug(TAG, "Handle refunds succeeded");
+            StoreUtils.LogDebug(TAG, "Query inventory succeeded");
 
             mPurchasesLeft = inventory.getAllPurchases();
             consumeAll();
 
-            StoreUtils.LogDebug(TAG, "Done handling refunds");
+            StoreUtils.LogDebug(TAG, "Done handling refunds and unconsumed items");
         }
 
-        IabHelper.OnConsumeFinishedListener consumeCallback = new IabHelper.OnConsumeFinishedListener() {
+        // Mutual recursion. The following three functions call each other to avoid async clashing in IabHelper.
+        void consumeAll () {
+            if (mPurchasesLeft.size() == 0) return; // exit recursion when we have no purchases left
+            Purchase purchase = mPurchasesLeft.remove(0);
+            if (purchase != null && purchase.getPurchaseState() == 2) { // Purchase state is 2, item has been refunded
+                mHelper.consumeAsync(purchase, consumeRefundCallback);
+            } else if (purchase != null && purchase.getPurchaseState() == 0) { // Purchase state is 0, item has been refunded
+                try {
+                    PurchasableVirtualItem v = StoreInfo.getPurchasableItem(purchase.getSku());
+                    if (!(v instanceof NonConsumableItem)) {
+                        mHelper.consumeAsync(purchase, consumePurchasedCallback);
+                    }
+                } catch (VirtualItemNotFoundException e) {
+                    StoreUtils.LogError(TAG, "ERROR : Couldn't find the PURCHASED" +
+                            " VirtualCurrencyPack OR GoogleMarketItem  with productId: " + purchase.getSku() +
+                            ". It's unexpected so an unexpected error is being emitted");
+                    BusProvider.getInstance().post(new UnexpectedStoreErrorEvent());
+                }
+            } else {
+                consumeAll();
+            }
+        }
+
+        IabHelper.OnConsumeFinishedListener consumeRefundCallback = new IabHelper.OnConsumeFinishedListener() {
             public void onConsumeFinished(Purchase purchase, IabResult result) {
                 String sku = purchase.getSku();
                 try {
@@ -446,55 +463,25 @@ public class StoreController {
             }
         };
 
-        // Continue consuming recursively until we've checked all items
-        void consumeAll () {
-            if (mPurchasesLeft.size() == 0) return; // exit recursion when we have no purchases left
-            Purchase purchase = mPurchasesLeft.remove(0);
-            if (purchase != null && purchase.getPurchaseState() == 2) { // Purchase state is 2, item has been refunded
-                mHelper.consumeAsync(purchase, consumeCallback);
-            } else {
-                consumeAll();
-            }
-        }
-        List<Purchase> mPurchasesLeft;
-    };
-
-    /**
-     * Consume any owned items that my not have been consumed previously.
-     */
-    IabHelper.QueryInventoryFinishedListener mConsumeOwnedItemsListener = new IabHelper.QueryInventoryFinishedListener() {
-        public void onQueryInventoryFinished(IabResult result, Inventory inventory) {
-            if (result.isFailure()) {
-                StoreUtils.LogDebug(TAG, "Query inventory error: " + result);
-                return;
-            }
-            StoreUtils.LogDebug(TAG, "Query inventory succeeded");
-
-            List<String> itemSkus = inventory.getAllOwnedSkus(IabHelper.ITEM_TYPE_INAPP);
-            for (String sku: itemSkus) {
+        IabHelper.OnConsumeFinishedListener consumePurchasedCallback = new IabHelper.OnConsumeFinishedListener() {
+            public void onConsumeFinished(Purchase purchase, IabResult result) {
+                String sku = purchase.getSku();
                 try {
-                    VirtualItem v = StoreInfo.getPurchasableItem(sku);
-                    if ( (v instanceof NonConsumableItem) ) {
-                        continue;
-                    }
-                    Purchase purchase = inventory.getPurchase(sku);
-                    if (purchase != null) {
-                        while (mHelper.isAsyncInProgress()) {
-                            Thread.sleep(1);
-                        }
-                        StoreUtils.LogDebug(TAG, "We have " + purchase.getPackageName() + ", consuming it");
-                        mHelper.consumeAsync(purchase, mConsumeFinishedListener);
-                    }
+                    PurchasableVirtualItem v = StoreInfo.getPurchasableItem(sku);
+                    BusProvider.getInstance().post(new PlayPurchaseEvent(v, purchase.getDeveloperPayload()));
+                    v.give(1);
+                    BusProvider.getInstance().post(new ItemPurchasedEvent(v));
                 } catch (VirtualItemNotFoundException e) {
                     StoreUtils.LogError(TAG, "ERROR : Couldn't find the PURCHASED" +
                             " VirtualCurrencyPack OR GoogleMarketItem  with productId: " + sku +
                             ". It's unexpected so an unexpected error is being emitted");
                     BusProvider.getInstance().post(new UnexpectedStoreErrorEvent());
-                    continue;
-                } catch (InterruptedException e) { }
+                }
+                consumeAll();
             }
-            StoreUtils.LogDebug(TAG, "Done consuming owned items");
-        }
+        };
+
+        List<Purchase> mPurchasesLeft;
     };
 
     /**
