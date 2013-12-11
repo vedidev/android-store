@@ -81,14 +81,14 @@ public class StoreController {
         if (publicKey != null && publicKey.length() != 0) {
             edit.putString(StoreConfig.PUBLIC_KEY, publicKey);
         } else if (prefs.getString(StoreConfig.PUBLIC_KEY, "").length() == 0) {
-            StoreUtils.LogError(TAG, "publicKey is null or empty. Can't initialize store !!");
+            StoreUtils.LogError(TAG, "publicKey is null or empty. Can't initialize store!!");
             return false;
         }
 
         if (customSecret != null && customSecret.length() != 0) {
             edit.putString(StoreConfig.CUSTOM_SEC, customSecret);
         } else if (prefs.getString(StoreConfig.CUSTOM_SEC, "").length() == 0) {
-            StoreUtils.LogError(TAG, "customSecret is null or empty. Can't initialize store !!");
+            StoreUtils.LogError(TAG, "customSecret is null or empty. Can't initialize store!!");
             return false;
         }
         edit.putInt("SA_VER_NEW", storeAssets.getVersion());
@@ -109,7 +109,7 @@ public class StoreController {
     public void storeOpening() {
         mLock.lock();
         if (mStoreOpen) {
-            StoreUtils.LogError(TAG, "Store is already open !");
+            StoreUtils.LogError(TAG, "Store is already open!");
             mLock.unlock();
             return;
         }
