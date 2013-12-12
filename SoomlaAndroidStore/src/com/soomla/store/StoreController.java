@@ -258,6 +258,7 @@ public class StoreController {
                 case 0:
                     StoreUtils.LogDebug(TAG, "Purchase successful.");
                     if ( !(v instanceof NonConsumableItem)) {
+                        // TODO: give user the item before consume
                         mHelper.consumeAsync(purchase, mConsumeFinishedListener);
                     } else {
                         BusProvider.getInstance().post(new PlayPurchaseEvent(v, developerPayload));
@@ -343,10 +344,10 @@ public class StoreController {
                 String developerPayload = purchase.getDeveloperPayload();
                 try {
                     PurchasableVirtualItem purchasableVirtualItem = StoreInfo.getPurchasableItem(productId);
+
+                    // TODO: give user the item before consume
                     BusProvider.getInstance().post(new PlayPurchaseEvent(purchasableVirtualItem, developerPayload));
-
                     purchasableVirtualItem.give(1);
-
                     BusProvider.getInstance().post(new ItemPurchasedEvent(purchasableVirtualItem));
                 } catch (VirtualItemNotFoundException e) {
                     StoreUtils.LogError(TAG, "ERROR : Couldn't find the PURCHASED" +
@@ -486,6 +487,8 @@ public class StoreController {
                 String sku = purchase.getSku();
                 try {
                     PurchasableVirtualItem v = StoreInfo.getPurchasableItem(sku);
+
+                    // TODO: give user the item before consume
                     BusProvider.getInstance().post(new PlayPurchaseEvent(v, purchase.getDeveloperPayload()));
                     v.give(1);
                     BusProvider.getInstance().post(new ItemPurchasedEvent(v));
