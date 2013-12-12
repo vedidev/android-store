@@ -133,7 +133,7 @@ public class StoreController {
 
         BusProvider.getInstance().post(new ClosingStoreEvent());
 
-        if (mHelper != null) {
+        if (mHelper != null && mHelper.isAsyncInProgress()) {
             (new Thread(new Runnable() {
                 @Override
                 public void run() {
@@ -149,6 +149,10 @@ public class StoreController {
                     mLock.unlock();
                 }
             })).start();
+        } else if (mHelper != null) {
+            mLock.lock();
+            stopIabHelper();
+            mLock.unlock();
         } else {
             StoreUtils.LogDebug(TAG, "Helper already gone, nothing to do");
         }
