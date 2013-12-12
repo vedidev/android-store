@@ -101,6 +101,9 @@ public class StoreController {
         // Update SOOMLA store from DB
         StoreInfo.initializeFromDB();
 
+        // Set up helper for the first time, querying inventory
+        startIabHelper(true);
+
         mInitialized = true;
         BusProvider.getInstance().post(new StoreControllerInitializedEvent());
         return true;
@@ -114,8 +117,7 @@ public class StoreController {
             return;
         }
 
-        /* Billing */
-        startIabHelper();
+        if (mHelper == null) startIabHelper(false);
 
         BusProvider.getInstance().post(new OpeningStoreEvent());
 
@@ -138,8 +140,10 @@ public class StoreController {
 
     /**
      * Create a new IAB helper and set it up.
+     *
+     * @param queryInventory if we should query the inventory after setup.
      */
-    private void startIabHelper() {
+    private void startIabHelper(final boolean queryInventory) {
         mLock.lock();
         // Setup IabHelper
         StoreUtils.LogDebug(TAG, "Creating IAB helper.");
@@ -159,9 +163,10 @@ public class StoreController {
 
                 BusProvider.getInstance().post(new BillingSupportedEvent());
 
-                // TODO: add flag to check if we need to consume unconsumed items and handle refunds
-                StoreUtils.LogDebug(TAG, "Setup successful, consuming unconsumed items and handling refunds");
-                mHelper.queryInventoryAsync(mPostInitQueryListener);
+                if (queryInventory) {
+                    StoreUtils.LogDebug(TAG, "Setup successful, consuming unconsumed items and handling refunds");
+                    mHelper.queryInventoryAsync(mPostInitQueryListener);
+                }
             }
         });
         mLock.unlock();
@@ -203,7 +208,7 @@ public class StoreController {
      */
     // TODO: implement checking if item is already owned
     private void buyWithGooglePlayInner(Activity activity, String sku, String payload) throws IllegalStateException, VirtualItemNotFoundException {
-        if (mHelper == null) startIabHelper();
+        if (mHelper == null) startIabHelper(false);
         mHelper.launchPurchaseFlow(activity, sku, Consts.RC_REQUEST, mPurchaseFinishedListener, payload);
         BusProvider.getInstance().post(new PlayPurchaseStartedEvent(StoreInfo.getPurchasableItem(sku)));
     }
@@ -217,7 +222,7 @@ public class StoreController {
         if (!transactionsAlreadyRestored()) {
             try {
                 BusProvider.getInstance().post(new RestoreTransactionsStartedEvent());
-                if (mHelper == null) startIabHelper();
+                if (mHelper == null) startIabHelper(false);
                 mHelper.queryInventoryAsync(mRestoreTransactionsListener);
             } catch (IllegalStateException e) {
                 StoreUtils.LogError(TAG, "Error restoring transactions " + e.getMessage());
