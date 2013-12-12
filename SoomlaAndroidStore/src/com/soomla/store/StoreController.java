@@ -486,7 +486,7 @@ public class StoreController {
      *  A wrapper to access IabHelper.handleActivityResult from outside
      */
     public boolean handleActivityResult(int requestCode, int resultCode, Intent data) {
-        return mHelper.handleActivityResult(requestCode, resultCode, data);
+        return (mHelper != null) && mHelper.handleActivityResult(requestCode, resultCode, data);
     }
 
     /* Singleton */
@@ -547,6 +547,7 @@ public class StoreController {
         protected void onActivityResult(int requestCode, int resultCode, Intent data) {
             if (!StoreController.getInstance().handleActivityResult(requestCode, resultCode, data)) {
                 super.onActivityResult(requestCode, resultCode, data);
+                if (StoreController.getInstance().mHelper == null) finish(); // No helper, nothing to do here...
             } else {
                 finish();
             }
