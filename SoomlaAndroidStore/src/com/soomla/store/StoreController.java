@@ -359,7 +359,7 @@ public class StoreController {
                 StoreUtils.LogDebug(TAG, "Error while consuming: " + result);
             }
 
-            if (mDisposeHelper) stopIabHelper();
+            if (mDisposeHelper || !mStoreOpen) stopIabHelper();
 
             StoreUtils.LogDebug(TAG, "End consumption flow");
         }
@@ -406,7 +406,7 @@ public class StoreController {
                 }
             }
 
-            if (mDisposeHelper) stopIabHelper();
+            if (mDisposeHelper || !mStoreOpen) stopIabHelper();
 
             StoreUtils.LogDebug(TAG, "Done restoring transactions");
             BusProvider.getInstance().post(new RestoreTransactionsEvent(true));
@@ -426,15 +426,14 @@ public class StoreController {
 
             mPurchasesLeft = inventory.getAllPurchases();
             consumeAll();
-
-            StoreUtils.LogDebug(TAG, "Done handling refunds and unconsumed items");
         }
 
         // The following three functions call each other to avoid async clashing in IabHelper.
         void consumeAll () {
             if (mPurchasesLeft.size() == 0) {
                 // exit recursion when we have no purchases left, make sure to dispose of helper if need be
-                if (mDisposeHelper) stopIabHelper();
+                if (mDisposeHelper || !mStoreOpen) stopIabHelper();
+                StoreUtils.LogDebug(TAG, "Done handling refunds and unconsumed items");
                 return;
             }
             Purchase purchase = mPurchasesLeft.remove(0);
