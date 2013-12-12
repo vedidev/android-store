@@ -221,10 +221,50 @@ public class StoreController {
     /**
      *  Used for internal starting of purchase with Google Play. Do *NOT* call this on your own.
      */
-    private void buyWithGooglePlayInner(Activity activity, String sku, String payload) throws IllegalStateException, VirtualItemNotFoundException {
-        if (mHelper == null) startIabHelper();
-        mHelper.launchPurchaseFlow(activity, sku, Consts.RC_REQUEST, mPurchaseFinishedListener, payload);
-        BusProvider.getInstance().post(new PlayPurchaseStartedEvent(StoreInfo.getPurchasableItem(sku)));
+    private void buyWithGooglePlayInner(final Activity activity, final String sku, final String payload) throws IllegalStateException, VirtualItemNotFoundException {
+        final PurchasableVirtualItem pvi = StoreInfo.getPurchasableItem(sku);
+        if (pvi instanceof NonConsumableItem) {
+            mHelper.launchPurchaseFlow(activity, sku, Consts.RC_REQUEST, mPurchaseFinishedListener, payload);
+            BusProvider.getInstance().post(new PlayPurchaseStartedEvent(pvi));
+        } else { // If this is not a NonConsumableItem, check if we already own one, if we do, consume it. TODO: Flatten. Javascript style pyramid code is ugly.
+            StoreUtils.LogDebug(TAG, "Checking if " + sku + " is already owned");
+            mHelper.queryInventoryAsync(new IabHelper.QueryInventoryFinishedListener() {
+                @Override
+                public void onQueryInventoryFinished(IabResult result, Inventory inv) {
+                    if (result.isSuccess()) {
+                        Purchase purchase = inv.getPurchase(sku);
+                        if (purchase != null && purchase.getPurchaseState() == 0) {
+                            StoreUtils.LogDebug(TAG, sku + " owned, consuming.");
+                            mHelper.consumeAsync(purchase, new IabHelper.OnConsumeFinishedListener() {
+                                @Override
+                                public void onConsumeFinished(Purchase purchase, IabResult result) {
+                                    if (result.isSuccess()) {
+                                        BusProvider.getInstance().post(new PlayPurchaseEvent(pvi, payload));
+                                        pvi.give(1);
+                                        BusProvider.getInstance().post(new ItemPurchasedEvent(pvi));
+                                        StoreUtils.LogDebug(TAG, "Consumption of " + sku + " successful, purchasing.");
+                                        mHelper.launchPurchaseFlow(activity, sku, Consts.RC_REQUEST, mPurchaseFinishedListener, payload);
+                                        BusProvider.getInstance().post(new PlayPurchaseStartedEvent(pvi));
+                                    } else {
+                                        StoreUtils.LogError(TAG, "Failed to consume PurchasableVirtualItem with itemId: " + sku + " can't purchase." +
+                                        "\n " + result);
+                                        BusProvider.getInstance().post(new UnexpectedStoreErrorEvent());
+                                    }
+                                }
+                            });
+                        } else {
+                            StoreUtils.LogDebug(TAG, sku + " not owned, purchasing.");
+                            mHelper.launchPurchaseFlow(activity, sku, Consts.RC_REQUEST, mPurchaseFinishedListener, payload);
+                            BusProvider.getInstance().post(new PlayPurchaseStartedEvent(pvi));
+                        }
+                    } else {
+                        StoreUtils.LogError(TAG, "Failed to query inventory, there's a chance we already own " + sku + ". Won't continue." +
+                                "\n " + result);
+                        BusProvider.getInstance().post(new UnexpectedStoreErrorEvent());
+                    }
+                }
+            });
+        }
     }
 
     /**
@@ -438,7 +478,7 @@ public class StoreController {
             StoreUtils.LogDebug(TAG, "Done handling refunds and unconsumed items");
         }
 
-        // Mutual recursion. The following three functions call each other to avoid async clashing in IabHelper.
+        // The following three functions call each other to avoid async clashing in IabHelper.
         void consumeAll () {
             if (mPurchasesLeft.size() == 0) return; // exit recursion when we have no purchases left
             Purchase purchase = mPurchasesLeft.remove(0);
