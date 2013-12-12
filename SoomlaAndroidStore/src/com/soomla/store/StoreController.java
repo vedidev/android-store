@@ -133,7 +133,25 @@ public class StoreController {
 
         BusProvider.getInstance().post(new ClosingStoreEvent());
 
-        stopIabHelper();
+        if (mHelper != null) {
+            (new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    mLock.lock();
+                    while (mHelper.isAsyncInProgress()) {
+                        try {
+                            Thread.sleep(1000);
+                        } catch (InterruptedException e) {
+                            StoreUtils.LogError(TAG, "Sleep interrupted");
+                        }
+                    }
+                    stopIabHelper();
+                    mLock.unlock();
+                }
+            })).start();
+        } else {
+            StoreUtils.LogDebug(TAG, "Helper already gone, nothing to do");
+        }
     }
 
     /**
@@ -170,11 +188,9 @@ public class StoreController {
      * Dispose of the helper to prevent memory leaks
      */
     private void stopIabHelper() {
-        mLock.lock();
         StoreUtils.LogDebug(TAG, "Destroying helper");
         if (mHelper != null) mHelper.dispose();
         mHelper = null;
-        mLock.unlock();
     }
 
     /**
