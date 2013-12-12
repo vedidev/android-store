@@ -226,7 +226,7 @@ public class StoreController {
         if (pvi instanceof NonConsumableItem) {
             mHelper.launchPurchaseFlow(activity, sku, Consts.RC_REQUEST, mPurchaseFinishedListener, payload);
             BusProvider.getInstance().post(new PlayPurchaseStartedEvent(pvi));
-        } else { // If this is not a NonConsumableItem, check if we already own one, if we do, consume it. TODO: Flatten. Javascript style pyramid code is ugly.
+        } else { // If this is not a NonConsumableItem, check if we already own one, if we do, consume it
             StoreUtils.LogDebug(TAG, "Checking if " + sku + " is already owned");
             mHelper.queryInventoryAsync(new IabHelper.QueryInventoryFinishedListener() {
                 @Override
