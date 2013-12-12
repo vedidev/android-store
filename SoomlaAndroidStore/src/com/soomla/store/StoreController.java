@@ -119,23 +119,24 @@ public class StoreController {
 
         if (mHelper == null) startIabHelper(false);
 
-        BusProvider.getInstance().post(new OpeningStoreEvent());
-
         mStoreOpen = true;
         mLock.unlock();
+
+        BusProvider.getInstance().post(new OpeningStoreEvent());
     }
 
     /**
      * Call this function when you close the actual store window.
      */
     public void storeClosing() {
+        mLock.lock();
         if (!mStoreOpen) return;
 
         mStoreOpen = false;
+        if (!mHelper.isAsyncInProgress()) stopIabHelper();
 
+        mLock.unlock();
         BusProvider.getInstance().post(new ClosingStoreEvent());
-
-        mDisposeHelper = true;
     }
 
     /**
@@ -176,10 +177,8 @@ public class StoreController {
      * Dispose of the helper to prevent memory leaks
      */
     private void stopIabHelper() {
-        mLock.lock();
         if (mHelper != null) mHelper.dispose();
         mHelper = null;
-        mLock.unlock();
     }
 
     /**
@@ -275,6 +274,7 @@ public class StoreController {
                     if (!StoreConfig.friendlyRefunds) {
                         v.take(1);
                     }
+                    BusProvider.getInstance().post(new PlayRefundEvent(v, developerPayload));
                     break;
             }
         } catch (VirtualItemNotFoundException e) {
@@ -359,7 +359,9 @@ public class StoreController {
                 StoreUtils.LogDebug(TAG, "Error while consuming: " + result);
             }
 
-            if (mDisposeHelper || !mStoreOpen) stopIabHelper();
+            mLock.lock();
+            if (!mStoreOpen) stopIabHelper();
+            mLock.unlock();
 
             StoreUtils.LogDebug(TAG, "End consumption flow");
         }
@@ -406,7 +408,9 @@ public class StoreController {
                 }
             }
 
-            if (mDisposeHelper || !mStoreOpen) stopIabHelper();
+            mLock.lock();
+            if (!mStoreOpen) stopIabHelper();
+            mLock.unlock();
 
             StoreUtils.LogDebug(TAG, "Done restoring transactions");
             BusProvider.getInstance().post(new RestoreTransactionsEvent(true));
@@ -429,10 +433,13 @@ public class StoreController {
         }
 
         // The following three functions call each other to avoid async clashing in IabHelper.
-        void consumeAll () {
+        private void consumeAll () {
             if (mPurchasesLeft.size() == 0) {
                 // exit recursion when we have no purchases left, make sure to dispose of helper if need be
-                if (mDisposeHelper || !mStoreOpen) stopIabHelper();
+                mLock.lock();
+                if (!mStoreOpen) stopIabHelper();
+                mLock.unlock();
+
                 StoreUtils.LogDebug(TAG, "Done handling refunds and unconsumed items");
                 return;
             }
@@ -449,14 +456,13 @@ public class StoreController {
                     StoreUtils.LogError(TAG, "ERROR : Couldn't find the PURCHASED" +
                             " VirtualCurrencyPack OR GoogleMarketItem  with productId: " + purchase.getSku() +
                             ". It's unexpected so an unexpected error is being emitted");
-                    BusProvider.getInstance().post(new UnexpectedStoreErrorEvent());
                 }
             } else {
                 consumeAll();
             }
         }
 
-        IabHelper.OnConsumeFinishedListener consumeRefundCallback = new IabHelper.OnConsumeFinishedListener() {
+        private IabHelper.OnConsumeFinishedListener consumeRefundCallback = new IabHelper.OnConsumeFinishedListener() {
             public void onConsumeFinished(Purchase purchase, IabResult result) {
                 String sku = purchase.getSku();
                 try {
@@ -470,13 +476,12 @@ public class StoreController {
                     StoreUtils.LogError(TAG, "ERROR : Couldn't find the PURCHASED" +
                             " VirtualCurrencyPack OR GoogleMarketItem  with productId: " + sku +
                             ". It's unexpected so an unexpected error is being emitted");
-                    BusProvider.getInstance().post(new UnexpectedStoreErrorEvent());
                 }
                 consumeAll();
             }
         };
 
-        IabHelper.OnConsumeFinishedListener consumePurchasedCallback = new IabHelper.OnConsumeFinishedListener() {
+        private IabHelper.OnConsumeFinishedListener consumePurchasedCallback = new IabHelper.OnConsumeFinishedListener() {
             public void onConsumeFinished(Purchase purchase, IabResult result) {
                 String sku = purchase.getSku();
                 try {
@@ -488,7 +493,6 @@ public class StoreController {
                     StoreUtils.LogError(TAG, "ERROR : Couldn't find the PURCHASED" +
                             " VirtualCurrencyPack OR GoogleMarketItem  with productId: " + sku +
                             ". It's unexpected so an unexpected error is being emitted");
-                    BusProvider.getInstance().post(new UnexpectedStoreErrorEvent());
                 }
                 consumeAll();
             }
@@ -526,7 +530,6 @@ public class StoreController {
 
     private boolean mInitialized   = false;
     private boolean mStoreOpen     = false;
-    private boolean mDisposeHelper = false;
 
     private IabHelper mHelper;
 
