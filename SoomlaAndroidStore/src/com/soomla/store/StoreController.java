@@ -133,29 +133,7 @@ public class StoreController {
 
         BusProvider.getInstance().post(new ClosingStoreEvent());
 
-        if (mHelper != null && mHelper.isAsyncInProgress()) {
-            (new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    mLock.lock();
-                    while (mHelper.isAsyncInProgress()) {
-                        try {
-                            Thread.sleep(1000);
-                        } catch (InterruptedException e) {
-                            StoreUtils.LogError(TAG, "Sleep interrupted");
-                        }
-                    }
-                    stopIabHelper();
-                    mLock.unlock();
-                }
-            })).start();
-        } else if (mHelper != null) {
-            mLock.lock();
-            stopIabHelper();
-            mLock.unlock();
-        } else {
-            StoreUtils.LogDebug(TAG, "Helper already gone, nothing to do");
-        }
+        mDisposeHelper = true;
     }
 
     /**
@@ -181,6 +159,7 @@ public class StoreController {
 
                 BusProvider.getInstance().post(new BillingSupportedEvent());
 
+                // TODO: add flag to check if we need to consume unconsumed items and handle refunds
                 StoreUtils.LogDebug(TAG, "Setup successful, consuming unconsumed items and handling refunds");
                 mHelper.queryInventoryAsync(mPostInitQueryListener);
             }
@@ -192,9 +171,10 @@ public class StoreController {
      * Dispose of the helper to prevent memory leaks
      */
     private void stopIabHelper() {
-        StoreUtils.LogDebug(TAG, "Destroying helper");
+        mLock.lock();
         if (mHelper != null) mHelper.dispose();
         mHelper = null;
+        mLock.unlock();
     }
 
     /**
@@ -221,50 +201,11 @@ public class StoreController {
     /**
      *  Used for internal starting of purchase with Google Play. Do *NOT* call this on your own.
      */
-    private void buyWithGooglePlayInner(final Activity activity, final String sku, final String payload) throws IllegalStateException, VirtualItemNotFoundException {
-        final PurchasableVirtualItem pvi = StoreInfo.getPurchasableItem(sku);
-        if (pvi instanceof NonConsumableItem) {
-            mHelper.launchPurchaseFlow(activity, sku, Consts.RC_REQUEST, mPurchaseFinishedListener, payload);
-            BusProvider.getInstance().post(new PlayPurchaseStartedEvent(pvi));
-        } else { // If this is not a NonConsumableItem, check if we already own one, if we do, consume it
-            StoreUtils.LogDebug(TAG, "Checking if " + sku + " is already owned");
-            mHelper.queryInventoryAsync(new IabHelper.QueryInventoryFinishedListener() {
-                @Override
-                public void onQueryInventoryFinished(IabResult result, Inventory inv) {
-                    if (result.isSuccess()) {
-                        Purchase purchase = inv.getPurchase(sku);
-                        if (purchase != null && purchase.getPurchaseState() == 0) {
-                            StoreUtils.LogDebug(TAG, sku + " owned, consuming.");
-                            mHelper.consumeAsync(purchase, new IabHelper.OnConsumeFinishedListener() {
-                                @Override
-                                public void onConsumeFinished(Purchase purchase, IabResult result) {
-                                    if (result.isSuccess()) {
-                                        BusProvider.getInstance().post(new PlayPurchaseEvent(pvi, payload));
-                                        pvi.give(1);
-                                        BusProvider.getInstance().post(new ItemPurchasedEvent(pvi));
-                                        StoreUtils.LogDebug(TAG, "Consumption of " + sku + " successful, purchasing.");
-                                        mHelper.launchPurchaseFlow(activity, sku, Consts.RC_REQUEST, mPurchaseFinishedListener, payload);
-                                        BusProvider.getInstance().post(new PlayPurchaseStartedEvent(pvi));
-                                    } else {
-                                        StoreUtils.LogError(TAG, "Failed to consume PurchasableVirtualItem with itemId: " + sku + " can't purchase." +
-                                        "\n " + result);
-                                        BusProvider.getInstance().post(new UnexpectedStoreErrorEvent());
-                                    }
-                                }
-                            });
-                        } else {
-                            StoreUtils.LogDebug(TAG, sku + " not owned, purchasing.");
-                            mHelper.launchPurchaseFlow(activity, sku, Consts.RC_REQUEST, mPurchaseFinishedListener, payload);
-                            BusProvider.getInstance().post(new PlayPurchaseStartedEvent(pvi));
-                        }
-                    } else {
-                        StoreUtils.LogError(TAG, "Failed to query inventory, there's a chance we already own " + sku + ". Won't continue." +
-                                "\n " + result);
-                        BusProvider.getInstance().post(new UnexpectedStoreErrorEvent());
-                    }
-                }
-            });
-        }
+    // TODO: implement checking if item is already owned
+    private void buyWithGooglePlayInner(Activity activity, String sku, String payload) throws IllegalStateException, VirtualItemNotFoundException {
+        if (mHelper == null) startIabHelper();
+        mHelper.launchPurchaseFlow(activity, sku, Consts.RC_REQUEST, mPurchaseFinishedListener, payload);
+        BusProvider.getInstance().post(new PlayPurchaseStartedEvent(StoreInfo.getPurchasableItem(sku)));
     }
 
     /**
@@ -412,6 +353,9 @@ public class StoreController {
             else {
                 StoreUtils.LogDebug(TAG, "Error while consuming: " + result);
             }
+
+            if (mDisposeHelper) stopIabHelper();
+
             StoreUtils.LogDebug(TAG, "End consumption flow");
         }
     };
@@ -456,6 +400,9 @@ public class StoreController {
                     BusProvider.getInstance().post(new UnexpectedStoreErrorEvent());
                 }
             }
+
+            if (mDisposeHelper) stopIabHelper();
+
             StoreUtils.LogDebug(TAG, "Done restoring transactions");
             BusProvider.getInstance().post(new RestoreTransactionsEvent(true));
         }
@@ -480,7 +427,11 @@ public class StoreController {
 
         // The following three functions call each other to avoid async clashing in IabHelper.
         void consumeAll () {
-            if (mPurchasesLeft.size() == 0) return; // exit recursion when we have no purchases left
+            if (mPurchasesLeft.size() == 0) {
+                // exit recursion when we have no purchases left, make sure to dispose of helper if need be
+                if (mDisposeHelper) stopIabHelper();
+                return;
+            }
             Purchase purchase = mPurchasesLeft.remove(0);
             if (purchase != null && purchase.getPurchaseState() == 2) { // Purchase state is 2, item has been refunded
                 mHelper.consumeAsync(purchase, consumeRefundCallback);
@@ -569,8 +520,9 @@ public class StoreController {
 
     private static final String TAG = "SOOMLA StoreController";
 
-    private boolean mInitialized = false;
-    private boolean mStoreOpen   = false;
+    private boolean mInitialized   = false;
+    private boolean mStoreOpen     = false;
+    private boolean mDisposeHelper = false;
 
     private IabHelper mHelper;
 
