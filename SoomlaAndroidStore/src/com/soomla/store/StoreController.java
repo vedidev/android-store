@@ -145,7 +145,6 @@ public class StoreController {
      * @param queryInventory if we should query the inventory after setup.
      */
     private void startIabHelper(final boolean queryInventory) {
-        mLock.lock();
         // Setup IabHelper
         StoreUtils.LogDebug(TAG, "Creating IAB helper.");
         mHelper = new IabHelper();
@@ -170,7 +169,6 @@ public class StoreController {
                 }
             }
         });
-        mLock.unlock();
     }
 
     /**
@@ -258,13 +256,11 @@ public class StoreController {
                 case 0:
                     StoreUtils.LogDebug(TAG, "Purchase successful.");
                     if ( !(v instanceof NonConsumableItem)) {
-                        // TODO: give user the item before consume
                         mHelper.consumeAsync(purchase, mConsumeFinishedListener);
-                    } else {
-                        BusProvider.getInstance().post(new PlayPurchaseEvent(v, developerPayload));
-                        v.give(1);
-                        BusProvider.getInstance().post(new ItemPurchasedEvent(v));
                     }
+                    BusProvider.getInstance().post(new PlayPurchaseEvent(v, developerPayload));
+                    v.give(1);
+                    BusProvider.getInstance().post(new ItemPurchasedEvent(v));
                     break;
                 case 1:
                     StoreUtils.LogDebug(TAG, "Purchase cancelled.");
@@ -340,21 +336,6 @@ public class StoreController {
             StoreUtils.LogDebug(TAG, "Consumption finished. Purchase: " + purchase + ", result: " + result);
             if (result.isSuccess()) {
                 StoreUtils.LogDebug(TAG, "Consumption successful. Provisioning");
-                String productId = purchase.getSku();
-                String developerPayload = purchase.getDeveloperPayload();
-                try {
-                    PurchasableVirtualItem purchasableVirtualItem = StoreInfo.getPurchasableItem(productId);
-
-                    // TODO: give user the item before consume
-                    BusProvider.getInstance().post(new PlayPurchaseEvent(purchasableVirtualItem, developerPayload));
-                    purchasableVirtualItem.give(1);
-                    BusProvider.getInstance().post(new ItemPurchasedEvent(purchasableVirtualItem));
-                } catch (VirtualItemNotFoundException e) {
-                    StoreUtils.LogError(TAG, "ERROR : Couldn't find the PURCHASED" +
-                            " VirtualCurrencyPack OR GoogleMarketItem  with productId: " + productId +
-                            ". It's unexpected so an unexpected error is being emitted");
-                    BusProvider.getInstance().post(new UnexpectedStoreErrorEvent());
-                }
             }
             else {
                 StoreUtils.LogDebug(TAG, "Error while consuming: " + result);
@@ -484,18 +465,11 @@ public class StoreController {
 
         private IabHelper.OnConsumeFinishedListener consumePurchasedCallback = new IabHelper.OnConsumeFinishedListener() {
             public void onConsumeFinished(Purchase purchase, IabResult result) {
-                String sku = purchase.getSku();
-                try {
-                    PurchasableVirtualItem v = StoreInfo.getPurchasableItem(sku);
-
-                    // TODO: give user the item before consume
-                    BusProvider.getInstance().post(new PlayPurchaseEvent(v, purchase.getDeveloperPayload()));
-                    v.give(1);
-                    BusProvider.getInstance().post(new ItemPurchasedEvent(v));
-                } catch (VirtualItemNotFoundException e) {
-                    StoreUtils.LogError(TAG, "ERROR : Couldn't find the PURCHASED" +
-                            " VirtualCurrencyPack OR GoogleMarketItem  with productId: " + sku +
-                            ". It's unexpected so an unexpected error is being emitted");
+                StoreUtils.LogDebug(TAG, "Consumption finished. Purchase: " + purchase + ", result: " + result);
+                if (result.isSuccess()) {
+                    StoreUtils.LogDebug(TAG, "Consumption successful");
+                } else {
+                    StoreUtils.LogDebug(TAG, "Error while consuming: " + result);
                 }
                 consumeAll();
             }
