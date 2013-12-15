@@ -157,7 +157,6 @@ public class StoreController {
                 if (result.isFailure()) {
                     StoreUtils.LogDebug(TAG, "There's no connectivity with the billing service.");
                     BusProvider.getInstance().post(new BillingNotSupportedEvent());
-                    mLock.unlock();
                     return;
                 }
 
