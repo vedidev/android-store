@@ -8,11 +8,11 @@ Haven't you ever wanted an in-app purchase one liner that looks like this!?
 
 ## android-store
 
-**December ??, 2013**: Refunds have been readded. *android-store* now checks if owned items have been refunded and takes them away when `StoreController` is initialized.
+**December 11th, 2013**: Refunds have been readded. *android-store* now checks if owned items have been refunded and takes them away when `StoreController` is initialized.
 
 > Note: removal of refunded items may take a while due to the way IABv3 caches information on the device. Try disabling and enabling WiFi on the device to refresh the cache.
 
-**December 1, 2013**: *android-store* has been updated to use Google's In-App Billing version 3. There is no need to use our _test mode_ to make static response purchases, everything is handled by Google now. Furthermore, you can now test **real** purchases using test accounts in the [Google Developer Console](https://play.google.com/apps/publish).
+**December 1st, 2013**: *android-store* has been updated to use Google's In-App Billing version 3. There is no need to use our _test mode_ to make static response purchases, everything is handled by Google now. Furthermore, you can now test **real** purchases using test accounts in the [Google Developer Console](https://play.google.com/apps/publish).
 
 > - Functions removed: `setTestMode()` & `isTestMode()` - not needed anymore
 > - Events removed: `onMarketRefund` - as of IAB version 3 Google does not support refunds anymore.
