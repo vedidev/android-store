@@ -23,10 +23,7 @@ import android.content.Intent;
 import android.content.IntentSender.SendIntentException;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
-import android.os.Bundle;
-import android.os.Handler;
-import android.os.IBinder;
-import android.os.RemoteException;
+import android.os.*;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -583,7 +580,7 @@ public class IabHelper {
     public void queryInventoryAsync(final boolean querySkuDetails,
                                final List<String> moreSkus,
                                final QueryInventoryFinishedListener listener) {
-        final Handler handler = new Handler();
+        final Handler handler = new Handler(Looper.getMainLooper());
         checkSetupDone("queryInventory");
         flagStartAsync("refresh inventory");
         (new Thread(new Runnable() {

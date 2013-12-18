@@ -540,11 +540,13 @@ public class StoreController {
 
         @Override
         protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-            if (!StoreController.getInstance().handleActivityResult(requestCode, resultCode, data)) {
-                super.onActivityResult(requestCode, resultCode, data);
-                if (StoreController.getInstance().mHelper == null) finish(); // No helper, nothing to do here...
-            } else {
-                finish();
+            if(resultCode != RESULT_CANCELED){
+                if (!StoreController.getInstance().handleActivityResult(requestCode, resultCode, data)) {
+                    super.onActivityResult(requestCode, resultCode, data);
+                    if (StoreController.getInstance().mHelper == null) finish(); // No helper, nothing to do here...
+                } else {
+                    finish();
+                }
             }
         }
     }
