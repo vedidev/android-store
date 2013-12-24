@@ -20,6 +20,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 
 import com.soomla.billing.Consts;
 import com.soomla.billing.IabHelper;
@@ -205,8 +206,8 @@ public class StoreController {
     // TODO: implement checking if item is already owned
     private void buyWithGooglePlayInner(Activity activity, String sku, String payload) throws IllegalStateException, VirtualItemNotFoundException {
         if (mHelper == null) startIabHelper(false);
-        mHelper.launchPurchaseFlow(activity, sku, Consts.RC_REQUEST, mPurchaseFinishedListener, payload);
         BusProvider.getInstance().post(new PlayPurchaseStartedEvent(StoreInfo.getPurchasableItem(sku)));
+        mHelper.launchPurchaseFlow(activity, sku, Consts.RC_REQUEST, mPurchaseFinishedListener, payload);
     }
 
     /**
@@ -215,17 +216,16 @@ public class StoreController {
      */
     public void restoreTransactions() {
         StoreUtils.LogDebug(TAG, "Sending restore transaction request");
-        if (!transactionsAlreadyRestored()) {
-            try {
-                BusProvider.getInstance().post(new RestoreTransactionsStartedEvent());
-                if (mHelper == null) startIabHelper(false);
-                mHelper.queryInventoryAsync(mRestoreTransactionsListener);
-            } catch (IllegalStateException e) {
-                StoreUtils.LogError(TAG, "Error restoring transactions " + e.getMessage());
-            }
-        } else {
-            StoreUtils.LogDebug(TAG, "Transactions already restored");
-        }
+        
+		try {
+			BusProvider.getInstance().post(
+					new RestoreTransactionsStartedEvent());
+			if (mHelper == null)
+				startIabHelper(false);
+			mHelper.queryInventoryAsync(false, null, mRestoreTransactionsListener);
+		} catch (IllegalStateException e) {
+			StoreUtils.LogError(TAG, "Error restoring transactions " + e.getMessage());
+		}
     }
 
     /**
@@ -540,14 +540,20 @@ public class StoreController {
 
         @Override
         protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-            if(resultCode != RESULT_CANCELED){
-                if (!StoreController.getInstance().handleActivityResult(requestCode, resultCode, data)) {
-                    super.onActivityResult(requestCode, resultCode, data);
-                    if (StoreController.getInstance().mHelper == null) finish(); // No helper, nothing to do here...
-                } else {
-                    finish();
-                }
-            }
+			if (StoreController.getInstance().mHelper == null) {
+				StoreUtils.LogError(TAG, "helper is null in onActivityResult.");
+				BusProvider.getInstance().post(new UnexpectedStoreErrorEvent());
+				super.onActivityResult(requestCode, resultCode, data);
+				finish();
+				return;
+			}
+
+			if (!StoreController.getInstance().mHelper.handleActivityResult(requestCode, resultCode, data))
+				super.onActivityResult(requestCode, resultCode, data);
+			else
+				StoreUtils.LogDebug(TAG, "onActivityResult handled by IabHelper.");
+
+			finish();
         }
     }
 }
