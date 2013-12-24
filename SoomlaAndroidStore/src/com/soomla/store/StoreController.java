@@ -20,9 +20,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.util.Log;
 
 import com.soomla.billing.Consts;
+import com.soomla.billing.IabException;
 import com.soomla.billing.IabHelper;
 import com.soomla.billing.IabResult;
 import com.soomla.billing.Inventory;
@@ -32,7 +32,6 @@ import com.soomla.store.data.StoreInfo;
 import com.soomla.store.domain.GoogleMarketItem;
 import com.soomla.store.domain.NonConsumableItem;
 import com.soomla.store.domain.PurchasableVirtualItem;
-import com.soomla.store.domain.VirtualItem;
 import com.soomla.store.events.BillingNotSupportedEvent;
 import com.soomla.store.events.BillingSupportedEvent;
 import com.soomla.store.events.ClosingStoreEvent;
@@ -70,7 +69,9 @@ public class StoreController {
      */
     public boolean initialize(IStoreAssets storeAssets, String publicKey, String customSecret) {
         if (mInitialized) {
-            StoreUtils.LogError(TAG, "StoreController is already initialized. You can't initialize it twice!");
+            String err = "StoreController is already initialized. You can't initialize it twice!";
+            StoreUtils.LogError(TAG, err);
+            BusProvider.getInstance().post(new UnexpectedStoreErrorEvent(err));
             return false;
         }
 
@@ -82,14 +83,18 @@ public class StoreController {
         if (publicKey != null && publicKey.length() != 0) {
             edit.putString(StoreConfig.PUBLIC_KEY, publicKey);
         } else if (prefs.getString(StoreConfig.PUBLIC_KEY, "").length() == 0) {
-            StoreUtils.LogError(TAG, "publicKey is null or empty. Can't initialize store!!");
+        	String err = "publicKey is null or empty. Can't initialize store!!";
+        	StoreUtils.LogError(TAG, err);
+            BusProvider.getInstance().post(new UnexpectedStoreErrorEvent(err));
             return false;
         }
 
         if (customSecret != null && customSecret.length() != 0) {
             edit.putString(StoreConfig.CUSTOM_SEC, customSecret);
         } else if (prefs.getString(StoreConfig.CUSTOM_SEC, "").length() == 0) {
-            StoreUtils.LogError(TAG, "customSecret is null or empty. Can't initialize store!!");
+        	String err = "customSecret is null or empty. Can't initialize store!!";
+            StoreUtils.LogError(TAG, err);
+            BusProvider.getInstance().post(new UnexpectedStoreErrorEvent(err));
             return false;
         }
         edit.putInt("SA_VER_NEW", storeAssets.getVersion());
@@ -102,42 +107,28 @@ public class StoreController {
         // Update SOOMLA store from DB
         StoreInfo.initializeFromDB();
 
-        // Set up helper for the first time, querying inventory
+        // Set up helper for the first time, querying and synchronizing inventory
+        StoreUtils.LogDebug(TAG, "Querying and Synchronizing inventory ...");
         startIabHelper(true);
-
+        
         mInitialized = true;
         BusProvider.getInstance().post(new StoreControllerInitializedEvent());
         return true;
     }
 
     public void storeOpening() {
-        mLock.lock();
-        if (mStoreOpen) {
-            StoreUtils.LogError(TAG, "Store is already open!");
-            mLock.unlock();
-            return;
-        }
-
-        if (mHelper == null) startIabHelper(false);
-
-        mStoreOpen = true;
-        mLock.unlock();
-
-        BusProvider.getInstance().post(new OpeningStoreEvent());
+    	BusProvider.getInstance().post(new OpeningStoreEvent());
+    	startIabHelper(false);
     }
 
     /**
      * Call this function when you close the actual store window.
      */
     public void storeClosing() {
-        mLock.lock();
-        if (!mStoreOpen) return;
-
+    	//mark mStoreOpen as false, all async operations check this flag.
         mStoreOpen = false;
-        if (!mHelper.isAsyncInProgress()) stopIabHelper();
-
-        mLock.unlock();
-        BusProvider.getInstance().post(new ClosingStoreEvent());
+        
+        //stopIabHelper();
     }
 
     /**
@@ -147,8 +138,17 @@ public class StoreController {
      */
     private void startIabHelper(final boolean queryInventory) {
         // Setup IabHelper
-        StoreUtils.LogDebug(TAG, "Creating IAB helper.");
-        mHelper = new IabHelper();
+        mLock.lock();
+        if(mHelper == null)
+        {
+        	StoreUtils.LogDebug(TAG, "Creating IAB helper.");
+        	mHelper = new IabHelper();
+        } else {
+        	StoreUtils.LogDebug(TAG, "An IAB helper is existed.");
+        	mLock.unlock();
+        	return;
+        }
+        mLock.unlock();
 
         // Start the setup and call the listener when the setup is over
         StoreUtils.LogDebug(TAG, "Starting setup.");
@@ -175,8 +175,14 @@ public class StoreController {
      * Dispose of the helper to prevent memory leaks
      */
     private void stopIabHelper() {
-        if (mHelper != null) mHelper.dispose();
-        mHelper = null;
+    	mLock.lock();
+        if (mHelper != null && !mHelper.isAsyncInProgress())
+        {
+        	mHelper.dispose();
+        	mHelper = null;
+            BusProvider.getInstance().post(new ClosingStoreEvent());
+        }
+        mLock.unlock();
     }
 
     /**
@@ -185,7 +191,7 @@ public class StoreController {
      * @param googleMarketItem is the item to purchase. This item has to be defined EXACTLY the same in Google Play.
      * @param payload a payload to get back when this purchase is finished.
      */
-    public void buyWithGooglePlay(GoogleMarketItem googleMarketItem, String payload) throws IllegalStateException {
+    public void buyWithGooglePlay(GoogleMarketItem googleMarketItem, String payload) throws IllegalStateException {   	
         SharedPreferences prefs = new ObscuredSharedPreferences(SoomlaApp.getAppContext().getSharedPreferences(StoreConfig.PREFS_NAME, Context.MODE_PRIVATE));
         String publicKey = prefs.getString(StoreConfig.PUBLIC_KEY, "");
         if (publicKey.length() == 0 || publicKey.equals("[YOUR PUBLIC KEY FROM GOOGLE PLAY]")) {
@@ -204,8 +210,10 @@ public class StoreController {
      *  Used for internal starting of purchase with Google Play. Do *NOT* call this on your own.
      */
     // TODO: implement checking if item is already owned
-    private void buyWithGooglePlayInner(Activity activity, String sku, String payload) throws IllegalStateException, VirtualItemNotFoundException {
-        if (mHelper == null) startIabHelper(false);
+    private void launchPurchaseInActivity(Activity activity, String sku, String payload) throws IllegalStateException, VirtualItemNotFoundException {      
+        if (mHelper == null)
+        	startIabHelper(false);
+        
         BusProvider.getInstance().post(new PlayPurchaseStartedEvent(StoreInfo.getPurchasableItem(sku)));
         mHelper.launchPurchaseFlow(activity, sku, Consts.RC_REQUEST, mPurchaseFinishedListener, payload);
     }
@@ -215,17 +223,8 @@ public class StoreController {
      * @{link #storeOpen} must be called before this method or your helper will be destroyed.
      */
     public void restoreTransactions() {
-        StoreUtils.LogDebug(TAG, "Sending restore transaction request");
-        
-		try {
-			BusProvider.getInstance().post(
-					new RestoreTransactionsStartedEvent());
-			if (mHelper == null)
-				startIabHelper(false);
-			mHelper.queryInventoryAsync(false, null, mRestoreTransactionsListener);
-		} catch (IllegalStateException e) {
-			StoreUtils.LogError(TAG, "Error restoring transactions " + e.getMessage());
-		}
+    	// the inventory is automatically sync with Google Play Service after initialization
+    	return;
     }
 
     /**
@@ -233,11 +232,9 @@ public class StoreController {
      * @return if transactions were restored already.
      */
     public boolean transactionsAlreadyRestored() {
-        SharedPreferences prefs = new ObscuredSharedPreferences(SoomlaApp.getAppContext().getSharedPreferences(StoreConfig.PREFS_NAME, Context.MODE_PRIVATE));
-        return prefs.getBoolean("RESTORED", false);
+    	// the inventory is automatically sync with Google Play Service after initialization
+    	return true;
     }
-
-    /* actions to take depending on billing result */
 
     /**
      * Check the state of the purchase and respond accordingly, giving the user an item,
@@ -245,40 +242,65 @@ public class StoreController {
      *
      * @param purchase the purchase data as received by the helper
      */
-    private void purchaseActionResultOk(Purchase purchase) {
+    private void syncPurchaseState(Purchase purchase, boolean isAfterPurchase) {
         String sku = purchase.getSku();
         String packageName = purchase.getPackageName();
         String developerPayload = purchase.getDeveloperPayload();
+        
+        PurchasableVirtualItem vItem = null;
+        boolean isNonConsumable = false;
+        boolean exist = false;
+        
         try {
-            PurchasableVirtualItem v = StoreInfo.getPurchasableItem(sku);
-            switch (purchase.getPurchaseState()) {
-                case 0:
-                    StoreUtils.LogDebug(TAG, "Purchase successful.");
-                    if ( !(v instanceof NonConsumableItem)) {
-                        mHelper.consumeAsync(purchase, mConsumeFinishedListener);
-                    }
-                    BusProvider.getInstance().post(new PlayPurchaseEvent(v, developerPayload));
-                    v.give(1);
-                    BusProvider.getInstance().post(new ItemPurchasedEvent(v));
-                    break;
-                case 1:
-                    StoreUtils.LogDebug(TAG, "Purchase cancelled.");
-                    BusProvider.getInstance().post(new PlayPurchaseCancelledEvent(v));
-                    break;
-                case 2:
-                    StoreUtils.LogDebug(TAG, "Purchase refunded.");
-                    if (!StoreConfig.friendlyRefunds) {
-                        v.take(1);
-                    }
-                    BusProvider.getInstance().post(new PlayRefundEvent(v, developerPayload));
-                    break;
-            }
+            vItem = StoreInfo.getPurchasableItem(sku);
+            isNonConsumable =  vItem instanceof NonConsumableItem;
+            exist = StoreInventory.nonConsumableItemExists(vItem.getItemId());
         } catch (VirtualItemNotFoundException e) {
             StoreUtils.LogError(TAG, "ERROR : Couldn't find the " + packageName +
                     " VirtualCurrencyPack OR GoogleMarketItem  with productId: " + sku +
                     ". It's unexpected so an unexpected error is being emitted.");
             BusProvider.getInstance().post(new UnexpectedStoreErrorEvent());
+            return;
         }
+            
+        // give item immediately after successful purchase, then sync purchase state later.
+        if( isAfterPurchase )
+    	{
+        	vItem.give(1);
+        	BusProvider.getInstance().post(new ItemPurchasedEvent(vItem));
+        	if(isNonConsumable)
+        		BusProvider.getInstance().post(new PlayPurchaseEvent(vItem, developerPayload));
+    	}
+        // sync nonconsumable item after re-installation.
+        else if(isNonConsumable && !exist && purchase.getPurchaseState() == 0)
+        {
+        	vItem.give(1);
+        	BusProvider.getInstance().post(new ItemPurchasedEvent(vItem));
+        	BusProvider.getInstance().post(new PlayPurchaseEvent(vItem, developerPayload));
+        }
+        	
+        // consume all consumable items
+    	if( !isNonConsumable ) 
+    	{
+    		try
+    		{
+    			mHelper.consume(purchase);
+    			StoreUtils.LogDebug(TAG, "Purchase successful.");
+            	BusProvider.getInstance().post(new PlayPurchaseEvent(vItem, developerPayload));
+    		}
+        	catch (IabException e)
+        	{
+        		StoreUtils.LogDebug(TAG, "Error while consuming: " + sku);
+        		BusProvider.getInstance().post(new UnexpectedStoreErrorEvent(e.getMessage()));
+        	}
+    	}
+
+    	// handle if an existing item is cancelled or refunded
+    	if(purchase.getPurchaseState() != 0 && !StoreConfig.friendlyRefunds)
+    	{
+    		vItem.take(1);
+            BusProvider.getInstance().post(new PlayRefundEvent(vItem, purchase.getDeveloperPayload()));
+    	}
     }
 
     /**
@@ -301,14 +323,6 @@ public class StoreController {
         }
     }
 
-    /**
-     * Post an unexpected error event saying the purchase failed.
-     */
-    private void purchaseActionResultUnexpected() {
-        BusProvider.getInstance().post(new UnexpectedStoreErrorEvent());
-        StoreUtils.LogError(TAG, "ERROR: Purchase failed");
-    }
-
     /* Callbacks for the IabHelper */
 
     /**
@@ -317,89 +331,21 @@ public class StoreController {
     IabHelper.OnIabPurchaseFinishedListener mPurchaseFinishedListener = new IabHelper.OnIabPurchaseFinishedListener() {
         public void onIabPurchaseFinished(IabResult result, Purchase purchase) {
             StoreUtils.LogDebug(TAG, "Purchase finished: " + result + ", purchase: " + purchase);
-            if (Consts.ResponseCode.valueOf(result.getResponse()) == Consts.ResponseCode.RESULT_OK) {
-                purchaseActionResultOk(purchase);
-            } else if (Consts.ResponseCode.valueOf(result.getResponse()) == Consts.ResponseCode.RESULT_USER_CANCELED) {
+            if ( result.isSuccess() ) {
+                syncPurchaseState(purchase, true);
+            } else if (result.getResponse() == IabHelper.BILLING_RESPONSE_RESULT_USER_CANCELED) {
                 purchaseActionResultCancelled(purchase);
             } else {
-                purchaseActionResultUnexpected();
+            	BusProvider.getInstance().post(new UnexpectedStoreErrorEvent(result.getMessage()));
             }
+            
+            if(!mStoreOpen)
+            	stopIabHelper();
         }
     };
 
     /**
-     * After consumption succeeds, give the user 1 of the consumed item.
-     */
-    IabHelper.OnConsumeFinishedListener mConsumeFinishedListener = new IabHelper.OnConsumeFinishedListener() {
-        public void onConsumeFinished(Purchase purchase, IabResult result) {
-            StoreUtils.LogDebug(TAG, "Consumption finished. Purchase: " + purchase + ", result: " + result);
-            if (result.isSuccess()) {
-                StoreUtils.LogDebug(TAG, "Consumption successful. Provisioning");
-            }
-            else {
-                StoreUtils.LogDebug(TAG, "Error while consuming: " + result);
-            }
-
-            mLock.lock();
-            if (!mStoreOpen) stopIabHelper();
-            mLock.unlock();
-
-            StoreUtils.LogDebug(TAG, "End consumption flow");
-        }
-    };
-
-    /**
-     * Query inventory and check for NonConsumableItems, if we have any, give them to the player.
-     */
-    IabHelper.QueryInventoryFinishedListener mRestoreTransactionsListener = new IabHelper.QueryInventoryFinishedListener() {
-        public void onQueryInventoryFinished(IabResult result, Inventory inventory) {
-            if (result.isFailure()) {
-                StoreUtils.LogDebug(TAG, "Restore transactions error: " + result.getMessage());
-                BusProvider.getInstance().post(new RestoreTransactionsEvent(false));
-                return;
-            }
-            StoreUtils.LogDebug(TAG, "Restore transactions succeeded");
-
-            SharedPreferences prefs = new ObscuredSharedPreferences(SoomlaApp.getAppContext().getSharedPreferences(StoreConfig.PREFS_NAME, Context.MODE_PRIVATE));
-            SharedPreferences.Editor edit = prefs.edit();
-
-            edit.putBoolean("RESTORED", true);
-            edit.commit();
-
-            List<String> itemSkus = inventory.getAllOwnedSkus(IabHelper.ITEM_TYPE_INAPP);
-            for (String sku: itemSkus) {
-                try {
-                    VirtualItem v = StoreInfo.getVirtualItem(sku);
-                    if ( !(v instanceof NonConsumableItem) ) {
-                        continue;
-                    }
-                    Purchase purchase = inventory.getPurchase(sku);
-                    if (purchase != null) {
-                        String developerPayload = purchase.getDeveloperPayload();
-                        StoreUtils.LogDebug(TAG, "Giving the player " + purchase.getPackageName());
-                        BusProvider.getInstance().post(new PlayPurchaseEvent( (NonConsumableItem)v, developerPayload));
-                        v.give(1);
-                        BusProvider.getInstance().post(new ItemPurchasedEvent( (NonConsumableItem)v) );
-                    }
-                } catch (VirtualItemNotFoundException e) {
-                    StoreUtils.LogError(TAG, "ERROR : Couldn't find the PURCHASED" +
-                            " VirtualCurrencyPack OR GoogleMarketItem  with productId: " + sku +
-                            ". It's unexpected so an unexpected error is being emitted");
-                    BusProvider.getInstance().post(new UnexpectedStoreErrorEvent());
-                }
-            }
-
-            mLock.lock();
-            if (!mStoreOpen) stopIabHelper();
-            mLock.unlock();
-
-            StoreUtils.LogDebug(TAG, "Done restoring transactions");
-            BusProvider.getInstance().post(new RestoreTransactionsEvent(true));
-        }
-    };
-
-    /**
-     * Handle refunds and unconsumed items
+     * Handle incomplete purchase and refund after initialization
      */
     IabHelper.QueryInventoryFinishedListener mPostInitQueryListener = new IabHelper.QueryInventoryFinishedListener() {
         public void onQueryInventoryFinished(IabResult result, Inventory inventory) {
@@ -409,72 +355,14 @@ public class StoreController {
             }
             StoreUtils.LogDebug(TAG, "Query inventory succeeded");
 
-            mPurchasesLeft = inventory.getAllPurchases();
-            consumeAll();
+            List<String> itemSkus = inventory.getAllOwnedSkus(IabHelper.ITEM_TYPE_INAPP);
+            for (String sku: itemSkus) {
+            	Purchase purchase = inventory.getPurchase(sku);	
+            	syncPurchaseState(purchase, false);
+            }
+            
+            BusProvider.getInstance().post(new RestoreTransactionsEvent(true));
         }
-
-        // The following three functions call each other to avoid async clashing in IabHelper.
-        private void consumeAll () {
-            if (mPurchasesLeft.size() == 0) {
-                // exit recursion when we have no purchases left, make sure to dispose of helper if need be
-                mLock.lock();
-                if (!mStoreOpen) stopIabHelper();
-                mLock.unlock();
-
-                StoreUtils.LogDebug(TAG, "Done handling refunds and unconsumed items");
-                return;
-            }
-            Purchase purchase = mPurchasesLeft.remove(0);
-            if (purchase != null && purchase.getPurchaseState() == 2) { // Purchase state is 2, item has been refunded
-                mHelper.consumeAsync(purchase, consumeRefundCallback);
-            } else if (purchase != null && purchase.getPurchaseState() == 0) { // Purchase state is 0, item has been refunded
-                try {
-                    PurchasableVirtualItem v = StoreInfo.getPurchasableItem(purchase.getSku());
-                    if (!(v instanceof NonConsumableItem)) {
-                        mHelper.consumeAsync(purchase, consumePurchasedCallback);
-                    }
-                } catch (VirtualItemNotFoundException e) {
-                    StoreUtils.LogError(TAG, "ERROR : Couldn't find the PURCHASED" +
-                            " VirtualCurrencyPack OR GoogleMarketItem  with productId: " + purchase.getSku() +
-                            ". It's unexpected so an unexpected error is being emitted");
-                }
-            } else {
-                consumeAll();
-            }
-        }
-
-        private IabHelper.OnConsumeFinishedListener consumeRefundCallback = new IabHelper.OnConsumeFinishedListener() {
-            public void onConsumeFinished(Purchase purchase, IabResult result) {
-                String sku = purchase.getSku();
-                try {
-                    PurchasableVirtualItem v = StoreInfo.getPurchasableItem(sku);
-                    StoreUtils.LogDebug(TAG, "Purchase refunded.");
-                    if (!StoreConfig.friendlyRefunds) {
-                        v.take(1);
-                    }
-                    BusProvider.getInstance().post(new PlayRefundEvent(v, purchase.getDeveloperPayload()));
-                } catch (VirtualItemNotFoundException e) {
-                    StoreUtils.LogError(TAG, "ERROR : Couldn't find the PURCHASED" +
-                            " VirtualCurrencyPack OR GoogleMarketItem  with productId: " + sku +
-                            ". It's unexpected so an unexpected error is being emitted");
-                }
-                consumeAll();
-            }
-        };
-
-        private IabHelper.OnConsumeFinishedListener consumePurchasedCallback = new IabHelper.OnConsumeFinishedListener() {
-            public void onConsumeFinished(Purchase purchase, IabResult result) {
-                StoreUtils.LogDebug(TAG, "Consumption finished. Purchase: " + purchase + ", result: " + result);
-                if (result.isSuccess()) {
-                    StoreUtils.LogDebug(TAG, "Consumption successful");
-                } else {
-                    StoreUtils.LogDebug(TAG, "Error while consuming: " + result);
-                }
-                consumeAll();
-            }
-        };
-
-        List<Purchase> mPurchasesLeft;
     };
 
     /**
@@ -526,7 +414,7 @@ public class StoreController {
             String payload = intent.getStringExtra(StoreController.EXTRA_DATA);
 
             try {
-                StoreController.getInstance().buyWithGooglePlayInner(this, productId, payload);
+                StoreController.getInstance().launchPurchaseInActivity(this, productId, payload);
             } catch (IllegalStateException e) {
                 StoreUtils.LogError(TAG, "Error purchasing item " + e.getMessage());
                 BusProvider.getInstance().post(new UnexpectedStoreErrorEvent());
