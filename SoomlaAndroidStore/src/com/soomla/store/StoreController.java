@@ -117,7 +117,6 @@ public class StoreController {
     }
 
     public void storeOpening() {
-    	BusProvider.getInstance().post(new OpeningStoreEvent());
     	startIabHelper(false);
     }
 
@@ -127,8 +126,7 @@ public class StoreController {
     public void storeClosing() {
     	//mark mStoreOpen as false, all async operations check this flag.
         mStoreOpen = false;
-        
-        //stopIabHelper();
+        stopIabHelper();
     }
 
     /**
@@ -139,17 +137,19 @@ public class StoreController {
     private void startIabHelper(final boolean queryInventory) {
         // Setup IabHelper
         mLock.lock();
-        if(mHelper == null)
+        if(mHelper != null)
         {
-        	StoreUtils.LogDebug(TAG, "Creating IAB helper.");
-        	mHelper = new IabHelper();
-        } else {
         	StoreUtils.LogDebug(TAG, "An IAB helper is existed.");
+        	BusProvider.getInstance().post(new UnexpectedStoreErrorEvent());
         	mLock.unlock();
         	return;
         }
+        
+        StoreUtils.LogDebug(TAG, "Creating IAB helper.");
+        mHelper = new IabHelper();
+    	BusProvider.getInstance().post(new OpeningStoreEvent());
         mLock.unlock();
-
+    	
         // Start the setup and call the listener when the setup is over
         StoreUtils.LogDebug(TAG, "Starting setup.");
         mHelper.startSetup(new IabHelper.OnIabSetupFinishedListener() {
@@ -162,10 +162,11 @@ public class StoreController {
                 }
 
                 BusProvider.getInstance().post(new BillingSupportedEvent());
-
+                mStoreOpen = true;
+                
                 if (queryInventory) {
                     StoreUtils.LogDebug(TAG, "Setup successful, consuming unconsumed items and handling refunds");
-                    mHelper.queryInventoryAsync(mPostInitQueryListener);
+                    mHelper.queryInventoryAsync(false, null, mPostInitQueryListener);
                 }
             }
         });
@@ -182,6 +183,11 @@ public class StoreController {
         	mHelper = null;
             BusProvider.getInstance().post(new ClosingStoreEvent());
         }
+        else
+        {
+        	StoreUtils.LogDebug(TAG, "Cannot close store during async process.");
+        	BusProvider.getInstance().post(new UnexpectedStoreErrorEvent());
+        }
         mLock.unlock();
     }
 
@@ -190,8 +196,18 @@ public class StoreController {
      *
      * @param googleMarketItem is the item to purchase. This item has to be defined EXACTLY the same in Google Play.
      * @param payload a payload to get back when this purchase is finished.
+     * @throws VirtualItemNotFoundException 
      */
-    public void buyWithGooglePlay(GoogleMarketItem googleMarketItem, String payload) throws IllegalStateException {   	
+    public void buyWithGooglePlay(GoogleMarketItem googleMarketItem, String payload, PurchasableVirtualItem v) throws IllegalStateException {
+    	if(mHelper == null)
+    	{
+    		StoreUtils.LogDebug(TAG, "Billing service is not connected.");
+    		BusProvider.getInstance().post(new UnexpectedStoreErrorEvent());
+    		return;
+    	}
+    	
+        BusProvider.getInstance().post(new PlayPurchaseStartedEvent(v));
+        
         SharedPreferences prefs = new ObscuredSharedPreferences(SoomlaApp.getAppContext().getSharedPreferences(StoreConfig.PREFS_NAME, Context.MODE_PRIVATE));
         String publicKey = prefs.getString(StoreConfig.PUBLIC_KEY, "");
         if (publicKey.length() == 0 || publicKey.equals("[YOUR PUBLIC KEY FROM GOOGLE PLAY]")) {
@@ -207,23 +223,21 @@ public class StoreController {
     }
 
     /**
-     *  Used for internal starting of purchase with Google Play. Do *NOT* call this on your own.
-     */
-    // TODO: implement checking if item is already owned
-    private void launchPurchaseInActivity(Activity activity, String sku, String payload) throws IllegalStateException, VirtualItemNotFoundException {      
-        if (mHelper == null)
-        	startIabHelper(false);
-        
-        BusProvider.getInstance().post(new PlayPurchaseStartedEvent(StoreInfo.getPurchasableItem(sku)));
-        mHelper.launchPurchaseFlow(activity, sku, Consts.RC_REQUEST, mPurchaseFinishedListener, payload);
-    }
-
-    /**
      * Initiate the restoreTransactions process
      * @{link #storeOpen} must be called before this method or your helper will be destroyed.
      */
     public void restoreTransactions() {
     	// the inventory is automatically sync with Google Play Service after initialization
+    	// allow user manually query inventory by calling this function
+    	
+    	BusProvider.getInstance().post(new RestoreTransactionsStartedEvent());
+    	if(mHelper == null) {
+    		StoreUtils.LogDebug(TAG, "Billing service is not connected.");
+    		BusProvider.getInstance().post(new UnexpectedStoreErrorEvent());
+    		return;
+    	}
+        
+    	mHelper.queryInventoryAsync(false, null, mPostInitQueryListener);
     	return;
     }
 
@@ -242,27 +256,13 @@ public class StoreController {
      *
      * @param purchase the purchase data as received by the helper
      */
-    private void syncPurchaseState(Purchase purchase, boolean isAfterPurchase) {
-        String sku = purchase.getSku();
-        String packageName = purchase.getPackageName();
+    private void syncPurchaseState(Purchase purchase, boolean isAfterPurchase) throws VirtualItemNotFoundException {
+    	String sku = purchase.getSku();
         String developerPayload = purchase.getDeveloperPayload();
-        
-        PurchasableVirtualItem vItem = null;
-        boolean isNonConsumable = false;
-        boolean exist = false;
-        
-        try {
-            vItem = StoreInfo.getPurchasableItem(sku);
-            isNonConsumable =  vItem instanceof NonConsumableItem;
-            exist = StoreInventory.nonConsumableItemExists(vItem.getItemId());
-        } catch (VirtualItemNotFoundException e) {
-            StoreUtils.LogError(TAG, "ERROR : Couldn't find the " + packageName +
-                    " VirtualCurrencyPack OR GoogleMarketItem  with productId: " + sku +
-                    ". It's unexpected so an unexpected error is being emitted.");
-            BusProvider.getInstance().post(new UnexpectedStoreErrorEvent());
-            return;
-        }
-            
+        PurchasableVirtualItem vItem = StoreInfo.getPurchasableItem(sku);
+        boolean isNonConsumable =  vItem instanceof NonConsumableItem;
+        boolean exist = StoreInventory.nonConsumableItemExists(vItem.getItemId());
+               
         // give item immediately after successful purchase, then sync purchase state later.
         if( isAfterPurchase )
     	{
@@ -303,26 +303,6 @@ public class StoreController {
     	}
     }
 
-    /**
-     * Post an event containing a PurchasableVirtualItem corresponding to the purchase,
-     * or an unexpected error event if the item was not found.
-     *
-     * @param purchase the purchase data as received by the helper
-     */
-    private void purchaseActionResultCancelled(Purchase purchase) {
-        String sku = purchase.getSku();
-        String packageName = SoomlaApp.getAppContext().getPackageName();
-        try {
-            PurchasableVirtualItem v = StoreInfo.getPurchasableItem(sku);
-            BusProvider.getInstance().post(new PlayPurchaseCancelledEvent(v));
-        } catch (VirtualItemNotFoundException e) {
-            StoreUtils.LogError(TAG, "ERROR : Couldn't find the " + packageName +
-                    " VirtualCurrencyPack OR GoogleMarketItem  with productId: " + sku +
-                    ". It's unexpected so an unexpected error is being emitted.");
-            BusProvider.getInstance().post(new UnexpectedStoreErrorEvent());
-        }
-    }
-
     /* Callbacks for the IabHelper */
 
     /**
@@ -331,13 +311,30 @@ public class StoreController {
     IabHelper.OnIabPurchaseFinishedListener mPurchaseFinishedListener = new IabHelper.OnIabPurchaseFinishedListener() {
         public void onIabPurchaseFinished(IabResult result, Purchase purchase) {
             StoreUtils.LogDebug(TAG, "Purchase finished: " + result + ", purchase: " + purchase);
-            if ( result.isSuccess() ) {
-                syncPurchaseState(purchase, true);
-            } else if (result.getResponse() == IabHelper.BILLING_RESPONSE_RESULT_USER_CANCELED) {
-                purchaseActionResultCancelled(purchase);
-            } else {
-            	BusProvider.getInstance().post(new UnexpectedStoreErrorEvent(result.getMessage()));
-            }
+            String sku = purchase.getSku();
+            String packageName = SoomlaApp.getAppContext().getPackageName();
+            
+			try {
+				if (result.isSuccess()) {
+					syncPurchaseState(purchase, true);
+				}
+				else if (result.getResponse() == IabHelper.BILLING_RESPONSE_RESULT_USER_CANCELED) {
+					BusProvider.getInstance().post(
+							new PlayPurchaseCancelledEvent(StoreInfo.getPurchasableItem(sku)));
+				}
+				else {
+					BusProvider.getInstance().post(
+							new UnexpectedStoreErrorEvent(result.getMessage()));
+				}
+			} catch (VirtualItemNotFoundException e) {
+				StoreUtils.LogError( TAG,
+					"ERROR : Couldn't find the "
+					+ packageName
+					+ " VirtualCurrencyPack OR GoogleMarketItem  with productId: "
+					+ sku
+					+ ". It's unexpected so an unexpected error is being emitted.");
+				BusProvider.getInstance().post(new UnexpectedStoreErrorEvent());
+			}
             
             if(!mStoreOpen)
             	stopIabHelper();
@@ -350,18 +347,27 @@ public class StoreController {
     IabHelper.QueryInventoryFinishedListener mPostInitQueryListener = new IabHelper.QueryInventoryFinishedListener() {
         public void onQueryInventoryFinished(IabResult result, Inventory inventory) {
             if (result.isFailure()) {
-                StoreUtils.LogDebug(TAG, "Query inventory error: " + result.getMessage());
+            	String err = "Query inventory error: " + result.getMessage();
+                StoreUtils.LogDebug(TAG, err);
+                BusProvider.getInstance().post(new UnexpectedStoreErrorEvent(err));
                 return;
             }
             StoreUtils.LogDebug(TAG, "Query inventory succeeded");
 
             List<String> itemSkus = inventory.getAllOwnedSkus(IabHelper.ITEM_TYPE_INAPP);
             for (String sku: itemSkus) {
-            	Purchase purchase = inventory.getPurchase(sku);	
-            	syncPurchaseState(purchase, false);
+            	Purchase purchase = inventory.getPurchase(sku);
+            	try {
+            		syncPurchaseState(purchase, false);
+            	} catch (VirtualItemNotFoundException e) {
+            		//if a product id don't exist in store info, simply ignore it.
+            	}
             }
             
             BusProvider.getInstance().post(new RestoreTransactionsEvent(true));
+            
+            if(!mStoreOpen)
+            	stopIabHelper();
         }
     };
 
@@ -414,13 +420,11 @@ public class StoreController {
             String payload = intent.getStringExtra(StoreController.EXTRA_DATA);
 
             try {
-                StoreController.getInstance().launchPurchaseInActivity(this, productId, payload);
+                StoreController sc = StoreController.getInstance();
+                sc.mHelper.launchPurchaseFlow( (Activity)SoomlaApp.getAppContext(),
+                		productId, Consts.RC_REQUEST, sc.mPurchaseFinishedListener, payload);
             } catch (IllegalStateException e) {
                 StoreUtils.LogError(TAG, "Error purchasing item " + e.getMessage());
-                BusProvider.getInstance().post(new UnexpectedStoreErrorEvent());
-                finish();
-            } catch (VirtualItemNotFoundException e) {
-                StoreUtils.LogError(TAG, "Couldn't find a purchasable item with productId: " + productId);
                 BusProvider.getInstance().post(new UnexpectedStoreErrorEvent());
                 finish();
             }
@@ -428,7 +432,8 @@ public class StoreController {
 
         @Override
         protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-			if (StoreController.getInstance().mHelper == null) {
+			if (StoreController.getInstance().mHelper == null)
+			{
 				StoreUtils.LogError(TAG, "helper is null in onActivityResult.");
 				BusProvider.getInstance().post(new UnexpectedStoreErrorEvent());
 				super.onActivityResult(requestCode, resultCode, data);

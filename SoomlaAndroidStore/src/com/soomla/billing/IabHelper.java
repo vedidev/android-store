@@ -25,7 +25,6 @@ import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.os.*;
 import android.text.TextUtils;
-import android.util.Log;
 
 import com.android.vending.billing.IInAppBillingService;
 import com.soomla.store.SoomlaApp;
