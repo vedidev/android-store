@@ -158,6 +158,7 @@ public class StoreController {
                 if (result.isFailure()) {
                     StoreUtils.LogDebug(TAG, "There's no connectivity with the billing service.");
                     BusProvider.getInstance().post(new BillingNotSupportedEvent());
+                    stopIabHelper();
                     return;
                 }
 
@@ -214,12 +215,17 @@ public class StoreController {
             StoreUtils.LogError(TAG, "You didn't provide a public key! You can't make purchases.");
             throw new IllegalStateException();
         }
-
-        Intent intent = new Intent(SoomlaApp.getAppContext(), IabActivity.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        intent.putExtra(PROD_ID, googleMarketItem.getProductId());
-        intent.putExtra(EXTRA_DATA, payload);
-        SoomlaApp.getAppContext().startActivity(intent);
+        
+        try {
+	        Intent intent = new Intent(SoomlaApp.getAppContext(), IabActivity.class);
+	        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+	        intent.putExtra(PROD_ID, googleMarketItem.getProductId());
+	        intent.putExtra(EXTRA_DATA, payload);
+	        SoomlaApp.getAppContext().startActivity(intent);
+        } catch(Exception e){
+        	StoreUtils.LogError(TAG, "Error purchasing item " + e.getMessage());
+            BusProvider.getInstance().post(new UnexpectedStoreErrorEvent(e.getMessage()));
+        }
     }
 
     /**
@@ -411,21 +417,30 @@ public class StoreController {
      * Do not start it on your own.
      */
     public static class IabActivity extends Activity {
+    	private boolean created = false;
+    	
         @Override
         protected void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
-
+            
+            if(created)
+            {
+            	finish();
+            	return;
+            }
+            
+            created = true;
             Intent intent = getIntent();
             String productId = intent.getStringExtra(StoreController.PROD_ID);
             String payload = intent.getStringExtra(StoreController.EXTRA_DATA);
 
             try {
                 StoreController sc = StoreController.getInstance();
-                sc.mHelper.launchPurchaseFlow( (Activity)SoomlaApp.getAppContext(),
-                		productId, Consts.RC_REQUEST, sc.mPurchaseFinishedListener, payload);
-            } catch (IllegalStateException e) {
+                sc.mHelper.launchPurchaseFlow( this, productId, Consts.RC_REQUEST, sc.mPurchaseFinishedListener, payload);
+
+            } catch (Exception e) {
                 StoreUtils.LogError(TAG, "Error purchasing item " + e.getMessage());
-                BusProvider.getInstance().post(new UnexpectedStoreErrorEvent());
+                BusProvider.getInstance().post(new UnexpectedStoreErrorEvent(e.getMessage()));
                 finish();
             }
         }
@@ -442,9 +457,7 @@ public class StoreController {
 			}
 
 			if (!StoreController.getInstance().mHelper.handleActivityResult(requestCode, resultCode, data))
-				super.onActivityResult(requestCode, resultCode, data);
-			else
-				StoreUtils.LogDebug(TAG, "onActivityResult handled by IabHelper.");
+				super.onActivityResult(requestCode, resultCode, data);				
 
 			finish();
         }
