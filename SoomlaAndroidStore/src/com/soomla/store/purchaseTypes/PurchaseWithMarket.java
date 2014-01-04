@@ -21,7 +21,6 @@ import com.soomla.store.StoreController;
 import com.soomla.store.StoreUtils;
 import com.soomla.store.domain.GoogleMarketItem;
 import com.soomla.store.events.ItemPurchaseStartedEvent;
-import com.soomla.store.events.PlayPurchaseStartedEvent;
 import com.soomla.store.exceptions.InsufficientFundsException;
 
 /**
@@ -55,9 +54,7 @@ public class PurchaseWithMarket extends PurchaseType {
         
         BusProvider.getInstance().post(new ItemPurchaseStartedEvent(getAssociatedItem()));
         try {
-            if (StoreController.getInstance().buyWithGooglePlay(mGoogleMarketItem, "")) {
-                BusProvider.getInstance().post(new PlayPurchaseStartedEvent(getAssociatedItem()));
-            }
+            StoreController.getInstance().buyWithGooglePlay(mGoogleMarketItem, "");
         } catch (IllegalStateException e) {
             StoreUtils.LogError(TAG, "Error when purchasing item");
         }
