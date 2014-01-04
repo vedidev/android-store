@@ -34,9 +34,9 @@ import com.soomla.store.domain.NonConsumableItem;
 import com.soomla.store.domain.PurchasableVirtualItem;
 import com.soomla.store.events.BillingNotSupportedEvent;
 import com.soomla.store.events.BillingSupportedEvent;
-import com.soomla.store.events.ClosingStoreEvent;
+import com.soomla.store.events.IabServiceStartedEvent;
+import com.soomla.store.events.IabServiceStoppedEvent;
 import com.soomla.store.events.ItemPurchasedEvent;
-import com.soomla.store.events.OpeningStoreEvent;
 import com.soomla.store.events.PlayPurchaseCancelledEvent;
 import com.soomla.store.events.PlayPurchaseEvent;
 import com.soomla.store.events.PlayPurchaseStartedEvent;
@@ -116,45 +116,30 @@ public class StoreController {
         return true;
     }
 
-    public void storeOpening() {
-    	startIabHelper(false);
-    }
-
-    /**
-     * Call this function when you close the actual store window.
-     */
-    public void storeClosing() {
-    	//mark mStoreOpen as false, all async operations check this flag.
-        mStoreOpen = false;
-        stopIabHelper();
-    }
-
     /**
      * Create a new IAB helper and set it up.
      *
      * @param queryInventory if we should query the inventory after setup.
      */
     private void startIabHelper(final boolean queryInventory) {
-        // Setup IabHelper
-        mLock.lock();
+        mHelperLock.lock();
+
         if(mHelper != null)
         {
-        	StoreUtils.LogDebug(TAG, "An IAB helper is existed.");
-        	BusProvider.getInstance().post(new UnexpectedStoreErrorEvent());
-        	mLock.unlock();
+            String msg = "Can't start Iab Helper when it already exists.";
+        	StoreUtils.LogDebug(TAG, msg);
+        	BusProvider.getInstance().post(new UnexpectedStoreErrorEvent(msg));
+            mHelperLock.unlock();
         	return;
         }
         
         StoreUtils.LogDebug(TAG, "Creating IAB helper.");
         mHelper = new IabHelper();
-    	BusProvider.getInstance().post(new OpeningStoreEvent());
-        mLock.unlock();
-    	
-        // Start the setup and call the listener when the setup is over
-        StoreUtils.LogDebug(TAG, "Starting setup.");
+
+        StoreUtils.LogDebug(TAG, "IAB helper Starting setup.");
         mHelper.startSetup(new IabHelper.OnIabSetupFinishedListener() {
             public void onIabSetupFinished(IabResult result) {
-                StoreUtils.LogDebug(TAG, "Setup finished.");
+                StoreUtils.LogDebug(TAG, "IAB helper Setup finished.");
                 if (result.isFailure()) {
                     StoreUtils.LogDebug(TAG, "There's no connectivity with the billing service.");
                     BusProvider.getInstance().post(new BillingNotSupportedEvent());
@@ -163,7 +148,7 @@ public class StoreController {
                 }
 
                 BusProvider.getInstance().post(new BillingSupportedEvent());
-                mStoreOpen = true;
+                BusProvider.getInstance().post(new IabServiceStartedEvent());
                 
                 if (queryInventory) {
                     StoreUtils.LogDebug(TAG, "Setup successful, consuming unconsumed items and handling refunds");
@@ -171,25 +156,32 @@ public class StoreController {
                 }
             }
         });
+
+        mHelperLock.unlock();
     }
 
     /**
      * Dispose of the helper to prevent memory leaks
      */
     private void stopIabHelper() {
-    	mLock.lock();
+    	mHelperLock.lock();
+
         if (mHelper != null && !mHelper.isAsyncInProgress())
         {
+            mHelperStop = false;
         	mHelper.dispose();
         	mHelper = null;
-            BusProvider.getInstance().post(new ClosingStoreEvent());
+            BusProvider.getInstance().post(new IabServiceStoppedEvent());
         }
-        else
+        else if (mHelper != null)
         {
-        	StoreUtils.LogDebug(TAG, "Cannot close store during async process.");
-        	BusProvider.getInstance().post(new UnexpectedStoreErrorEvent());
+            String msg = "Cannot close store during async process. Will be stopped when async operation is finished.";
+            mHelperStop = true;
+        	StoreUtils.LogDebug(TAG, msg);
+//        	BusProvider.getInstance().post(new UnexpectedStoreErrorEvent(msg));
         }
-        mLock.unlock();
+
+        mHelperLock.unlock();
     }
 
     /**
@@ -197,17 +189,15 @@ public class StoreController {
      *
      * @param googleMarketItem is the item to purchase. This item has to be defined EXACTLY the same in Google Play.
      * @param payload a payload to get back when this purchase is finished.
-     * @throws VirtualItemNotFoundException 
+     * @throws IllegalStateException
      */
-    public void buyWithGooglePlay(GoogleMarketItem googleMarketItem, String payload, PurchasableVirtualItem v) throws IllegalStateException {
+    public boolean buyWithGooglePlay(GoogleMarketItem googleMarketItem, String payload) throws IllegalStateException {
     	if(mHelper == null)
     	{
     		StoreUtils.LogDebug(TAG, "Billing service is not connected.");
     		BusProvider.getInstance().post(new UnexpectedStoreErrorEvent());
-    		return;
+    		return false;
     	}
-    	
-        BusProvider.getInstance().post(new PlayPurchaseStartedEvent(v));
         
         SharedPreferences prefs = new ObscuredSharedPreferences(SoomlaApp.getAppContext().getSharedPreferences(StoreConfig.PREFS_NAME, Context.MODE_PRIVATE));
         String publicKey = prefs.getString(StoreConfig.PUBLIC_KEY, "");
@@ -222,10 +212,13 @@ public class StoreController {
 	        intent.putExtra(PROD_ID, googleMarketItem.getProductId());
 	        intent.putExtra(EXTRA_DATA, payload);
 	        SoomlaApp.getAppContext().startActivity(intent);
+
+            return true;
         } catch(Exception e){
         	StoreUtils.LogError(TAG, "Error purchasing item " + e.getMessage());
             BusProvider.getInstance().post(new UnexpectedStoreErrorEvent(e.getMessage()));
         }
+        return false;
     }
 
     /**
@@ -233,27 +226,15 @@ public class StoreController {
      * @{link #storeOpen} must be called before this method or your helper will be destroyed.
      */
     public void restoreTransactions() {
-    	// the inventory is automatically sync with Google Play Service after initialization
-    	// allow user manually query inventory by calling this function
-    	
     	BusProvider.getInstance().post(new RestoreTransactionsStartedEvent());
     	if(mHelper == null) {
-    		StoreUtils.LogDebug(TAG, "Billing service is not connected.");
-    		BusProvider.getInstance().post(new UnexpectedStoreErrorEvent());
+            String msg = "Can't restore transactions when IAB Helper is not connected";
+    		StoreUtils.LogDebug(TAG, msg);
+    		BusProvider.getInstance().post(new UnexpectedStoreErrorEvent(msg));
     		return;
     	}
         
     	mHelper.queryInventoryAsync(false, null, mPostInitQueryListener);
-    	return;
-    }
-
-    /**
-     * Check if transactions were restored already.
-     * @return if transactions were restored already.
-     */
-    public boolean transactionsAlreadyRestored() {
-    	// the inventory is automatically sync with Google Play Service after initialization
-    	return true;
     }
 
     /**
@@ -272,10 +253,9 @@ public class StoreController {
         // give item immediately after successful purchase, then sync purchase state later.
         if( isAfterPurchase )
     	{
+            BusProvider.getInstance().post(new PlayPurchaseEvent(vItem, developerPayload));
         	vItem.give(1);
         	BusProvider.getInstance().post(new ItemPurchasedEvent(vItem));
-        	if(isNonConsumable)
-        		BusProvider.getInstance().post(new PlayPurchaseEvent(vItem, developerPayload));
     	}
         // sync nonconsumable item after re-installation.
         else if(isNonConsumable && !exist && purchase.getPurchaseState() == 0)
@@ -342,8 +322,9 @@ public class StoreController {
 				BusProvider.getInstance().post(new UnexpectedStoreErrorEvent());
 			}
             
-            if(!mStoreOpen)
+            if(mHelperStop) {
             	stopIabHelper();
+            }
         }
     };
 
@@ -372,8 +353,9 @@ public class StoreController {
             
             BusProvider.getInstance().post(new RestoreTransactionsEvent(true));
             
-            if(!mStoreOpen)
+            if(mHelperStop) {
             	stopIabHelper();
+            }
         }
     };
 
@@ -405,11 +387,10 @@ public class StoreController {
     private static final String TAG = "SOOMLA StoreController";
 
     private boolean mInitialized   = false;
-    private boolean mStoreOpen     = false;
 
     private IabHelper mHelper;
-
-    private Lock mLock = new ReentrantLock();
+    private Lock mHelperLock = new ReentrantLock();
+    private boolean mHelperStop = false;
 
     /**
      * Android In-App Billing v3 requires and activity to receive the result of the billing process.
@@ -447,17 +428,15 @@ public class StoreController {
 
         @Override
         protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-			if (StoreController.getInstance().mHelper == null)
-			{
-				StoreUtils.LogError(TAG, "helper is null in onActivityResult.");
-				BusProvider.getInstance().post(new UnexpectedStoreErrorEvent());
+			if (!StoreController.getInstance().handleActivityResult(requestCode, resultCode, data)) {
 				super.onActivityResult(requestCode, resultCode, data);
-				finish();
-				return;
-			}
 
-			if (!StoreController.getInstance().mHelper.handleActivityResult(requestCode, resultCode, data))
-				super.onActivityResult(requestCode, resultCode, data);				
+                if (StoreController.getInstance().mHelper == null)
+                {
+                    StoreUtils.LogError(TAG, "helper is null in onActivityResult.");
+                    BusProvider.getInstance().post(new UnexpectedStoreErrorEvent());
+                }
+            }
 
 			finish();
         }
