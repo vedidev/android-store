@@ -16,7 +16,6 @@ Haven't you ever wanted an in-app purchase one liner that looks like this!?
 
 > - Functions removed: `setTestMode()` & `isTestMode()` - not needed anymore
 > - Events removed: `onMarketRefund` - as of IAB version 3 Google does not support refunds anymore.
-> - `StoreController.storeOpening()` does not take an activity as a parameter anymore.
 
 The current virtual economny model is called **modelV3**. Want to learn more about it? Try these:  
 * [Economy Model Objects](https://github.com/soomla/android-store/wiki/Economy-Model-Objects)  
@@ -73,20 +72,6 @@ Check out our [Wiki] (https://github.com/soomla/android-store/wiki) for more inf
 
     > Initialize `StoreController` ONLY ONCE when your application loads.
 
-5. Now that you have _StoreController_ loaded, just decide when you want to show/hide your store's UI to the user and let _StoreController_ know about it:
-
-  When you show the store call:
-
-    ```Java
-    StoreController.getInstance().storeOpening();
-    ```
-
-  When you hide the store call:
-
-    ```Java
-    StoreController.getInstance().storeClosing();
-    ```
-
 And that's it ! You have storage and in-app purchasing capabilities... ALL-IN-ONE.
 
 
@@ -122,6 +107,26 @@ StoreInventory.buy(TEN_COINS_PACK.getItemId());
     
 And that's it! android-store knows how to contact Google Play for you and will redirect your users to their purchasing system to complete the transaction.
 Don't forget to define your _IStoreEventHandler_ in order to get the events of successful or failed purchases (see [Event Handling](https://github.com/soomla/android-store#event-handling)).
+
+## In App Billing Service
+
+We currently support Google Play as the default IAB service. We're working to add more stores' services.
+
+The billing service is started and stopped for every operation you're running on StoreContoroller (buyWithGooglePlay, restoreTransactions ...).
+
+We recommend that you open the IAB Serbice and keep it open in the background in cases where you have an in-game storefront. This is how you do that:
+
+When you open the store, call:  
+```Java
+StoreController.getInstance().startIabServiceInBg();
+```
+
+When the store is closed, call:  
+```Java
+StoreController.getInstance().stopIabServiceInBg();
+```
+
+Be careful with that. Don't leave the service running in the background without closing it.
 
 
 ## Debugging
