@@ -63,7 +63,7 @@ public class ExampleEventHandler {
 
     @Subscribe
     public void onPlayPurchaseCancelledEvent(PlayPurchaseCancelledEvent marketPurchaseCancelledEvent) {
-        showToastIfDebug("Market purchase started for: " + marketPurchaseCancelledEvent.getPurchasableVirtualItem().getName());
+        showToastIfDebug("Market purchase cancelled for: " + marketPurchaseCancelledEvent.getPurchasableVirtualItem().getName());
     }
 
     @Subscribe
@@ -72,10 +72,8 @@ public class ExampleEventHandler {
     }
 
     @Subscribe
-    public void onClosingStore(ClosingStoreEvent closingStoreEvent) {
-        mActivityI.robotBackHome();
-
-        showToastIfDebug("Going to close store");
+    public void onIabServiceStarted(IabServiceStartedEvent iabServiceStartedEvent) {
+        showToastIfDebug("Iab Service started");
     }
 
     @Subscribe
@@ -84,8 +82,8 @@ public class ExampleEventHandler {
     }
 
     @Subscribe
-    public void onOpeningStore(OpeningStoreEvent openingStoreEvent) {
-        showToastIfDebug("Store is opening");
+    public void onIabServiceStoppedEvent(IabServiceStoppedEvent iabServiceStoppedEvent) {
+        showToastIfDebug("Iab Service stopped");
     }
 
     @Subscribe

@@ -37,6 +37,8 @@ public class StoreGoodsActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.listview);
 
+        StoreController.getInstance().startIabServiceInBg();
+
         TextView title = (TextView)findViewById(R.id.title);
 
         title.setText("Virtual Goods");
@@ -103,7 +105,7 @@ public class StoreGoodsActivity extends Activity {
 
     @Override
     protected void onDestroy() {
-        StoreController.getInstance().storeClosing();
+        StoreController.getInstance().stopIabServiceInBg();
         super.onDestroy();
     }
 

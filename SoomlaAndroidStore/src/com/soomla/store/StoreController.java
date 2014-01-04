@@ -242,6 +242,7 @@ public class StoreController {
 
         if (!mHelper.isAsyncInProgress())
         {
+            StoreUtils.LogDebug(TAG, "Stopping Iab helper");
             mHelperStop = false;
             mHelper.dispose();
             mHelper = null;
