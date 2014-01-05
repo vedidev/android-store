@@ -290,9 +290,6 @@ public class StoreController {
                 consumeIfNonConsumable(purchase);
                 break;
             case 1:
-                StoreUtils.LogDebug(TAG, "Purchase cancelled.");
-                purchaseActionResultCancelled(purchase);
-                break;
             case 2:
                 StoreUtils.LogDebug(TAG, "Purchase refunded.");
                 if (!StoreConfig.friendlyRefunds) {
