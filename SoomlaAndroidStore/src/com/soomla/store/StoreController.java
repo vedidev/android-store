@@ -287,7 +287,7 @@ public class StoreController {
                 pvi.give(1);
                 BusProvider.getInstance().post(new ItemPurchasedEvent(pvi));
 
-                consumeIfNonConsumable(purchase);
+                consumeIfConsumable(purchase);
                 break;
             case 1:
             case 2:
@@ -319,7 +319,7 @@ public class StoreController {
         }
     }
 
-    private void consumeIfNonConsumable(Purchase purchase) {
+    private void consumeIfConsumable(Purchase purchase) {
         String sku = purchase.getSku();
         try {
             PurchasableVirtualItem pvi = StoreInfo.getPurchasableItem(sku);
@@ -362,7 +362,7 @@ public class StoreController {
             } else {
                 if (result.getResponse() == IabHelper.BILLING_RESPONSE_RESULT_ITEM_ALREADY_OWNED) {
                     StoreUtils.LogDebug(TAG, "Tried to buy an item that was not consumed. Trying to consume it if it's non consumable.");
-                    consumeIfNonConsumable(purchase);
+                    consumeIfConsumable(purchase);
                 }
 
                 purchaseActionResultUnexpected(result);
