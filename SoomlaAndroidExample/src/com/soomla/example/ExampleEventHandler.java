@@ -57,23 +57,18 @@ public class ExampleEventHandler {
     }
 
     @Subscribe
-    public void onPlayPurchaseStartedEvent(PlayPurchaseStartedEvent marketPurchaseStartedEvent) {
+    public void onPlayPurchaseStarted(PlayPurchaseStartedEvent marketPurchaseStartedEvent) {
         showToastIfDebug("Market purchase started for: " + marketPurchaseStartedEvent.getPurchasableVirtualItem().getName());
     }
 
     @Subscribe
-    public void onPlayPurchaseCancelledEvent(PlayPurchaseCancelledEvent marketPurchaseCancelledEvent) {
+    public void onPlayPurchaseCancelled(PlayPurchaseCancelledEvent marketPurchaseCancelledEvent) {
         showToastIfDebug("Market purchase cancelled for: " + marketPurchaseCancelledEvent.getPurchasableVirtualItem().getName());
     }
 
     @Subscribe
-    public void onItemPurchaseStartedEvent(ItemPurchaseStartedEvent itemPurchaseStartedEvent) {
+    public void onItemPurchaseStarted(ItemPurchaseStartedEvent itemPurchaseStartedEvent) {
         showToastIfDebug("Item purchase started for: " + itemPurchaseStartedEvent.getPurchasableVirtualItem().getName());
-    }
-
-    @Subscribe
-    public void onIabServiceStarted(IabServiceStartedEvent iabServiceStartedEvent) {
-        showToastIfDebug("Iab Service started");
     }
 
     @Subscribe
@@ -82,7 +77,12 @@ public class ExampleEventHandler {
     }
 
     @Subscribe
-    public void onIabServiceStoppedEvent(IabServiceStoppedEvent iabServiceStoppedEvent) {
+    public void onIabServiceStarted(IabServiceStartedEvent iabServiceStartedEvent) {
+        showToastIfDebug("Iab Service started");
+    }
+	
+    @Subscribe
+    public void onIabServiceStopped(IabServiceStoppedEvent iabServiceStoppedEvent) {
         showToastIfDebug("Iab Service stopped");
     }
 
@@ -97,12 +97,12 @@ public class ExampleEventHandler {
     }
 
     @Subscribe
-    public void onRestoreTransactionsEvent(RestoreTransactionsEvent restoreTransactionsEvent) {
+    public void onRestoreTransactions(RestoreTransactionsEvent restoreTransactionsEvent) {
         showToastIfDebug("restoreTransactions: " + restoreTransactionsEvent.isSuccess() + ".");
     }
 
     @Subscribe
-    public void onRestoreTransactionsStartedEvent(RestoreTransactionsStartedEvent restoreTransactionsStartedEvent) {
+    public void onRestoreTransactionsStarted(RestoreTransactionsStartedEvent restoreTransactionsStartedEvent) {
         showToastIfDebug("restoreTransactions Started");
     }
 
