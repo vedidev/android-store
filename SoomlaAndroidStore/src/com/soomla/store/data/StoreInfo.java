@@ -16,7 +16,7 @@
 package com.soomla.store.data;
 
 import android.text.TextUtils;
-import com.soomla.billing.util.AESObfuscator;
+import com.soomla.store.util.AESObfuscator;
 import com.soomla.store.IStoreAssets;
 import com.soomla.store.StoreUtils;
 import com.soomla.store.domain.NonConsumableItem;
@@ -261,7 +261,7 @@ public class StoreInfo {
 
                 PurchaseType purchaseType = pack.getPurchaseType();
                 if (purchaseType instanceof PurchaseWithMarket) {
-                    mPurchasableItems.put(((PurchaseWithMarket) purchaseType).getGoogleMarketItem().getProductId(), pack);
+                    mPurchasableItems.put(((PurchaseWithMarket) purchaseType).getMarketItem().getProductId(), pack);
                 }
             }
         }
@@ -352,7 +352,7 @@ public class StoreInfo {
 
                 PurchaseType purchaseType = non.getPurchaseType();
                 if (purchaseType instanceof PurchaseWithMarket) {
-                    mPurchasableItems.put(((PurchaseWithMarket) purchaseType).getGoogleMarketItem().getProductId(), non);
+                    mPurchasableItems.put(((PurchaseWithMarket) purchaseType).getMarketItem().getProductId(), non);
                 }
             }
         }
@@ -365,7 +365,7 @@ public class StoreInfo {
 
         PurchaseType purchaseType = g.getPurchaseType();
         if (purchaseType instanceof PurchaseWithMarket) {
-            mPurchasableItems.put(((PurchaseWithMarket) purchaseType).getGoogleMarketItem().getProductId(), g);
+            mPurchasableItems.put(((PurchaseWithMarket) purchaseType).getMarketItem().getProductId(), g);
         }
     }
 
@@ -458,7 +458,7 @@ public class StoreInfo {
 
             PurchaseType purchaseType = vi.getPurchaseType();
             if (purchaseType instanceof PurchaseWithMarket) {
-                mPurchasableItems.put(((PurchaseWithMarket) purchaseType).getGoogleMarketItem().getProductId(), vi);
+                mPurchasableItems.put(((PurchaseWithMarket) purchaseType).getMarketItem().getProductId(), vi);
             }
         }
 
@@ -476,7 +476,7 @@ public class StoreInfo {
 
             PurchaseType purchaseType = vi.getPurchaseType();
             if (purchaseType instanceof PurchaseWithMarket) {
-                mPurchasableItems.put(((PurchaseWithMarket) purchaseType).getGoogleMarketItem().getProductId(), vi);
+                mPurchasableItems.put(((PurchaseWithMarket) purchaseType).getMarketItem().getProductId(), vi);
             }
         }
 
@@ -485,7 +485,7 @@ public class StoreInfo {
 
             PurchaseType purchaseType = vi.getPurchaseType();
             if (purchaseType instanceof PurchaseWithMarket) {
-                mPurchasableItems.put(((PurchaseWithMarket) purchaseType).getGoogleMarketItem().getProductId(), vi);
+                mPurchasableItems.put(((PurchaseWithMarket) purchaseType).getMarketItem().getProductId(), vi);
             }
         }
 

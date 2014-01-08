@@ -17,12 +17,10 @@
 package com.soomla.store.data;
 
 import android.text.TextUtils;
-import com.soomla.billing.util.AESObfuscator;
+import com.soomla.store.util.AESObfuscator;
 import com.soomla.store.StoreUtils;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 
 /**
  * This class provides basic storage operations for a simple key-value store.

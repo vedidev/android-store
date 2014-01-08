@@ -16,7 +16,7 @@
 
 package com.soomla.store.data;
 
-import com.soomla.billing.util.AESObfuscator;
+import com.soomla.store.util.AESObfuscator;
 import com.soomla.store.StoreUtils;
 import com.soomla.store.domain.VirtualItem;
 

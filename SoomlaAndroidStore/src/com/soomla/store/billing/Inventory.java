@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 
-package com.soomla.billing;
+package com.soomla.store.billing;
 
 import java.util.ArrayList;
 import java.util.HashMap;

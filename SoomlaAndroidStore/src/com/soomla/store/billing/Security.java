@@ -13,13 +13,13 @@
  * limitations under the License.
  */
 
-package com.soomla.billing;
+package com.soomla.store.billing;
 
 import android.text.TextUtils;
 import android.util.Log;
 
-import com.soomla.billing.util.Base64;
-import com.soomla.billing.util.Base64DecoderException;
+import com.soomla.store.util.Base64;
+import com.soomla.store.util.Base64DecoderException;
 
 import java.security.InvalidKeyException;
 import java.security.KeyFactory;

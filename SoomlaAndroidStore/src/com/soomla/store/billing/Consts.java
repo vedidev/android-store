@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package com.soomla.billing;
+package com.soomla.store.billing;
 
 /**
  * This class holds global constants that are used throughout the application

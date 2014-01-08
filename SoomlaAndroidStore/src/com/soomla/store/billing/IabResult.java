@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 
-package com.soomla.billing;
+package com.soomla.store.billing;
 
 /**
  * Represents the result of an in-app billing operation.

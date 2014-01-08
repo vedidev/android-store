@@ -16,7 +16,7 @@
 package com.soomla.store.data;
 
 import android.text.TextUtils;
-import com.soomla.billing.util.AESObfuscator;
+import com.soomla.store.util.AESObfuscator;
 import com.soomla.store.SoomlaApp;
 import com.soomla.store.StoreUtils;
 

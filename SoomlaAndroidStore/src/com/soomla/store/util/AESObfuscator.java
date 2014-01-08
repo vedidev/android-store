@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.soomla.billing.util;
+package com.soomla.store.util;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -43,6 +43,8 @@ public class AESObfuscator {
     private static final String CIPHER_ALGORITHM = "AES/CBC/PKCS5Padding";
     private static final byte[] IV =
             { 16, 74, 71, -80, 32, 101, -47, 72, 117, -14, 0, -29, 70, 65, -12, 74 };
+
+    // For backward compatibility, this value must not change even though it doesn't necessarily match the package name
     private static final String header = "com.soomla.billing.util.AESObfuscator-1|";
 
     private Cipher mEncryptor;
