@@ -28,7 +28,7 @@ import com.soomla.store.exceptions.InsufficientFundsException;
 import com.soomla.store.exceptions.VirtualItemNotFoundException;
 
 /**
- * This type of Purchase allows users to purchase PurchasableVirtualItems with other VirtualItems.
+ * This type of IabPurchase allows users to purchase PurchasableVirtualItems with other VirtualItems.
  */
 public class PurchaseWithVirtualItem extends PurchaseType {
 

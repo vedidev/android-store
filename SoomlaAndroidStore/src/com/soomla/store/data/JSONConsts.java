@@ -57,7 +57,7 @@ public class JSONConsts {
     public static final String CURRENCYPACK_CURRENCYAMOUNT = "currency_amount";
     public static final String CURRENCYPACK_CURRENCYITEMID = "currency_itemId";
 
-    /** Purchase Type **/
+    /** IabPurchase Type **/
     public static final String PURCHASABLE_ITEM         = "purchasableItem";
 
     public static final String PURCHASE_TYPE            = "purchaseType";

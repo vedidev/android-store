@@ -25,18 +25,19 @@ import java.util.List;
  * orders to create an in-app billing service (e.g. Google Play, Amazon, Samsung Apps...)
  */
 public interface IIabService {
-    public void queryInventoryAsync(boolean querySkuDetails, List<String> moreSkus, IabHelper.QueryInventoryFinishedListener listener);
+
     public boolean isIabServiceInitialized();
-    public void consume(Purchase purchase) throws IabException;
+
+    public void consume(IabPurchase purchase) throws IabException;
+
     public boolean handleActivityResult(int requestCode, int resultCode, Intent data);
 
     public void launchPurchaseFlow(Activity act,
                                    String sku,
-                                   int requestCode,
-                                   final IabCallbacks.OnPurchaseEventListener purchaseSuccessListener,
-                                   final IabCallbacks.OnPurchaseEventListener purchaseCancelledListener,
-                                   final IabCallbacks.OnPurchaseEventListener itemAlreadyOwnedListener,
-                                   final IabCallbacks.OnPurchaseUnexpectedResultListener purchaseUnexpectedResultListener,
-                                   final IabCallbacks.Listener purchaseFinishedListener,
+                                   final IabCallbacks.OnPurchaseListener purchaseListener,
                                    String extraData);
+
+    public void queryInventoryAsync(boolean querySkuDetails,
+                                    List<String> moreSkus,
+                                    IabCallbacks.OnQueryInventoryListener queryInventoryListener);
 }

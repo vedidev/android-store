@@ -24,7 +24,7 @@ import com.soomla.store.events.ItemPurchaseStartedEvent;
 import com.soomla.store.exceptions.InsufficientFundsException;
 
 /**
- * This type of Purchase is used to let users purchase PurchasableVirtualItems with Google Play (with real $$).
+ * This type of IabPurchase is used to let users purchase PurchasableVirtualItems with Google Play (with real $$).
  */
 public class PurchaseWithMarket extends PurchaseType {
 

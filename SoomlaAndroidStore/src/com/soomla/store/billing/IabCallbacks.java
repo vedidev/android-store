@@ -21,33 +21,22 @@ package com.soomla.store.billing;
   */
 public class IabCallbacks {
 
-    /**
-     * A general purpose listener for passing Soomla logic as a callback to
-     * any in-app billing events.
-     */
-    public interface Listener {
-        public void callback();
-    }
-
-    /**
-     * A listener for passing Soomla logic as a callback to
-     * purchase related events.  Specifically use it to these events:
-     * <ol>
-     *     <li>Purchase success</li>
-     *     <li>Purchase cancelled</li>
-     *     <li>Item already owned</li>
-     * </ol>
-     */
-    public interface OnPurchaseEventListener {
-        public void callback(Purchase purchase);
+    public interface IabInitListener {
+        public void success(boolean alreadyInBg);
+        public void fail(String message);
     }
 
 
-    /**
-     * A listener for passing Soomla logic as a callback
-     * to purchases that can't be processed due to an unexpected result.
-     */
-    public interface OnPurchaseUnexpectedResultListener {
-        public void callback(IabResult result);
+    public interface OnPurchaseListener {
+        public void success(IabPurchase purchase);
+        public void cancelled(IabPurchase purchase);
+        public void alreadyOwned(IabPurchase purchase);
+        public void fail(String message);
     }
+
+    public interface OnQueryInventoryListener {
+        public void success(IabPurchase purchase);
+        public void fail(String message);
+    }
+
 }

@@ -66,7 +66,7 @@ public abstract class PurchasableVirtualItem extends VirtualItem {
 
             mPurchaseType = new PurchaseWithVirtualItem(itemId, amount);
         } else {
-            StoreUtils.LogError(TAG, "Purchase type not recognized !");
+            StoreUtils.LogError(TAG, "IabPurchase type not recognized !");
         }
 
         if (mPurchaseType != null) {

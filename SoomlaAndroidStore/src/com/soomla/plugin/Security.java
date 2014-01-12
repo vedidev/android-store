@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 
-package com.soomla.store.billing;
+package com.soomla.plugin;
 
 import android.text.TextUtils;
 import android.util.Log;
