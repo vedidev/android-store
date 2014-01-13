@@ -155,9 +155,9 @@ public class StoreExampleActivity extends Activity {
     }
 
     private void openStore() {
-        StoreController.getInstance().storeOpening();
         Intent intent = new Intent(getApplicationContext(), StoreGoodsActivity.class);
         startActivity(intent);
+        robotBackHome();
     }
 
     private Handler mHandler = new Handler();

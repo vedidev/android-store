@@ -54,13 +54,10 @@ public class PurchaseWithMarket extends PurchaseType {
         
         BusProvider.getInstance().post(new ItemPurchaseStartedEvent(getAssociatedItem()));
         try {
-            StoreController.getInstance().buyWithGooglePlay(mGoogleMarketItem, "", getAssociatedItem());
+            StoreController.getInstance().buyWithGooglePlay(mGoogleMarketItem, "");
         } catch (IllegalStateException e) {
             StoreUtils.LogError(TAG, "Error when purchasing item");
         }
-
-        // This is where the job of PurchaseWithMarket ends. The success/fail purchase event will be handled
-        // by StoreController
     }
 
     public GoogleMarketItem getGoogleMarketItem() {

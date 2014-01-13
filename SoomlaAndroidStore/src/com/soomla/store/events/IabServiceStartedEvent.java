@@ -16,7 +16,10 @@
 package com.soomla.store.events;
 
 /**
- * This event is fired when the store is about to close.
+ * This event is fired when a billing service is started.
  */
-public class ClosingStoreEvent {
+public class IabServiceStartedEvent {
+
+    public IabServiceStartedEvent() {
+    }
 }
