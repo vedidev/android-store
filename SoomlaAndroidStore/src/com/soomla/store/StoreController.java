@@ -21,7 +21,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 
-import com.soomla.store.billing.google.GooglePlayIabService;
 import com.soomla.store.billing.IabCallbacks;
 import com.soomla.store.billing.IabException;
 import com.soomla.store.billing.IabPurchase;
@@ -54,7 +53,7 @@ import com.soomla.store.exceptions.VirtualItemNotFoundException;
 public class StoreController {
 
     /**
-     * This initializer also initializes {@link StoreInfo}.
+     * This initializer also initializes {@link com.soomla.store.data.StoreInfo}.
      * @param storeAssets is the definition of your application specific assets.
      * @param publicKey is the public key given to you from Google.
      * @param customSecret is your encryption secret (it's used to encrypt your data in the database)
@@ -62,6 +61,13 @@ public class StoreController {
     public boolean initialize(IStoreAssets storeAssets, String publicKey, String customSecret) {
         if (mInitialized) {
             String err = "StoreController is already initialized. You can't initialize it twice!";
+            StoreUtils.LogError(TAG, err);
+            BusProvider.getInstance().post(new UnexpectedStoreErrorEvent(err));
+            return false;
+        }
+
+        if (StoreConfig.InAppBillingService == null) {
+            String err = "You didn't set up an in-app billing service. StoreController will stop now.";
             StoreUtils.LogError(TAG, err);
             BusProvider.getInstance().post(new UnexpectedStoreErrorEvent(err));
             return false;
@@ -100,8 +106,7 @@ public class StoreController {
         StoreInfo.initializeFromDB();
 
         // Set up helper for the first time, querying and synchronizing inventory
-        mIabService = new GooglePlayIabService();
-        mIabService.initializeBillingService(new IabCallbacks.IabInitListener() {
+        StoreConfig.InAppBillingService.initializeBillingService(new IabCallbacks.IabInitListener() {
             @Override
             public void success(boolean alreadyInBg) {
                 if (!alreadyInBg) {
@@ -122,7 +127,7 @@ public class StoreController {
                     }
                 };
 
-                mIabService.queryInventoryAsync(false, null, queryInventoryListener);
+                StoreConfig.InAppBillingService.queryInventoryAsync(false, null, queryInventoryListener);
             }
 
             @Override
@@ -139,7 +144,7 @@ public class StoreController {
 
 
     public void startIabServiceInBg() {
-        mIabService.startIabServiceInBg(new IabCallbacks.IabInitListener() {
+        StoreConfig.InAppBillingService.startIabServiceInBg(new IabCallbacks.IabInitListener() {
 
             @Override
             public void success(boolean alreadyInBg) {
@@ -159,7 +164,7 @@ public class StoreController {
     }
 
     public void stopIabServiceInBg() {
-        mIabService.stopIabServiceInBg(new IabCallbacks.IabInitListener() {
+        StoreConfig.InAppBillingService.stopIabServiceInBg(new IabCallbacks.IabInitListener() {
 
             @Override
             public void success(boolean alreadyInBg) {
@@ -177,7 +182,7 @@ public class StoreController {
      * Initiate the restoreTransactions process
      */
     public void restoreTransactions() {
-        mIabService.initializeBillingService(new IabCallbacks.IabInitListener() {
+        StoreConfig.InAppBillingService.initializeBillingService(new IabCallbacks.IabInitListener() {
 
             @Override
             public void success(boolean alreadyInBg) {
@@ -197,7 +202,7 @@ public class StoreController {
                         handleErrorResult(message);
                     }
                 };
-                mIabService.queryInventoryAsync(false, null, queryInventoryListener);
+                StoreConfig.InAppBillingService.queryInventoryAsync(false, null, queryInventoryListener);
                 BusProvider.getInstance().post(new RestoreTransactionsStartedEvent());
             }
 
@@ -230,7 +235,7 @@ public class StoreController {
             intent.putExtra(PROD_ID, marketItem.getProductId());
             intent.putExtra(EXTRA_DATA, payload);
 
-            mIabService.initializeBillingService(new IabCallbacks.IabInitListener() {
+            StoreConfig.InAppBillingService.initializeBillingService(new IabCallbacks.IabInitListener() {
 
                 @Override
                 public void success(boolean alreadyInBg) {
@@ -281,7 +286,7 @@ public class StoreController {
             return false;
         }
 
-        mIabService.initializeBillingService(new IabCallbacks.IabInitListener() {
+        StoreConfig.InAppBillingService.initializeBillingService(new IabCallbacks.IabInitListener() {
 
             @Override
             public void success(boolean alreadyInBg) {
@@ -312,7 +317,7 @@ public class StoreController {
                         handleErrorResult(message);
                     }
                 };
-                mIabService.launchPurchaseFlow(activity, sku, purchaseListener, payload);
+                StoreConfig.InAppBillingService.launchPurchaseFlow(activity, sku, purchaseListener, payload);
                 BusProvider.getInstance().post(new PlayPurchaseStartedEvent(pvi));
             }
 
@@ -394,7 +399,7 @@ public class StoreController {
             PurchasableVirtualItem pvi = StoreInfo.getPurchasableItem(sku);
 
             if (!(pvi instanceof NonConsumableItem)) {
-                mIabService.consume(purchase);
+                StoreConfig.InAppBillingService.consume(purchase);
             }
         } catch (VirtualItemNotFoundException e) {
             StoreUtils.LogError(TAG, "(purchaseActionResultCancelled) ERROR : Couldn't find the " +
@@ -439,8 +444,6 @@ public class StoreController {
 
     private boolean mInitialized = false;
 
-    private GooglePlayIabService mIabService;
-
 
     /**
      * Android In-App Billing v3 requires an activity to receive the result of the billing process.
@@ -469,10 +472,10 @@ public class StoreController {
 
         @Override
         protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-            if (!StoreController.getInstance().mIabService.handleActivityResult(requestCode, resultCode, data)) {
+            if (!StoreConfig.InAppBillingService.handleActivityResult(requestCode, resultCode, data)) {
                 super.onActivityResult(requestCode, resultCode, data);
 
-                if (!StoreController.getInstance().mIabService.isIabServiceInitialized())
+                if (!StoreConfig.InAppBillingService.isIabServiceInitialized())
                 {
                     StoreUtils.LogError(TAG, "helper is null in onActivityResult.");
                     BusProvider.getInstance().post(new UnexpectedStoreErrorEvent());

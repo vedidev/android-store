@@ -15,10 +15,21 @@
  */
 package com.soomla.store;
 
+import com.soomla.store.billing.IIabService;
+import com.soomla.store.billing.google.GooglePlayIabService;
+
 /**
  * This class holds the store's configurations.
  */
 public class StoreConfig {
+
+    /**
+     * Select your in-app billing service.
+     * The default is Google Play using https://github.com/soomla/android-store-google-play
+     */
+    public static final IIabService InAppBillingService = new GooglePlayIabService();
+
+
 
     /* CHANGE THIS SECRET NOW ! */
     public static String SOOM_SEC = "SINC_SSEEKK";

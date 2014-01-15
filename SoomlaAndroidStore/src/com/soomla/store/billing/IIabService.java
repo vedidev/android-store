@@ -40,4 +40,11 @@ public interface IIabService {
     public void queryInventoryAsync(boolean querySkuDetails,
                                     List<String> moreSkus,
                                     IabCallbacks.OnQueryInventoryListener queryInventoryListener);
+
+    public void initializeBillingService(IabCallbacks.IabInitListener initListener);
+
+    public void startIabServiceInBg(IabCallbacks.IabInitListener initListener);
+
+    public void stopIabServiceInBg(IabCallbacks.IabInitListener initListener);
+
 }
