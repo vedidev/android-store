@@ -215,7 +215,7 @@ Fork -> Clone -> Implement -> Test -> Pull-Request. We have great RESPECT for co
 ## SOOMLA, Elsewhere ...
 
 
-+ [SOOMLA Website](http://soom.la/)
++ [Framework Page](http://project.soom.la/)
 + [On Facebook](https://www.facebook.com/pages/The-SOOMLA-Project/389643294427376)
 + [On AngelList](https://angel.co/the-soomla-project)
 
