@@ -491,21 +491,5 @@ public class StoreController {
 
         	finish();
         }
-
-        @Override
-        protected void onDestroy() {
-        	StoreController sc = StoreController.getInstance();
-        	if(sc.mHelper != null && sc.mHelper.isAsyncInProgress() )
-        	{
-        		sc.mHelper.dispose();
-        		sc.mHelper = null;
-        		BusProvider.getInstance().post(new IabServiceStoppedEvent());
-
-        		String err = "IabActivity is destroyed during purchase.";
-        		StoreUtils.LogError(TAG, err);
-        		BusProvider.getInstance().post(new UnexpectedStoreErrorEvent(err));
-        	}
-        }
-        
     }
 }
