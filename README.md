@@ -224,3 +224,6 @@ Fork -> Clone -> Implement -> Test -> Pull-Request. We have great RESPECT for co
 MIT License. Copyright (c) 2012 SOOMLA. http://project.soom.la
 + http://www.opensource.org/licenses/MIT
 
+<!-- Githalytics pixel for Google Analytics tracking -->
+[![githalytics.com alpha](https://cruel-carlota.pagodabox.com/ef5f3626747e10e8069ee123f06c4f25 "githalytics.com")](http://githalytics.com/soomla/android-store)
+
