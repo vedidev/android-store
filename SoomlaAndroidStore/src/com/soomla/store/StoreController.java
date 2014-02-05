@@ -173,7 +173,7 @@ public class StoreController {
                 }
             });
         } catch(Exception e){
-        	StoreUtils.LogError(TAG, "Error purchasing item " + e.getMessage());
+        	StoreUtils.LogError(TAG, "(buyWithGooglePlay) Error purchasing item " + e.getMessage());
             BusProvider.getInstance().post(new UnexpectedStoreErrorEvent(e.getMessage()));
         }
     }
@@ -196,6 +196,8 @@ public class StoreController {
         startIabHelper(new OnIabStartedListener() {
             @Override
             public void onIabStarted() {
+                StoreUtils.LogDebug(TAG, "Trying to buy sku: " + sku);
+
                 mHelper.launchPurchaseFlow(activity, sku, Consts.RC_REQUEST, mPurchaseFinishedListener, payload);
                 BusProvider.getInstance().post(new PlayPurchaseStartedEvent(pvi));
             }
@@ -471,7 +473,7 @@ public class StoreController {
                     finish();
                 }
             }catch (Exception e) {
-                StoreUtils.LogError(TAG, "Error purchasing item " + e.getMessage());
+                StoreUtils.LogError(TAG, "(onCreate) Error purchasing item " + e.getMessage());
                 BusProvider.getInstance().post(new UnexpectedStoreErrorEvent(e.getMessage()));
                 finish();
             }
