@@ -16,13 +16,15 @@
 
 package com.soomla.store.data;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.text.TextUtils;
 import com.soomla.billing.util.AESObfuscator;
+import com.soomla.store.SoomlaApp;
+import com.soomla.store.StoreConfig;
 import com.soomla.store.StoreUtils;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 
 /**
  * This class provides basic storage operations for a simple key-value store.
@@ -43,13 +45,13 @@ public class KeyValueStorage {
     public String getValue(String key) {
         StoreUtils.LogDebug(TAG, "trying to fetch a value for key: " + key);
 
-        key = StorageManager.getAESObfuscator().obfuscateString(key);
+        key = getAESObfuscator().obfuscateString(key);
 
-        String val = StorageManager.getDatabase().getKeyVal(key);
+        String val = getDatabase().getKeyVal(key);
 
         if (val != null && !TextUtils.isEmpty(val)) {
             try {
-                val = StorageManager.getAESObfuscator().unobfuscateToString(val);
+                val = getAESObfuscator().unobfuscateToString(val);
             } catch (AESObfuscator.ValidationException e) {
                 StoreUtils.LogError(TAG, e.getMessage());
                 val = "";
@@ -64,26 +66,26 @@ public class KeyValueStorage {
     public void setNonEncryptedKeyValue(String key, String val) {
         StoreUtils.LogDebug(TAG, "setting " + val + " for key: " + key);
 
-        val = StorageManager.getAESObfuscator().obfuscateString(val);
+        val = getAESObfuscator().obfuscateString(val);
 
-        StorageManager.getDatabase().setKeyVal(key, val);
+        getDatabase().setKeyVal(key, val);
     }
 
 
     public void deleteNonEncryptedKeyValue(String key) {
         StoreUtils.LogDebug(TAG, "deleting " + key);
 
-        StorageManager.getDatabase().deleteKeyVal(key);
+        getDatabase().deleteKeyVal(key);
     }
 
     public String getNonEncryptedKeyValue(String key) {
         StoreUtils.LogDebug(TAG, "trying to fetch a value for key: " + key);
 
-        String val = StorageManager.getDatabase().getKeyVal(key);
+        String val = getDatabase().getKeyVal(key);
 
         if (val != null && !TextUtils.isEmpty(val)) {
             try {
-                val = StorageManager.getAESObfuscator().unobfuscateToString(val);
+                val = getAESObfuscator().unobfuscateToString(val);
             } catch (AESObfuscator.ValidationException e) {
                 StoreUtils.LogError(TAG, e.getMessage());
                 val = "";
@@ -97,13 +99,13 @@ public class KeyValueStorage {
     public HashMap<String, String> getNonEncryptedQueryValues(String query) {
         StoreUtils.LogDebug(TAG, "trying to fetch a values for query: " + query);
 
-        HashMap<String, String> vals = StorageManager.getDatabase().getQueryVals(query);
+        HashMap<String, String> vals = getDatabase().getQueryVals(query);
         HashMap<String, String> results = new HashMap<String, String>();
         for(String key : vals.keySet()) {
             String val = vals.get(key);
             if (val != null && !TextUtils.isEmpty(val)) {
                 try {
-                    val = StorageManager.getAESObfuscator().unobfuscateToString(val);
+                    val = getAESObfuscator().unobfuscateToString(val);
                     results.put(key, val);
                 } catch (AESObfuscator.ValidationException e) {
                     StoreUtils.LogError(TAG, e.getMessage());
@@ -124,10 +126,10 @@ public class KeyValueStorage {
     public void setValue(String key, String val) {
         StoreUtils.LogDebug(TAG, "setting " + val + " for key: " + key);
 
-        key = StorageManager.getAESObfuscator().obfuscateString(key);
-        val = StorageManager.getAESObfuscator().obfuscateString(val);
+        key = getAESObfuscator().obfuscateString(key);
+        val = getAESObfuscator().obfuscateString(val);
 
-        StorageManager.getDatabase().setKeyVal(key, val);
+        getDatabase().setKeyVal(key, val);
     }
 
     /**
@@ -137,13 +139,47 @@ public class KeyValueStorage {
     public void deleteKeyValue(String key) {
         StoreUtils.LogDebug(TAG, "deleting " + key);
 
-        key = StorageManager.getAESObfuscator().obfuscateString(key);
+        key = getAESObfuscator().obfuscateString(key);
 
-        StorageManager.getDatabase().deleteKeyVal(key);
+        getDatabase().deleteKeyVal(key);
+    }
+
+    private synchronized KeyValDatabase getDatabase(){
+
+        if (mKvDatabase == null) {
+            mKvDatabase = new KeyValDatabase(SoomlaApp.getAppContext());
+
+            SharedPreferences prefs = new ObscuredSharedPreferences(
+                    SoomlaApp.getAppContext().getSharedPreferences(StoreConfig.PREFS_NAME, Context.MODE_PRIVATE));
+            int mt_ver = prefs.getInt("MT_VER", 0);
+            int sa_ver_old = prefs.getInt("SA_VER_OLD", -1);
+            int sa_ver_new = prefs.getInt("SA_VER_NEW", 0);
+            if (mt_ver < StoreConfig.METADATA_VERSION || sa_ver_old < sa_ver_new) {
+                SharedPreferences.Editor edit = prefs.edit();
+                edit.putInt("MT_VER", StoreConfig.METADATA_VERSION);
+                edit.putInt("SA_VER_OLD", sa_ver_new);
+                edit.commit();
+
+                String keyStoreInfo = mObfuscator.obfuscateString(KeyValDatabase.keyMetaStoreInfo());
+                mKvDatabase.deleteKeyVal(keyStoreInfo);
+            }
+        }
+
+        return mKvDatabase;
+    }
+
+    private static AESObfuscator getAESObfuscator(){
+        if (mObfuscator == null) {
+            mObfuscator = new AESObfuscator(StoreConfig.obfuscationSalt, SoomlaApp.getAppContext().getPackageName(), StoreUtils.deviceId());
+        }
+
+        return mObfuscator;
     }
 
 
     /** Private Members **/
 
     private static final String TAG = "SOOMLA KeyValueStorage";
+    private static AESObfuscator mObfuscator;
+    private static KeyValDatabase mKvDatabase;
 }

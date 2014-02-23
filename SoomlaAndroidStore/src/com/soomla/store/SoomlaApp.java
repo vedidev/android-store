@@ -20,7 +20,7 @@ import android.app.Application;
 import android.content.Context;
 
 public class SoomlaApp extends Application{
-	public static SoomlaApp mInstance = null;
+	protected static SoomlaApp mInstance = null;
     
 	public static SoomlaApp instance() {
     	return mInstance;

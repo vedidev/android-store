@@ -15,7 +15,6 @@
  */
 package com.soomla.store.data;
 
-import com.soomla.billing.util.AESObfuscator;
 import com.soomla.store.BusProvider;
 import com.soomla.store.StoreUtils;
 import com.soomla.store.domain.VirtualItem;
@@ -56,9 +55,8 @@ public class VirtualGoodsStorage extends VirtualItemStorage{
 
         String itemId = good.getItemId();
         String key = KeyValDatabase.keyGoodUpgrade(itemId);
-        key = StorageManager.getAESObfuscator().obfuscateString(key);
 
-        StorageManager.getDatabase().deleteKeyVal(key);
+        StorageManager.getKeyValueStorage().deleteKeyValue(key);
 
         if (notify) {
             BusProvider.getInstance().post(new GoodUpgradeEvent(good, null));
@@ -82,10 +80,9 @@ public class VirtualGoodsStorage extends VirtualItemStorage{
 
         String itemId = good.getItemId();
         String key = KeyValDatabase.keyGoodUpgrade(itemId);
-        key = StorageManager.getAESObfuscator().obfuscateString(key);
+        String upItemId =  upgradeVG.getItemId();
 
-        String upItemId =  StorageManager.getAESObfuscator().obfuscateString(upgradeVG.getItemId());
-        StorageManager.getDatabase().setKeyVal(key, upItemId);
+        StorageManager.getKeyValueStorage().setValue(key, upItemId);
 
         if (notify) {
             BusProvider.getInstance().post(new GoodUpgradeEvent(good, upgradeVG));
@@ -104,9 +101,8 @@ public class VirtualGoodsStorage extends VirtualItemStorage{
 
         String itemId = good.getItemId();
         String key = KeyValDatabase.keyGoodUpgrade(itemId);
-        key = StorageManager.getAESObfuscator().obfuscateString(key);
 
-        String upItemId = StorageManager.getDatabase().getKeyVal(key);
+        String upItemId = StorageManager.getKeyValueStorage().getValue(key);
 
         if (upItemId == null) {
             StoreUtils.LogDebug(mTag, "You tried to fetch the current upgrade of " + good.getName() + " but there's not upgrade to it.");
@@ -114,10 +110,7 @@ public class VirtualGoodsStorage extends VirtualItemStorage{
         }
 
         try {
-            upItemId = StorageManager.getAESObfuscator().unobfuscateToString(upItemId);
             return (UpgradeVG) StoreInfo.getVirtualItem(upItemId);
-        } catch (AESObfuscator.ValidationException e) {
-            StoreUtils.LogError(mTag, e.getMessage());
         } catch (VirtualItemNotFoundException e) {
             StoreUtils.LogError(mTag, "The current upgrade's itemId from the DB is not found in StoreInfo.");
         } catch (ClassCastException e) {
@@ -137,8 +130,7 @@ public class VirtualGoodsStorage extends VirtualItemStorage{
 
         String itemId = good.getItemId();
         String key = KeyValDatabase.keyGoodEquipped(itemId);
-        key = StorageManager.getAESObfuscator().obfuscateString(key);
-        String val = StorageManager.getDatabase().getKeyVal(key);
+        String val = StorageManager.getKeyValueStorage().getValue(key);
 
         return val != null;
     }
@@ -178,15 +170,14 @@ public class VirtualGoodsStorage extends VirtualItemStorage{
 
         String itemId = good.getItemId();
         String key = KeyValDatabase.keyGoodEquipped(itemId);
-        key = StorageManager.getAESObfuscator().obfuscateString(key);
 
         if (equip) {
-            StorageManager.getDatabase().setKeyVal(key, "");
+            StorageManager.getKeyValueStorage().setValue(key, "");
             if (notify) {
                 BusProvider.getInstance().post(new GoodEquippedEvent(good));
             }
         } else {
-            StorageManager.getDatabase().deleteKeyVal(key);
+            StorageManager.getKeyValueStorage().deleteKeyValue(key);
             if (notify) {
                 BusProvider.getInstance().post(new GoodUnEquippedEvent(good));
             }

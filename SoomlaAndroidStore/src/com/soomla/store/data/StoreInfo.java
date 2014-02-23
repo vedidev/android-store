@@ -16,7 +16,6 @@
 package com.soomla.store.data;
 
 import android.text.TextUtils;
-import com.soomla.billing.util.AESObfuscator;
 import com.soomla.store.IStoreAssets;
 import com.soomla.store.StoreUtils;
 import com.soomla.store.domain.NonConsumableItem;
@@ -75,18 +74,10 @@ public class StoreInfo {
      */
     public static boolean initializeFromDB() {
         String key = KeyValDatabase.keyMetaStoreInfo();
-        key = StorageManager.getAESObfuscator().obfuscateString(key);
-        String val = StorageManager.getDatabase().getKeyVal(key);
+        String val = StorageManager.getKeyValueStorage().getValue(key);
 
         if (val == null && TextUtils.isEmpty(val)){
             StoreUtils.LogDebug(TAG, "store json is not in DB yet.");
-            return false;
-        }
-
-        try {
-            val = StorageManager.getAESObfuscator().unobfuscateToString(val);
-        } catch (AESObfuscator.ValidationException e) {
-            StoreUtils.LogError(TAG, e.getMessage());
             return false;
         }
 
@@ -499,9 +490,7 @@ public class StoreInfo {
         String store_json = toJSONObject().toString();
         StoreUtils.LogDebug(TAG, store_json);
         String key = KeyValDatabase.keyMetaStoreInfo();
-        store_json = StorageManager.getAESObfuscator().obfuscateString(store_json);
-        key = StorageManager.getAESObfuscator().obfuscateString(key);
-        StorageManager.getDatabase().setKeyVal(key, store_json);
+        StorageManager.getKeyValueStorage().setValue(key, store_json);
     }
 
     /** Private members **/
