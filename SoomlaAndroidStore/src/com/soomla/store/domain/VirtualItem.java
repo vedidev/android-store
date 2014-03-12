@@ -28,8 +28,7 @@ public abstract class VirtualItem {
     /** Constructor
      *
      * @param mName is the name of the virtual item.
-     * @param mDescription is the description of the virtual item. If you use SOOMLA's storefront, This will show up
-     *                       in the store in the description section.
+     * @param mDescription is the description of the virtual item.
      * @param mItemId is the itemId of the virtual item.
      */
     public VirtualItem(String mName, String mDescription, String mItemId) {

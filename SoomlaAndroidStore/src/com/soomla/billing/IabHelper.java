@@ -234,6 +234,7 @@ public class IabHelper {
         };
 
         Intent serviceIntent = new Intent("com.android.vending.billing.InAppBillingService.BIND");
+        serviceIntent.setPackage("com.android.vending");
         if (!SoomlaApp.getAppContext().getPackageManager().queryIntentServices(serviceIntent, 0).isEmpty()) {
             // service available to handle that Intent
             SoomlaApp.getAppContext().bindService(serviceIntent, mServiceConn, Context.BIND_AUTO_CREATE);
@@ -259,7 +260,7 @@ public class IabHelper {
         mSetupDone = false;
         if (mServiceConn != null) {
             StoreUtils.LogDebug(TAG, "Unbinding from service.");
-            if (SoomlaApp.getAppContext() != null) SoomlaApp.getAppContext().unbindService(mServiceConn);
+            if (SoomlaApp.getAppContext() != null && mService != null) SoomlaApp.getAppContext().unbindService(mServiceConn);
             mServiceConn = null;
             mService = null;
             mPurchaseListener = null;

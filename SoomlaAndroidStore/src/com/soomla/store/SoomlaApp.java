@@ -20,11 +20,10 @@ import android.app.Application;
 import android.content.Context;
 
 public class SoomlaApp extends Application{
+	protected static SoomlaApp mInstance = null;
 
-    public static SoomlaApp mInstance = null;
-
-    public static SoomlaApp instance() {
-        return mInstance;
+	public static SoomlaApp instance() {
+    	return mInstance;
     }
 
     private static Context context;
