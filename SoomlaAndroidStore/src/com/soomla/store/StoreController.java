@@ -111,12 +111,18 @@ public class StoreController {
             @Override
             public void onIabStarted() {
                 StoreUtils.LogDebug(TAG, "Setup successful, consuming unconsumed items and handling refunds");
-                mHelper.queryInventoryAsync(false, null, mPostInitQueryListener);
+                mHelper.queryInventoryAsync(false, null, new IabHelper.QueryInventoryFinishedListener() {
+                    @Override
+                    public void onQueryInventoryFinished(IabResult result, Inventory inv) {
+                        postInitQueryListener(result, inv);
+
+                        BusProvider.getInstance().post(new StoreControllerInitializedEvent());
+                    }
+                });
             }
         });
         
         mInitialized = true;
-        BusProvider.getInstance().post(new StoreControllerInitializedEvent());
         return true;
     }
 
@@ -138,7 +144,12 @@ public class StoreController {
         startIabHelper(new OnIabStartedListener() {
             @Override
             public void onIabStarted() {
-                mHelper.queryInventoryAsync(false, null, mPostInitQueryListener);
+                mHelper.queryInventoryAsync(false, null, new IabHelper.QueryInventoryFinishedListener() {
+                    @Override
+                    public void onQueryInventoryFinished(IabResult result, Inventory inv) {
+                        postInitQueryListener(result, inv);
+                    }
+                });
                 BusProvider.getInstance().post(new RestoreTransactionsStartedEvent());
             }
         });
@@ -374,28 +385,23 @@ public class StoreController {
         }
     };
 
-    /**
-     * Handle incomplete purchase and refund after initialization
-     */
-    IabHelper.QueryInventoryFinishedListener mPostInitQueryListener = new IabHelper.QueryInventoryFinishedListener() {
-        public void onQueryInventoryFinished(IabResult result, Inventory inventory) {
-            StoreUtils.LogDebug(TAG, "Query inventory succeeded");
-            if (result.getResponse() == IabHelper.BILLING_RESPONSE_RESULT_OK) {
-                List<String> itemSkus = inventory.getAllOwnedSkus(IabHelper.ITEM_TYPE_INAPP);
-                for (String sku: itemSkus) {
-                    Purchase purchase = inventory.getPurchase(sku);
-                    purchaseActionResultOk(purchase);
-                }
-            } else {
-                StoreUtils.LogError(TAG, "Query inventory error: " + result.getMessage());
-                purchaseActionResultUnexpected(result);
+    private void postInitQueryListener(IabResult result, Inventory inventory) {
+        StoreUtils.LogDebug(TAG, "Query inventory succeeded");
+        if (result.getResponse() == IabHelper.BILLING_RESPONSE_RESULT_OK) {
+            List<String> itemSkus = inventory.getAllOwnedSkus(IabHelper.ITEM_TYPE_INAPP);
+            for (String sku: itemSkus) {
+                Purchase purchase = inventory.getPurchase(sku);
+                purchaseActionResultOk(purchase);
             }
-            
-            BusProvider.getInstance().post(new RestoreTransactionsEvent(true));
-
-            stopIabHelper();
+        } else {
+            StoreUtils.LogError(TAG, "Query inventory error: " + result.getMessage());
+            purchaseActionResultUnexpected(result);
         }
-    };
+
+        BusProvider.getInstance().post(new RestoreTransactionsEvent(true));
+
+        stopIabHelper();
+    }
 
     /**
      *  A wrapper to access IabHelper.handleActivityResult from outside
