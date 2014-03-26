@@ -107,7 +107,7 @@ Don't forget to define your _IStoreEventHandler_ in order to get the events of s
 
 ## In App Billing Service
 
-We currently support Google Play as the default IAB service. We're working to add more stores.
+We currently support Google Play as the default IAB service. We're working to add more billing services.
 
 The billing service is started and stopped for every operation you're running on StoreContoroller (buyWithMarket, restoreTransactions ...).
 
