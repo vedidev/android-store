@@ -253,7 +253,7 @@ public class StoreController {
             });
 
         } catch(Exception e){
-            StoreUtils.LogError(TAG, "Error purchasing item " + e.getMessage());
+        	StoreUtils.LogError(TAG, "(buyWithMarket) Error purchasing item " + e.getMessage());
             BusProvider.getInstance().post(new UnexpectedStoreErrorEvent(e.getMessage()));
         }
     }

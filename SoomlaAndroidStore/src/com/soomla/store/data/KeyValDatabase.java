@@ -170,10 +170,6 @@ public class KeyValDatabase {
         return "meta.storeinfo";
     }
 
-    public static String keyMetaStorefrontInfo() {
-        return "meta.storefrontinfo";
-    }
-
 
     // General key-value storage
     private static final String KEYVAL_TABLE_NAME = "kv_store";

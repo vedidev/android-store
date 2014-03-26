@@ -99,8 +99,8 @@ public class AESObfuscator {
     }
 
     public synchronized String obfuscateString(String original) {
-        if (original == null) {
-            return null;
+        if (TextUtils.isEmpty(original)) {
+            return original;
         }
         try {
             // Header is appended as an integrity check

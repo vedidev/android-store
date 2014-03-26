@@ -16,7 +16,6 @@
 
 package com.soomla.store.data;
 
-import com.soomla.store.util.AESObfuscator;
 import com.soomla.store.StoreUtils;
 import com.soomla.store.domain.VirtualItem;
 
@@ -35,16 +34,11 @@ public abstract class VirtualItemStorage {
 
         String itemId = item.getItemId();
         String key = keyBalance(itemId);
-        key = StorageManager.getAESObfuscator().obfuscateString(key);
-        String val = StorageManager.getDatabase().getKeyVal(key);
+        String val = StorageManager.getKeyValueStorage().getValue(key);
 
         int balance = 0;
         if (val != null) {
-            try {
-                balance = StorageManager.getAESObfuscator().unobfuscateToInt(val);
-            } catch (AESObfuscator.ValidationException e) {
-                StoreUtils.LogError(mTag, e.getMessage());
-            }
+            balance = Integer.parseInt(val);
         }
 
         StoreUtils.LogDebug(mTag, "the balance for " + item.getItemId() + " is " + balance);
@@ -72,9 +66,8 @@ public abstract class VirtualItemStorage {
 
         String balanceStr = "" + balance;
         String key = keyBalance(itemId);
-        balanceStr = StorageManager.getAESObfuscator().obfuscateString(balanceStr);
-        key      = StorageManager.getAESObfuscator().obfuscateString(key);
-        StorageManager.getDatabase().setKeyVal(key, balanceStr);
+
+        StorageManager.getKeyValueStorage().setValue(key, balanceStr);
 
         if (notify) {
             postBalanceChangeEvent(item, balance, 0);
@@ -102,9 +95,7 @@ public abstract class VirtualItemStorage {
         }
         String balanceStr = "" + (balance + amount);
         String key = keyBalance(itemId);
-        balanceStr = StorageManager.getAESObfuscator().obfuscateString(balanceStr);
-        key      = StorageManager.getAESObfuscator().obfuscateString(key);
-        StorageManager.getDatabase().setKeyVal(key, balanceStr);
+        StorageManager.getKeyValueStorage().setValue(key, balanceStr);
 
         if (notify) {
             postBalanceChangeEvent(item, balance+amount, amount);
@@ -132,9 +123,7 @@ public abstract class VirtualItemStorage {
         }
         String balanceStr = "" + balance;
         String key = keyBalance(itemId);
-        balanceStr = StorageManager.getAESObfuscator().obfuscateString(balanceStr);
-        key      = StorageManager.getAESObfuscator().obfuscateString(key);
-        StorageManager.getDatabase().setKeyVal(key, balanceStr);
+        StorageManager.getKeyValueStorage().setValue(key, balanceStr);
 
         if (notify) {
             postBalanceChangeEvent(item, balance, -1*amount);
