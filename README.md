@@ -8,22 +8,17 @@ Haven't you ever wanted an in-app purchase one liner that looks like this!?
 
 ## android-store
 
+**March 26th, 2014**: We've split out Google Play to a plugin so we'll be able to add more billing providers to android-store.
+
 **December 11th, 2013**: Refunds have been readded. *android-store* now checks if owned items have been refunded and takes them away when `StoreController` is initialized.
 
 > Note: removal of refunded items may take a while due to the way IABv3 caches information on the device. Try disabling and enabling WiFi on the device to refresh the cache.
-
-**December 1st, 2013**: *android-store* has been updated to use Google's In-App Billing version 3. There is no need to use our _test mode_ to make static response purchases, everything is handled by Google now. Furthermore, you can now test **real** purchases using test accounts in the [Google Developer Console](https://play.google.com/apps/publish).
-
-> - Functions removed: `setTestMode()` & `isTestMode()` - not needed anymore
-> - Events removed: `onMarketRefund` - as of IAB version 3 Google does not support refunds anymore.
 
 The current virtual economny model is called **modelV3**. Want to learn more about it? Try these:  
 * [Economy Model Objects](https://github.com/soomla/android-store/wiki/Economy-Model-Objects)  
 * [Handling Store Operations](https://github.com/soomla/android-store/wiki/Handling-Store-Operations)
 
 android-store is an open code initiative as part of The SOOMLA Project. It is a Java API that simplifies Google Play's in-app purchasing API and compliments it with storage, security and event handling. The project also includes a sample app for reference. 
-
->If you also want to create a **storefront** you can do that using SOOMLA's [In-App Purchase Store Designer](http://soom.la).
 
 
 Check out our [Wiki] (https://github.com/soomla/android-store/wiki) for more information about the project and how to use it better.
@@ -32,9 +27,11 @@ Check out our [Wiki] (https://github.com/soomla/android-store/wiki) for more inf
 
 * Before doing anything, SOOMLA recommends that you go through [Android In-app Billing](http://developer.android.com/guide/google/play/billing/index.html).
 
-1. Clone android-store. Copy all files from android-store/SoomlaAndroidStore subfolders to their equivalent folders in your Android project:
+1. Recursively clone android-store. Copy all files from android-store/SoomlaAndroidStore subfolders to their equivalent folders in your Android project:
 
- `git clone git@github.com:soomla/android-store.git`
+ `git clone --recursive git@github.com:soomla/android-store.git`
+ 
+ 	> This will clone android-store and android-store-google-play which is the default billing provider.
 
 2. Make the following changes to your AndroidManifest.xml:
 
@@ -110,9 +107,9 @@ Don't forget to define your _IStoreEventHandler_ in order to get the events of s
 
 ## In App Billing Service
 
-We currently support Google Play as the default IAB service. We're working to add more stores' services.
+We currently support Google Play as the default IAB service. We're working to add more stores.
 
-The billing service is started and stopped for every operation you're running on StoreContoroller (buyWithGooglePlay, restoreTransactions ...).
+The billing service is started and stopped for every operation you're running on StoreContoroller (buyWithMarket, restoreTransactions ...).
 
 We recommend that you open the IAB Serbice and keep it open in the background in cases where you have an in-game storefront. This is how you do that:
 
@@ -224,6 +221,4 @@ Fork -> Clone -> Implement -> Test -> Pull-Request. We have great RESPECT for co
 MIT License. Copyright (c) 2012 SOOMLA. http://project.soom.la
 + http://www.opensource.org/licenses/MIT
 
-<!-- Githalytics pixel for Google Analytics tracking -->
-[![githalytics.com alpha](https://cruel-carlota.pagodabox.com/ef5f3626747e10e8069ee123f06c4f25 "githalytics.com")](http://githalytics.com/soomla/android-store)
 
