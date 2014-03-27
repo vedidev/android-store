@@ -39,4 +39,9 @@ public class IabCallbacks {
         public void fail(String message);
     }
 
+    public interface OnConsumeListener {
+        public void success(IabPurchase purchase);
+        public void fail(String message);
+    }
+
 }
