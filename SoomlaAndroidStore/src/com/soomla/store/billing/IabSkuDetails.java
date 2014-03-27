@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 
-package com.soomla.billing;
+package com.soomla.store.billing;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -21,20 +21,20 @@ import org.json.JSONObject;
 /**
  * Represents an in-app product's listing details.
  */
-public class SkuDetails {
-    String mItemType;
-    String mSku;
-    String mType;
-    String mPrice;
-    String mTitle;
-    String mDescription;
-    String mJson;
+public class IabSkuDetails {
+    private String mItemType;
+    private String mSku;
+    private String mType;
+    private String mPrice;
+    private String mTitle;
+    private String mDescription;
+    private String mJson;
 
-    public SkuDetails(String jsonSkuDetails) throws JSONException {
-        this(IabHelper.ITEM_TYPE_INAPP, jsonSkuDetails);
-    }
+//    public IabSkuDetails(String jsonSkuDetails) throws JSONException {
+//        this(IabHelper.ITEM_TYPE_INAPP, jsonSkuDetails);
+//    }
     
-    public SkuDetails(String itemType, String jsonSkuDetails) throws JSONException {
+    public IabSkuDetails(String itemType, String jsonSkuDetails) throws JSONException {
         mItemType = itemType;
         mJson = jsonSkuDetails;
         JSONObject o = new JSONObject(mJson);
@@ -45,14 +45,36 @@ public class SkuDetails {
         mDescription = o.optString("description");
     }
 
-    public String getSku() { return mSku; }
-    public String getType() { return mType; }
-    public String getPrice() { return mPrice; }
-    public String getTitle() { return mTitle; }
-    public String getDescription() { return mDescription; }
+    public String getItemType() {
+        return mItemType;
+    }
+
+    public String getSku() {
+        return mSku;
+    }
+
+    public String getType() {
+        return mType;
+    }
+
+    public String getPrice() {
+        return mPrice;
+    }
+
+    public String getTitle() {
+        return mTitle;
+    }
+
+    public String getDescription() {
+        return mDescription;
+    }
+
+    public String getJson() {
+        return mJson;
+    }
 
     @Override
     public String toString() {
-        return "SkuDetails:" + mJson;
+        return "IabSkuDetails:" + mJson;
     }
 }

@@ -59,14 +59,14 @@ public abstract class PurchasableVirtualItem extends VirtualItem {
         if (purchaseType.equals(JSONConsts.PURCHASE_TYPE_MARKET)) {
             JSONObject marketItemObj = purchasableObj.getJSONObject(JSONConsts.PURCHASE_MARKET_ITEM);
 
-            mPurchaseType = new PurchaseWithMarket(new GoogleMarketItem(marketItemObj));
+            mPurchaseType = new PurchaseWithMarket(new MarketItem(marketItemObj));
         } else if (purchaseType.equals(JSONConsts.PURCHASE_TYPE_VI)) {
             String itemId = purchasableObj.getString(JSONConsts.PURCHASE_VI_ITEMID);
             int amount = purchasableObj.getInt(JSONConsts.PURCHASE_VI_AMOUNT);
 
             mPurchaseType = new PurchaseWithVirtualItem(itemId, amount);
         } else {
-            StoreUtils.LogError(TAG, "Purchase type not recognized !");
+            StoreUtils.LogError(TAG, "IabPurchase type not recognized !");
         }
 
         if (mPurchaseType != null) {
@@ -94,7 +94,7 @@ public abstract class PurchasableVirtualItem extends VirtualItem {
             if(mPurchaseType instanceof PurchaseWithMarket) {
                 purchasableObj.put(JSONConsts.PURCHASE_TYPE, JSONConsts.PURCHASE_TYPE_MARKET);
 
-                GoogleMarketItem  mi = ((PurchaseWithMarket) mPurchaseType).getGoogleMarketItem();
+                MarketItem mi = ((PurchaseWithMarket) mPurchaseType).getMarketItem();
                 purchasableObj.put(JSONConsts.PURCHASE_MARKET_ITEM, mi.toJSONObject());
             } else if(mPurchaseType instanceof PurchaseWithVirtualItem) {
                 purchasableObj.put(JSONConsts.PURCHASE_TYPE, JSONConsts.PURCHASE_TYPE_VI);

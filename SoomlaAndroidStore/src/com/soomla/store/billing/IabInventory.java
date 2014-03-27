@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 
-package com.soomla.billing;
+package com.soomla.store.billing;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -22,21 +22,21 @@ import java.util.Map;
 
 /**
  * Represents a block of information about in-app items.
- * An Inventory is returned by such methods as {@link IabHelper#queryInventory}.
+ * An IabInventory is returned by such methods as {@link IabHelper#queryInventory}.
  */
-public class Inventory {
-    Map<String,SkuDetails> mSkuMap = new HashMap<String,SkuDetails>();
-    Map<String,Purchase> mPurchaseMap = new HashMap<String,Purchase>();
+public class IabInventory {
+    private Map<String,IabSkuDetails> mSkuMap = new HashMap<String,IabSkuDetails>();
+    private Map<String,IabPurchase> mPurchaseMap = new HashMap<String,IabPurchase>();
 
-    Inventory() { }
+    public IabInventory() { }
 
     /** Returns the listing details for an in-app product. */
-    public SkuDetails getSkuDetails(String sku) {
+    public IabSkuDetails getSkuDetails(String sku) {
         return mSkuMap.get(sku);
     }
 
     /** Returns purchase information for a given product, or null if there is no purchase. */
-    public Purchase getPurchase(String sku) {
+    public IabPurchase getPurchase(String sku) {
         return mPurchaseMap.get(sku);
     }
 
@@ -52,11 +52,11 @@ public class Inventory {
 
     /**
      * Erase a purchase (locally) from the inventory, given its product ID. This just
-     * modifies the Inventory object locally and has no effect on the server! This is
-     * useful when you have an existing Inventory object which you know to be up to date,
+     * modifies the IabInventory object locally and has no effect on the server! This is
+     * useful when you have an existing IabInventory object which you know to be up to date,
      * and you have just consumed an item successfully, which means that erasing its
-     * purchase data from the Inventory you already have is quicker than querying for
-     * a new Inventory.
+     * purchase data from the IabInventory you already have is quicker than querying for
+     * a new IabInventory.
      */
     public void erasePurchase(String sku) {
         if (mPurchaseMap.containsKey(sku)) mPurchaseMap.remove(sku);
@@ -70,22 +70,22 @@ public class Inventory {
     /** Returns a list of all owned product IDs of a given type */
     public List<String> getAllOwnedSkus(String itemType) {
         List<String> result = new ArrayList<String>();
-        for (Purchase p : mPurchaseMap.values()) {
+        for (IabPurchase p : mPurchaseMap.values()) {
             if (p.getItemType().equals(itemType)) result.add(p.getSku());
         }
         return result;
     }
 
     /** Returns a list of all purchases. */
-    public List<Purchase> getAllPurchases() {
-        return new ArrayList<Purchase>(mPurchaseMap.values());
+    public List<IabPurchase> getAllPurchases() {
+        return new ArrayList<IabPurchase>(mPurchaseMap.values());
     }
 
-    void addSkuDetails(SkuDetails d) {
+    public void addSkuDetails(IabSkuDetails d) {
         mSkuMap.put(d.getSku(), d);
     }
 
-    void addPurchase(Purchase p) {
+    public void addPurchase(IabPurchase p) {
         mPurchaseMap.put(p.getSku(), p);
     }
 }

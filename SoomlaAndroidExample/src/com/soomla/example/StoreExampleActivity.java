@@ -56,10 +56,10 @@ public class StoreExampleActivity extends Activity {
          * long enough to perform the operation they need to perform.
          */
         IStoreAssets storeAssets = new MuffinRushAssets();
+        mEventHandler = new ExampleEventHandler(mHandler, this);
         StoreController.getInstance().initialize(storeAssets,
                 "[YOUR PUBLIC KEY FROM GOOGLE PLAY HERE]",
                 "[YOUR CUSTOM GAME SECRET HERE]");
-        mEventHandler = new ExampleEventHandler(mHandler, this);
 
         // Checking if it's a first run and adding 10000 currencies if it is.
         // OFCOURSE... THIS IS JUST FOR TESTING.

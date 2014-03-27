@@ -152,7 +152,7 @@ public class MuffinRushAssets implements IStoreAssets {
             "No Ads",
             "Test purchase of MANAGED item.",
             "no_ads",
-            new PurchaseWithMarket(new GoogleMarketItem(NO_ADDS_NONCONS_PRODUCT_ID, GoogleMarketItem.Managed.MANAGED , 1.99))
+            new PurchaseWithMarket(new MarketItem(NO_ADDS_NONCONS_PRODUCT_ID, MarketItem.Managed.MANAGED , 1.99))
     );
 
 }

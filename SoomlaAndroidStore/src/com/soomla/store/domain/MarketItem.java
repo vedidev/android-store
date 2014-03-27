@@ -25,7 +25,7 @@ import org.json.JSONObject;
  * Every PurchasableVirtualItem with PurchaseType of PurchaseWithMarket has an instance of this class which is a
  * representation of the same currency pack as an item on Google Play.
  */
-public class GoogleMarketItem {
+public class MarketItem {
 
     /** Constructor
      *
@@ -33,7 +33,7 @@ public class GoogleMarketItem {
      * @param mManaged is the Managed type of the current item in Google Play.
      * @param mPrice is the actual $$ cost of the current item in Google Play.
      */
-    public GoogleMarketItem(String mProductId, Managed mManaged, double mPrice) {
+    public MarketItem(String mProductId, Managed mManaged, double mPrice) {
         this.mProductId = mProductId;
         this.mManaged = mManaged;
         this.mPrice = mPrice;
@@ -41,11 +41,11 @@ public class GoogleMarketItem {
 
     /** Constructor
      *
-     * Generates an instance of {@link GoogleMarketItem} from a JSONObject.
-     * @param jsonObject is a JSONObject representation of the wanted {@link GoogleMarketItem}.
+     * Generates an instance of {@link MarketItem} from a JSONObject.
+     * @param jsonObject is a JSONObject representation of the wanted {@link MarketItem}.
      * @throws JSONException
      */
-    public GoogleMarketItem(JSONObject jsonObject) throws JSONException {
+    public MarketItem(JSONObject jsonObject) throws JSONException {
         if (jsonObject.has(JSONConsts.MARKETITEM_MANAGED)) {
             this.mManaged = Managed.values()[jsonObject.getInt(JSONConsts.MARKETITEM_MANAGED)];
         } else {
@@ -110,7 +110,7 @@ public class GoogleMarketItem {
      *  The Id of this VirtualGood in Google Market
     */
 
-    private static final String TAG = "SOOMLA GoogleMarketItem";
+    private static final String TAG = "SOOMLA MarketItem";
 
     private String mProductId;
     private double mPrice;

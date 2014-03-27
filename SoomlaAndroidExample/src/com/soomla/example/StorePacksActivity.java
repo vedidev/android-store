@@ -167,14 +167,14 @@ public class StorePacksActivity extends Activity {
                 content.setText(nonConsumableItem.getDescription());
                 info.setText("");
                 PurchaseWithMarket pwm = (PurchaseWithMarket) nonConsumableItem.getPurchaseType();
-                thumb_image.setImageResource((Integer)mImages.get(pwm.getGoogleMarketItem().getProductId()));
+                thumb_image.setImageResource((Integer)mImages.get(pwm.getMarketItem().getProductId()));
             } else {
                 VirtualCurrencyPack pack = StoreInfo.getCurrencyPacks().get(position-1);
                 title.setText(pack.getName());
                 content.setText(pack.getDescription());
                 PurchaseWithMarket pwm = (PurchaseWithMarket) pack.getPurchaseType();
-                info.setText("price: $" + pwm.getGoogleMarketItem().getPrice());
-                thumb_image.setImageResource((Integer)mImages.get(pwm.getGoogleMarketItem().getProductId()));
+                info.setText("price: $" + pwm.getMarketItem().getPrice());
+                thumb_image.setImageResource((Integer)mImages.get(pwm.getMarketItem().getProductId()));
             }
 
             return vi;

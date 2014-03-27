@@ -19,12 +19,12 @@ package com.soomla.store.purchaseTypes;
 import com.soomla.store.BusProvider;
 import com.soomla.store.StoreController;
 import com.soomla.store.StoreUtils;
-import com.soomla.store.domain.GoogleMarketItem;
+import com.soomla.store.domain.MarketItem;
 import com.soomla.store.events.ItemPurchaseStartedEvent;
 import com.soomla.store.exceptions.InsufficientFundsException;
 
 /**
- * This type of Purchase is used to let users purchase PurchasableVirtualItems with Google Play (with real $$).
+ * This type of IabPurchase is used to let users purchase PurchasableVirtualItems with Google Play (with real $$).
  */
 public class PurchaseWithMarket extends PurchaseType {
 
@@ -34,15 +34,15 @@ public class PurchaseWithMarket extends PurchaseType {
      * @param price is the price in Google Play.
      */
     public PurchaseWithMarket(String productId, double price) {
-        mGoogleMarketItem = new GoogleMarketItem(productId, GoogleMarketItem.Managed.UNMANAGED, price);
+        mMarketItem = new MarketItem(productId, MarketItem.Managed.UNMANAGED, price);
     }
 
     /** Constructor
      *
-     * @param googleMarketItem is the representation of the item in Google Play.
+     * @param marketItem is the representation of the item in Google Play.
      */
-    public PurchaseWithMarket(GoogleMarketItem googleMarketItem) {
-        mGoogleMarketItem = googleMarketItem;
+    public PurchaseWithMarket(MarketItem marketItem) {
+        mMarketItem = marketItem;
     }
 
     /**
@@ -50,21 +50,21 @@ public class PurchaseWithMarket extends PurchaseType {
      */
     @Override
     public void buy() throws InsufficientFundsException {
-        StoreUtils.LogDebug(TAG, "Starting in-app purchase for productId: " + mGoogleMarketItem.getProductId());
+        StoreUtils.LogDebug(TAG, "Starting in-app purchase for productId: " + mMarketItem.getProductId());
         
         BusProvider.getInstance().post(new ItemPurchaseStartedEvent(getAssociatedItem()));
         try {
-            StoreController.getInstance().buyWithGooglePlay(mGoogleMarketItem, "");
+            StoreController.getInstance().buyWithMarket(mMarketItem, "");
         } catch (IllegalStateException e) {
             StoreUtils.LogError(TAG, "Error when purchasing item");
         }
     }
 
-    public GoogleMarketItem getGoogleMarketItem() {
-        return mGoogleMarketItem;
+    public MarketItem getMarketItem() {
+        return mMarketItem;
     }
 
     private static final String TAG = "SOOMLA PurchaseWithMarket";
 
-    private GoogleMarketItem mGoogleMarketItem;
+    private MarketItem mMarketItem;
 }

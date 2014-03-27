@@ -21,33 +21,26 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 
-import com.soomla.billing.Consts;
-import com.soomla.billing.IabException;
-import com.soomla.billing.IabHelper;
-import com.soomla.billing.IabResult;
-import com.soomla.billing.Inventory;
-import com.soomla.billing.Purchase;
+import com.soomla.store.billing.IabCallbacks;
+import com.soomla.store.billing.IabException;
+import com.soomla.store.billing.IabPurchase;
 import com.soomla.store.data.ObscuredSharedPreferences;
 import com.soomla.store.data.StoreInfo;
-import com.soomla.store.domain.GoogleMarketItem;
+import com.soomla.store.domain.MarketItem;
 import com.soomla.store.domain.NonConsumableItem;
 import com.soomla.store.domain.PurchasableVirtualItem;
 import com.soomla.store.events.BillingNotSupportedEvent;
 import com.soomla.store.events.BillingSupportedEvent;
 import com.soomla.store.events.IabServiceStartedEvent;
-import com.soomla.store.events.IabServiceStoppedEvent;
 import com.soomla.store.events.ItemPurchasedEvent;
 import com.soomla.store.events.PlayPurchaseCancelledEvent;
 import com.soomla.store.events.PlayPurchaseEvent;
 import com.soomla.store.events.PlayPurchaseStartedEvent;
 import com.soomla.store.events.PlayRefundEvent;
-import com.soomla.store.events.RestoreTransactionsEvent;
 import com.soomla.store.events.RestoreTransactionsStartedEvent;
 import com.soomla.store.events.StoreControllerInitializedEvent;
 import com.soomla.store.events.UnexpectedStoreErrorEvent;
 import com.soomla.store.exceptions.VirtualItemNotFoundException;
-
-import java.util.List;
 
 /**
  * This class holds the basic assets needed to operate the Store.
@@ -60,7 +53,7 @@ import java.util.List;
 public class StoreController {
 
     /**
-     * This initializer also initializes {@link StoreInfo}.
+     * This initializer also initializes {@link com.soomla.store.data.StoreInfo}.
      * @param storeAssets is the definition of your application specific assets.
      * @param publicKey is the public key given to you from Google.
      * @param customSecret is your encryption secret (it's used to encrypt your data in the database)
@@ -68,6 +61,13 @@ public class StoreController {
     public boolean initialize(IStoreAssets storeAssets, String publicKey, String customSecret) {
         if (mInitialized) {
             String err = "StoreController is already initialized. You can't initialize it twice!";
+            StoreUtils.LogError(TAG, err);
+            BusProvider.getInstance().post(new UnexpectedStoreErrorEvent(err));
+            return false;
+        }
+
+        if (StoreConfig.InAppBillingService == null) {
+            String err = "You didn't set up an in-app billing service. StoreController will stop now.";
             StoreUtils.LogError(TAG, err);
             BusProvider.getInstance().post(new UnexpectedStoreErrorEvent(err));
             return false;
@@ -106,83 +106,176 @@ public class StoreController {
         StoreInfo.initializeFromDB();
 
         // Set up helper for the first time, querying and synchronizing inventory
-        StoreUtils.LogDebug(TAG, "Querying and Synchronizing inventory ...");
-        startIabHelper(new StoreController.OnIabStartedListener() {
+        StoreConfig.InAppBillingService.initializeBillingService(new IabCallbacks.IabInitListener() {
             @Override
-            public void onIabStarted() {
+            public void success(boolean alreadyInBg) {
+                if (!alreadyInBg) {
+                    notifyIabServiceStarted();
+                }
                 StoreUtils.LogDebug(TAG, "Setup successful, consuming unconsumed items and handling refunds");
-                mHelper.queryInventoryAsync(false, null, mPostInitQueryListener);
+
+                IabCallbacks.OnQueryInventoryListener queryInventoryListener = new IabCallbacks.OnQueryInventoryListener() {
+
+                    @Override
+                    public void success(IabPurchase purchase) {
+                        handleSuccessfulPurchase(purchase);
+                    }
+
+                    @Override
+                    public void fail(String message) {
+                        handleErrorResult(message);
+                    }
+                };
+
+                StoreConfig.InAppBillingService.queryInventoryAsync(false, null, queryInventoryListener);
+            }
+
+            @Override
+            public void fail(String message) {
+                reportIabInitFailure(message);
             }
         });
-        
+
+
         mInitialized = true;
         BusProvider.getInstance().post(new StoreControllerInitializedEvent());
         return true;
     }
 
+
     public void startIabServiceInBg() {
-        keepIabServiceOpen = true;
-        startIabHelper(null);
-    }
+        StoreConfig.InAppBillingService.startIabServiceInBg(new IabCallbacks.IabInitListener() {
 
-    public void stopIabServiceInBg() {
-        keepIabServiceOpen = false;
-        stopIabHelper();
-    }
-
-    /**
-     * Initiate the restoreTransactions process
-     * @{link #storeOpen} must be called before this method or your helper will be destroyed.
-     */
-    public void restoreTransactions() {
-        startIabHelper(new OnIabStartedListener() {
             @Override
-            public void onIabStarted() {
-                mHelper.queryInventoryAsync(false, null, mPostInitQueryListener);
-                BusProvider.getInstance().post(new RestoreTransactionsStartedEvent());
+            public void success(boolean alreadyInBg) {
+                if (!alreadyInBg) {
+                    notifyIabServiceStarted();
+                    StoreUtils.LogDebug(TAG, "Successfully started billing service in background.");
+                } else {
+                    StoreUtils.LogDebug(TAG, "Couldn't start billing service in background. Was already started.");
+                }
+            }
+
+            @Override
+            public void fail(String message) {
+                StoreUtils.LogError(TAG, "Couldn't start billing service in background. error: " + message);
             }
         });
     }
 
+    public void stopIabServiceInBg() {
+        StoreConfig.InAppBillingService.stopIabServiceInBg(new IabCallbacks.IabInitListener() {
+
+            @Override
+            public void success(boolean alreadyInBg) {
+                StoreUtils.LogDebug(TAG, "Successfully stopped billing service in background.");
+            }
+
+            @Override
+            public void fail(String message) {
+                StoreUtils.LogError(TAG, "Couldn't stop billing service in background. error: " + message);
+            }
+        });
+    }
+
+    /**
+     * Initiate the restoreTransactions process
+     */
+    public void restoreTransactions() {
+        StoreConfig.InAppBillingService.initializeBillingService(new IabCallbacks.IabInitListener() {
+
+            @Override
+            public void success(boolean alreadyInBg) {
+                if (!alreadyInBg) {
+                    notifyIabServiceStarted();
+                }
+                StoreUtils.LogDebug(TAG, "Setup successful, consuming unconsumed items and handling refunds");
+                IabCallbacks.OnQueryInventoryListener queryInventoryListener = new IabCallbacks.OnQueryInventoryListener() {
+
+                    @Override
+                    public void success(IabPurchase purchase) {
+                        handleSuccessfulPurchase(purchase);
+                    }
+
+                    @Override
+                    public void fail(String message) {
+                        handleErrorResult(message);
+                    }
+                };
+                StoreConfig.InAppBillingService.queryInventoryAsync(false, null, queryInventoryListener);
+                BusProvider.getInstance().post(new RestoreTransactionsStartedEvent());
+            }
+
+            @Override
+            public void fail(String message) {
+                reportIabInitFailure(message);
+            }
+
+        });
+    }
 
     /**
      * Start a purchase process with Google Play.
      *
-     * @param googleMarketItem is the item to purchase. This item has to be defined EXACTLY the same in Google Play.
+     * @param marketItem is the item to purchase. This item has to be defined EXACTLY the same in Google Play.
      * @param payload a payload to get back when this purchase is finished.
      * @throws IllegalStateException
      */
-    public void buyWithGooglePlay(GoogleMarketItem googleMarketItem, String payload) throws IllegalStateException {
+    public void buyWithMarket(MarketItem marketItem, String payload) throws IllegalStateException {
         SharedPreferences prefs = new ObscuredSharedPreferences(SoomlaApp.getAppContext().getSharedPreferences(StoreConfig.PREFS_NAME, Context.MODE_PRIVATE));
         String publicKey = prefs.getString(StoreConfig.PUBLIC_KEY, "");
         if (publicKey.length() == 0 || publicKey.equals("[YOUR PUBLIC KEY FROM GOOGLE PLAY]")) {
             StoreUtils.LogError(TAG, "You didn't provide a public key! You can't make purchases.");
             throw new IllegalStateException();
         }
-        
+
         try {
             final Intent intent = new Intent(SoomlaApp.getAppContext(), IabActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            intent.putExtra(PROD_ID, googleMarketItem.getProductId());
+            intent.putExtra(PROD_ID, marketItem.getProductId());
             intent.putExtra(EXTRA_DATA, payload);
 
-            startIabHelper(new OnIabStartedListener() {
+            StoreConfig.InAppBillingService.initializeBillingService(new IabCallbacks.IabInitListener() {
+
                 @Override
-                public void onIabStarted() {
+                public void success(boolean alreadyInBg) {
+                    if (!alreadyInBg) {
+                        notifyIabServiceStarted();
+                    }
                     SoomlaApp.getAppContext().startActivity(intent);
                 }
+
+                @Override
+                public void fail(String message) {
+                    reportIabInitFailure(message);
+                }
+
             });
+
         } catch(Exception e){
-        	StoreUtils.LogError(TAG, "(buyWithGooglePlay) Error purchasing item " + e.getMessage());
+        	StoreUtils.LogError(TAG, "(buyWithMarket) Error purchasing item " + e.getMessage());
             BusProvider.getInstance().post(new UnexpectedStoreErrorEvent(e.getMessage()));
         }
+    }
+
+    /*====================   Common callbacks for success \ failure \ finish   ====================*/
+
+    private void notifyIabServiceStarted() {
+        BusProvider.getInstance().post(new BillingSupportedEvent());
+        BusProvider.getInstance().post(new IabServiceStartedEvent());
+    }
+
+    private void reportIabInitFailure(String message) {
+        String msg = "There's no connectivity with the billing service. error: " + message;
+        StoreUtils.LogDebug(TAG, msg);
+        BusProvider.getInstance().post(new BillingNotSupportedEvent());
+//        BusProvider.getInstance().post(new UnexpectedStoreErrorEvent(msg));
     }
 
     /**
      *  Used for internal starting of purchase with Google Play. Do *NOT* call this on your own.
      */
-    // TODO: implement checking if item is already owned in google play
-    private boolean buyWithGooglePlayInner(final Activity activity, final String sku, final String payload) {
+    private boolean buyWithMarketInner(final Activity activity, final String sku, final String payload) {
         final PurchasableVirtualItem pvi;
         try {
             pvi = StoreInfo.getPurchasableItem(sku);
@@ -193,73 +286,52 @@ public class StoreController {
             return false;
         }
 
-        startIabHelper(new OnIabStartedListener() {
-            @Override
-            public void onIabStarted() {
-                StoreUtils.LogDebug(TAG, "Trying to buy sku: " + sku);
+        StoreConfig.InAppBillingService.initializeBillingService(new IabCallbacks.IabInitListener() {
 
-                mHelper.launchPurchaseFlow(activity, sku, Consts.RC_REQUEST, mPurchaseFinishedListener, payload);
+            @Override
+            public void success(boolean alreadyInBg) {
+                if (!alreadyInBg) {
+                    notifyIabServiceStarted();
+                }
+
+                IabCallbacks.OnPurchaseListener purchaseListener = new IabCallbacks.OnPurchaseListener() {
+
+                    @Override
+                    public void success(IabPurchase purchase) {
+                        handleSuccessfulPurchase(purchase);
+                    }
+
+                    @Override
+                    public void cancelled(IabPurchase purchase) {
+                        handleCancelledPurchase(purchase);
+                    }
+
+                    @Override
+                    public void alreadyOwned(IabPurchase purchase) {
+                        StoreUtils.LogDebug(TAG, "Tried to buy an item that was not consumed. Trying to consume it if it's a consumable.");
+                        consumeIfConsumable(purchase);
+                    }
+
+                    @Override
+                    public void fail(String message) {
+                        handleErrorResult(message);
+                    }
+                };
+                StoreConfig.InAppBillingService.launchPurchaseFlow(activity, sku, purchaseListener, payload);
                 BusProvider.getInstance().post(new PlayPurchaseStartedEvent(pvi));
             }
+
+            @Override
+            public void fail(String message) {
+                reportIabInitFailure(message);
+            }
+
         });
 
         return true;
     }
 
-    /**
-     * Create a new IAB helper and set it up.
-     *
-     * @param onIabSetupFinishedListener is a callback that lets users to add their own implementation for when the Iab is started
-     */
-    private synchronized void startIabHelper(StoreController.OnIabStartedListener onIabSetupFinishedListener) {
-        if(mHelper != null)
-        {
-            StoreUtils.LogDebug(TAG, "The helper is started. Just running the post start function.");
-            if (onIabSetupFinishedListener != null) {
-                onIabSetupFinishedListener.onIabStarted();
-            }
-            return;
-        }
 
-        StoreUtils.LogDebug(TAG, "Creating IAB helper.");
-        mHelper = new IabHelper();
-
-        StoreUtils.LogDebug(TAG, "IAB helper Starting setup.");
-        mHelper.startSetup(onIabSetupFinishedListener);
-    }
-
-    /**
-     * Dispose of the helper to prevent memory leaks
-     */
-    private synchronized void stopIabHelper() {
-        if (keepIabServiceOpen) {
-            StoreUtils.LogDebug(TAG, "Not stopping Iab Helper b/c the user run 'startIabServiceInBg'. Keeping it open.");
-            return;
-        }
-
-        if (mHelper == null) {
-            StoreUtils.LogError(TAG, "Tried to stop IAB Helper when it was null.");
-            return;
-        }
-
-        if (!mHelper.isAsyncInProgress())
-        {
-            StoreUtils.LogDebug(TAG, "Stopping Iab helper");
-            mHelperStop = false;
-            mHelper.dispose();
-            mHelper = null;
-            BusProvider.getInstance().post(new IabServiceStoppedEvent());
-        }
-        else
-        {
-            String msg = "Cannot close store during async process. Will be stopped when async operation is finished.";
-            mHelperStop = true;
-            StoreUtils.LogDebug(TAG, msg);
-//        	BusProvider.getInstance().post(new UnexpectedStoreErrorEvent(msg));
-        }
-    }
-
-    /* Callbacks for the IabHelper */
 
     /**
      * Check the state of the purchase and respond accordingly, giving the user an item,
@@ -267,7 +339,7 @@ public class StoreController {
      *
      * @param purchase
      */
-    private void purchaseActionResultOk(Purchase purchase) {
+    private void handleSuccessfulPurchase(IabPurchase purchase) {
         String sku = purchase.getSku();
         String developerPayload = purchase.getDeveloperPayload();
 
@@ -275,8 +347,8 @@ public class StoreController {
         try {
             pvi = StoreInfo.getPurchasableItem(sku);
         } catch (VirtualItemNotFoundException e) {
-            StoreUtils.LogError(TAG, "(purchaseActionResultOk - purchase or query-inventory) ERROR : Couldn't find the " +
-                    " VirtualCurrencyPack OR GoogleMarketItem  with productId: " + sku +
+            StoreUtils.LogError(TAG, "(handleSuccessfulPurchase - purchase or query-inventory) ERROR : Couldn't find the " +
+                    " VirtualCurrencyPack OR MarketItem  with productId: " + sku +
                     ". It's unexpected so an unexpected error is being emitted.");
             BusProvider.getInstance().post(new UnexpectedStoreErrorEvent("Couldn't find the sku of a product after purchase or query-inventory."));
             return;
@@ -284,7 +356,7 @@ public class StoreController {
 
         switch (purchase.getPurchaseState()) {
             case 0:
-                StoreUtils.LogDebug(TAG, "Purchase successful.");
+                StoreUtils.LogDebug(TAG, "IabPurchase successful.");
                 BusProvider.getInstance().post(new PlayPurchaseEvent(pvi, developerPayload));
                 pvi.give(1);
                 BusProvider.getInstance().post(new ItemPurchasedEvent(pvi));
@@ -293,7 +365,7 @@ public class StoreController {
                 break;
             case 1:
             case 2:
-                StoreUtils.LogDebug(TAG, "Purchase refunded.");
+                StoreUtils.LogDebug(TAG, "IabPurchase refunded.");
                 if (!StoreConfig.friendlyRefunds) {
                     pvi.take(1);
                 }
@@ -308,30 +380,30 @@ public class StoreController {
      *
      * @param purchase
      */
-    private void purchaseActionResultCancelled(Purchase purchase) {
+    private void handleCancelledPurchase(IabPurchase purchase) {
         String sku = purchase.getSku();
         try {
             PurchasableVirtualItem v = StoreInfo.getPurchasableItem(sku);
             BusProvider.getInstance().post(new PlayPurchaseCancelledEvent(v));
         } catch (VirtualItemNotFoundException e) {
             StoreUtils.LogError(TAG, "(purchaseActionResultCancelled) ERROR : Couldn't find the " +
-                    "VirtualCurrencyPack OR GoogleMarketItem  with productId: " + sku +
+                    "VirtualCurrencyPack OR MarketItem  with productId: " + sku +
                     ". It's unexpected so an unexpected error is being emitted.");
             BusProvider.getInstance().post(new UnexpectedStoreErrorEvent());
         }
     }
 
-    private void consumeIfConsumable(Purchase purchase) {
+    private void consumeIfConsumable(IabPurchase purchase) {
         String sku = purchase.getSku();
         try {
             PurchasableVirtualItem pvi = StoreInfo.getPurchasableItem(sku);
 
             if (!(pvi instanceof NonConsumableItem)) {
-                mHelper.consume(purchase);
+                StoreConfig.InAppBillingService.consume(purchase);
             }
         } catch (VirtualItemNotFoundException e) {
             StoreUtils.LogError(TAG, "(purchaseActionResultCancelled) ERROR : Couldn't find the " +
-                    "VirtualCurrencyPack OR GoogleMarketItem  with productId: " + sku +
+                    "VirtualCurrencyPack OR MarketItem  with productId: " + sku +
                     ". It's unexpected so an unexpected error is being emitted.");
             BusProvider.getInstance().post(new UnexpectedStoreErrorEvent());
         } catch (IabException e) {
@@ -340,69 +412,16 @@ public class StoreController {
         }
     }
 
+
     /**
      * Post an unexpected error event saying the purchase failed.
-     * @param result
+     * @param message
      */
-    private void purchaseActionResultUnexpected(IabResult result) {
-        BusProvider.getInstance().post(new UnexpectedStoreErrorEvent(result.getMessage()));
-        StoreUtils.LogError(TAG, "ERROR: Purchase failed: " + result.getMessage());
+    private void handleErrorResult(String message) {
+        BusProvider.getInstance().post(new UnexpectedStoreErrorEvent(message));
+        StoreUtils.LogError(TAG, "ERROR: IabPurchase failed: " + message);
     }
 
-
-    /**
-     * Wait to see if the purchase succeeded, then start the consumption process.
-     */
-    IabHelper.OnIabPurchaseFinishedListener mPurchaseFinishedListener = new IabHelper.OnIabPurchaseFinishedListener() {
-        public void onIabPurchaseFinished(IabResult result, Purchase purchase) {
-
-            StoreUtils.LogDebug(TAG, "Purchase finished: " + result + ", purchase: " + purchase);
-            if (result.getResponse() == IabHelper.BILLING_RESPONSE_RESULT_OK) {
-                purchaseActionResultOk(purchase);
-            } else if (result.getResponse() == IabHelper.BILLING_RESPONSE_RESULT_USER_CANCELED) {
-                purchaseActionResultCancelled(purchase);
-            } else {
-                if (result.getResponse() == IabHelper.BILLING_RESPONSE_RESULT_ITEM_ALREADY_OWNED) {
-                    StoreUtils.LogDebug(TAG, "Tried to buy an item that was not consumed. Trying to consume it if it's non consumable.");
-                    consumeIfConsumable(purchase);
-                }
-
-                purchaseActionResultUnexpected(result);
-            }
-
-            stopIabHelper();
-        }
-    };
-
-    /**
-     * Handle incomplete purchase and refund after initialization
-     */
-    IabHelper.QueryInventoryFinishedListener mPostInitQueryListener = new IabHelper.QueryInventoryFinishedListener() {
-        public void onQueryInventoryFinished(IabResult result, Inventory inventory) {
-            StoreUtils.LogDebug(TAG, "Query inventory succeeded");
-            if (result.getResponse() == IabHelper.BILLING_RESPONSE_RESULT_OK) {
-                List<String> itemSkus = inventory.getAllOwnedSkus(IabHelper.ITEM_TYPE_INAPP);
-                for (String sku: itemSkus) {
-                    Purchase purchase = inventory.getPurchase(sku);
-                    purchaseActionResultOk(purchase);
-                }
-            } else {
-                StoreUtils.LogError(TAG, "Query inventory error: " + result.getMessage());
-                purchaseActionResultUnexpected(result);
-            }
-            
-            BusProvider.getInstance().post(new RestoreTransactionsEvent(true));
-
-            stopIabHelper();
-        }
-    };
-
-    /**
-     *  A wrapper to access IabHelper.handleActivityResult from outside
-     */
-    private boolean handleActivityResult(int requestCode, int resultCode, Intent data) {
-        return (mHelper != null) && mHelper.handleActivityResult(requestCode, resultCode, data);
-    }
 
     /* Singleton */
     private static StoreController sInstance = null;
@@ -419,61 +438,34 @@ public class StoreController {
 
 
     /* Private Members */
+    private static final String TAG = "SOOMLA StoreController";
     private static final String PROD_ID    = "PRD#ID";
     private static final String EXTRA_DATA = "EXTR#DT";
 
-    private static final String TAG = "SOOMLA StoreController";
-
-    private boolean mInitialized   = false;
-    private boolean keepIabServiceOpen = false;
-
-    private IabHelper mHelper;
-    private boolean mHelperStop = false;
+    private boolean mInitialized = false;
 
 
-    private abstract class OnIabStartedListener implements IabHelper.OnIabSetupFinishedListener {
-
-        @Override
-        public void onIabSetupFinished(IabResult result) {
-            StoreUtils.LogDebug(TAG, "IAB helper Setup finished.");
-            if (result.isFailure()) {
-                String msg = "There's no connectivity with the billing service.";
-                StoreUtils.LogDebug(TAG, msg);
-                BusProvider.getInstance().post(new BillingNotSupportedEvent());
-//                BusProvider.getInstance().post(new UnexpectedStoreErrorEvent(msg));
-                stopIabHelper();
-                return;
-            }
-
-            BusProvider.getInstance().post(new BillingSupportedEvent());
-            BusProvider.getInstance().post(new IabServiceStartedEvent());
-
-            onIabStarted();
-        }
-
-        public abstract void onIabStarted();
-    }
     /**
-     * Android In-App Billing v3 requires and activity to receive the result of the billing process.
+     * Android In-App Billing v3 requires an activity to receive the result of the billing process.
      * This activity's job is to do just that, it also contains the white/green IAB window.  Please
      * Do not start it on your own.
      */
     public static class IabActivity extends Activity {
-    	
+
         @Override
         protected void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
 
             Intent intent = getIntent();
-            String productId = intent.getStringExtra(StoreController.PROD_ID);
-            String payload = intent.getStringExtra(StoreController.EXTRA_DATA);
+            String productId = intent.getStringExtra(PROD_ID);
+            String payload = intent.getStringExtra(EXTRA_DATA);
 
             try {
-                if (!StoreController.getInstance().buyWithGooglePlayInner(this, productId, payload)) {
+                if (!StoreController.getInstance().buyWithMarketInner(this, productId, payload)) {
                     finish();
                 }
             }catch (Exception e) {
-                StoreUtils.LogError(TAG, "(onCreate) Error purchasing item " + e.getMessage());
+                StoreUtils.LogError(TAG, "Error purchasing item " + e.getMessage());
                 BusProvider.getInstance().post(new UnexpectedStoreErrorEvent(e.getMessage()));
                 finish();
             }
@@ -481,17 +473,17 @@ public class StoreController {
 
         @Override
         protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        	if (!StoreController.getInstance().handleActivityResult(requestCode, resultCode, data)) {
-        		super.onActivityResult(requestCode, resultCode, data);
+            if (!StoreConfig.InAppBillingService.handleActivityResult(requestCode, resultCode, data)) {
+                super.onActivityResult(requestCode, resultCode, data);
 
-        		if (StoreController.getInstance().mHelper == null)
-        		{
-        			StoreUtils.LogError(TAG, "helper is null in onActivityResult.");
-        			BusProvider.getInstance().post(new UnexpectedStoreErrorEvent());
-        		}
-        	}
+                if (!StoreConfig.InAppBillingService.isIabServiceInitialized())
+                {
+                    StoreUtils.LogError(TAG, "helper is null in onActivityResult.");
+                    BusProvider.getInstance().post(new UnexpectedStoreErrorEvent());
+                }
+            }
 
-        	finish();
+            finish();
         }
     }
 }
