@@ -30,6 +30,8 @@ public interface IIabService {
 
     public void consume(IabPurchase purchase) throws IabException;
 
+    public void consumeAsync(IabPurchase purchase, final IabCallbacks.OnConsumeListener consumeListener);
+
     public boolean handleActivityResult(int requestCode, int resultCode, Intent data);
 
     public void launchPurchaseFlow(Activity act,

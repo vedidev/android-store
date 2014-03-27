@@ -455,6 +455,7 @@ public class StoreController {
         @Override
         protected void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
+
             Intent intent = getIntent();
             String productId = intent.getStringExtra(PROD_ID);
             String payload = intent.getStringExtra(EXTRA_DATA);
