@@ -303,25 +303,30 @@ public class StoreController {
 
                     @Override
                     public void success(IabPurchase purchase) {
+                        mWaitingServiceResponse = false;
                         handleSuccessfulPurchase(purchase);
                     }
 
                     @Override
                     public void cancelled(IabPurchase purchase) {
+                        mWaitingServiceResponse = false;
                         handleCancelledPurchase(purchase);
                     }
 
                     @Override
                     public void alreadyOwned(IabPurchase purchase) {
+                        mWaitingServiceResponse = false;
                         StoreUtils.LogDebug(TAG, "Tried to buy an item that was not consumed. Trying to consume it if it's a consumable.");
                         consumeIfConsumable(purchase);
                     }
 
                     @Override
                     public void fail(String message) {
+                        mWaitingServiceResponse = false;
                         handleErrorResult(message);
                     }
                 };
+                mWaitingServiceResponse = true;
                 StoreConfig.InAppBillingService.launchPurchaseFlow(activity, sku, purchaseListener, payload);
                 BusProvider.getInstance().post(new PlayPurchaseStartedEvent(pvi));
             }
@@ -448,6 +453,7 @@ public class StoreController {
     private static final String EXTRA_DATA = "EXTR#DT";
 
     private boolean mInitialized = false;
+    private boolean mWaitingServiceResponse = false;
 
 
     /**
@@ -489,6 +495,17 @@ public class StoreController {
             }
 
             finish();
+        }
+        
+        @Override
+        protected void onDestroy() {
+            if (StoreController.getInstance().mWaitingServiceResponse == true)
+            {
+                String err = "IabActivity is destroyed during purchase.";
+                StoreUtils.LogError(TAG, err);
+                BusProvider.getInstance().post(new UnexpectedStoreErrorEvent(err));
+                StoreController.getInstance().mWaitingServiceResponse = false;
+            }
         }
     }
 }
