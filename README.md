@@ -8,6 +8,8 @@ Haven't you ever wanted an in-app purchase one liner that looks like this!?
 
 ## android-store
 
+**April 1st, 2014**: We've added the option to refresh market items details from the IAB Service (default is Google Play). You can call 'refreshInventory(true)' from StoreController when you want and all your PurchasableItems that has a PurchaseType of PurchaseWithMarket will update the values of: MarketPrice, MarketTitle, MarketDescription. android-store automatically running the operation when you intialize StoreController.
+
 **March 26th, 2014**: We've split out Google Play to a plugin so we'll be able to add more billing providers to android-store.  http://blog.soom.la/2014/03/google-play-will-not-be-the-only-option-for-long.html
 
 **December 11th, 2013**: Refunds have been readded. *android-store* now checks if owned items have been refunded and takes them away when `StoreController` is initialized.
