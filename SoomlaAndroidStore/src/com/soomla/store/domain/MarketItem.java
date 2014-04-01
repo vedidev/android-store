@@ -90,6 +90,33 @@ public class MarketItem {
         return mPrice;
     }
 
+    public String getMarketPrice() {
+        return mMarketPrice;
+    }
+
+    public String getMarketTitle() {
+        return mMarketTitle;
+    }
+
+    public String getMarketDescription() {
+        return mMarketDescription;
+    }
+
+
+    /** Setters**/
+
+    public void setMarketPrice(String mMarketPrice) {
+        this.mMarketPrice = mMarketPrice;
+    }
+
+    public void setMarketTitle(String mMarketTitle) {
+        this.mMarketTitle = mMarketTitle;
+    }
+
+    public void setMarketDescription(String mMarketDescription) {
+        this.mMarketDescription = mMarketDescription;
+    }
+
     /** Private members **/
 
     /**
@@ -114,4 +141,8 @@ public class MarketItem {
 
     private String mProductId;
     private double mPrice;
+
+    private String mMarketPrice;
+    private String mMarketTitle;
+    private String mMarketDescription;
 }

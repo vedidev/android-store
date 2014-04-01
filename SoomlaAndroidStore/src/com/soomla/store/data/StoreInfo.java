@@ -216,6 +216,8 @@ public class StoreInfo {
         return mCategories;
     }
 
+    public static List<String> getAllProductIds() { return new ArrayList<String>(mPurchasableItems.keySet()); }
+
     /** Private functions **/
 
     private static void fromJSONObject(JSONObject jsonObject) throws JSONException{

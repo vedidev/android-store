@@ -16,7 +16,16 @@
 package com.soomla.store.events;
 
 /**
- * This event is fired when a restore transactions process has started.
+ * This event is fired when restore transaction was finished.
  */
-public class RestoreTransactionsStartedEvent {
+public class RefreshInventoryFinishedEvent {
+    private boolean mSuccess;
+
+    public RefreshInventoryFinishedEvent(boolean success) {
+        mSuccess = success;
+    }
+
+    public boolean isSuccess() {
+        return mSuccess;
+    }
 }

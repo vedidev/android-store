@@ -24,6 +24,7 @@ import android.os.Bundle;
 import com.soomla.store.billing.IabCallbacks;
 import com.soomla.store.billing.IabException;
 import com.soomla.store.billing.IabPurchase;
+import com.soomla.store.billing.IabSkuDetails;
 import com.soomla.store.data.ObscuredSharedPreferences;
 import com.soomla.store.data.StoreInfo;
 import com.soomla.store.domain.MarketItem;
@@ -32,15 +33,19 @@ import com.soomla.store.domain.PurchasableVirtualItem;
 import com.soomla.store.events.BillingNotSupportedEvent;
 import com.soomla.store.events.BillingSupportedEvent;
 import com.soomla.store.events.IabServiceStartedEvent;
+import com.soomla.store.events.RefreshInventoryFinishedEvent;
 import com.soomla.store.events.ItemPurchasedEvent;
 import com.soomla.store.events.PlayPurchaseCancelledEvent;
 import com.soomla.store.events.PlayPurchaseEvent;
 import com.soomla.store.events.PlayPurchaseStartedEvent;
 import com.soomla.store.events.PlayRefundEvent;
-import com.soomla.store.events.RestoreTransactionsStartedEvent;
+import com.soomla.store.events.RefreshInventoryStartedEvent;
 import com.soomla.store.events.StoreControllerInitializedEvent;
 import com.soomla.store.events.UnexpectedStoreErrorEvent;
 import com.soomla.store.exceptions.VirtualItemNotFoundException;
+import com.soomla.store.purchaseTypes.PurchaseWithMarket;
+
+import java.util.List;
 
 /**
  * This class holds the basic assets needed to operate the Store.
@@ -105,37 +110,7 @@ public class StoreController {
         // Update SOOMLA store from DB
         StoreInfo.initializeFromDB();
 
-        // Set up helper for the first time, querying and synchronizing inventory
-        StoreConfig.InAppBillingService.initializeBillingService(new IabCallbacks.IabInitListener() {
-            @Override
-            public void success(boolean alreadyInBg) {
-                if (!alreadyInBg) {
-                    notifyIabServiceStarted();
-                }
-                StoreUtils.LogDebug(TAG, "Setup successful, consuming unconsumed items and handling refunds");
-
-                IabCallbacks.OnQueryInventoryListener queryInventoryListener = new IabCallbacks.OnQueryInventoryListener() {
-
-                    @Override
-                    public void success(IabPurchase purchase) {
-                        handleSuccessfulPurchase(purchase);
-                    }
-
-                    @Override
-                    public void fail(String message) {
-                        handleErrorResult(message);
-                    }
-                };
-
-                StoreConfig.InAppBillingService.queryInventoryAsync(false, null, queryInventoryListener);
-            }
-
-            @Override
-            public void fail(String message) {
-                reportIabInitFailure(message);
-            }
-        });
-
+        refreshInventory(true);
 
         mInitialized = true;
         BusProvider.getInstance().post(new StoreControllerInitializedEvent());
@@ -179,9 +154,9 @@ public class StoreController {
     }
 
     /**
-     * Initiate the restoreTransactions process
+     * Initiate the refreshInventory process
      */
-    public void restoreTransactions() {
+    public void refreshInventory(final boolean refreshMarketItemsDetails) {
         StoreConfig.InAppBillingService.initializeBillingService(new IabCallbacks.IabInitListener() {
 
             @Override
@@ -193,17 +168,47 @@ public class StoreController {
                 IabCallbacks.OnQueryInventoryListener queryInventoryListener = new IabCallbacks.OnQueryInventoryListener() {
 
                     @Override
-                    public void success(IabPurchase purchase) {
-                        handleSuccessfulPurchase(purchase);
+                    public void success(List<IabPurchase> purchases, List<IabSkuDetails> skuDetailsList) {
+                        for(IabPurchase iabPurchase : purchases) {
+                            StoreUtils.LogDebug(TAG, "Got owned item: " + iabPurchase.getSku());
+
+                            handleSuccessfulPurchase(iabPurchase);
+                        }
+
+                        for (IabSkuDetails iabSkuDetails : skuDetailsList) {
+                            String productId = iabSkuDetails.getSku();
+                            String price = iabSkuDetails.getPrice();
+                            String title = iabSkuDetails.getTitle();
+                            String desc = iabSkuDetails.getDescription();
+
+                            StoreUtils.LogDebug(TAG, "Got item details: " +
+                                    "\ntitle:\t" + iabSkuDetails.getTitle() +
+                                    "\nprice:\t" + iabSkuDetails.getPrice() +
+                                    "\nproductId:\t" + iabSkuDetails.getSku() +
+                                    "\ndesc:\t" + iabSkuDetails.getDescription());
+
+                            try {
+                                PurchasableVirtualItem pvi = StoreInfo.getPurchasableItem(productId);
+                                ((PurchaseWithMarket)pvi.getPurchaseType()).getMarketItem().setMarketTitle(title);
+                                ((PurchaseWithMarket)pvi.getPurchaseType()).getMarketItem().setMarketPrice(price);
+                                ((PurchaseWithMarket)pvi.getPurchaseType()).getMarketItem().setMarketDescription(desc);
+                            } catch (VirtualItemNotFoundException e) {
+                                String msg = "(refreshInventory) Couldn't find a purchasable item associated with: " + productId;
+                                StoreUtils.LogError(TAG, msg);
+                            }
+                        }
+
+                        BusProvider.getInstance().post(new RefreshInventoryFinishedEvent(true));
                     }
 
                     @Override
                     public void fail(String message) {
+                        BusProvider.getInstance().post(new RefreshInventoryFinishedEvent(false));
                         handleErrorResult(message);
                     }
                 };
-                StoreConfig.InAppBillingService.queryInventoryAsync(false, null, queryInventoryListener);
-                BusProvider.getInstance().post(new RestoreTransactionsStartedEvent());
+                StoreConfig.InAppBillingService.queryInventoryAsync(refreshMarketItemsDetails, null, queryInventoryListener);
+                BusProvider.getInstance().post(new RefreshInventoryStartedEvent());
             }
 
             @Override

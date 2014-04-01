@@ -6,7 +6,6 @@ import android.widget.Toast;
 import com.soomla.store.BusProvider;
 import com.soomla.store.SoomlaApp;
 import com.soomla.store.StoreConfig;
-import com.soomla.store.StoreController;
 import com.soomla.store.events.*;
 import com.squareup.otto.Subscribe;
 
@@ -98,12 +97,12 @@ public class ExampleEventHandler {
     }
 
     @Subscribe
-    public void onRestoreTransactions(RestoreTransactionsEvent restoreTransactionsEvent) {
+    public void onRestoreTransactions(RefreshInventoryFinishedEvent restoreTransactionsEvent) {
         showToastIfDebug("restoreTransactions: " + restoreTransactionsEvent.isSuccess() + ".");
     }
 
     @Subscribe
-    public void onRestoreTransactionsStarted(RestoreTransactionsStartedEvent restoreTransactionsStartedEvent) {
+    public void onRestoreTransactionsStarted(RefreshInventoryStartedEvent restoreTransactionsStartedEvent) {
         showToastIfDebug("restoreTransactions Started");
     }
 
