@@ -30,8 +30,8 @@ public class PurchaseWithMarket extends PurchaseType {
 
     /** Constructor
      *
-     * @param productId is the productId to purchase in Google Play.
-     * @param price is the price in Google Play.
+     * @param productId is the productId to purchase in the Market.
+     * @param price is the price in the Market.
      */
     public PurchaseWithMarket(String productId, double price) {
         mMarketItem = new MarketItem(productId, MarketItem.Managed.UNMANAGED, price);

@@ -33,8 +33,7 @@ import java.util.Iterator;
  * sell packs of "Coins". e.g. "10 Coins Set" or "Super Saver Pack".
  *
  * This VirtualItem is purchasable.
- * In case you purchase this item in Google Play (PurchaseWithMarket), You need to define the google item in Google
- * Play Developer Console. (https://play.google.com/apps/publish)
+ * In case you purchase this item in the Market (PurchaseWithMarket), You need to define the market items in the dev console.
  */
 public class VirtualCurrencyPack extends PurchasableVirtualItem {
 

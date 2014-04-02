@@ -40,8 +40,7 @@ import java.util.Iterator;
  *  - Usage Examples: 'Box Of Chocolates', '10 Swords'
  *
  * This VirtualItem is purchasable.
- * In case you purchase this item in Google Play (PurchaseWithMarket), You need to define the google item in Google
- * Play Developer Console. (https://play.google.com/apps/publish)
+ * In case you purchase this item in the Market (PurchaseWithMarket).
  */
 public class SingleUsePackVG extends VirtualGood {
 

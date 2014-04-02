@@ -22,9 +22,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 /**
- * A representation of a non-consumable item in Google Play. These kinds of items are bought by the user once and kept for him forever.
+ * A representation of a non-consumable item in the Market. These kinds of items are bought by the user once and kept for him forever.
  * 
- * Don't get confused... this is not a Lifetime VirtualGood. It's just a MANAGED item in Google Play.
+ * Don't get confused... this is not a Lifetime VirtualGood. It's just a MANAGED item in the Market.
  * This item will be retrieved when you "restoreTransactions"
  */
 public class NonConsumableItem extends PurchasableVirtualItem {

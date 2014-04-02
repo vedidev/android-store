@@ -20,7 +20,7 @@ import com.soomla.store.StoreUtils;
 import com.soomla.store.domain.NonConsumableItem;
 
 /**
- * This class provide basic storage operations on Google Play's MANAGED items.
+ * This class provide basic storage operations on Market's MANAGED items.
  */
 public class NonConsumableItemsStorage {
 

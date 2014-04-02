@@ -32,8 +32,7 @@ import org.json.JSONObject;
  * - Usage Examples: 'Hat', 'Sword'
  *
  * This VirtualItem is purchasable.
- * In case you purchase this item in Google Play (PurchaseWithMarket), You need to define the google item in Google
- * Play Developer Console. (https://play.google.com/apps/publish)
+ * In case you purchase this item in the Market (PurchaseWithMarket).
  */
 public class SingleUseVG extends VirtualGood{
 

@@ -50,8 +50,7 @@ import java.util.Iterator;
  *                  'binoculars' (users might only want to take them at night)
  *
  * This VirtualItem is purchasable.
- * In case you purchase this item in Google Play (PurchaseWithMarket), You need to define the google item in Google
- * Play Developer Console. (https://play.google.com/apps/publish)
+ * In case you purchase this item in the Market (PurchaseWithMarket), You need to define the item in the developer console.
  */
 public class EquippableVG extends LifetimeVG{
 

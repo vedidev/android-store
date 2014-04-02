@@ -21,9 +21,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 /**
- * This class represents an item in Google Play.
+ * This class represents an item in the Market.
  * Every PurchasableVirtualItem with PurchaseType of PurchaseWithMarket has an instance of this class which is a
- * representation of the same currency pack as an item on Google Play.
+ * representation of the same currency pack as an item on the Market.
  */
 public class MarketItem {
 

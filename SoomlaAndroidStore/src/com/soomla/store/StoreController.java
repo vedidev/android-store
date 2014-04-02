@@ -33,13 +33,14 @@ import com.soomla.store.domain.PurchasableVirtualItem;
 import com.soomla.store.events.BillingNotSupportedEvent;
 import com.soomla.store.events.BillingSupportedEvent;
 import com.soomla.store.events.IabServiceStartedEvent;
-import com.soomla.store.events.RefreshInventoryFinishedEvent;
+import com.soomla.store.events.ItemsMarketRefreshed;
+import com.soomla.store.events.MarketPurchaseCancelledEvent;
+import com.soomla.store.events.MarketPurchaseEvent;
+import com.soomla.store.events.MarketPurchaseStartedEvent;
+import com.soomla.store.events.MarketRefundEvent;
+import com.soomla.store.events.RestoreTransactionsFinishedEvent;
 import com.soomla.store.events.ItemPurchasedEvent;
-import com.soomla.store.events.PlayPurchaseCancelledEvent;
-import com.soomla.store.events.PlayPurchaseEvent;
-import com.soomla.store.events.PlayPurchaseStartedEvent;
-import com.soomla.store.events.PlayRefundEvent;
-import com.soomla.store.events.RefreshInventoryStartedEvent;
+import com.soomla.store.events.RestoreTransactionsStartedEvent;
 import com.soomla.store.events.StoreControllerInitializedEvent;
 import com.soomla.store.events.UnexpectedStoreErrorEvent;
 import com.soomla.store.exceptions.VirtualItemNotFoundException;
@@ -49,7 +50,7 @@ import java.util.List;
 
 /**
  * This class holds the basic assets needed to operate the Store.
- * You can use it to purchase products from Google Play.
+ * You can use it to purchase products from the mobile store.
  *
  * This is the only class you need to initialize in order to use the SOOMLA SDK.
  *
@@ -169,46 +170,52 @@ public class StoreController {
 
                     @Override
                     public void success(List<IabPurchase> purchases, List<IabSkuDetails> skuDetailsList) {
-                        for(IabPurchase iabPurchase : purchases) {
-                            StoreUtils.LogDebug(TAG, "Got owned item: " + iabPurchase.getSku());
+                        if (purchases.size() > 0) {
+                            for (IabPurchase iabPurchase : purchases) {
+                                StoreUtils.LogDebug(TAG, "Got owned item: " + iabPurchase.getSku());
 
-                            handleSuccessfulPurchase(iabPurchase);
-                        }
-
-                        for (IabSkuDetails iabSkuDetails : skuDetailsList) {
-                            String productId = iabSkuDetails.getSku();
-                            String price = iabSkuDetails.getPrice();
-                            String title = iabSkuDetails.getTitle();
-                            String desc = iabSkuDetails.getDescription();
-
-                            StoreUtils.LogDebug(TAG, "Got item details: " +
-                                    "\ntitle:\t" + iabSkuDetails.getTitle() +
-                                    "\nprice:\t" + iabSkuDetails.getPrice() +
-                                    "\nproductId:\t" + iabSkuDetails.getSku() +
-                                    "\ndesc:\t" + iabSkuDetails.getDescription());
-
-                            try {
-                                PurchasableVirtualItem pvi = StoreInfo.getPurchasableItem(productId);
-                                ((PurchaseWithMarket)pvi.getPurchaseType()).getMarketItem().setMarketTitle(title);
-                                ((PurchaseWithMarket)pvi.getPurchaseType()).getMarketItem().setMarketPrice(price);
-                                ((PurchaseWithMarket)pvi.getPurchaseType()).getMarketItem().setMarketDescription(desc);
-                            } catch (VirtualItemNotFoundException e) {
-                                String msg = "(refreshInventory) Couldn't find a purchasable item associated with: " + productId;
-                                StoreUtils.LogError(TAG, msg);
+                                handleSuccessfulPurchase(iabPurchase);
                             }
+
+                            BusProvider.getInstance().post(new RestoreTransactionsFinishedEvent(true));
                         }
 
-                        BusProvider.getInstance().post(new RefreshInventoryFinishedEvent(true));
+                        if (skuDetailsList.size() > 0) {
+                            for (IabSkuDetails iabSkuDetails : skuDetailsList) {
+                                String productId = iabSkuDetails.getSku();
+                                String price = iabSkuDetails.getPrice();
+                                String title = iabSkuDetails.getTitle();
+                                String desc = iabSkuDetails.getDescription();
+
+                                StoreUtils.LogDebug(TAG, "Got item details: " +
+                                        "\ntitle:\t" + iabSkuDetails.getTitle() +
+                                        "\nprice:\t" + iabSkuDetails.getPrice() +
+                                        "\nproductId:\t" + iabSkuDetails.getSku() +
+                                        "\ndesc:\t" + iabSkuDetails.getDescription());
+
+                                try {
+                                    PurchasableVirtualItem pvi = StoreInfo.getPurchasableItem(productId);
+                                    ((PurchaseWithMarket) pvi.getPurchaseType()).getMarketItem().setMarketTitle(title);
+                                    ((PurchaseWithMarket) pvi.getPurchaseType()).getMarketItem().setMarketPrice(price);
+                                    ((PurchaseWithMarket) pvi.getPurchaseType()).getMarketItem().setMarketDescription(desc);
+                                } catch (VirtualItemNotFoundException e) {
+                                    String msg = "(refreshInventory) Couldn't find a purchasable item associated with: " + productId;
+                                    StoreUtils.LogError(TAG, msg);
+                                }
+                            }
+
+                            BusProvider.getInstance().post(new ItemsMarketRefreshed());
+                        }
                     }
 
                     @Override
                     public void fail(String message) {
-                        BusProvider.getInstance().post(new RefreshInventoryFinishedEvent(false));
+                        BusProvider.getInstance().post(new RestoreTransactionsFinishedEvent(false));
                         handleErrorResult(message);
                     }
                 };
                 StoreConfig.InAppBillingService.queryInventoryAsync(refreshMarketItemsDetails, null, queryInventoryListener);
-                BusProvider.getInstance().post(new RefreshInventoryStartedEvent());
+                BusProvider.getInstance().post(new RestoreTransactionsStartedEvent());
             }
 
             @Override
@@ -328,7 +335,7 @@ public class StoreController {
                 };
                 mWaitingServiceResponse = true;
                 StoreConfig.InAppBillingService.launchPurchaseFlow(activity, sku, purchaseListener, payload);
-                BusProvider.getInstance().post(new PlayPurchaseStartedEvent(pvi));
+                BusProvider.getInstance().post(new MarketPurchaseStartedEvent(pvi));
             }
 
             @Override
@@ -367,7 +374,7 @@ public class StoreController {
         switch (purchase.getPurchaseState()) {
             case 0:
                 StoreUtils.LogDebug(TAG, "IabPurchase successful.");
-                BusProvider.getInstance().post(new PlayPurchaseEvent(pvi, developerPayload));
+                BusProvider.getInstance().post(new MarketPurchaseEvent(pvi, developerPayload));
                 pvi.give(1);
                 BusProvider.getInstance().post(new ItemPurchasedEvent(pvi));
 
@@ -379,7 +386,7 @@ public class StoreController {
                 if (!StoreConfig.friendlyRefunds) {
                     pvi.take(1);
                 }
-                BusProvider.getInstance().post(new PlayRefundEvent(pvi, developerPayload));
+                BusProvider.getInstance().post(new MarketRefundEvent(pvi, developerPayload));
                 break;
         }
     }
@@ -394,7 +401,7 @@ public class StoreController {
         String sku = purchase.getSku();
         try {
             PurchasableVirtualItem v = StoreInfo.getPurchasableItem(sku);
-            BusProvider.getInstance().post(new PlayPurchaseCancelledEvent(v));
+            BusProvider.getInstance().post(new MarketPurchaseCancelledEvent(v));
         } catch (VirtualItemNotFoundException e) {
             StoreUtils.LogError(TAG, "(purchaseActionResultCancelled) ERROR : Couldn't find the " +
                     "VirtualCurrencyPack OR MarketItem  with productId: " + sku +
