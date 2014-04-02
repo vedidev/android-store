@@ -22,12 +22,12 @@ public class ExampleEventHandler {
     }
 
     @Subscribe
-    public void onMarketPurchase(PlayPurchaseEvent marketPurchaseEvent) {
+    public void onMarketPurchase(MarketPurchaseEvent marketPurchaseEvent) {
         showToastIfDebug(marketPurchaseEvent.getPurchasableVirtualItem().getName() + " was just purchased");
     }
 
     @Subscribe
-    public void onMarketRefund(PlayRefundEvent marketRefundEvent) {
+    public void onMarketRefund(MarketRefundEvent marketRefundEvent) {
         showToastIfDebug(marketRefundEvent.getPurchasableVirtualItem().getName() + " was just refunded");
     }
 
@@ -57,12 +57,12 @@ public class ExampleEventHandler {
     }
 
     @Subscribe
-    public void onPlayPurchaseStarted(PlayPurchaseStartedEvent marketPurchaseStartedEvent) {
+    public void onMarketPurchaseStarted(MarketPurchaseStartedEvent marketPurchaseStartedEvent) {
         showToastIfDebug("Market purchase started for: " + marketPurchaseStartedEvent.getPurchasableVirtualItem().getName());
     }
 
     @Subscribe
-    public void onPlayPurchaseCancelled(PlayPurchaseCancelledEvent marketPurchaseCancelledEvent) {
+    public void onMarketPurchaseCancelled(MarketPurchaseCancelledEvent marketPurchaseCancelledEvent) {
         showToastIfDebug("Market purchase cancelled for: " + marketPurchaseCancelledEvent.getPurchasableVirtualItem().getName());
     }
 
@@ -97,12 +97,12 @@ public class ExampleEventHandler {
     }
 
     @Subscribe
-    public void onRestoreTransactions(RefreshInventoryFinishedEvent restoreTransactionsEvent) {
-        showToastIfDebug("restoreTransactions: " + restoreTransactionsEvent.isSuccess() + ".");
+    public void onRestoreTransactionsFinished(RestoreTransactionsFinishedEvent restoreTransactionsFinishedEvent) {
+        showToastIfDebug("restoreTransactions: " + restoreTransactionsFinishedEvent.isSuccess() + ".");
     }
 
     @Subscribe
-    public void onRestoreTransactionsStarted(RefreshInventoryStartedEvent restoreTransactionsStartedEvent) {
+    public void onRestoreTransactionsStarted(RestoreTransactionsStartedEvent restoreTransactionsStartedEvent) {
         showToastIfDebug("restoreTransactions Started");
     }
 
