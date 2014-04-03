@@ -58,8 +58,8 @@ public class StoreExampleActivity extends Activity {
         IStoreAssets storeAssets = new MuffinRushAssets();
         mEventHandler = new ExampleEventHandler(mHandler, this);
         StoreController.getInstance().initialize(storeAssets,
-                "[YOUR PUBLIC KEY FROM GOOGLE PLAY HERE]",
-                "[YOUR CUSTOM GAME SECRET HERE]");
+                "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAphC8H7OYag8u8l1WayR7dHMKFC+XC09tLk9A6FnxqsJPF4+Y4iJ4NTs24PVYWB4y/DQjfo3b7z6DqXBYgAOMYn7I3VIbjzgbit+DgGWfmiKWCQotcG5jWEsTiGMy+yRkJ6mwvWyVt8c3EfYrgrIfDMYrzIpk+F0PK/ybDiQmj4j2H9PB3NwOMpaGCkKM3IrEY66fclnJpO3nDqN7Lun5mGAlni5eMKkwM5f5O8DUD65y/MmXTwUddXKnIaurY6giRcJktK6zWsFopxf2EzDb1byP3ISiwxZAgic5BfQYh3HAbeEMD0CvRCHQIctJ8k7zn63NmaemPR7lFjY1GNWeowIDAQAB",
+                "aaaaabbbbbb");
 
         // Checking if it's a first run and adding 10000 currencies if it is.
         // OFCOURSE... THIS IS JUST FOR TESTING.

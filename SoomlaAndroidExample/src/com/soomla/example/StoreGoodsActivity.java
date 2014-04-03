@@ -192,7 +192,7 @@ public class StoreGoodsActivity extends Activity {
         startActivity(intent);
     }
 
-    public void refreshInventory(View v) throws IOException{
+    public void restoreTransactions(View v) throws IOException{
         StoreController.getInstance().refreshInventory(false);
     }
 }

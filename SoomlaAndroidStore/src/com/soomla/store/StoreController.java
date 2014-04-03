@@ -509,9 +509,15 @@ public class StoreController {
 
             finish();
         }
+
+        @Override
+        protected void onStop() {
+            super.onStop();
+        }
         
         @Override
         protected void onDestroy() {
+
             if (StoreController.getInstance().mWaitingServiceResponse == true)
             {
                 String err = "IabActivity is destroyed during purchase.";
@@ -519,6 +525,8 @@ public class StoreController {
                 BusProvider.getInstance().post(new UnexpectedStoreErrorEvent(err));
                 StoreController.getInstance().mWaitingServiceResponse = false;
             }
+
+            super.onDestroy();
         }
     }
 }
