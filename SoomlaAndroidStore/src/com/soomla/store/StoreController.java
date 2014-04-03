@@ -33,7 +33,7 @@ import com.soomla.store.domain.PurchasableVirtualItem;
 import com.soomla.store.events.BillingNotSupportedEvent;
 import com.soomla.store.events.BillingSupportedEvent;
 import com.soomla.store.events.IabServiceStartedEvent;
-import com.soomla.store.events.ItemsMarketRefreshed;
+import com.soomla.store.events.MarketItemsRefreshed;
 import com.soomla.store.events.MarketPurchaseCancelledEvent;
 import com.soomla.store.events.MarketPurchaseEvent;
 import com.soomla.store.events.MarketPurchaseStartedEvent;
@@ -46,6 +46,7 @@ import com.soomla.store.events.UnexpectedStoreErrorEvent;
 import com.soomla.store.exceptions.VirtualItemNotFoundException;
 import com.soomla.store.purchaseTypes.PurchaseWithMarket;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -181,6 +182,8 @@ public class StoreController {
                         }
 
                         if (skuDetailsList.size() > 0) {
+
+                            List<MarketItem> marketItems = new ArrayList<MarketItem>();
                             for (IabSkuDetails iabSkuDetails : skuDetailsList) {
                                 String productId = iabSkuDetails.getSku();
                                 String price = iabSkuDetails.getPrice();
@@ -195,16 +198,19 @@ public class StoreController {
 
                                 try {
                                     PurchasableVirtualItem pvi = StoreInfo.getPurchasableItem(productId);
-                                    ((PurchaseWithMarket) pvi.getPurchaseType()).getMarketItem().setMarketTitle(title);
-                                    ((PurchaseWithMarket) pvi.getPurchaseType()).getMarketItem().setMarketPrice(price);
-                                    ((PurchaseWithMarket) pvi.getPurchaseType()).getMarketItem().setMarketDescription(desc);
+                                    MarketItem mi = ((PurchaseWithMarket) pvi.getPurchaseType()).getMarketItem();
+                                    mi.setMarketTitle(title);
+                                    mi.setMarketPrice(price);
+                                    mi.setMarketDescription(desc);
+
+                                    marketItems.add(mi);
                                 } catch (VirtualItemNotFoundException e) {
                                     String msg = "(refreshInventory) Couldn't find a purchasable item associated with: " + productId;
                                     StoreUtils.LogError(TAG, msg);
                                 }
                             }
 
-                            BusProvider.getInstance().post(new ItemsMarketRefreshed());
+                            BusProvider.getInstance().post(new MarketItemsRefreshed(marketItems));
                         }
                     }
 

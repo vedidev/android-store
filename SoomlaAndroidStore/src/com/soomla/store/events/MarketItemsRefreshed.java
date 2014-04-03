@@ -16,13 +16,22 @@
 package com.soomla.store.events;
 
 
+import com.soomla.store.domain.MarketItem;
+
+import java.util.List;
+
 /**
  * This event is fired when items associated with market are refreshed (prices, titles ...)
  */
-public class ItemsMarketRefreshed {
+public class MarketItemsRefreshed {
 
-    public ItemsMarketRefreshed() {
+    List<MarketItem> mMarketItems;
 
+    public MarketItemsRefreshed(List<MarketItem> marketItems) {
+        this.mMarketItems = marketItems;
     }
 
+    public List<MarketItem> getMarketItems() {
+        return mMarketItems;
+    }
 }
