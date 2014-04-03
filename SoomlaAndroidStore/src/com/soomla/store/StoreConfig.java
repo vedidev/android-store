@@ -35,7 +35,7 @@ public class StoreConfig {
     public static String SOOM_SEC = "SINC_SSEEKK";
 
     // do you want to print out debug messages?
-    public static final boolean logDebug = true;
+    public static final boolean logDebug = false;
 
     public static final boolean friendlyRefunds = false;
 
@@ -64,4 +64,10 @@ public class StoreConfig {
     public static final String PUBLIC_KEY      = "PO#SU#SO#GU";
     public static final String CUSTOM_SEC      = "SU#LL#SE#RE";
 
+
+    /**
+     * What this basically does is that it removes the need to verify purchases when there's an no signature.
+     * Be careful and make sure you don't publish your app with this set to true.
+     */
+    public static boolean AllowAndroidTestPurchases = false;
 }
