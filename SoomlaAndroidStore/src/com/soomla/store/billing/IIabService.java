@@ -21,7 +21,7 @@ import android.content.Intent;
 import java.util.List;
 
 /**
- * This interface defines the the functionality that needs to be implemented in
+ * This interface defines the functionality that needs to be implemented in
  * orders to create an in-app billing service (e.g. Google Play, Amazon, Samsung Apps...)
  */
 public interface IIabService {
