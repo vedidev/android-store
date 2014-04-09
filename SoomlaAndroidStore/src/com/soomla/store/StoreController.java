@@ -365,6 +365,7 @@ public class StoreController {
     private void handleSuccessfulPurchase(IabPurchase purchase) {
         String sku = purchase.getSku();
         String developerPayload = purchase.getDeveloperPayload();
+        String token = purchase.getToken();
 
         PurchasableVirtualItem pvi;
         try {
@@ -380,7 +381,7 @@ public class StoreController {
         switch (purchase.getPurchaseState()) {
             case 0:
                 StoreUtils.LogDebug(TAG, "IabPurchase successful.");
-                BusProvider.getInstance().post(new MarketPurchaseEvent(pvi, developerPayload));
+                BusProvider.getInstance().post(new MarketPurchaseEvent(pvi, developerPayload, token));
                 pvi.give(1);
                 BusProvider.getInstance().post(new ItemPurchasedEvent(pvi));
 

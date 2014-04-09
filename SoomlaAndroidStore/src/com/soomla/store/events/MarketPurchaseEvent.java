@@ -23,11 +23,13 @@ import com.soomla.store.domain.PurchasableVirtualItem;
 public class MarketPurchaseEvent {
 
     private PurchasableVirtualItem mPurchasableVirtualItem;
-    private String           mPayload;
+    private String                 mPayload;
+    private String                 mToken;
 
-    public MarketPurchaseEvent(PurchasableVirtualItem purchasableVirtualItem, String payload) {
+    public MarketPurchaseEvent(PurchasableVirtualItem purchasableVirtualItem, String payload, String token) {
         mPurchasableVirtualItem = purchasableVirtualItem;
         mPayload = payload;
+        mToken = token;
     }
 
     public PurchasableVirtualItem getPurchasableVirtualItem() {
@@ -36,5 +38,9 @@ public class MarketPurchaseEvent {
 
     public String getPayload() {
         return mPayload;
+    }
+
+    public String getToken() {
+        return mToken;
     }
 }
