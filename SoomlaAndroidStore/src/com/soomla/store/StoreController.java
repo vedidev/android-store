@@ -276,6 +276,10 @@ public class StoreController {
         }
     }
 
+    public boolean isInitialized() {
+        return mInitialized;
+    }
+
     /*====================   Common callbacks for success \ failure \ finish   ====================*/
 
     private void notifyIabServiceStarted() {
