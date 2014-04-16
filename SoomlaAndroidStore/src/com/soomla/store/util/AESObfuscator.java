@@ -38,6 +38,7 @@ import java.security.spec.KeySpec;
  * An Obfuscator that uses AES to encrypt data.
  */
 public class AESObfuscator {
+    private static final String TAG = "SOOMLA AESObfuscator";
     private static final String UTF8 = "UTF-8";
     private static final String KEYGEN_ALGORITHM = "PBEWITHSHAAND256BITAES-CBC-BC";
     private static final String CIPHER_ALGORITHM = "AES/CBC/PKCS5Padding";
@@ -59,10 +60,18 @@ public class AESObfuscator {
     public AESObfuscator(byte[] salt, String applicationId, String deviceId) {
         SharedPreferences prefs = new ObscuredSharedPreferences(SoomlaApp.getAppContext().getSharedPreferences(StoreConfig.PREFS_NAME, Context.MODE_PRIVATE));
         byte[] passwordData = null;
+        String sec = prefs.getString(StoreConfig.CUSTOM_SEC, "SOOMLA_SEC");
+        if (sec.equals("SOOMLA_SEC")) {
+            StoreUtils.LogError(TAG, "You didn't provide a custom secret!!! Stopping now!");
+
+            // TODO: Figure out how to terminate the app
+//            android.os.Process.killProcess(android.os.Process.myPid());
+//            System.exit(1);
+        }
         try {
             SecretKeyFactory factory = SecretKeyFactory.getInstance(KEYGEN_ALGORITHM);
             KeySpec keySpec =
-                    new PBEKeySpec((applicationId + deviceId + prefs.getString(StoreConfig.CUSTOM_SEC, "SOOMLA_SEC")).toCharArray(), salt, 1024, 256);
+                    new PBEKeySpec((applicationId + deviceId + sec).toCharArray(), salt, 1024, 256);
             passwordData = factory.generateSecret(keySpec).getEncoded();
         } catch (GeneralSecurityException e) {
             StoreUtils.LogDebug("SOOMLA AESObfuscator", "probably an incompatible device. trying different approach.");
@@ -71,7 +80,7 @@ public class AESObfuscator {
             try {
                 digester = MessageDigest.getInstance("MD5");
 
-                char[] password = (applicationId + deviceId + prefs.getString(StoreConfig.CUSTOM_SEC, "SOOMLA_SEC")).toCharArray();
+                char[] password = (applicationId + deviceId + sec).toCharArray();
                 for (int i = 0; i < password.length; i++) {
                     digester.update((byte) password[i]);
                 }
