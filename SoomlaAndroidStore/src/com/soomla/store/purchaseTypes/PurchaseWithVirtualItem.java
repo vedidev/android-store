@@ -82,6 +82,10 @@ public class PurchaseWithVirtualItem extends PurchaseType {
         return mAmount;
     }
 
+    public void setAmount(int mAmount) {
+        this.mAmount = mAmount;
+    }
+
     private static final String TAG = "SOOMLA PurchaseWithVirtualItem";
 
     private String      mTargetItemId;

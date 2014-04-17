@@ -429,6 +429,14 @@ public class StoreInfo {
         return jsonObject;
     }
 
+    public static void save() {
+        // put StoreInfo in the database as JSON
+        String store_json = toJSONObject().toString();
+        StoreUtils.LogDebug(TAG, "saving StoreInfo to DB. json is: " + store_json);
+        String key = KeyValDatabase.keyMetaStoreInfo();
+        StorageManager.getKeyValueStorage().setValue(key, store_json);
+    }
+
     private static void initializeWithStoreAssets(IStoreAssets storeAssets) {
         /// fall-back here if the json doesn't exist, we load the store from the given {@link IStoreAssets}.
         mCurrencies = Arrays.asList(storeAssets.getCurrencies());
@@ -488,11 +496,7 @@ public class StoreInfo {
             }
         }
 
-        // put StoreInfo in the database as JSON
-        String store_json = toJSONObject().toString();
-        StoreUtils.LogDebug(TAG, store_json);
-        String key = KeyValDatabase.keyMetaStoreInfo();
-        StorageManager.getKeyValueStorage().setValue(key, store_json);
+        save();
     }
 
     /** Private members **/

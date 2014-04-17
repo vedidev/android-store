@@ -105,6 +105,10 @@ public class MarketItem {
 
     /** Setters**/
 
+    public void setPrice(double mPrice) {
+        this.mPrice = mPrice;
+    }
+
     public void setMarketPrice(String mMarketPrice) {
         this.mMarketPrice = mMarketPrice;
     }
