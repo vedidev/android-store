@@ -25,7 +25,9 @@ import com.soomla.store.billing.IabCallbacks;
 import com.soomla.store.billing.IabException;
 import com.soomla.store.billing.IabPurchase;
 import com.soomla.store.billing.IabSkuDetails;
+import com.soomla.store.data.NonConsumableItemsStorage;
 import com.soomla.store.data.ObscuredSharedPreferences;
+import com.soomla.store.data.StorageManager;
 import com.soomla.store.data.StoreInfo;
 import com.soomla.store.domain.MarketItem;
 import com.soomla.store.domain.NonConsumableItem;
@@ -385,6 +387,17 @@ public class StoreController {
         switch (purchase.getPurchaseState()) {
             case 0:
                 StoreUtils.LogDebug(TAG, "IabPurchase successful.");
+
+                // if the purchasable item is NonConsumableItem and it already exists then we
+                // don't fire any events.
+                // fixes: https://github.com/soomla/unity3d-store/issues/192
+                if (pvi instanceof NonConsumableItem) {
+                    boolean exists = StorageManager.getNonConsumableItemsStorage().nonConsumableItemExists((NonConsumableItem) pvi);
+                    if (exists) {
+                        return;
+                    }
+                }
+
                 BusProvider.getInstance().post(new MarketPurchaseEvent(pvi, developerPayload, token));
                 pvi.give(1);
                 BusProvider.getInstance().post(new ItemPurchasedEvent(pvi));
