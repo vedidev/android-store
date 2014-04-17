@@ -19,19 +19,30 @@ import com.soomla.store.domain.virtualCurrencies.VirtualCurrency;
 
 /**
  * This event is fired when the balance of a specific VirtualCurrency has changed.
+ *
+ * Real Game Example:
+ *  Example Inventory: { currency_coin: 100, green_hat: 3, blue_hat: 5 }
+ *  Suppose your user buys something for 10 "Coins".
+ *  His new balance of currency_coin will now be 90.
+ *  A CurrencyBalanceChangedEvent is fired.
  */
 public class CurrencyBalanceChangedEvent {
 
-    private VirtualCurrency mCurrency;
-    private int mBalance;
-    private int mAmountAdded;
-
+    /**
+     * Constructor
+     *
+     * @param currency
+     * @param balance
+     * @param amountAdded
+     */
     public CurrencyBalanceChangedEvent(VirtualCurrency currency, int balance, int amountAdded) {
         mCurrency = currency;
         mBalance = balance;
         mAmountAdded = amountAdded;
     }
 
+
+    /** Setters and Getters */
     public VirtualCurrency getCurrency() {
         return mCurrency;
     }
@@ -43,4 +54,13 @@ public class CurrencyBalanceChangedEvent {
     public int getAmountAdded() {
         return mAmountAdded;
     }
+
+
+    /** Private Members */
+
+    private VirtualCurrency mCurrency;
+
+    private int mBalance;
+
+    private int mAmountAdded;
 }

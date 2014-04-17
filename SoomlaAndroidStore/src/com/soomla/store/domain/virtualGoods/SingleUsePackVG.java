@@ -32,22 +32,24 @@ import java.util.Iterator;
  * This kind of virtual good can be used to let your users buy more than one SingleUseVG at once.
  *
  * The SingleUsePackVG's characteristics are:
- *  1. Can be purchased unlimited number of times.
- *  2. Doesn't Have a balance in the database. The SingleUseVG there's associated with this pack has its own balance. When
- *      your users buy a SingleUsePackVG, the balance of the associated SingleUseVG goes up in the amount that this pack
- *      represents (mGoodAmount).
+ *  1. Can be purchased an unlimited number of times.
+ *  2. Doesn't have a balance in the database. The SingleUseVG that's associated with this pack
+ *     has its own balance. When your users buy a SingleUsePackVG, the balance of the associated
+ *     SingleUseVG goes up in the amount that this pack represents (mGoodAmount).
  *
- *  - Usage Examples: 'Box Of Chocolates', '10 Swords'
+ * Real Game Examples: 'Box Of Chocolates', '10 Swords'
  *
- * This VirtualItem is purchasable.
- * In case you purchase this item in the Market (PurchaseWithMarket).
+ * NOTE: In case you want this item to be available for purchase in the market (PurchaseWithMarket),
+ * you will need to define the item in Google Play Developer Console.
+ *
+ * SingleUsePackVG extends VirtualGood extends PurchasableVirtualItem extends VirtualItem
  */
 public class SingleUsePackVG extends VirtualGood {
 
     /** Constructor
      *
-     * @param goodItemId is the itemId of the SingleUseVG associated with this pack.
-     * @param amount is the number of SingleUseVGs in the pack.
+     * @param goodItemId the itemId of the SingleUseVG associated with this pack.
+     * @param amount the number of SingleUseVGs in the pack.
      * @param name see parent
      * @param description see parent
      * @param itemId see parent
@@ -62,9 +64,11 @@ public class SingleUsePackVG extends VirtualGood {
         mGoodAmount = amount;
     }
 
-    /** Constructor
+    /**
+     * Constructor
      *
-     * see parent
+     * @param jsonObject see parent
+     * @throws JSONException
      */
     public SingleUsePackVG(JSONObject jsonObject) throws JSONException {
         super(jsonObject);
@@ -75,6 +79,8 @@ public class SingleUsePackVG extends VirtualGood {
 
     /**
      * see parent
+     *
+     * @return see parent
      */
     @Override
     public JSONObject toJSONObject() {
@@ -99,7 +105,8 @@ public class SingleUsePackVG extends VirtualGood {
 
     /**
      * see parent
-     * @param amount the amount of the specific item to be given.
+     *
+     * @param amount the amount of the specific item to be given
      * @return balance after the giving process
      */
     @Override
@@ -116,7 +123,7 @@ public class SingleUsePackVG extends VirtualGood {
 
     /**
      * see parent
-     * @param amount the amount of the specific item to be taken.
+     * @param amount the amount of the specific item to be taken
      * @return balance after the taking process
      */
     @Override
@@ -133,11 +140,16 @@ public class SingleUsePackVG extends VirtualGood {
 
     /**
      * see parent
+     *
+     * @return see parent
      */
     @Override
     protected boolean canBuy() {
         return true;
     }
+
+
+    /** Setters and Getters **/
 
     public String getGoodItemId() {
         return mGoodItemId;
@@ -147,8 +159,12 @@ public class SingleUsePackVG extends VirtualGood {
         return mGoodAmount;
     }
 
-    private static final String TAG = "SOOMLA SingleUsePackVG";
 
-    private String      mGoodItemId;
-    private int         mGoodAmount;
+    /** Private Members **/
+
+    private static final String TAG = "SOOMLA SingleUsePackVG"; //used for Log messages
+
+    private String mGoodItemId; //the itemId of the SingleUseVG associated with this Pack.
+
+    private int mGoodAmount; //the number of SingleUseVGs in the pack.
 }

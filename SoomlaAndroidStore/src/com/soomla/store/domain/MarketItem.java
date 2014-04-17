@@ -21,17 +21,17 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 /**
- * This class represents an item in the Market.
- * Every PurchasableVirtualItem with PurchaseType of PurchaseWithMarket has an instance of this class which is a
- * representation of the same currency pack as an item on the Market.
+ * A representation of an item in Google Play.
+ * MarketItem is only used for PurchaseWithMarket purchase type.
  */
 public class MarketItem {
 
-    /** Constructor
+    /**
+     * Constructor
      *
-     * @param mProductId is the Id of the current item in Google Play.
-     * @param mManaged is the Managed type of the current item in Google Play.
-     * @param mPrice is the actual $$ cost of the current item in Google Play.
+     * @param mProductId the Id of the current item in Google Play.
+     * @param mManaged the Managed type of the current item in Google Play.
+     * @param mPrice the actual $$ cost of the current item in Google Play.
      */
     public MarketItem(String mProductId, Managed mManaged, double mPrice) {
         this.mProductId = mProductId;
@@ -39,7 +39,8 @@ public class MarketItem {
         this.mPrice = mPrice;
     }
 
-    /** Constructor
+    /**
+     * Constructor
      *
      * Generates an instance of {@link MarketItem} from a JSONObject.
      * @param jsonObject is a JSONObject representation of the wanted {@link MarketItem}.
@@ -59,6 +60,11 @@ public class MarketItem {
         this.mPrice = jsonObject.getDouble(JSONConsts.MARKETITEM_PRICE);
     }
 
+    /**
+     * Converts the current VirtualItem to a {@link JSONObject}.
+     *
+     * @return a {@link JSONObject} representation of the current VirtualItem.
+     */
     public JSONObject toJSONObject(){
         JSONObject jsonObject = new JSONObject();
         try {
@@ -72,8 +78,35 @@ public class MarketItem {
         return jsonObject;
     }
 
-    /** Getters **/
+    /**
+     * Each product in the catalog can be MANAGED, UNMANAGED, or SUBSCRIPTION.
+     * MANAGED means that the product can be purchased only once per user (such as a new level in
+     * a game). The purchase is remembered by Android Market and can be restored if this
+     * application is uninstalled and then re-installed.
+     * UNMANAGED is used for products that can be used up and purchased multiple times (such as
+     * poker chips). It is up to the application to keep track of UNMANAGED products for the user.
+     * SUBSCRIPTION is just like MANAGED except that the user gets charged periodically (monthly
+     * or yearly).
+     */
+    public static enum Managed { MANAGED, UNMANAGED, SUBSCRIPTION }
 
+
+    /** Setters and Getters **/
+
+    //SETTERS:
+    public void setMarketPrice(String mMarketPrice) {
+        this.mMarketPrice = mMarketPrice;
+    }
+
+    public void setMarketTitle(String mMarketTitle) {
+        this.mMarketTitle = mMarketTitle;
+    }
+
+    public void setMarketDescription(String mMarketDescription) {
+        this.mMarketDescription = mMarketDescription;
+    }
+
+    //GETTERS:
     public String getProductId() {
         return mProductId;
     }
@@ -102,7 +135,6 @@ public class MarketItem {
         return mMarketDescription;
     }
 
-
     /** Setters**/
 
     public void setPrice(double mPrice) {
@@ -121,32 +153,20 @@ public class MarketItem {
         this.mMarketDescription = mMarketDescription;
     }
 
+
     /** Private members **/
 
-    /**
-     * Each product in the catalog can be MANAGED, UNMANAGED, or SUBSCRIPTION.  MANAGED
-     * means that the product can be purchased only once per user (such as a new
-     * level in a game). The purchase is remembered by Android Market and
-     * can be restored if this application is uninstalled and then
-     * re-installed. UNMANAGED is used for products that can be used up and
-     * purchased multiple times (such as poker chips). It is up to the
-     * application to keep track of UNMANAGED products for the user.
-     * SUBSCRIPTION is just like MANAGED except that the user gets charged monthly
-     * or yearly.
-     */
-    public static enum Managed { MANAGED, UNMANAGED, SUBSCRIPTION }
+    private static final String TAG = "SOOMLA MarketItem"; //used for Log messages
 
-    private Managed mManaged;
-    /**
-     *  The Id of this VirtualGood in Google Market
-    */
+    private Managed mManaged; //the Managed type of the current item in Google Play.
 
-    private static final String TAG = "SOOMLA MarketItem";
+    private String mProductId; //id of this VirtualGood in Google Market
 
-    private String mProductId;
-    private double mPrice;
+    private double mPrice; //the actual $$ cost of the current item in Google Play.
 
     private String mMarketPrice;
+
     private String mMarketTitle;
+
     private String mMarketDescription;
 }

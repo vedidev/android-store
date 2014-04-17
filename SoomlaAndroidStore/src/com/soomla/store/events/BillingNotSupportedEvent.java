@@ -16,7 +16,7 @@
 package com.soomla.store.events;
 
 /**
- * This event id fired when SOOMLA knows that billing is not supported on the device.
+ * This event is fired when SOOMLA knows that billing is NOT supported on the device.
  */
 public class BillingNotSupportedEvent {
 }

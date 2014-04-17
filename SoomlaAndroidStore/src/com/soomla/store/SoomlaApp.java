@@ -19,14 +19,16 @@ package com.soomla.store;
 import android.app.Application;
 import android.content.Context;
 
+/**
+ * SoomlaApp extends Application
+ */
 public class SoomlaApp extends Application{
+
 	protected static SoomlaApp mInstance = null;
 
 	public static SoomlaApp instance() {
     	return mInstance;
     }
-
-    private static Context context;
 
     @Override
     public void onCreate() {
@@ -35,6 +37,9 @@ public class SoomlaApp extends Application{
         context = getApplicationContext();
     }
 
+
+    /** Setters and Getters */
+
     public static void setExternalContext(Context oContext) {
         context = oContext;
     }
@@ -42,4 +47,9 @@ public class SoomlaApp extends Application{
     public static Context getAppContext() {
         return context;
     }
+
+
+    /** Private Members */
+
+    private static Context context;
 }

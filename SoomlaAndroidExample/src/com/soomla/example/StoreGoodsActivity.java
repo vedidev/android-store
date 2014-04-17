@@ -187,7 +187,6 @@ public class StoreGoodsActivity extends Activity {
     }
 
     public void wantsToBuyPacks(View v) throws IOException {
-
         Intent intent = new Intent(getApplicationContext(), StorePacksActivity.class);
         startActivity(intent);
     }

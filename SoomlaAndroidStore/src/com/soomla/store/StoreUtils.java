@@ -21,31 +21,59 @@ import android.util.Log;
 
 public class StoreUtils {
 
+    /**
+     * Creates Log Debug message according to given tag and message
+     *
+     * @param tag
+     * @param message
+     */
     public static void LogDebug(String tag, String message) {
         if (StoreConfig.logDebug) {
             Log.d(tag, message);
         }
     }
 
+    /**
+     * Creates Log Warning message according to given tag and message
+     *
+     * @param tag
+     * @param message
+     */
     public static void LogWarning(String tag, String message) {
         Log.w(tag, message);
     }
 
+    /**
+     * Creates Log Error message according to given tag and message
+     *
+     * @param tag
+     * @param message
+     */
     public static void LogError(String tag, String message) {
         Log.e(tag, message);
     }
 
+    /**
+     * Retrieves Android device Id
+     *
+     * @return androidId which is the id of the device being used
+     */
     public static String deviceId() {
-        String androidId = Settings.Secure.getString(SoomlaApp.getAppContext().getContentResolver(), Settings.Secure.ANDROID_ID);
+        String androidId = Settings.Secure.getString(SoomlaApp.getAppContext().getContentResolver(),
+                Settings.Secure.ANDROID_ID);
         if (androidId == null) {
             // This is a fallback in case the device id cannot be retrieved on the device
             // (happened on some devices !)
-            StoreUtils.LogError("SOOMLA ObscuredSharedPreferences", "Couldn't fetch ANDROID_ID. using fake id.");
+            StoreUtils.LogError("SOOMLA ObscuredSharedPreferences",
+                    "Couldn't fetch ANDROID_ID. Using fake id.");
             androidId = "SOOMFAKE";
         }
 
         return androidId;
     }
 
-    private static String TAG = "SOOMLA StoreUtils";
+
+    /** Private Members **/
+
+    private static String TAG = "SOOMLA StoreUtils"; //used for Log messages
 }

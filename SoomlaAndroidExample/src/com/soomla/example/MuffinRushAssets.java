@@ -61,11 +61,10 @@ public class MuffinRushAssets implements IStoreAssets {
     public static final String FOURHUNDMUFF_PACK_PRODUCT_ID = "android.test.purchased";
     public static final String THOUSANDMUFF_PACK_PRODUCT_ID = "android.test.item_unavailable";
     public static final String NO_ADDS_NONCONS_PRODUCT_ID   = "no_ads";
-
-    public static final String MUFFINCAKE_ITEM_ID   = "fruit_cake";
-    public static final String PAVLOVA_ITEM_ID   = "pavlova";
-    public static final String CHOCLATECAKE_ITEM_ID   = "chocolate_cake";
-    public static final String CREAMCUP_ITEM_ID   = "cream_cup";
+    public static final String MUFFINCAKE_ITEM_ID           = "fruit_cake";
+    public static final String PAVLOVA_ITEM_ID              = "pavlova";
+    public static final String CHOCLATECAKE_ITEM_ID         = "chocolate_cake";
+    public static final String CREAMCUP_ITEM_ID             = "cream_cup";
 
     /** Virtual Currencies **/
     public static final VirtualCurrency MUFFIN_CURRENCY = new VirtualCurrency(
@@ -77,19 +76,19 @@ public class MuffinRushAssets implements IStoreAssets {
     /** Virtual Currency Packs **/
 
     public static final VirtualCurrencyPack TENMUFF_PACK = new VirtualCurrencyPack(
-            "10 Muffins",                                   // name
-            "Test refund of an item",                       // description
-            "muffins_10",                                   // item id
-            10,                                             // number of currencies in the pack
-            MUFFIN_CURRENCY_ITEM_ID,                                // the currency associated with this pack
+            "10 Muffins",                               // name
+            "Test refund of an item",                   // description
+            "muffins_10",                               // item id
+            10,                                         // number of currencies in the pack
+            MUFFIN_CURRENCY_ITEM_ID,                    // the currency associated with this pack
             new PurchaseWithMarket(TENMUFF_PACK_PRODUCT_ID, 0.99));
 
     public static final VirtualCurrencyPack FIFTYMUFF_PACK = new VirtualCurrencyPack(
-            "50 Muffins",                                   // name
-            "Test cancellation of an item",                 // description
-            "muffins_50",                                   // item id
-            50,                                             // number of currencies in the pack
-            MUFFIN_CURRENCY_ITEM_ID,                        // the currency associated with this pack
+            "50 Muffins",                               // name
+            "Test cancellation of an item",             // description
+            "muffins_50",                               // item id
+            50,                                         // number of currencies in the pack
+            MUFFIN_CURRENCY_ITEM_ID,                    // the currency associated with this pack
             new PurchaseWithMarket(FIFTYMUFF_PACK_PRODUCT_ID, 1.99));
 
     public static final VirtualCurrencyPack FOURHUNDMUFF_PACK = new VirtualCurrencyPack(

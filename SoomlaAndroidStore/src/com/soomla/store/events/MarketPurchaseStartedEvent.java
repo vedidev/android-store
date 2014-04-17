@@ -22,13 +22,22 @@ import com.soomla.store.domain.PurchasableVirtualItem;
  */
 public class MarketPurchaseStartedEvent {
 
-    private PurchasableVirtualItem mPurchasableVirtualItem;
-
+    /**
+     * Constructor
+     *
+     * @param purchasableVirtualItem
+     */
     public MarketPurchaseStartedEvent(PurchasableVirtualItem purchasableVirtualItem) {
         mPurchasableVirtualItem = purchasableVirtualItem;
     }
 
+
+    /** Setters and Getters */
     public PurchasableVirtualItem getPurchasableVirtualItem() {
         return mPurchasableVirtualItem;
     }
+
+
+    /** Private Members */
+    private PurchasableVirtualItem mPurchasableVirtualItem;
 }

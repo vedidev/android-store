@@ -35,42 +35,46 @@ import org.json.JSONObject;
 import java.util.*;
 
 /**
- * This class holds the store's meta data including:
+ * This class holds the store's metadata including:
  * - Virtual Currencies
  * - Virtual Currency Packs
- * - All kinds of Virtual goods
- * - Virtual categories
- * - NonConsumables
+ * - All kinds of Virtual Goods
+ * - Virtual Categories
+ * - NonConsumable Items
  */
 public class StoreInfo {
 
     /**
-     * This function initializes StoreInfo. On first initialization, when the
-     * database doesn't have any previous version of the store metadata, StoreInfo
-     * is being loaded from the given {@link IStoreAssets}. After the first initialization,
-     * StoreInfo will be initialized from the database.
+     * Initializes StoreInfo, either from IStoreAssets or from database.
+     * On first initialization, when the database doesn't have any previous version of the store
+     * metadata, StoreInfo gets loaded from the given {@link IStoreAssets}.
+     * After the first initialization, StoreInfo will be initialized from the database.
      *
-     * IMPORTANT: If you want to override the current StoreInfo, you'll have to bump the version of your
-     * implementation of IStoreAssets in order to remove the metadata when the application loads.
-     * (bumping the version is done by returning a higher number in {@link com.soomla.store.IStoreAssets#getVersion()}.
+     * IMPORTANT: If you want to override the current StoreInfo, you'll have to bump the version
+     * of your implementation of IStoreAssets in order to remove the metadata when the application
+     * loads. Bumping the version is done by returning a higher number in
+     * {@link com.soomla.store.IStoreAssets#getVersion()}.
      */
     public static void setStoreAssets(IStoreAssets storeAssets){
         if (storeAssets == null){
-            StoreUtils.LogError(TAG, "The given store assets can't be null !");
+            StoreUtils.LogError(TAG, "The given store assets can't be null!");
             return;
         }
 
-        // we prefer initialization from the database (storeAssets are only set on the first time the game is loaded)!
+        // We always initialize from the database, unless this is the first time the game is
+        // loaded - in that case we initialize from storeAssets
         if (!initializeFromDB()){
             initializeWithStoreAssets(storeAssets);
         }
     }
 
     /**
-     * Initializes StoreInfo from the database. This action should be performed only once during the lifetime of
-     * a session of the game. StoreController automatically initializes StoreInfo. Don't do it if you don't know what
-     * you're doing.
-     * @return success.
+     * Initializes StoreInfo from the database.
+     * This action should be performed only once during the lifetime of a session of the game.
+     * StoreController automatically initializes StoreInfo.
+     * Don't do it if you don't know what you're doing.
+     *
+     * @return success
      */
     public static boolean initializeFromDB() {
         String key = KeyValDatabase.keyMetaStoreInfo();
@@ -100,9 +104,11 @@ public class StoreInfo {
     }
 
     /**
-     * A utility function to retrieve a single VirtualItem that resides in the meta data.
-     * @param itemId the itemId of the required VirtualItem.
-     * @throws VirtualItemNotFoundException when the given itemId was not found.
+     * Retrieves a single VirtualItem that resides in the metadata.
+     *
+     * @param itemId the itemId of the required VirtualItem
+     * @return VirtualItem for the given itemId
+     * @throws VirtualItemNotFoundException if no VirtualItem with the given itemId was found.
      */
     public static VirtualItem getVirtualItem(String itemId) throws VirtualItemNotFoundException{
         VirtualItem item = mVirtualItems.get(itemId);
@@ -114,15 +120,18 @@ public class StoreInfo {
     }
 
     /**
-     * A utility function to retrieve a single PurchasableVirtualItem that resides in the meta data.
+     * Retrieves a single PurchasableVirtualItem that resides in the metadata.
      *
-     * IMPORTANT: The retrieved PurchasableVirtualItems are only those which has a purchaseType of PurchaseWithMarket.
-     * (This is why we fetch here with productId)
+     * IMPORTANT: The retrieved PurchasableVirtualItems are only those that have a purchaseType
+     * of PurchaseWithMarket. (This is why we fetch here with productId)
      *
-     * @param productId the productId of the required PurchasableVirtualItem.
-     * @throws VirtualItemNotFoundException when the given productId was not found.
+     * @param productId the productId of the required PurchasableVirtualItem
+     * @return PurchasableVirtualItem for the given productId
+     * @throws VirtualItemNotFoundException if no PurchasableVirtualItem with the given productId
+     * was found.
      */
-    public static PurchasableVirtualItem getPurchasableItem(String productId) throws VirtualItemNotFoundException{
+    public static PurchasableVirtualItem getPurchasableItem(String productId)
+            throws VirtualItemNotFoundException{
         PurchasableVirtualItem item = mPurchasableItems.get(productId);
         if (item == null) {
             throw new VirtualItemNotFoundException("productId", productId);
@@ -132,14 +141,14 @@ public class StoreInfo {
     }
 
     /**
-     * A utility function to retrieve a single VirtualCategory for a given VirtualGood itemId.
+     * Retrieves a single VirtualCategory for a given VirtualGood itemId.
      *
-     * @param goodItemId the virtualGood in the category.
-     * @return a VirtualCategory for the given VirtualGood.
-     *
-     * @throws VirtualItemNotFoundException when the given goodItemId was not found.
+     * @param goodItemId the virtualGood in the category
+     * @return a VirtualCategory for the given VirtualGood
+     * @throws VirtualItemNotFoundException when the given goodItemId was not found
      */
-    public static VirtualCategory getCategory(String goodItemId) throws VirtualItemNotFoundException {
+    public static VirtualCategory getCategory(String goodItemId)
+            throws VirtualItemNotFoundException {
         VirtualCategory item = mGoodsCategories.get(goodItemId);
         if (item == null) {
             throw new VirtualItemNotFoundException("goodItemId", goodItemId);
@@ -149,9 +158,11 @@ public class StoreInfo {
     }
 
     /**
-     * A utility function to retrieve a first UpgradeVG for a given VirtualGood itemId.
-     * @param goodItemId is the VirtualGood we're searching the upgrade for.
-     * @return the first upgrade for the given VirtualGood or null if there are no upgrades.
+     * Retrieves the first UpgradeVG for a given VirtualGood itemId.
+     *
+     * @param goodItemId the item id of the VirtualGood whose upgrade we are looking for
+     * @return the first upgrade for the VirtualGood with the given goodItemId or null if
+     *     there are no upgrades
      */
     public static UpgradeVG getGoodFirstUpgrade(String goodItemId) {
         List<UpgradeVG> upgrades = mGoodsUpgrades.get(goodItemId);
@@ -166,9 +177,11 @@ public class StoreInfo {
     }
 
     /**
-     * A utility function to retrieve a last UpgradeVG for a given VirtualGood itemId.
-     * @param goodItemId is the VirtualGood we're searching the upgrade for.
-     * @return the last upgrade for the given VirtualGood or null if there are no upgrades.
+     * Retrieves the last UpgradeVG for a given VirtualGood itemId.
+     *
+     * @param goodItemId the item id of the VirtualGood whose upgrade we are looking for
+     * @return the last upgrade for the VirtualGood with the given goodItemId or null if
+     *     there are no upgrades
      */
     public static UpgradeVG getGoodLastUpgrade(String goodItemId) {
         List<UpgradeVG> upgrades = mGoodsUpgrades.get(goodItemId);
@@ -183,18 +196,28 @@ public class StoreInfo {
     }
 
     /**
-     * A utility function to retrieve all UpgradeVGs for a given VirtualGood itemId.
-     * @param goodItemId is the VirtualGood we're searching the upgrades for.
+     * Retrieves all UpgradeVGs for a given VirtualGood itemId.
+     *
+     * @param goodItemId the item id of the VirtualGood whose upgrades we are looking for
+     * @return list of all UpgradeVGs for the VirtualGood with the given goodItemId
      */
     public static List<UpgradeVG> getGoodUpgrades(String goodItemId) {
         return mGoodsUpgrades.get(goodItemId);
     }
 
+    /**
+     * Checks if the VirtualGood with the given goodItemId has upgrades.
+     *
+     * @param goodItemId the item id of the VirtualGood that we are checking if has upgrades
+     * @return true if upgrades found for the VirtualGood with the given goodItemId,
+     *     otherwise false
+     */
     public static boolean hasUpgrades(String goodItemId) {
         return mGoodsUpgrades.containsKey(goodItemId);
     }
 
-    /** Getters **/
+
+    /** Setters and Getters **/
 
     public static List<VirtualCurrency> getCurrencies(){
         return mCurrencies;
@@ -216,16 +239,25 @@ public class StoreInfo {
         return mCategories;
     }
 
-    public static List<String> getAllProductIds() { return new ArrayList<String>(mPurchasableItems.keySet()); }
+    public static List<String> getAllProductIds() {
+        return new ArrayList<String>(mPurchasableItems.keySet());
+    }
 
-    /** Private functions **/
 
-    private static void fromJSONObject(JSONObject jsonObject) throws JSONException{
+    /** Private Functions **/
+
+    /**
+     * Transforms given jsonObject to StoreInfo
+     *
+     * @param jsonObject
+     * @throws JSONException
+     */
+    private static void fromJSONObject(JSONObject jsonObject) throws JSONException {
+
         mVirtualItems = new HashMap<String, VirtualItem>();
         mPurchasableItems = new HashMap<String, PurchasableVirtualItem>();
         mGoodsCategories = new HashMap<String, VirtualCategory>();
         mGoodsUpgrades = new HashMap<String, List<UpgradeVG>>();
-
         mCurrencyPacks = new LinkedList<VirtualCurrencyPack>();
         mGoods = new LinkedList<VirtualGood>();
         mCategories = new LinkedList<VirtualCategory>();
@@ -351,6 +383,11 @@ public class StoreInfo {
         }
     }
 
+    /**
+     * Adds virtual good to StoreInfo
+     *
+     * @param g VirtualGood to be added
+     */
     private static void addVG(VirtualGood g) {
         mGoods.add(g);
 
@@ -364,6 +401,7 @@ public class StoreInfo {
 
     /**
      * Converts StoreInfo to a JSONObject.
+     *
      * @return a JSONObject representation of the StoreInfo.
      */
     public static JSONObject toJSONObject(){
@@ -437,6 +475,12 @@ public class StoreInfo {
         StorageManager.getKeyValueStorage().setValue(key, store_json);
     }
 
+    /**
+     * Initializes from StoreAssets.
+     * This happens only once - when the game is loaded for the first time.
+     *
+     * @param storeAssets
+     */
     private static void initializeWithStoreAssets(IStoreAssets storeAssets) {
         /// fall-back here if the json doesn't exist, we load the store from the given {@link IStoreAssets}.
         mCurrencies = Arrays.asList(storeAssets.getCurrencies());
@@ -499,19 +543,27 @@ public class StoreInfo {
         save();
     }
 
-    /** Private members **/
 
-    private static final String TAG = "SOOMLA StoreInfo";
+    /** Private Members **/
+
+    private static final String TAG = "SOOMLA StoreInfo"; //used for Log messages
 
     // convenient hash to retrieve virtual items
-    private static HashMap<String, VirtualItem>             mVirtualItems;
-    private static HashMap<String, PurchasableVirtualItem>  mPurchasableItems;
-    private static HashMap<String, VirtualCategory>         mGoodsCategories;
-    private static HashMap<String, List<UpgradeVG>>         mGoodsUpgrades;
+    private static HashMap<String, VirtualItem> mVirtualItems;
 
-    private static List<VirtualCurrency>                mCurrencies;
-    private static List<VirtualCurrencyPack>            mCurrencyPacks;
-    private static List<VirtualGood>                    mGoods;
-    private static List<VirtualCategory>                mCategories;
-    private static List<NonConsumableItem>              mNonConsumables;
+    private static HashMap<String, PurchasableVirtualItem> mPurchasableItems;
+
+    private static HashMap<String, VirtualCategory> mGoodsCategories;
+
+    private static HashMap<String, List<UpgradeVG>> mGoodsUpgrades;
+
+    private static List<VirtualCurrency> mCurrencies;
+
+    private static List<VirtualCurrencyPack> mCurrencyPacks;
+
+    private static List<VirtualGood> mGoods;
+
+    private static List<VirtualCategory> mCategories;
+
+    private static List<NonConsumableItem> mNonConsumables;
 }

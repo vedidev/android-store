@@ -19,19 +19,33 @@ package com.soomla.store.events;
  * This event is fired if there's an unexpected/unrecognized error in store.
  */
 public class UnexpectedStoreErrorEvent {
-	private String mMessage;
+
+    /**
+     * Constructor
+     *
+     * @param message
+     */
 	public UnexpectedStoreErrorEvent(String message)
 	{
 		mMessage = message;
 	}
-	
+
+    /**
+     * Constructor
+     */
 	public UnexpectedStoreErrorEvent()
 	{
 		mMessage = "Unknown error";
 	}
-	
+
+
+    /** Setters and Getters */
 	public String getMessage()
 	{
 		return mMessage;
 	}
+
+
+    /** Private Members */
+    private String mMessage;
 }

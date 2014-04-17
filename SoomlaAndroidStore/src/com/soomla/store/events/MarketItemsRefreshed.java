@@ -25,13 +25,21 @@ import java.util.List;
  */
 public class MarketItemsRefreshed {
 
-    List<MarketItem> mMarketItems;
-
+    /**
+     * Constructor
+     *
+     * @param marketItems
+     */
     public MarketItemsRefreshed(List<MarketItem> marketItems) {
         this.mMarketItems = marketItems;
     }
 
+
+    /** Setters and Getters */
     public List<MarketItem> getMarketItems() {
         return mMarketItems;
     }
+
+    /** Private Members */
+    List<MarketItem> mMarketItems;
 }

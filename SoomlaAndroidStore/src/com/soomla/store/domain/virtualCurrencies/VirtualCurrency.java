@@ -22,20 +22,36 @@ import org.json.JSONObject;
 
 /**
  * This is a representation of a game's virtual currency.
- * Each game can have multiple instances of a virtual currency, all kept in {@link com.soomla.store.data.StoreInfo};
+ * Each game can have multiple instances of a virtual currency, all kept in
+ * {@link com.soomla.store.data.StoreInfo}
+ *
+ * Real Game Examples: 'coin', 'gem', 'muffin'
+ *
+ * NOTE: This item is NOT purchasable! However, a VirtualCurrencyPack is purchasable. For example,
+ * if the virtual currency in your game is a 'Coin' and you want to make a single 'Coin' available
+ * for purchase you will need to define a VirtualCurrencyPack of 1'Coin'.
+ *
+ * VirtualCurrency extends VirtualItem
  */
 public class VirtualCurrency extends VirtualItem {
 
-    /** Constructor
+    /**
+     * Constructor
      * see parent
+     *
+     * @param mName see parent
+     * @param mDescription see parent
+     * @param itemId see parent
      */
     public VirtualCurrency(String mName, String mDescription, String itemId) {
         super(mName, mDescription, itemId);
     }
 
-    /** Constructor
+    /**
+     * Constructor
      *
-     * see parent
+     * @param jsonObject see parent
+     * @throws JSONException
      */
     public VirtualCurrency(JSONObject jsonObject) throws JSONException {
         super(jsonObject);
@@ -43,15 +59,19 @@ public class VirtualCurrency extends VirtualItem {
 
     /**
      * see parent
+     *
+     * @return see parent
      */
+    @Override
     public JSONObject toJSONObject(){
         return super.toJSONObject();
     }
 
     /**
      * see parent
-     * @param amount the amount of the specific item to be given.
-     * @return balance after the giving process
+     *
+     * @param amount see parent
+     * @return see parent
      */
     @Override
     public int give(int amount, boolean notify) {
@@ -60,8 +80,9 @@ public class VirtualCurrency extends VirtualItem {
 
     /**
      * see parent
-     * @param amount the amount of the specific item to be taken.
-     * @return balance after the taking process
+     *
+     * @param amount see parent
+     * @return see parent
      */
     @Override
     public int take(int amount, boolean notify) {
@@ -70,8 +91,9 @@ public class VirtualCurrency extends VirtualItem {
 
     /**
      * see parent
+     *
      * @param balance see parent
-     * @return balance after the resetting process
+     * @return see parent
      */
     @Override
     public int resetBalance(int balance, boolean notify) {

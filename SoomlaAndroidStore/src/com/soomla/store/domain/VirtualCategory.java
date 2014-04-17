@@ -24,24 +24,26 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 
 /**
- * This class is a definition of a category. A single category can be associated with many virtual goods.
- * You can use it to arrange virtual goods to their specific categories.
+ * This class is a definition of a category. A single category can be associated with many virtual
+ * goods. You can use it to arrange virtual goods to their specific categories.
  */
 public class VirtualCategory {
 
-    /** Constructor
+    /**
+     * Constructor
      *
-     * @param name is the category's name.
-     * @param goodsItemIds is the list of itemIds of the VirtualGoods in this category.
+     * @param name the category's name.
+     * @param goodsItemIds the list of itemIds of the VirtualGoods in this category.
      */
     public VirtualCategory(String name, ArrayList<String> goodsItemIds) {
         mName = name;
         mGoodsItemIds = goodsItemIds;
     }
 
-    /** Constructor
-     *
+    /**
+     * Constructor
      * Generates an instance of {@link VirtualCategory} from a JSONObject.
+     *
      * @param jsonObject is a JSONObject representation of the wanted {@link VirtualCategory}.
      * @throws JSONException
      */
@@ -57,6 +59,7 @@ public class VirtualCategory {
 
     /**
      * Converts the current {@link VirtualCategory} to a JSONObject.
+     *
      * @return a JSONObject representation of the current {@link VirtualCategory}.
      */
     public JSONObject toJSONObject(){
@@ -77,7 +80,8 @@ public class VirtualCategory {
         return jsonObject;
     }
 
-    /** Getters **/
+
+    /** Setters and Getters **/
 
     public String getName() {
         return mName;
@@ -87,10 +91,14 @@ public class VirtualCategory {
         return mGoodsItemIds;
     }
 
+
     /** Private members **/
 
-    private static final String TAG = "SOOMLA VirtualCategory";
+    private static final String TAG = "SOOMLA VirtualCategory"; //used for Log messages
 
+    //the list of itemIds of the VirtualGoods in this category
     private ArrayList<String> mGoodsItemIds = new ArrayList<String>();
-    private String  mName;
+
+    private String  mName; //the category's name
+
 }

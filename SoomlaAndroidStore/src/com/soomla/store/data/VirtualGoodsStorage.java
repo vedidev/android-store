@@ -28,28 +28,25 @@ import com.soomla.store.events.GoodUpgradeEvent;
 import com.soomla.store.exceptions.VirtualItemNotFoundException;
 
 /**
- * This class provide basic storage operations on VirtualGoods.
+ * This class provides basic storage operations on VirtualGoods.
  */
 public class VirtualGoodsStorage extends VirtualItemStorage{
 
-    /** Constructor
-     *
+    /**
+     * Constructor
      */
     public VirtualGoodsStorage() {
         mTag = "SOOMLA VirtualGoodsStorage";
     }
 
-
-    /** Public functions **/
-
     /**
-     * This function removes any upgrade associated with the given VirtualGood.
+     * Removes any upgrade associated with the given VirtualGood.
+     *
      * @param good the VirtualGood to remove upgrade from.
      */
     public void removeUpgrades(VirtualGood good) {
         removeUpgrades(good, true);
     }
-
     public void removeUpgrades(VirtualGood good, boolean notify) {
         StoreUtils.LogDebug(mTag, "Removing upgrade information from virtual good: " + good.getName());
 
@@ -65,6 +62,7 @@ public class VirtualGoodsStorage extends VirtualItemStorage{
 
     /**
      * Assigns a specific upgrade to the given VirtualGood.
+     *
      * @param good the VirtualGood to upgrade.
      * @param upgradeVG the upgrade to assign.
      */
@@ -89,10 +87,9 @@ public class VirtualGoodsStorage extends VirtualItemStorage{
         }
     }
 
-
-
     /**
      * Retrieves the current upgrade for the given VirtualGood.
+     *
      * @param good the VirtualGood to retrieve upgrade for.
      * @return the current upgrade for the given VirtualGood.
      */
@@ -121,9 +118,10 @@ public class VirtualGoodsStorage extends VirtualItemStorage{
     }
 
     /**
-     * Check the equipping status of the given EquippableVG.
+     * Checks the equipping status of the given EquippableVG.
+     *
      * @param good the EquippableVG to check the status for.
-     * @return the equipping status of the given EquippableVG.
+     * @return true if the given good is equipped, false otherwise
      */
     public boolean isEquipped(EquippableVG good){
         StoreUtils.LogDebug(mTag, "checking if virtual good with itemId: " + good.getItemId() + " is equipped.");
@@ -136,7 +134,8 @@ public class VirtualGoodsStorage extends VirtualItemStorage{
     }
 
     /**
-     * Equip the given EquippableVG.
+     * Equips the given EquippableVG.
+     *
      * @param good the EquippableVG to equip.
      */
     public void equip(EquippableVG good) {
@@ -146,12 +145,12 @@ public class VirtualGoodsStorage extends VirtualItemStorage{
         if (isEquipped(good)) {
             return;
         }
-
         equipPriv(good, true, notify);
     }
 
     /**
-     * UnEquip the given EquippableVG.
+     * UnEquips the given EquippableVG.
+     *
      * @param good the EquippableVG to unequip.
      */
     public void unequip(EquippableVG good) {
@@ -161,10 +160,36 @@ public class VirtualGoodsStorage extends VirtualItemStorage{
         if (!isEquipped(good)) {
             return;
         }
-
         equipPriv(good, false, notify);
     }
 
+    /**
+     * see parent
+     *
+     * @param itemId id of the virtual item whose balance is to be retrieved
+     * @return
+     */
+    @Override
+    protected String keyBalance(String itemId) {
+        return KeyValDatabase.keyGoodBalance(itemId);
+    }
+
+    /**
+     * see parent
+     *
+     * @param item virtual item whose balance has changed
+     * @param balance the balance that has changed
+     * @param amountAdded the amount added to the item's balance
+     */
+    @Override
+    protected void postBalanceChangeEvent(VirtualItem item, int balance, int amountAdded) {
+        BusProvider.getInstance().post(new GoodBalanceChangedEvent((VirtualGood) item,
+                balance, amountAdded));
+    }
+
+    /**
+     * Helper function for equip and unequip functions
+     */
     private void equipPriv(EquippableVG good, boolean equip, boolean notify){
         StoreUtils.LogDebug(mTag, (!equip ? "unequipping " : "equipping ") + good.getName() + ".");
 
@@ -182,16 +207,6 @@ public class VirtualGoodsStorage extends VirtualItemStorage{
                 BusProvider.getInstance().post(new GoodUnEquippedEvent(good));
             }
         }
-    }
-
-    @Override
-    protected String keyBalance(String itemId) {
-        return KeyValDatabase.keyGoodBalance(itemId);
-    }
-
-    @Override
-    protected void postBalanceChangeEvent(VirtualItem item, int balance, int amountAdded) {
-        BusProvider.getInstance().post(new GoodBalanceChangedEvent((VirtualGood) item, balance, amountAdded));
     }
 
 }

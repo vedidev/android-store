@@ -30,11 +30,13 @@ import org.json.JSONObject;
 import java.util.Iterator;
 
 /**
- * An upgrade virtual good is one VG in a series of VGs that define an upgrade scale of an associated VirtualGood.
+ * An upgrade virtual good is one VG in a series of VGs that define an upgrade scale of an
+ * associated VirtualGood.
  *
  * This type of virtual good is best explained with an example:
- * Lets say you have a strength attribute to your character in the game and that strength is on the scale 1-5.
- * You want to provide your users with the ability to upgrade that strength. This is what you'll need to create:
+ * Let's say there's a strength attribute to one of the character in your game and that strength is
+ * on a scale of 1-5. You want to provide your users with the ability to upgrade that strength.
+ * This is what you'll need to create:
  *  1. SingleUseVG for 'strength'
  *  2. UpgradeVG for strength 'level 1'
  *  3. UpgradeVG for strength 'level 2'
@@ -42,19 +44,24 @@ import java.util.Iterator;
  *  5. UpgradeVG for strength 'level 4'
  *  6. UpgradeVG for strength 'level 5'
  *
- * Now, when the user buys this UpgradeVG, we check and make sure the appropriate conditions are met and buy it for you
- * (which actually means we upgrade the associated VirtualGood).
+ * When the user buys this UpgradeVG, we check and make sure the appropriate conditions are
+ * met and buy it for you (which actually means we upgrade the associated VirtualGood).
  *
- * This VirtualItem is purchasable.
- * In case you purchase this item in the Market (PurchaseWithMarket).
+ * NOTE: In case you want this item to be available for purchase in the market (PurchaseWithMarket),
+ * you will need to define the item in Google Play Developer Console.
+ *
+ * UpgradeVG extends LifeTimeVG extends VirtualGood extends PurchasableVirtualItem
+ * extends VirtualItem
  */
 public class UpgradeVG extends LifetimeVG {
 
     /** Constructor
      *
-     * @param goodItemId is the itemId of the VirtualGood associated with this upgrade.
-     * @param prevItemId is the itemId of the UpgradeVG before or if this is the first UpgradeVG in the scale then the value is null.
-     * @param nextItemId is the itemId of the UpgradeVG after or if this is the last UpgradeVG in the scale then the value is null.
+     * @param goodItemId the itemId of the VirtualGood associated with this upgrade.
+     * @param prevItemId the itemId of the UpgradeVG before, or if this is the first UpgradeVG in
+     *                   the scale then the value is null.
+     * @param nextItemId the itemId of the UpgradeVG after, or if this is the last UpgradeVG in
+     *                   the scale then the value is null.
      * @param mName see parent
      * @param mDescription see parent
      * @param mItemId see parent
@@ -72,8 +79,11 @@ public class UpgradeVG extends LifetimeVG {
         mNextItemId = nextItemId;
     }
 
-    /** Constructor
-     * see parent
+    /**
+     * Constructor
+     *
+     * @param jsonObject see parent
+     * @throws JSONException
      */
     public UpgradeVG(JSONObject jsonObject) throws JSONException {
         super(jsonObject);
@@ -85,6 +95,8 @@ public class UpgradeVG extends LifetimeVG {
 
     /**
      * see parent
+     *
+     * @return see parent
      */
     @Override
     public JSONObject toJSONObject(){
@@ -99,13 +111,100 @@ public class UpgradeVG extends LifetimeVG {
             }
 
             jsonObject.put(JSONConsts.VGU_GOOD_ITEMID, mGoodItemId);
-            jsonObject.put(JSONConsts.VGU_PREV_ITEMID, TextUtils.isEmpty(mPrevItemId) ? "" : mPrevItemId);
-            jsonObject.put(JSONConsts.VGU_NEXT_ITEMID, TextUtils.isEmpty(mNextItemId) ? "" : mNextItemId);
+            jsonObject.put(JSONConsts.VGU_PREV_ITEMID, TextUtils.isEmpty(mPrevItemId) ? ""
+                    : mPrevItemId);
+            jsonObject.put(JSONConsts.VGU_NEXT_ITEMID, TextUtils.isEmpty(mNextItemId) ? ""
+                    : mNextItemId);
         } catch (JSONException e) {
             StoreUtils.LogError(TAG, "An error occurred while generating JSON object.");
         }
 
         return jsonObject;
+    }
+
+    /**
+     * Assigns the current upgrade to the associated VirtualGood (mGood).
+     *
+     * NOTE: This action doesn't check anything! It just assigns the current UpgradeVG to the
+     * associated mGood.
+     *
+     * @param amount is NOT USED HERE!
+     * @return 1 if the user was given the good, 0 otherwise
+     */
+    @Override
+    public int give(int amount, boolean notify) {
+        StoreUtils.LogDebug(TAG, "Assigning " + getName() + " to: " + mGoodItemId);
+
+        VirtualGood good = null;
+        try {
+            good = (VirtualGood)StoreInfo.getVirtualItem(mGoodItemId);
+        } catch (VirtualItemNotFoundException e) {
+            StoreUtils.LogError(TAG, "VirtualGood with itemId: " + mGoodItemId +
+                    " doesn't exist! Can't upgrade.");
+            return 0;
+        }
+
+        StorageManager.getVirtualGoodsStorage().assignCurrentUpgrade(good, this, notify);
+
+        return super.give(amount, notify);
+    }
+
+     /**
+     * Takes Upgrade from the user, or in other words DOWNGRADES the associated VirtualGood (mGood).
+     * Checks if the current Upgrade is really associated with the VirtualGood and:
+     *   if YES - downgrades to the previous upgrade (or remove upgrades in case of null).
+     *   if NO  - returns 0 (do nothing).
+     *
+     * @param amount is NOT USED HERE!
+     * @param notify see parent
+     * @return see parent
+     */
+    @Override
+    public int take(int amount, boolean notify) {
+        VirtualGood good = null;
+
+        try {
+            good = (VirtualGood)StoreInfo.getVirtualItem(mGoodItemId);
+        } catch (VirtualItemNotFoundException e) {
+            StoreUtils.LogError(TAG, "VirtualGood with itemId: " + mGoodItemId
+                    + " doesn't exist! Can't downgrade.");
+            return 0;
+        }
+
+        UpgradeVG upgradeVG = StorageManager.getVirtualGoodsStorage().getCurrentUpgrade(good);
+
+        // Case: Upgrade is not assigned to this Virtual Good
+        if (upgradeVG != this) {
+            StoreUtils.LogError(TAG, "You can't take an upgrade that's not currently assigned."
+                    + "The UpgradeVG " + getName() + " is not assigned to " + "the VirtualGood: "
+                    + good.getName());
+            return 0;
+        }
+
+        if (!TextUtils.isEmpty(mPrevItemId)) {
+            UpgradeVG prevUpgradeVG = null;
+            // Case: downgrade is not possible because previous upgrade does not exist
+            try {
+                prevUpgradeVG = (UpgradeVG)StoreInfo.getVirtualItem(mPrevItemId);
+            } catch (VirtualItemNotFoundException e) {
+                StoreUtils.LogError(TAG, "Previous UpgradeVG with itemId: " + mPrevItemId
+                        + " doesn't exist! Can't downgrade.");
+                return 0;
+            }
+            // Case: downgrade is successful!
+            StoreUtils.LogDebug(TAG, "Downgrading " + good.getName() + " to: "
+                    + prevUpgradeVG.getName());
+            StorageManager.getVirtualGoodsStorage().assignCurrentUpgrade(good,
+                    prevUpgradeVG, notify);
+        }
+
+        // Case: first Upgrade in the series - so we downgrade to NO upgrade.
+        else {
+            StoreUtils.LogDebug(TAG, "Downgrading " + good.getName() + " to NO-UPGRADE");
+            StorageManager.getVirtualGoodsStorage().removeUpgrades(good, notify);
+        }
+
+        return super.take(amount, notify);
     }
 
     /** Getters **/
@@ -123,78 +222,10 @@ public class UpgradeVG extends LifetimeVG {
     }
 
     /**
-     * Assigning the current upgrade to the associated VirtualGood (mGood).
-     *
-     * This action doesn't check nothing!! It just assigns the current UpgradeVG to the associated mGood.
-     * @param amount is NOT USED HERE !
-     * @return 1 if the user was given the good, 0 otherwise
-     */
-    @Override
-    public int give(int amount, boolean notify) {
-        StoreUtils.LogDebug(TAG, "Assigning " + getName() + " to: " + mGoodItemId);
-
-        VirtualGood good = null;
-        try {
-            good = (VirtualGood)StoreInfo.getVirtualItem(mGoodItemId);
-        } catch (VirtualItemNotFoundException e) {
-            StoreUtils.LogError(TAG, "VirtualGood with itemId: " + mGoodItemId + " doesn't exist! Can't upgrade.");
-            return 0;
-        }
-
-        StorageManager.getVirtualGoodsStorage().assignCurrentUpgrade(good, this, notify);
-
-        return super.give(amount, notify);
-    }
-
-     /**
-     * This is actually a downgrade of the associated VirtualGood (mGood).
-     * We check if the current Upgrade is really associated with the VirtualGood and:
-     *  if YES we downgrade to the previous upgrade (or removing upgrades in case of null).
-     *  if NO we return (do nothing).
-     *
-     * @param amount is NOT USED HERE !
-     */
-    @Override
-    public int take(int amount, boolean notify) {
-        VirtualGood good = null;
-        try {
-            good = (VirtualGood)StoreInfo.getVirtualItem(mGoodItemId);
-        } catch (VirtualItemNotFoundException e) {
-            StoreUtils.LogError(TAG, "VirtualGood with itemId: " + mGoodItemId + " doesn't exist! Can't downgrade.");
-            return 0;
-        }
-
-        UpgradeVG upgradeVG = StorageManager.getVirtualGoodsStorage().getCurrentUpgrade(good);
-        if (upgradeVG != this) {
-            StoreUtils.LogError(TAG, "You can't take an upgrade that's not currently assigned. The UpgradeVG " + getName() + " is not assigned to " +
-                    "the VirtualGood: " + good.getName());
-            return 0;
-        }
-
-
-        if (!TextUtils.isEmpty(mPrevItemId)) {
-            UpgradeVG prevUpgradeVG = null;
-
-            try {
-                prevUpgradeVG = (UpgradeVG)StoreInfo.getVirtualItem(mPrevItemId);
-            } catch (VirtualItemNotFoundException e) {
-                StoreUtils.LogError(TAG, "Previous UpgradeVG with itemId: " + mPrevItemId + " doesn't exist! Can't downgrade.");
-                return 0;
-            }
-
-            StoreUtils.LogDebug(TAG, "Downgrading " + good.getName() + " to: " + prevUpgradeVG.getName());
-            StorageManager.getVirtualGoodsStorage().assignCurrentUpgrade(good, prevUpgradeVG, notify);
-        } else {
-            StoreUtils.LogDebug(TAG, "Downgrading " + good.getName() + " to NO-UPGRADE");
-            StorageManager.getVirtualGoodsStorage().removeUpgrades(good, notify);
-        }
-
-        return super.take(amount, notify);
-    }
-
-    /**
-     * We want to enforce the logic of allowing/rejecting upgrades here so users won't buy when they are not supposed to.
-     * If you want to give your users upgrades for free, use the "give" function.
+     * Determines if the user is in a state that allows him to buy an UpgradeVG
+     * This method enforces allowing/rejecting of upgrades here so users won't buy them when
+     * they are not supposed to.
+     * If you want to give your users free upgrades, use the "give" function.
      */
     @Override
     protected boolean canBuy() {
@@ -202,19 +233,35 @@ public class UpgradeVG extends LifetimeVG {
         try {
             good = (VirtualGood)StoreInfo.getVirtualItem(mGoodItemId);
         } catch (VirtualItemNotFoundException e) {
-            StoreUtils.LogError(TAG, "VirtualGood with itemId: " + mGoodItemId + " doesn't exist! Returning NO (can't buy).");
+            StoreUtils.LogError(TAG, "VirtualGood with itemId: " + mGoodItemId +
+                    " doesn't exist! Returning NO (can't buy).");
             return false;
         }
 
         UpgradeVG upgradeVG = StorageManager.getVirtualGoodsStorage().getCurrentUpgrade(good);
         return ((upgradeVG == null && TextUtils.isEmpty(mPrevItemId)) ||
-               (upgradeVG != null && ((upgradeVG.getNextItemId().equals(getItemId())) || (upgradeVG.getPrevItemId().equals(getItemId())))))
+               (upgradeVG != null && ((upgradeVG.getNextItemId().equals(getItemId())) ||
+                       (upgradeVG.getPrevItemId().equals(getItemId())))))
                 && super.canBuy();
     }
 
-    private static final String TAG = "SOOMLA UpgradeVG";
 
-    private String   mGoodItemId;
-    private String   mPrevItemId;
-    private String   mNextItemId;
+    /** Private Members **/
+
+    private static final String TAG = "SOOMLA UpgradeVG"; //used for Log messages
+
+    private String mGoodItemId; //the itemId of the VirtualGood associated with this upgrade
+
+    /**
+     * The itemId of the UpgradeVG before, or if this is the first UpgradeVG in the scale then
+     * the value is null.
+     */
+    private String mPrevItemId;
+
+    /**
+     * The itemId of the UpgradeVG after, or if this is the last UpgradeVG in the scale then
+     * the value is null.
+     */
+    private String mNextItemId;
+
 }

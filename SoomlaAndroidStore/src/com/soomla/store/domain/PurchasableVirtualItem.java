@@ -28,18 +28,22 @@ import org.json.JSONObject;
 import java.util.Iterator;
 
 /**
- * A representation of an VirtualItem you can actually purchase.
+ * A representation of a VirtualItem that you can actually purchase.
+ *
+ * PurchasableVirtualItem extends VirtualItem
  */
 public abstract class PurchasableVirtualItem extends VirtualItem {
 
-    /** Constructor
+    /**
+     * Constructor
      *
      * @param mName see parent
      * @param mDescription see parent
      * @param mItemId see parent
-     * @param purchaseType is the way this item is purchased.
+     * @param purchaseType the way this item is purchased
      */
-    public PurchasableVirtualItem(String mName, String mDescription, String mItemId, PurchaseType purchaseType) {
+    public PurchasableVirtualItem(String mName, String mDescription, String mItemId,
+                                  PurchaseType purchaseType) {
         super(mName, mDescription, mItemId);
 
         mPurchaseType = purchaseType;
@@ -48,7 +52,10 @@ public abstract class PurchasableVirtualItem extends VirtualItem {
     }
 
     /**
-     * see parent
+     * Constructor
+     *
+     * @param jsonObject see parent
+     * @throws JSONException
      */
     public PurchasableVirtualItem(JSONObject jsonObject) throws JSONException {
         super(jsonObject);
@@ -57,7 +64,8 @@ public abstract class PurchasableVirtualItem extends VirtualItem {
         String purchaseType = purchasableObj.getString(JSONConsts.PURCHASE_TYPE);
 
         if (purchaseType.equals(JSONConsts.PURCHASE_TYPE_MARKET)) {
-            JSONObject marketItemObj = purchasableObj.getJSONObject(JSONConsts.PURCHASE_MARKET_ITEM);
+            JSONObject marketItemObj =
+                    purchasableObj.getJSONObject(JSONConsts.PURCHASE_MARKET_ITEM);
 
             mPurchaseType = new PurchaseWithMarket(new MarketItem(marketItemObj));
         } else if (purchaseType.equals(JSONConsts.PURCHASE_TYPE_VI)) {
@@ -76,6 +84,8 @@ public abstract class PurchasableVirtualItem extends VirtualItem {
 
     /**
      * see parent
+     *
+     * @return see parent
      */
     @Override
     public JSONObject toJSONObject(){
@@ -99,8 +109,10 @@ public abstract class PurchasableVirtualItem extends VirtualItem {
             } else if(mPurchaseType instanceof PurchaseWithVirtualItem) {
                 purchasableObj.put(JSONConsts.PURCHASE_TYPE, JSONConsts.PURCHASE_TYPE_VI);
 
-                purchasableObj.put(JSONConsts.PURCHASE_VI_ITEMID, ((PurchaseWithVirtualItem) mPurchaseType).getTargetItemId());
-                purchasableObj.put(JSONConsts.PURCHASE_VI_AMOUNT, ((PurchaseWithVirtualItem) mPurchaseType).getAmount());
+                purchasableObj.put(JSONConsts.PURCHASE_VI_ITEMID,
+                        ((PurchaseWithVirtualItem) mPurchaseType).getTargetItemId());
+                purchasableObj.put(JSONConsts.PURCHASE_VI_AMOUNT,
+                        ((PurchaseWithVirtualItem) mPurchaseType).getAmount());
             }
 
             jsonObject.put(JSONConsts.PURCHASABLE_ITEM, purchasableObj);
@@ -112,7 +124,8 @@ public abstract class PurchasableVirtualItem extends VirtualItem {
     }
 
     /**
-     * Use this function to buy a Virtual Item. This action uses the associated PurchaseType to perform the purchase.
+     * Buys a Virtual Item, after checking if user is in a state that allows him to buy.
+     * This action uses the associated PurchaseType to perform the purchase.
      *
      * @throws InsufficientFundsException
      */
@@ -122,16 +135,25 @@ public abstract class PurchasableVirtualItem extends VirtualItem {
         mPurchaseType.buy();
     }
 
+
+    /** Setters and Getters */
+
     public PurchaseType getPurchaseType() {
         return mPurchaseType;
     }
 
+
     /**
-     * Determines if you are in a state that allows you to buy a specific VirtualItem.
+     * Determines if user is in a state that allows him to buy a specific VirtualItem.
+     *
+     * @return true if can buy, false otherwise
      */
     protected abstract boolean canBuy();
 
-    private static final String TAG = "SOOMLA PurchasableVirtualItem";
 
-    private PurchaseType mPurchaseType;
+    /** Private Members */
+
+    private static final String TAG = "SOOMLA PurchasableVirtualItem"; //used for Log messages
+
+    private PurchaseType mPurchaseType; //the way this PurchasableVirtualItem is purchased.
 }

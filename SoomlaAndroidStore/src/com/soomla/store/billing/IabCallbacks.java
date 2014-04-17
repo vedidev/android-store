@@ -18,10 +18,10 @@ package com.soomla.store.billing;
  import java.util.List;
 
  /**
-  * A utility class that defines interfaces for passing callbacks
-  * to in-app billing events.
+  * A utility class that defines interfaces for passing callbacks to in-app billing events.
   */
 public class IabCallbacks {
+
 
     public interface IabInitListener {
         public void success(boolean alreadyInBg);
@@ -36,10 +36,12 @@ public class IabCallbacks {
         public void fail(String message);
     }
 
+
     public interface OnQueryInventoryListener {
         public void success(List<IabPurchase> purchases, List<IabSkuDetails> skuDetails);
         public void fail(String message);
     }
+
 
     public interface OnConsumeListener {
         public void success(IabPurchase purchase);

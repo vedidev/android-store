@@ -16,24 +16,30 @@
 package com.soomla.store.billing;
 
 /**
- * Exception thrown when something went wrong with in-app billing.
+ * This exception is thrown when something goes wrong with the in-app billing process.
  * An IabException has an associated IabResult (an error).
- * To get the IAB result that caused this exception to be thrown,
- * call {@link #getResult()}.
+ * To get the IabResults that caused this exception to be thrown, call {@link #getResult()}.
+ *
+ * IabException extends Exception
  */
 public class IabException extends Exception {
+
+    // Every IabException has an associated IabResult
     IabResult mResult;
 
     public IabException(IabResult r) {
         this(r, null);
     }
+
     public IabException(int response, String message) {
         this(new IabResult(response, message));
     }
+
     public IabException(IabResult r, Exception cause) {
         super(r.getMessage(), cause);
         mResult = r;
     }
+
     public IabException(int response, String message, Exception cause) {
         this(new IabResult(response, message), cause);
     }

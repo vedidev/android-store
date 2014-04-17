@@ -22,13 +22,22 @@ import com.soomla.store.domain.PurchasableVirtualItem;
  */
 public class MarketPurchaseCancelledEvent {
 
-    private PurchasableVirtualItem mPurchasableVirtualItem;
-
+    /**
+     * Constructor
+     *
+     * @param purchasableVirtualItem
+     */
     public MarketPurchaseCancelledEvent(PurchasableVirtualItem purchasableVirtualItem) {
         mPurchasableVirtualItem = purchasableVirtualItem;
     }
 
+
+    /** Setters and Getters */
     public PurchasableVirtualItem getPurchasableVirtualItem() {
         return mPurchasableVirtualItem;
     }
+
+
+    /** Private Members */
+    private PurchasableVirtualItem mPurchasableVirtualItem;
 }

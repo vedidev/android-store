@@ -31,14 +31,15 @@ import java.util.HashMap;
  */
 public class KeyValueStorage {
 
-    /** Constructor
-     *
+    /**
+     * Constructor
      */
     public KeyValueStorage() {
     }
 
     /**
      * Fetch the value for the given key.
+     *
      * @param key is the key in the key-val pair.
      * @return the value for the given key.
      */
@@ -62,7 +63,12 @@ public class KeyValueStorage {
         return val;
     }
 
-
+    /**
+     * Sets key-val pair in the database according to given key and val
+     *
+     * @param key
+     * @param val
+     */
     public void setNonEncryptedKeyValue(String key, String val) {
         StoreUtils.LogDebug(TAG, "setting " + val + " for key: " + key);
 
@@ -71,13 +77,23 @@ public class KeyValueStorage {
         getDatabase().setKeyVal(key, val);
     }
 
-
+    /**
+     * Deletes key-val pair that has the given key
+     *
+     * @param key
+     */
     public void deleteNonEncryptedKeyValue(String key) {
         StoreUtils.LogDebug(TAG, "deleting " + key);
 
         getDatabase().deleteKeyVal(key);
     }
 
+    /**
+     * Retrieves the value of the key-val pair with the given key
+     *
+     * @param key
+     * @return value
+     */
     public String getNonEncryptedKeyValue(String key) {
         StoreUtils.LogDebug(TAG, "trying to fetch a value for key: " + key);
 
@@ -96,8 +112,14 @@ public class KeyValueStorage {
         return val;
     }
 
+    /**
+     * Retrieves key-val pairs according to given query
+     *
+     * @param query
+     * @return
+     */
     public HashMap<String, String> getNonEncryptedQueryValues(String query) {
-        StoreUtils.LogDebug(TAG, "trying to fetch a values for query: " + query);
+        StoreUtils.LogDebug(TAG, "trying to fetch values for query: " + query);
 
         HashMap<String, String> vals = getDatabase().getQueryVals(query);
         HashMap<String, String> results = new HashMap<String, String>();
@@ -120,6 +142,7 @@ public class KeyValueStorage {
 
     /**
      * Sets the given value to the given key.
+     *
      * @param key is the key in the key-val pair.
      * @param val is the val in the key-val pair.
      */
@@ -134,6 +157,7 @@ public class KeyValueStorage {
 
     /**
      * Deletes a key-val pair with the given key.
+     *
      * @param key is the key in the key-val pair.
      */
     public void deleteKeyValue(String key) {
@@ -144,13 +168,19 @@ public class KeyValueStorage {
         getDatabase().deleteKeyVal(key);
     }
 
+    /**
+     * Retrieves key-val database
+     *
+     * @return key-val database
+     */
     private synchronized KeyValDatabase getDatabase(){
 
         if (mKvDatabase == null) {
             mKvDatabase = new KeyValDatabase(SoomlaApp.getAppContext());
 
             SharedPreferences prefs = new ObscuredSharedPreferences(
-                    SoomlaApp.getAppContext().getSharedPreferences(StoreConfig.PREFS_NAME, Context.MODE_PRIVATE));
+                    SoomlaApp.getAppContext().getSharedPreferences(StoreConfig.PREFS_NAME,
+                            Context.MODE_PRIVATE));
             int mt_ver = prefs.getInt("MT_VER", 0);
             int sa_ver_old = prefs.getInt("SA_VER_OLD", -1);
             int sa_ver_new = prefs.getInt("SA_VER_NEW", 0);
@@ -160,7 +190,7 @@ public class KeyValueStorage {
                 edit.putInt("SA_VER_OLD", sa_ver_new);
                 edit.commit();
 
-                String keyStoreInfo = mObfuscator.obfuscateString(KeyValDatabase.keyMetaStoreInfo());
+                String keyStoreInfo=mObfuscator.obfuscateString(KeyValDatabase.keyMetaStoreInfo());
                 mKvDatabase.deleteKeyVal(keyStoreInfo);
             }
         }
@@ -168,9 +198,15 @@ public class KeyValueStorage {
         return mKvDatabase;
     }
 
+    /**
+     * Retrieves AESObfuscator
+     *
+     * @return AESObfuscator
+     */
     private static AESObfuscator getAESObfuscator(){
         if (mObfuscator == null) {
-            mObfuscator = new AESObfuscator(StoreConfig.obfuscationSalt, SoomlaApp.getAppContext().getPackageName(), StoreUtils.deviceId());
+            mObfuscator = new AESObfuscator(StoreConfig.obfuscationSalt,
+                    SoomlaApp.getAppContext().getPackageName(), StoreUtils.deviceId());
         }
 
         return mObfuscator;
@@ -179,7 +215,9 @@ public class KeyValueStorage {
 
     /** Private Members **/
 
-    private static final String TAG = "SOOMLA KeyValueStorage";
+    private static final String TAG = "SOOMLA KeyValueStorage"; //used for Log Messages
+
     private static AESObfuscator mObfuscator;
+
     private static KeyValDatabase mKvDatabase;
 }

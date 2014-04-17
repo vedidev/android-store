@@ -19,16 +19,31 @@ import com.soomla.store.domain.virtualGoods.EquippableVG;
 
 /**
  * This event is fired when the balance of a specific EquippableVG has been equipped.
+ *
+ * Real Game Example:
+ *  Example Inventory: { currency_coin: 100, Characters: Robot_X, Robot_Y }
+ *  Suppose your user equips Robot_X.
+ *  His new balance of Characters will be { Characters: Robot_Y }.
+ *  A GoodEquippedEvent is fired.
  */
 public class GoodEquippedEvent {
-
-    private EquippableVG mGood;
-
+    /**
+     * Constructor
+     *
+     * @param good
+     */
     public GoodEquippedEvent(EquippableVG good) {
         mGood = good;
     }
 
+
+    /** Setters and Getters */
     public EquippableVG getGood() {
         return mGood;
     }
+
+
+    /** Private Members */
+
+    private EquippableVG mGood;
 }

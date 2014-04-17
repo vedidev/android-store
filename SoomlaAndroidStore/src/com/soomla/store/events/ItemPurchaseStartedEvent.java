@@ -18,17 +18,26 @@ package com.soomla.store.events;
 import com.soomla.store.domain.PurchasableVirtualItem;
 
 /**
- * This event is fired when the balance of a specific PurchasableVirtualItem purchase process has started.
+ * This event is fired when a specific PurchasableVirtualItem purchase process has started.
  */
 public class ItemPurchaseStartedEvent {
 
-    private PurchasableVirtualItem mPurchasableVirtualItem;
-
+    /**
+     * Constructor
+     *
+     * @param purchasableVirtualItem
+     */
     public ItemPurchaseStartedEvent(PurchasableVirtualItem purchasableVirtualItem) {
         mPurchasableVirtualItem = purchasableVirtualItem;
     }
 
+
+    /** Setters and Getters */
     public PurchasableVirtualItem getPurchasableVirtualItem() {
         return mPurchasableVirtualItem;
     }
+
+
+    /** Private Members */
+    private PurchasableVirtualItem mPurchasableVirtualItem;
 }

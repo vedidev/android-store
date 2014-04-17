@@ -22,13 +22,19 @@ import com.soomla.store.domain.PurchasableVirtualItem;
  */
 public class MarketRefundEvent {
 
-    private PurchasableVirtualItem mPurchasableVirtualItem;
-    private String           mPayload;
-
+    /**
+     * Constructor
+     *
+     * @param purchasableVirtualItem the item that is being returned
+     * @param payload the amount you are refunding your user
+     */
     public MarketRefundEvent(PurchasableVirtualItem purchasableVirtualItem, String payload) {
         mPurchasableVirtualItem = purchasableVirtualItem;
         mPayload = payload;
     }
+
+
+    /** Setters and Getters */
 
     public PurchasableVirtualItem getPurchasableVirtualItem() {
         return mPurchasableVirtualItem;
@@ -37,4 +43,11 @@ public class MarketRefundEvent {
     public String getPayload() {
         return mPayload;
     }
+
+
+    /** Private Members */
+
+    private PurchasableVirtualItem mPurchasableVirtualItem;
+
+    private String mPayload;
 }

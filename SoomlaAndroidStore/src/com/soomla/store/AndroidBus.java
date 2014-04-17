@@ -19,9 +19,18 @@ import android.os.Handler;
 import android.os.Looper;
 import com.squareup.otto.Bus;
 
+/**
+ * This class represents an event bus, allowing separate parts of your application to communicate.
+ *
+ * AndroidBus extends Bus
+ */
 public class AndroidBus extends Bus {
-    private final Handler mainThread = new Handler(Looper.getMainLooper());
 
+    /**
+     * Lets subscribers know that a change that has occurred
+     *
+     * @param event an instance of any class may be published on the bus
+     */
     @Override
     public void post(final Object event) {
         if (Looper.myLooper() == Looper.getMainLooper()) {
@@ -36,6 +45,11 @@ public class AndroidBus extends Bus {
         }
     }
 
+    /**
+     * Registers with the bus, in order to receive events.
+     *
+     * @param object
+     */
     @Override
     public void register(final Object object) {
         if (Looper.myLooper() == Looper.getMainLooper()) {
@@ -50,6 +64,11 @@ public class AndroidBus extends Bus {
         }
     }
 
+    /**
+     * Unregisters with the bus, in order to STOP receiving events.
+     *
+     * @param object
+     */
     @Override
     public void unregister(final Object object) {
         if (Looper.myLooper() == Looper.getMainLooper()) {
@@ -63,4 +82,9 @@ public class AndroidBus extends Bus {
             });
         }
     }
+
+
+    /** Private Members */
+
+    private final Handler mainThread = new Handler(Looper.getMainLooper());
 }

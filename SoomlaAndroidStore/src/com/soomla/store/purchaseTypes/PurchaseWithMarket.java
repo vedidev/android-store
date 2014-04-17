@@ -24,33 +24,45 @@ import com.soomla.store.events.ItemPurchaseStartedEvent;
 import com.soomla.store.exceptions.InsufficientFundsException;
 
 /**
- * This type of IabPurchase is used to let users purchase PurchasableVirtualItems with Google Play (with real $$).
+ * This type of IabPurchase allows users to purchase PurchasableVirtualItems with Google Play
+ * (with real money! $$$).
+ *
+ * Real Game Example: Purchase a Sword for $1.99.
+ *
+ * PurchaseWithMarket extends PurchaseType
  */
 public class PurchaseWithMarket extends PurchaseType {
 
-    /** Constructor
+    /**
+     * Constructor
+     * Constructs a PurchaseWithMarket object by constructing a new MarketItem object with the
+     * given productId and price, and declaring it as UNMANAGED.
      *
-     * @param productId is the productId to purchase in the Market.
-     * @param price is the price in the Market.
+     * @param productId the productId to purchase in the Market.
+     * @param price the price in the Market.
      */
     public PurchaseWithMarket(String productId, double price) {
         mMarketItem = new MarketItem(productId, MarketItem.Managed.UNMANAGED, price);
     }
 
-    /** Constructor
+    /**
+     * Constructor
      *
-     * @param marketItem is the representation of the item in Google Play.
+     * @param marketItem the representation of the item in Google Play
      */
     public PurchaseWithMarket(MarketItem marketItem) {
         mMarketItem = marketItem;
     }
 
     /**
-     * see parent
+     * Buys the virtual item with real money (from the Market).
+     *
+     * @throws com.soomla.store.exceptions.InsufficientFundsException
      */
     @Override
     public void buy() throws InsufficientFundsException {
-        StoreUtils.LogDebug(TAG, "Starting in-app purchase for productId: " + mMarketItem.getProductId());
+        StoreUtils.LogDebug(TAG, "Starting in-app purchase for productId: "
+                + mMarketItem.getProductId());
         
         BusProvider.getInstance().post(new ItemPurchaseStartedEvent(getAssociatedItem()));
         try {
@@ -60,11 +72,17 @@ public class PurchaseWithMarket extends PurchaseType {
         }
     }
 
+
+    /** Setters and Getters */
+
     public MarketItem getMarketItem() {
         return mMarketItem;
     }
 
-    private static final String TAG = "SOOMLA PurchaseWithMarket";
 
-    private MarketItem mMarketItem;
+    /** Private Members */
+
+    private static final String TAG = "SOOMLA PurchaseWithMarket"; //used for Log messages
+
+    private MarketItem mMarketItem; //the representation of the item in Google Play
 }

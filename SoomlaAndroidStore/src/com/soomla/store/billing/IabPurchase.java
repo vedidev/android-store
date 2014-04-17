@@ -25,7 +25,7 @@ public class IabPurchase {
     private String mItemType;  // ITEM_TYPE_INAPP or ITEM_TYPE_SUBS
     private String mOrderId;
     private String mPackageName;
-    private String mSku;
+    private String mSku; //the item’s unique product ID in Google Play
     private long mPurchaseTime;
     private int mPurchaseState;
     private String mDeveloperPayload;

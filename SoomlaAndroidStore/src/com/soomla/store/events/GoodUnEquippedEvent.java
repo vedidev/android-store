@@ -19,16 +19,30 @@ import com.soomla.store.domain.virtualGoods.EquippableVG;
 
 /**
  * This event is fired when the balance of a specific EquippableVG has been unequipped.
+ *
+ * Real Game Example:
+ *  Example Inventory: { currency_coin: 100, Characters: Robot_Y }
+ *  Suppose your user unequips Robot_X.
+ *  His new balance of Characters will be { Characters: Robot_X, Robot_Y }.
+ *  A GoodUnEquippedEvent is fired.
  */
 public class GoodUnEquippedEvent {
 
-    private EquippableVG mGood;
-
+    /**
+     * Constructor
+     *
+     * @param good
+     */
     public GoodUnEquippedEvent(EquippableVG good) {
         mGood = good;
     }
 
+
+    /** Setters and Getters */
     public EquippableVG getGood() {
         return mGood;
     }
+
+    /** Private Members */
+    private EquippableVG mGood;
 }

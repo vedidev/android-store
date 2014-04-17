@@ -19,19 +19,30 @@ import com.soomla.store.domain.virtualGoods.VirtualGood;
 
 /**
  * This event is fired when the balance of a specific VirtualGood has changed.
+ *
+ * Real Game Example:
+ *  Example Inventory: { currency_coin: 100, green_hat: 3, blue_hat: 5 }
+ *  Suppose your user buys something for 4 "blue_hat"s.
+ *  His new balance of "blue_hat" will now be 1.
+ *  A GoodBalanceChangedEvent is fired.
  */
 public class GoodBalanceChangedEvent {
 
-    private VirtualGood mGood;
-    private int mBalance;
-    private int mAmountAdded;
-
+    /**
+     * Constructor
+     *
+     * @param good
+     * @param balance
+     * @param amountAdded
+     */
     public GoodBalanceChangedEvent(VirtualGood good, int balance, int amountAdded) {
         mGood = good;
         mBalance = balance;
         mAmountAdded = amountAdded;
     }
 
+
+    /** Setters and Getters */
     public VirtualGood getGood() {
         return mGood;
     }
@@ -43,4 +54,14 @@ public class GoodBalanceChangedEvent {
     public int getAmountAdded() {
         return mAmountAdded;
     }
+
+
+    /** Private Members */
+
+    private VirtualGood mGood;
+
+    private int mBalance;
+
+    private int mAmountAdded;
+
 }

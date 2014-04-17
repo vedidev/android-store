@@ -16,7 +16,7 @@
 package com.soomla.store.events;
 
 /**
- * This event id fired when SOOMLA StoreController is initialized.
+ * This event is fired when SOOMLA StoreController is initialized.
  */
 public class StoreControllerInitializedEvent {
 }

@@ -20,41 +20,54 @@ import com.soomla.store.billing.google.GooglePlayIabService;
 
 /**
  * This class holds the store's configurations.
+ *
+ * IMPORTANT: Change SOOM_SEC below !!!
+ * IMPORTANT: Change obfuscationSalt below !!!
+ * IMPORTANT: Before releasing your game, set DB_DELETE = false !!!
+ * IMPORTANT: Before releasing your game, set AllowAndroidTestPurchases = false !!!
  */
 public class StoreConfig {
 
     /**
      * Select your in-app billing service.
      * The default is Google Play using https://github.com/soomla/android-store-google-play
+     * If this value is left empty, you will not be able to release your game to the market.
      */
     public static final IIabService InAppBillingService = new GooglePlayIabService();
 
-
-
-    /* CHANGE THIS SECRET NOW ! */
+    //CHANGE THIS SECRET!!!
     public static String SOOM_SEC = "SINC_SSEEKK";
 
-    // do you want to print out debug messages?
+    //Set to true if you want to print out debug messages
     public static final boolean logDebug = false;
 
+    //???
     public static final boolean friendlyRefunds = false;
 
-    // the obfuscated salt. randomly generated numbers.
-    // IMPORTANT: it's recommended that you change these numbers for your specific application BUT change them only once.
-    public static final byte[] obfuscationSalt = new byte[] { 64, -54, -113, -47, 98, -52, 87, -102, -65, -127, 89, 51, -11, -35, 30, 77, -45, 75, -26, 3 };
 
-    // ***NEVER*** CHANGE THE VALUE FOR THIS VARIABLE !!!
-    // This value defines the version of the metadata located in your database.
+    /**
+     * The obfuscated salt: randomly generated numbers.
+     * IMPORTANT: it's recommended that you change these numbers for your specific application,
+     * BUT change them only once!
+     */
+    public static final byte[] obfuscationSalt = new byte[] { 64, -54, -113, -47, 98, -52, 87,
+            -102, -65, -127, 89, 51, -11, -35, 30, 77, -45, 75, -26, 3 };
+
+    /**
+     * ---NEVER!--- CHANGE THE VALUE FOR THIS VARIABLE !!!
+     * This value defines the version of the metadata located in your database.
+     */
     public static final int METADATA_VERSION = 3;
 
-    /*
-    if this is true than the database will be deleted whenever the application loads.
-    don't release your game with this option set to true !!!!!!!!!!!!
-    otherwise, your users will lose all their data every time they load the application.
-
-    NOTE: this feature can be useful on testing when you want to change stuff in your implementation of IStoreAssets
-        and see how they look like. If you try to change things in IStoreAssets and don't delete the DB than your
-        changes will not be shown.
+    /**
+     * If this is true than the database will be deleted whenever the application loads.
+     *
+     * WARNING: Do NOT release your game with this option set to true !!!!!!!!!!!!
+     * Otherwise, your users will lose all their data every time they load the application.
+     *
+     * NOTE: this feature can be useful for testing when you want to change stuff in your
+     * implementation of IStoreAssets and see what they look like. If you try to change things
+     * in IStoreAssets and don't delete the DB then your changes will not be shown.
      */
     public static final boolean DB_DELETE = false;
 
@@ -64,10 +77,11 @@ public class StoreConfig {
     public static final String PUBLIC_KEY      = "PO#SU#SO#GU";
     public static final String CUSTOM_SEC      = "SU#LL#SE#RE";
 
-
     /**
-     * What this basically does is that it removes the need to verify purchases when there's an no signature.
-     * Be careful and make sure you don't publish your app with this set to true.
+     * When set to true, this removes the need to verify purchases when there's no signature.
+     * This is useful while you are in development and testing stages of your game.
+     *
+     * WARNING: Do NOT publish your app with this set to true!!!
      */
     public static boolean AllowAndroidTestPurchases = false;
 }
