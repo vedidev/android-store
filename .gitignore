@@ -19,3 +19,6 @@ docs/*
 
 
 SoomlaAndroidExample/res/.DS_Store
+SoomlaAndroidExample/SoomlaAndroidExample.apk
+SoomlaAndroidStore/module_soomlaandroidstore.xml
+SoomlaAndroidStore/src/META-INF/
