@@ -475,6 +475,84 @@ public class StoreInfo {
         StorageManager.getKeyValueStorage().setValue(key, store_json);
     }
 
+    public static void save(VirtualItem virtualItem) {
+        replaceVirtualItem(virtualItem);
+        save();
+    }
+
+    public static void replaceVirtualItem(VirtualItem virtualItem) {
+        mVirtualItems.put(virtualItem.getItemId(), virtualItem);
+
+        if (virtualItem instanceof VirtualCurrency) {
+            for(int i=0; i<mCurrencies.size(); i++) {
+                if (mCurrencies.get(i).getItemId().equals(virtualItem.getItemId())) {
+                    mCurrencies.remove(i);
+                    break;
+                }
+            }
+            mCurrencies.add((VirtualCurrency)virtualItem);
+        }
+
+        if (virtualItem instanceof VirtualCurrencyPack) {
+            VirtualCurrencyPack vcp = (VirtualCurrencyPack)virtualItem;
+            PurchaseType purchaseType = vcp.getPurchaseType();
+            if (purchaseType instanceof PurchaseWithMarket) {
+                mPurchasableItems.put(((PurchaseWithMarket) purchaseType).getMarketItem().getProductId(), vcp);
+            }
+
+            for(int i=0; i<mCurrencyPacks.size(); i++) {
+                if (mCurrencyPacks.get(i).getItemId().equals(vcp.getItemId())) {
+                    mCurrencyPacks.remove(i);
+                    break;
+                }
+            }
+            mCurrencyPacks.add(vcp);
+        }
+
+        if (virtualItem instanceof VirtualGood) {
+            VirtualGood vg = (VirtualGood)virtualItem;
+
+            if (vg instanceof UpgradeVG) {
+                List<UpgradeVG> upgrades = mGoodsUpgrades.get(((UpgradeVG) vg).getGoodItemId());
+                if (upgrades == null) {
+                    upgrades = new ArrayList<UpgradeVG>();
+                    mGoodsUpgrades.put(((UpgradeVG) vg).getGoodItemId(), upgrades);
+                }
+                upgrades.add((UpgradeVG) vg);
+            }
+
+            PurchaseType purchaseType = vg.getPurchaseType();
+            if (purchaseType instanceof PurchaseWithMarket) {
+                mPurchasableItems.put(((PurchaseWithMarket) purchaseType).getMarketItem().getProductId(), vg);
+            }
+
+            for(int i=0; i<mGoods.size(); i++) {
+                if (mGoods.get(i).getItemId().equals(vg.getItemId())) {
+                    mGoods.remove(i);
+                    break;
+                }
+            }
+            mGoods.add(vg);
+        }
+
+        if (virtualItem instanceof NonConsumableItem) {
+            NonConsumableItem non = (NonConsumableItem) virtualItem;
+
+            PurchaseType purchaseType = non.getPurchaseType();
+            if (purchaseType instanceof PurchaseWithMarket) {
+                mPurchasableItems.put(((PurchaseWithMarket) purchaseType).getMarketItem().getProductId(), non);
+            }
+
+            for(int i=0; i<mNonConsumables.size(); i++) {
+                if (mNonConsumables.get(i).getItemId().equals(non.getItemId())) {
+                    mNonConsumables.remove(i);
+                    break;
+                }
+            }
+            mNonConsumables.add(non);
+        }
+    }
+
     /**
      * Initializes from StoreAssets.
      * This happens only once - when the game is loaded for the first time.
