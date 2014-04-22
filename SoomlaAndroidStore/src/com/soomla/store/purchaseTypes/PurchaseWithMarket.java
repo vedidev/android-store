@@ -24,7 +24,7 @@ import com.soomla.store.events.ItemPurchaseStartedEvent;
 import com.soomla.store.exceptions.InsufficientFundsException;
 
 /**
- * This type of IabPurchase allows users to purchase PurchasableVirtualItems with Google Play
+ * This type of IabPurchase allows users to purchase PurchasableVirtualItems with the Market
  * (with real money! $$$).
  *
  * Real Game Example: Purchase a Sword for $1.99.
@@ -48,7 +48,7 @@ public class PurchaseWithMarket extends PurchaseType {
     /**
      * Constructor
      *
-     * @param marketItem the representation of the item in Google Play
+     * @param marketItem the representation of the item in the market
      */
     public PurchaseWithMarket(MarketItem marketItem) {
         mMarketItem = marketItem;
@@ -84,5 +84,5 @@ public class PurchaseWithMarket extends PurchaseType {
 
     private static final String TAG = "SOOMLA PurchaseWithMarket"; //used for Log messages
 
-    private MarketItem mMarketItem; //the representation of the item in Google Play
+    private MarketItem mMarketItem; //the representation of the item in the market
 }

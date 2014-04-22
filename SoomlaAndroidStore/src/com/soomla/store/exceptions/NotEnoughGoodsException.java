@@ -14,6 +14,12 @@ package com.soomla.store.exceptions;
  *  NotEnoughGoodsException extends Exception
  */
 public class NotEnoughGoodsException extends Exception{
+
+    /**
+     * Constructor
+     *
+     * @param itemId id of virtual good that was attempted to be equipped
+     */
     public NotEnoughGoodsException(String itemId) {
         super("You tried to equip virtual good with itemId: " + itemId
                 + " but you don't have any of it.");

@@ -25,10 +25,20 @@ import java.util.Map;
  * An IabInventory is returned by such methods as {@link IabHelper#queryInventory}.
  */
 public class IabInventory {
+    private Map<String,IabSkuDetails> mSkuMap = new HashMap<String,IabSkuDetails>();
+    private Map<String,IabPurchase> mPurchaseMap = new HashMap<String,IabPurchase>();
 
     public IabInventory() { }
 
+    /** Returns the listing details for an in-app product. */
+    public IabSkuDetails getSkuDetails(String sku) {
+        return mSkuMap.get(sku);
+    }
 
+    /** Returns purchase information for a given product, or null if there is no purchase. */
+    public IabPurchase getPurchase(String sku) {
+        return mPurchaseMap.get(sku);
+    }
 
     /** Returns whether or not there exists a purchase of the given product. */
     public boolean hasPurchase(String sku) {
@@ -41,7 +51,7 @@ public class IabInventory {
     }
 
     /**
-     * Erases a purchase (locally) from the inventory, given its product ID. This just
+     * Erase a purchase (locally) from the inventory, given its product ID. This just
      * modifies the IabInventory object locally and has no effect on the server! This is
      * useful when you have an existing IabInventory object which you know to be up to date,
      * and you have just consumed an item successfully, which means that erasing its
@@ -50,32 +60,6 @@ public class IabInventory {
      */
     public void erasePurchase(String sku) {
         if (mPurchaseMap.containsKey(sku)) mPurchaseMap.remove(sku);
-    }
-
-    /** Returns a list of all purchases. */
-    public List<IabPurchase> getAllPurchases() {
-        return new ArrayList<IabPurchase>(mPurchaseMap.values());
-    }
-
-    public void addSkuDetails(IabSkuDetails d) {
-        mSkuMap.put(d.getSku(), d);
-    }
-
-    public void addPurchase(IabPurchase p) {
-        mPurchaseMap.put(p.getSku(), p);
-    }
-
-
-    /** Setters and Getters */
-
-    /** Returns the listing details for an in-app product. */
-    public IabSkuDetails getSkuDetails(String sku) {
-        return mSkuMap.get(sku);
-    }
-
-    /** Returns purchase information for a given product, or null if there is no purchase. */
-    public IabPurchase getPurchase(String sku) {
-        return mPurchaseMap.get(sku);
     }
 
     /** Returns a list of all owned product IDs. */
@@ -92,9 +76,16 @@ public class IabInventory {
         return result;
     }
 
+    /** Returns a list of all purchases. */
+    public List<IabPurchase> getAllPurchases() {
+        return new ArrayList<IabPurchase>(mPurchaseMap.values());
+    }
 
-    /** Private Members */
+    public void addSkuDetails(IabSkuDetails d) {
+        mSkuMap.put(d.getSku(), d);
+    }
 
-    private Map<String,IabSkuDetails> mSkuMap = new HashMap<String,IabSkuDetails>();
-    private Map<String,IabPurchase> mPurchaseMap = new HashMap<String,IabPurchase>();
+    public void addPurchase(IabPurchase p) {
+        mPurchaseMap.put(p.getSku(), p);
+    }
 }

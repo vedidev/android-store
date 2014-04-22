@@ -60,8 +60,7 @@ public class StoreInfo {
             StoreUtils.LogError(TAG, "The given store assets can't be null!");
             return;
         }
-
-        // We always initialize from the database, unless this is the first time the game is
+        // we always initialize from the database, unless this is the first time the game is
         // loaded - in that case we initialize from storeAssets
         if (!initializeFromDB()){
             initializeWithStoreAssets(storeAssets);
@@ -95,8 +94,8 @@ public class StoreInfo {
 
             return true;
         } catch (JSONException e) {
-            StoreUtils.LogDebug(TAG, "Can't parse metadata json. Going to return false and make " +
-                    "StoreInfo load from static data: " + val);
+            StoreUtils.LogDebug(TAG, "Can't parse metadata json. Going to return false and make "
+                    + "StoreInfo load from static data: " + val);
         }
 
         return false;
@@ -121,14 +120,13 @@ public class StoreInfo {
 
     /**
      * Retrieves a single PurchasableVirtualItem that resides in the metadata.
-     *
-     * IMPORTANT: The retrieved PurchasableVirtualItems are only those that have a purchaseType
+     * IMPORTANT: The retrieved PurchasableVirtualItem has a purchaseType
      * of PurchaseWithMarket. (This is why we fetch here with productId)
      *
      * @param productId the productId of the required PurchasableVirtualItem
      * @return PurchasableVirtualItem for the given productId
-     * @throws VirtualItemNotFoundException if no PurchasableVirtualItem with the given productId
-     * was found.
+     * @throws VirtualItemNotFoundException if no PurchasableVirtualItem with the given
+     *         productId was found.
      */
     public static PurchasableVirtualItem getPurchasableItem(String productId)
             throws VirtualItemNotFoundException{
@@ -286,7 +284,8 @@ public class StoreInfo {
 
                 PurchaseType purchaseType = pack.getPurchaseType();
                 if (purchaseType instanceof PurchaseWithMarket) {
-                    mPurchasableItems.put(((PurchaseWithMarket) purchaseType).getMarketItem().getProductId(), pack);
+                    mPurchasableItems.put(((PurchaseWithMarket) purchaseType)
+                            .getMarketItem().getProductId(), pack);
                 }
             }
         }
@@ -377,7 +376,8 @@ public class StoreInfo {
 
                 PurchaseType purchaseType = non.getPurchaseType();
                 if (purchaseType instanceof PurchaseWithMarket) {
-                    mPurchasableItems.put(((PurchaseWithMarket) purchaseType).getMarketItem().getProductId(), non);
+                    mPurchasableItems.put(((PurchaseWithMarket) purchaseType)
+                            .getMarketItem().getProductId(), non);
                 }
             }
         }
@@ -395,7 +395,8 @@ public class StoreInfo {
 
         PurchaseType purchaseType = g.getPurchaseType();
         if (purchaseType instanceof PurchaseWithMarket) {
-            mPurchasableItems.put(((PurchaseWithMarket) purchaseType).getMarketItem().getProductId(), g);
+            mPurchasableItems.put(((PurchaseWithMarket) purchaseType)
+                    .getMarketItem().getProductId(), g);
         }
     }
 
@@ -467,19 +468,36 @@ public class StoreInfo {
         return jsonObject;
     }
 
+    /**
+     * Saves StoreInfo (the store's metadata) in the database as JSON
+     */
     public static void save() {
-        // put StoreInfo in the database as JSON
         String store_json = toJSONObject().toString();
         StoreUtils.LogDebug(TAG, "saving StoreInfo to DB. json is: " + store_json);
         String key = KeyValDatabase.keyMetaStoreInfo();
         StorageManager.getKeyValueStorage().setValue(key, store_json);
     }
 
+    /**
+     * Replaces the given virtual item, and then saves StoreInfo (the store's metadata)
+     *
+     * @param virtualItem
+     */
     public static void save(VirtualItem virtualItem) {
         replaceVirtualItem(virtualItem);
         save();
     }
 
+    /**
+     * Replaces an old virtual item with a new one by doing the following:
+     *   1. Determines the type of the given virtual item.
+     *   2. Looks for the given virtual item in the relevant list, according to its type.
+     *   3. If found, removes it.
+     *   4. Adds the given virtual item.
+     *
+     * @param virtualItem if the given virtual item exists in relevant list, replace with the
+     *                    given virtual item, otherwise add the given virtual item.
+     */
     public static void replaceVirtualItem(VirtualItem virtualItem) {
         mVirtualItems.put(virtualItem.getItemId(), virtualItem);
 
@@ -497,7 +515,8 @@ public class StoreInfo {
             VirtualCurrencyPack vcp = (VirtualCurrencyPack)virtualItem;
             PurchaseType purchaseType = vcp.getPurchaseType();
             if (purchaseType instanceof PurchaseWithMarket) {
-                mPurchasableItems.put(((PurchaseWithMarket) purchaseType).getMarketItem().getProductId(), vcp);
+                mPurchasableItems.put(((PurchaseWithMarket) purchaseType).getMarketItem()
+                        .getProductId(), vcp);
             }
 
             for(int i=0; i<mCurrencyPacks.size(); i++) {
@@ -523,7 +542,8 @@ public class StoreInfo {
 
             PurchaseType purchaseType = vg.getPurchaseType();
             if (purchaseType instanceof PurchaseWithMarket) {
-                mPurchasableItems.put(((PurchaseWithMarket) purchaseType).getMarketItem().getProductId(), vg);
+                mPurchasableItems.put(((PurchaseWithMarket) purchaseType).getMarketItem()
+                        .getProductId(), vg);
             }
 
             for(int i=0; i<mGoods.size(); i++) {
@@ -540,7 +560,8 @@ public class StoreInfo {
 
             PurchaseType purchaseType = non.getPurchaseType();
             if (purchaseType instanceof PurchaseWithMarket) {
-                mPurchasableItems.put(((PurchaseWithMarket) purchaseType).getMarketItem().getProductId(), non);
+                mPurchasableItems.put(((PurchaseWithMarket) purchaseType).getMarketItem()
+                        .getProductId(), non);
             }
 
             for(int i=0; i<mNonConsumables.size(); i++) {
@@ -560,7 +581,8 @@ public class StoreInfo {
      * @param storeAssets
      */
     private static void initializeWithStoreAssets(IStoreAssets storeAssets) {
-        /// fall-back here if the json doesn't exist, we load the store from the given {@link IStoreAssets}.
+        // fall-back here if the json doesn't exist,
+        // we load the store from the given {@link IStoreAssets}.
         mCurrencies = Arrays.asList(storeAssets.getCurrencies());
         mCurrencyPacks = Arrays.asList(storeAssets.getCurrencyPacks());
         mGoods = Arrays.asList(storeAssets.getGoods());
@@ -581,7 +603,8 @@ public class StoreInfo {
 
             PurchaseType purchaseType = vi.getPurchaseType();
             if (purchaseType instanceof PurchaseWithMarket) {
-                mPurchasableItems.put(((PurchaseWithMarket) purchaseType).getMarketItem().getProductId(), vi);
+                mPurchasableItems.put(((PurchaseWithMarket) purchaseType).getMarketItem()
+                        .getProductId(), vi);
             }
         }
 
@@ -599,7 +622,8 @@ public class StoreInfo {
 
             PurchaseType purchaseType = vi.getPurchaseType();
             if (purchaseType instanceof PurchaseWithMarket) {
-                mPurchasableItems.put(((PurchaseWithMarket) purchaseType).getMarketItem().getProductId(), vi);
+                mPurchasableItems.put(((PurchaseWithMarket) purchaseType).getMarketItem()
+                        .getProductId(), vi);
             }
         }
 
@@ -608,7 +632,8 @@ public class StoreInfo {
 
             PurchaseType purchaseType = vi.getPurchaseType();
             if (purchaseType instanceof PurchaseWithMarket) {
-                mPurchasableItems.put(((PurchaseWithMarket) purchaseType).getMarketItem().getProductId(), vi);
+                mPurchasableItems.put(((PurchaseWithMarket) purchaseType).getMarketItem()
+                        .getProductId(), vi);
             }
         }
 
@@ -626,22 +651,30 @@ public class StoreInfo {
 
     private static final String TAG = "SOOMLA StoreInfo"; //used for Log messages
 
-    // convenient hash to retrieve virtual items
+    // convenient hash of virtual items
     private static HashMap<String, VirtualItem> mVirtualItems;
 
+    // convenient hash of purchasable virtual items
     private static HashMap<String, PurchasableVirtualItem> mPurchasableItems;
 
+    // convenient hash of goods-categories
     private static HashMap<String, VirtualCategory> mGoodsCategories;
 
+    // convenient hash of good-upgrades
     private static HashMap<String, List<UpgradeVG>> mGoodsUpgrades;
 
+    // list of virtual currencies
     private static List<VirtualCurrency> mCurrencies;
 
+    // list of currency-packs
     private static List<VirtualCurrencyPack> mCurrencyPacks;
 
+    // list of virtual goods
     private static List<VirtualGood> mGoods;
 
+    // list of virtul categories
     private static List<VirtualCategory> mCategories;
 
+    // list of non consumable items
     private static List<NonConsumableItem> mNonConsumables;
 }

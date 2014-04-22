@@ -28,13 +28,13 @@ import org.json.JSONObject;
  *
  * The LifetimeVG's characteristics are:
  *  1. Can only be purchased once.
- *  2. Your users can't have more than one of this item.
+ *  2. Your users cannot have more than one of this item.
  *
  * Real Games Examples: 'No Ads', 'Double Coins'
  *
  * This VirtualItem is purchasable.
  * In case you want this item to be available for purchase in the market (PurchaseWithMarket),
- * you will need to define the item in Google Play Developer Console.
+ * you will need to define the item in the market (Google Play, Amazon App Store, etc...).
  *
  * LifeTimeVG extends VirtualGood extends PurchasableVirtualItem extends VirtualItem
  */
@@ -119,7 +119,7 @@ import org.json.JSONObject;
     }
 
     /**
-     * Determines if user is in a state that allows him to buy a LifetimeVG, by checking his
+     * Determines if the user is in a state that allows him to buy a LifetimeVG, by checking his
      * balance of LifetimeVGs.
      * From the definition of a LifetimeVG:
      * If the user has a balance of 0 - he can buy

@@ -21,6 +21,13 @@ package com.soomla.store.exceptions;
  * VirtualItemNotFoundException extends Exception
  */
 public class VirtualItemNotFoundException extends Exception {
+
+    /**
+     * Constructor
+     *
+     * @param lookupBy
+     * @param lookupVal
+     */
     public VirtualItemNotFoundException(String lookupBy, String lookupVal) {
         super("Virtual item was not found when searching with " + lookupBy + "=" + lookupVal);
     }

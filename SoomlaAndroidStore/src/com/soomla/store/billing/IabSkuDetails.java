@@ -22,14 +22,18 @@ import org.json.JSONObject;
  * Represents an in-app product's listing details.
  */
 public class IabSkuDetails {
+    private String mItemType;
+    private String mSku;
+    private String mType;
+    private String mPrice;
+    private String mTitle;
+    private String mDescription;
+    private String mJson;
 
-    /**
-     * Constructor
-     *
-     * @param itemType
-     * @param jsonSkuDetails
-     * @throws JSONException
-     */
+//    public IabSkuDetails(String jsonSkuDetails) throws JSONException {
+//        this(IabHelper.ITEM_TYPE_INAPP, jsonSkuDetails);
+//    }
+
     public IabSkuDetails(String itemType, String jsonSkuDetails) throws JSONException {
         mItemType = itemType;
         mJson = jsonSkuDetails;
@@ -40,14 +44,6 @@ public class IabSkuDetails {
         mTitle = o.optString("title");
         mDescription = o.optString("description");
     }
-
-    @Override
-    public String toString() {
-        return "IabSkuDetails:" + mJson;
-    }
-
-
-    /** Setters and Getters */
 
     public String getItemType() {
         return mItemType;
@@ -77,15 +73,8 @@ public class IabSkuDetails {
         return mJson;
     }
 
-
-    /** Private Members */
-
-    private String mItemType;
-    private String mSku;
-    private String mType;
-    private String mPrice;
-    private String mTitle;
-    private String mDescription;
-    private String mJson;
-
+    @Override
+    public String toString() {
+        return "IabSkuDetails:" + mJson;
+    }
 }

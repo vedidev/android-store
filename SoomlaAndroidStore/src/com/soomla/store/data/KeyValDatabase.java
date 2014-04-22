@@ -81,7 +81,7 @@ public class KeyValDatabase {
     }
 
     /**
-     * Gets the value for the given key.
+     * Retrieves the value for the given key.
      *
      * @param key the key of the key-val pair.
      * @return a value for the given key.

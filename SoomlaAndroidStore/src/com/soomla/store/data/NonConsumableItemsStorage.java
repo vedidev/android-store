@@ -20,7 +20,7 @@ import com.soomla.store.StoreUtils;
 import com.soomla.store.domain.NonConsumableItem;
 
 /**
- * This class provide basic storage operations on Market's MANAGED items.
+ * This class provides basic storage operations on the Market's MANAGED items.
  */
 public class NonConsumableItemsStorage {
 
@@ -34,7 +34,7 @@ public class NonConsumableItemsStorage {
      * Checks if the given non-consumable {@link NonConsumableItem} exists.
      *
      * @param nonConsumableItem the required non-consumable {@link NonConsumableItem}.
-     * @return whether the given item exists or not.
+     * @return true if the given item exists, false otherwise.
      */
     public boolean nonConsumableItemExists(NonConsumableItem nonConsumableItem){
 
@@ -49,9 +49,9 @@ public class NonConsumableItemsStorage {
     }
 
     /**
-     * Adds the given google non-consumable item to the storage.
+     * Adds the given non-consumable item to the storage.
      *
-     * @param nonConsumableItem the required google non-consumable item.
+     * @param nonConsumableItem the required non-consumable item.
      * @return true
      */
     public boolean add(NonConsumableItem nonConsumableItem){
@@ -66,9 +66,9 @@ public class NonConsumableItemsStorage {
     }
 
     /**
-     * Removes the given google non-consumable item from the storage.
+     * Removes the given non-consumable item from the storage.
      *
-     * @param nonConsumableItem the required google non-consumable item.
+     * @param nonConsumableItem the required non-consumable item.
      * @return false
      */
     public boolean remove(NonConsumableItem nonConsumableItem){

@@ -27,7 +27,7 @@ import org.json.JSONObject;
  * 
  * NOTE: Don't be confused: this is not a Lifetime VirtualGood. It's just a MANAGED item in the
  * Market. This item will be retrieved when you "restoreTransactions".
- * If you want to make a LifetimeVG available for purchase in the Google Play Store, you will need
+ * If you want to make a LifetimeVG available for purchase in the market, you will need
  * to declare it as a NonConsumableItem.
  *
  * NonConsumableItem extends PurchasableVirtualItem extends VirtualItem

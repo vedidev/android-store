@@ -21,7 +21,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 /**
- * A representation of an item in Google Play.
+ * A representation of an item in the market.
  * MarketItem is only used for PurchaseWithMarket purchase type.
  */
 public class MarketItem {
@@ -29,9 +29,9 @@ public class MarketItem {
     /**
      * Constructor
      *
-     * @param mProductId the Id of the current item in Google Play.
-     * @param mManaged the Managed type of the current item in Google Play.
-     * @param mPrice the actual $$ cost of the current item in Google Play.
+     * @param mProductId the Id of the current item in the market.
+     * @param mManaged the Managed type of the current item in the market.
+     * @param mPrice the actual $$ cost of the current item in the market.
      */
     public MarketItem(String mProductId, Managed mManaged, double mPrice) {
         this.mProductId = mProductId;
@@ -93,7 +93,6 @@ public class MarketItem {
 
     /** Setters and Getters **/
 
-    //SETTERS:
     public void setMarketPrice(String mMarketPrice) {
         this.mMarketPrice = mMarketPrice;
     }
@@ -106,7 +105,6 @@ public class MarketItem {
         this.mMarketDescription = mMarketDescription;
     }
 
-    //GETTERS:
     public String getProductId() {
         return mProductId;
     }
@@ -135,34 +133,16 @@ public class MarketItem {
         return mMarketDescription;
     }
 
-    /** Setters**/
 
-    public void setPrice(double mPrice) {
-        this.mPrice = mPrice;
-    }
-
-    public void setMarketPrice(String mMarketPrice) {
-        this.mMarketPrice = mMarketPrice;
-    }
-
-    public void setMarketTitle(String mMarketTitle) {
-        this.mMarketTitle = mMarketTitle;
-    }
-
-    public void setMarketDescription(String mMarketDescription) {
-        this.mMarketDescription = mMarketDescription;
-    }
-
-
-    /** Private members **/
+    /** Private Members **/
 
     private static final String TAG = "SOOMLA MarketItem"; //used for Log messages
 
-    private Managed mManaged; //the Managed type of the current item in Google Play.
+    private Managed mManaged; //the Managed type of the current item in the market.
 
-    private String mProductId; //id of this VirtualGood in Google Market
+    private String mProductId; //id of this VirtualGood in the market
 
-    private double mPrice; //the actual $$ cost of the current item in Google Play.
+    private double mPrice; //the actual $$ cost of the current item in the market.
 
     private String mMarketPrice;
 

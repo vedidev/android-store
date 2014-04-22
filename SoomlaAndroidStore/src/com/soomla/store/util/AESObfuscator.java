@@ -85,7 +85,7 @@ public class AESObfuscator {
             MessageDigest digester = null;
             try {
                 digester = MessageDigest.getInstance("MD5");
-                char[] password = (applicationId + deviceId + sec).toCharArray();changes
+                char[] password = (applicationId + deviceId + sec).toCharArray();
                 for (int i = 0; i < password.length; i++) {
                     digester.update((byte) password[i]);
                 }

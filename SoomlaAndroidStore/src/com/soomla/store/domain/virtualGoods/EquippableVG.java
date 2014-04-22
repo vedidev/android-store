@@ -48,11 +48,11 @@ import java.util.Iterator;
  *                must stay unequipped.
  *
  * Real Game Examples:
- *      - different characters available and the user can play with ONE specific character
- *      - 'binoculars' that users might only want to take at night
+ *  - different characters available, while the user can play with ONE specific character at a time
+ *  - 'binoculars' that users might only want to take at night
  *
  * NOTE: In case you want this item to be available for purchase in the market (PurchaseWithMarket),
- * you will need to define it in the Google Play Developer Console.
+ * you will need to define it in the market (Google Play, Amazon App Store, etc...).
  *
  * EquippableVG extends LifeTimeVG extends VirtualGood extends PurchasableVirtualItem extends
  * VirtualItem
@@ -132,10 +132,10 @@ public class EquippableVG extends LifetimeVG{
     /**
      * Equips the current EquippableVG.
      * If Equipping Model is 'global' or 'category' it is handled accordingly.
-     * If Equipping Model is 'local' there's no need to check anything, because of the
-     * definition of local - it does not affect other EquippableVGs.
+     * If Equipping Model is 'local' there's no need to check anything, because it does not
+     * affect other EquippableVGs.
      *
-     * @param notify
+     * @param notify if notify is true post event to bus
      * @throws NotEnoughGoodsException
      */
     public void equip(boolean notify) throws NotEnoughGoodsException {

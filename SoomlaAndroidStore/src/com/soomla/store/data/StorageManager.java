@@ -28,6 +28,7 @@ public class StorageManager {
     /** Setters and Getters **/
 
     public static VirtualCurrencyStorage getVirtualCurrencyStorage() {
+
         return mVirtualCurrencyStorage;
     }
 
@@ -56,15 +57,19 @@ public class StorageManager {
 
     /** Private Members **/
 
-    private static final String TAG = "SOOMLA StorageManager";
+    private static final String TAG = "SOOMLA StorageManager"; //used for Log messages
 
+    // storage of all Virtual Goods
     private static VirtualGoodsStorage mVirtualGoodsStorage = new VirtualGoodsStorage();
 
+    // storage of all Virtual currencies
     private static VirtualCurrencyStorage mVirtualCurrencyStorage = new VirtualCurrencyStorage();
 
+    // storage of all non-consumable items
     private static NonConsumableItemsStorage mNonConsumableItemsStorage =
             new NonConsumableItemsStorage();
 
+    // key-value storage
     private static KeyValueStorage mKeyValueStorage = new KeyValueStorage();
 
 }

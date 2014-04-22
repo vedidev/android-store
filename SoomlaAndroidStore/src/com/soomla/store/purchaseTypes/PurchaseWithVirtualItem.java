@@ -98,6 +98,7 @@ public class PurchaseWithVirtualItem extends PurchaseType {
         this.mAmount = mAmount;
     }
 
+
     /** Private Members */
 
     //used for Log messages

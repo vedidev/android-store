@@ -16,65 +16,28 @@
 package com.soomla.store.billing;
 
 /**
- * This exception is thrown when something goes wrong with the in-app billing process.
+ * Exception thrown when something went wrong with in-app billing.
  * An IabException has an associated IabResult (an error).
- * To get the IabResults that caused this exception to be thrown, call {@link #getResult()}.
- *
- * IabException extends Exception
+ * To get the IAB result that caused this exception to be thrown,
+ * call {@link #getResult()}.
  */
 public class IabException extends Exception {
-
-    // Every IabException has an associated IabResult
     IabResult mResult;
 
-    /**
-     * Constructor
-     * Creates instance of IabException with given result and no message
-     *
-     * @param r IabResult associated with this IabException
-     */
     public IabException(IabResult r) {
         this(r, null);
     }
-
-    /**
-     * Constructor
-     * Creates instance of IabException by creating associated IabResult with given response and
-     * message (see {@link com.soomla.store.billing.IabResult})
-     *
-     * @param response response code - will be used for creating IabResult
-     * @param message message - will be used for creating IabResult
-     */
     public IabException(int response, String message) {
         this(new IabResult(response, message));
     }
-
-    /**
-     * Constructor
-     *
-     * @param r IabResult associated with this IabException
-     * @param cause Exception cause
-     */
     public IabException(IabResult r, Exception cause) {
         super(r.getMessage(), cause);
         mResult = r;
     }
-
-    /**
-     * Constructor
-     *
-     * @param response response code - will be used for creating IabResult
-     * @param message message - will be used for creating IabResult
-     * @param cause Exception cause
-     */
     public IabException(int response, String message, Exception cause) {
         this(new IabResult(response, message), cause);
     }
 
-    /**
-     * Returns the IAB result (error) that this exception signals.
-     *
-     * @return result
-     */
+    /** Returns the IAB result (error) that this exception signals. */
     public IabResult getResult() { return mResult; }
 }

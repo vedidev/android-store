@@ -30,10 +30,13 @@ public class RestoreTransactionsFinishedEvent {
     }
 
     /** Setters and Getters */
+
     public boolean isSuccess() {
         return mSuccess;
     }
 
+
     /** Private Members */
+
     private boolean mSuccess;
 }

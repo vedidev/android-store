@@ -33,11 +33,13 @@ public class MarketPurchaseStartedEvent {
 
 
     /** Setters and Getters */
+
     public PurchasableVirtualItem getPurchasableVirtualItem() {
         return mPurchasableVirtualItem;
     }
 
 
     /** Private Members */
+
     private PurchasableVirtualItem mPurchasableVirtualItem;
 }

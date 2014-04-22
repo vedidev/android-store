@@ -17,9 +17,10 @@ package com.soomla.store.billing;
 
 /**
  * Represents the result of an in-app billing operation.
- * A result is composed of a response code (an integer) and possibly a message (String).
- * You can get those by calling {@link #getResponse} and {@link #getMessage()}, respectively.
- * You can also inquire whether a result is a success or a failure by
+ * A result is composed of a response code (an integer) and possibly a
+ * message (String). You can get those by calling
+ * {@link #getResponse} and {@link #getMessage()}, respectively. You
+ * can also inquire whether a result is a success or a failure by
  * calling {@link #isSuccess()} and {@link #isFailure()}.
  */
 public class IabResult {
@@ -47,16 +48,10 @@ public class IabResult {
     public static final int IABHELPER_SUBSCRIPTIONS_NOT_AVAILABLE = -1009;
     public static final int IABHELPER_INVALID_CONSUMPTION = -1010;
 
-    // Class Members
+
     int mResponse;
     String mMessage;
 
-    /**
-     * Constructor
-     *
-     * @param response response code
-     * @param message optional message
-     */
     public IabResult(int response, String message) {
         mResponse = response;
         if (message == null || message.trim().length() == 0) {
@@ -66,19 +61,12 @@ public class IabResult {
             mMessage = message + " (response: " + getResponseDesc(response) + ")";
         }
     }
-
-
-    /** Setters and Getters */
-
     public int getResponse() { return mResponse; }
-
     public String getMessage() { return mMessage; }
-
     public boolean isSuccess() { return mResponse == BILLING_RESPONSE_RESULT_OK; }
-
     public boolean isFailure() { return !isSuccess(); }
-
     public String toString() { return "IabResult: " + getMessage(); }
+
 
     /**
      * Returns a human-readable description for the given response code.
@@ -114,4 +102,3 @@ public class IabResult {
             return iab_msgs[code];
     }
 }
-

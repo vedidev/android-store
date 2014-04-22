@@ -127,7 +127,7 @@ public abstract class PurchasableVirtualItem extends VirtualItem {
      * Buys a Virtual Item, after checking if user is in a state that allows him to buy.
      * This action uses the associated PurchaseType to perform the purchase.
      *
-     * @throws InsufficientFundsException
+     * @throws InsufficientFundsException if the user does not have enough funds to buy()
      */
     public void buy() throws InsufficientFundsException {
         if (!canBuy()) return;
@@ -135,20 +135,19 @@ public abstract class PurchasableVirtualItem extends VirtualItem {
         mPurchaseType.buy();
     }
 
-
-    /** Setters and Getters */
-
-    public PurchaseType getPurchaseType() {
-        return mPurchaseType;
-    }
-
-
     /**
      * Determines if user is in a state that allows him to buy a specific VirtualItem.
      *
      * @return true if can buy, false otherwise
      */
     protected abstract boolean canBuy();
+
+
+    /** Setters and Getters */
+
+    public PurchaseType getPurchaseType() {
+        return mPurchaseType;
+    }
 
 
     /** Private Members */

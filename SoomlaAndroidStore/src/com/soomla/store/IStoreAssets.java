@@ -27,6 +27,8 @@ import com.soomla.store.domain.virtualGoods.VirtualGood;
  */
 public interface IStoreAssets {
 
+    /** Setters and Getters */
+
     /**
      * Retrieves the current version of your IStoreAssets.
      *

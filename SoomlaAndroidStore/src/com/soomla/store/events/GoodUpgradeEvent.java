@@ -29,13 +29,19 @@ import com.soomla.store.domain.virtualGoods.VirtualGood;
  */
 public class GoodUpgradeEvent {
 
-    private VirtualGood mGood;
-    private UpgradeVG   mCurrentUpgrade;
-
+    /**
+     * Constructor
+     *
+     * @param good good that has been upgraded/downgraded
+     * @param upgradeVG upgrade details
+     */
     public GoodUpgradeEvent(VirtualGood good, UpgradeVG upgradeVG) {
         mGood = good;
         mCurrentUpgrade = upgradeVG;
     }
+
+
+    /** Setters and Getters */
 
     public VirtualGood getGood() {
         return mGood;
@@ -44,4 +50,12 @@ public class GoodUpgradeEvent {
     public UpgradeVG getCurrentUpgrade() {
         return mCurrentUpgrade;
     }
+
+
+    /** Private Members */
+
+    private VirtualGood mGood; //good that has been upgraded/downgraded
+
+    private UpgradeVG   mCurrentUpgrade; //upgrade details
+
 }

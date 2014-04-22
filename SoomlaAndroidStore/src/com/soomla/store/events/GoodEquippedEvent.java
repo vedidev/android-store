@@ -38,6 +38,7 @@ public class GoodEquippedEvent {
 
 
     /** Setters and Getters */
+
     public EquippableVG getGood() {
         return mGood;
     }

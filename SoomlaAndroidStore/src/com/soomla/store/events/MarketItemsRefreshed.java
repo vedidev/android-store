@@ -36,10 +36,13 @@ public class MarketItemsRefreshed {
 
 
     /** Setters and Getters */
+
     public List<MarketItem> getMarketItems() {
         return mMarketItems;
     }
 
+
     /** Private Members */
+
     List<MarketItem> mMarketItems;
 }

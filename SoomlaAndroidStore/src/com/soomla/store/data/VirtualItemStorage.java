@@ -49,14 +49,24 @@ public abstract class VirtualItemStorage {
     }
 
     /**
-     * Sets the balance of the given virtual item as the given balance.
+     * Sets the balance of the given virtual item to be the given balance.
      *
-     * @param item is the required virtual item.
-     * @return the balance of the required virtual item.
+     * @param item the required virtual item
+     * @param balance the new balance to be set
+     * @return the balance of the required virtual item
      */
     public int setBalance(VirtualItem item, int balance) {
         return setBalance(item, balance, true);
     }
+
+    /**
+     * Sets the balance of the given virtual item to be the given balance.
+     *
+     * @param item the required virtual item
+     * @param balance the new balance to be set
+     * @param notify if notify is true post balance change event
+     * @return the balance of the required virtual item
+     */
     public int setBalance(VirtualItem item, int balance, boolean notify) {
         StoreUtils.LogDebug(mTag, "setting balance " + balance + " to " + item.getName() + ".");
 
@@ -82,12 +92,22 @@ public abstract class VirtualItemStorage {
     /**
      * Adds the given amount of items to the storage.
      *
-     * @param item is the required virtual item.
-     * @param amount is the amount of items to add.
+     * @param item the required virtual item
+     * @param amount the amount of items to add
+     * @return new balance
      */
     public int add(VirtualItem item, int amount){
         return add(item, amount, true);
     }
+
+    /**
+     * Adds the given amount of items to the storage.
+     *
+     * @param item the required virtual item
+     * @param amount the amount of items to add
+     * @param notify if notify is true post balance change event
+     * @return new balance
+     */
     public int add(VirtualItem item, int amount, boolean notify){
         StoreUtils.LogDebug(mTag, "adding " + amount + " " + item.getName());
 
@@ -113,10 +133,20 @@ public abstract class VirtualItemStorage {
      *
      * @param item is the virtual item to remove the given amount from.
      * @param amount is the amount to remove.
+     * @return new balance
      */
     public int remove(VirtualItem item, int amount){
         return remove(item, amount, true);
     }
+
+    /**
+     * Removes the given amount from the given virtual item's balance.
+     *
+     * @param item is the virtual item to remove the given amount from.
+     * @param amount is the amount to remove.
+     * @param notify if notify is true post balance change event
+     * @return new balance
+     */
     public int remove(VirtualItem item, int amount, boolean notify){
         StoreUtils.LogDebug(mTag, "Removing " + amount + " " + item.getName() + ".");
 

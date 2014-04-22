@@ -25,11 +25,12 @@ import org.json.JSONObject;
  * Each game can have multiple instances of a virtual currency, all kept in
  * {@link com.soomla.store.data.StoreInfo}
  *
- * Real Game Examples: 'coin', 'gem', 'muffin'
+ * Real Game Examples: 'Coin', 'Gem', 'Muffin'
  *
- * NOTE: This item is NOT purchasable! However, a VirtualCurrencyPack is purchasable. For example,
- * if the virtual currency in your game is a 'Coin' and you want to make a single 'Coin' available
- * for purchase you will need to define a VirtualCurrencyPack of 1'Coin'.
+ * NOTE: This item is NOT purchasable!
+ * However, a VirtualCurrencyPack IS purchasable.
+ * For example, if the virtual currency in your game is a 'Coin' and you want to make a single
+ * 'Coin' available for purchase you will need to define a VirtualCurrencyPack of 1'Coin'.
  *
  * VirtualCurrency extends VirtualItem
  */

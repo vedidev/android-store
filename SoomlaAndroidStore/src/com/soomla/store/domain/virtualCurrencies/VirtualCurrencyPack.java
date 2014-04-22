@@ -34,7 +34,7 @@ import java.util.Iterator;
  * (e.g. "10 Coins Set" or "Super Saver Pack").
  *
  * NOTE: In case you want this item to be available for purchase in the market (PurchaseWithMarket),
- * you will need to define the item in Google Play Developer Console.
+ * you will need to define the item in the market (Google Play, Amazon App Store, etc...).
  *
  * VirtualCurrencyPack extends PurchasableVirtualItem extends VirtualItem
  */
@@ -165,7 +165,7 @@ public class VirtualCurrencyPack extends PurchasableVirtualItem {
     }
 
 
-    /** Getters **/
+    /** Setters and Getters **/
 
     public int getCurrencyAmount() {
         return mCurrencyAmount;
@@ -176,7 +176,7 @@ public class VirtualCurrencyPack extends PurchasableVirtualItem {
     }
 
 
-    /** Private members **/
+    /** Private Members **/
 
     private static final String TAG = "SOOMLA VirtualCurrencyPack"; //used for Log messages
 

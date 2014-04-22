@@ -39,10 +39,12 @@ public class GoodUnEquippedEvent {
 
 
     /** Setters and Getters */
+
     public EquippableVG getGood() {
         return mGood;
     }
 
     /** Private Members */
+
     private EquippableVG mGood;
 }

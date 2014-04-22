@@ -27,7 +27,7 @@ import com.squareup.otto.Bus;
 public class AndroidBus extends Bus {
 
     /**
-     * Lets subscribers know that a change that has occurred
+     * Posts events to let subscribers know that a change that has occurred
      *
      * @param event an instance of any class may be published on the bus
      */
@@ -46,7 +46,7 @@ public class AndroidBus extends Bus {
     }
 
     /**
-     * Registers with the bus, in order to receive events.
+     * Registers to the event bus, in order to receive events.
      *
      * @param object
      */
@@ -65,7 +65,7 @@ public class AndroidBus extends Bus {
     }
 
     /**
-     * Unregisters with the bus, in order to STOP receiving events.
+     * Unregisters to the event bus, in order to STOP receiving events.
      *
      * @param object
      */

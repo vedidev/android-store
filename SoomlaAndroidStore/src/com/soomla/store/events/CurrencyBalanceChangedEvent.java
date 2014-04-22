@@ -43,6 +43,7 @@ public class CurrencyBalanceChangedEvent {
 
 
     /** Setters and Getters */
+
     public VirtualCurrency getCurrency() {
         return mCurrency;
     }

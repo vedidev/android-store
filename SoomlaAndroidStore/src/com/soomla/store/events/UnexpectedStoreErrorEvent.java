@@ -40,6 +40,7 @@ public class UnexpectedStoreErrorEvent {
 
 
     /** Setters and Getters */
+
 	public String getMessage()
 	{
 		return mMessage;
@@ -47,5 +48,6 @@ public class UnexpectedStoreErrorEvent {
 
 
     /** Private Members */
+
     private String mMessage;
 }

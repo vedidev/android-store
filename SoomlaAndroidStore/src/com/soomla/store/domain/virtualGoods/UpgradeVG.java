@@ -48,7 +48,7 @@ import java.util.Iterator;
  * met and buy it for you (which actually means we upgrade the associated VirtualGood).
  *
  * NOTE: In case you want this item to be available for purchase in the market (PurchaseWithMarket),
- * you will need to define the item in Google Play Developer Console.
+ * you will need to define the item in the market (Google Play, Amazon App Store, etc...).
  *
  * UpgradeVG extends LifeTimeVG extends VirtualGood extends PurchasableVirtualItem
  * extends VirtualItem
@@ -207,20 +207,6 @@ public class UpgradeVG extends LifetimeVG {
         return super.take(amount, notify);
     }
 
-    /** Getters **/
-
-    public String getGoodItemId() {
-        return mGoodItemId;
-    }
-
-    public String getPrevItemId() {
-        return mPrevItemId;
-    }
-
-    public String getNextItemId() {
-        return mNextItemId;
-    }
-
     /**
      * Determines if the user is in a state that allows him to buy an UpgradeVG
      * This method enforces allowing/rejecting of upgrades here so users won't buy them when
@@ -243,6 +229,20 @@ public class UpgradeVG extends LifetimeVG {
                (upgradeVG != null && ((upgradeVG.getNextItemId().equals(getItemId())) ||
                        (upgradeVG.getPrevItemId().equals(getItemId())))))
                 && super.canBuy();
+    }
+
+    /** Setters and Getters **/
+
+    public String getGoodItemId() {
+        return mGoodItemId;
+    }
+
+    public String getPrevItemId() {
+        return mPrevItemId;
+    }
+
+    public String getNextItemId() {
+        return mNextItemId;
     }
 
 

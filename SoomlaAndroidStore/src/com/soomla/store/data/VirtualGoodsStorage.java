@@ -29,6 +29,8 @@ import com.soomla.store.exceptions.VirtualItemNotFoundException;
 
 /**
  * This class provides basic storage operations on VirtualGoods.
+ *
+ * VirtualGoodsStorage extends VirtualItemStorage
  */
 public class VirtualGoodsStorage extends VirtualItemStorage{
 
@@ -42,11 +44,18 @@ public class VirtualGoodsStorage extends VirtualItemStorage{
     /**
      * Removes any upgrade associated with the given VirtualGood.
      *
-     * @param good the VirtualGood to remove upgrade from.
+     * @param good the VirtualGood to remove upgrade from
      */
     public void removeUpgrades(VirtualGood good) {
         removeUpgrades(good, true);
     }
+
+    /**
+     * Removes any upgrade associated with the given VirtualGood.
+     *
+     * @param good the VirtualGood to remove upgrade from
+     * @param notify if notify is true post event to bus
+     */
     public void removeUpgrades(VirtualGood good, boolean notify) {
         StoreUtils.LogDebug(mTag, "Removing upgrade information from virtual good: " + good.getName());
 
@@ -69,6 +78,14 @@ public class VirtualGoodsStorage extends VirtualItemStorage{
     public void assignCurrentUpgrade(VirtualGood good, UpgradeVG upgradeVG) {
         assignCurrentUpgrade(good, upgradeVG, true);
     }
+
+    /**
+     * Assigns a specific upgrade to the given VirtualGood.
+     *
+     * @param good the VirtualGood to upgrade.
+     * @param upgradeVG the upgrade to assign.
+     * @param notify if notify is true post event to bus
+     */
     public void assignCurrentUpgrade(VirtualGood good, UpgradeVG upgradeVG, boolean notify) {
         if (getCurrentUpgrade(good) != null && getCurrentUpgrade(good).getItemId().equals(upgradeVG.getItemId())) {
             return;
@@ -118,9 +135,9 @@ public class VirtualGoodsStorage extends VirtualItemStorage{
     }
 
     /**
-     * Checks the equipping status of the given EquippableVG.
+     * Checks if the given EquippableVG is currently equipped or not.
      *
-     * @param good the EquippableVG to check the status for.
+     * @param good the EquippableVG to check the status for
      * @return true if the given good is equipped, false otherwise
      */
     public boolean isEquipped(EquippableVG good){
@@ -136,11 +153,18 @@ public class VirtualGoodsStorage extends VirtualItemStorage{
     /**
      * Equips the given EquippableVG.
      *
-     * @param good the EquippableVG to equip.
+     * @param good the EquippableVG to equip
      */
     public void equip(EquippableVG good) {
         equip(good, true);
     }
+
+    /**
+     * Equips the given EquippableVG.
+     *
+     * @param good the EquippableVG to equip
+     * @param notify if notify is true post event to bus
+     */
     public void equip(EquippableVG good, boolean notify) {
         if (isEquipped(good)) {
             return;
@@ -151,11 +175,18 @@ public class VirtualGoodsStorage extends VirtualItemStorage{
     /**
      * UnEquips the given EquippableVG.
      *
-     * @param good the EquippableVG to unequip.
+     * @param good the EquippableVG to unequip
      */
     public void unequip(EquippableVG good) {
         unequip(good, true);
     }
+
+    /**
+     * UnEquips the given EquippableVG.
+     *
+     * @param good the EquippableVG to unequip
+     * @param notify if notify is true post event to bus
+     */
     public void unequip(EquippableVG good, boolean notify) {
         if (!isEquipped(good)) {
             return;

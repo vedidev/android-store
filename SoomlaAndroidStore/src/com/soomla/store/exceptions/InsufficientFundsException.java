@@ -31,6 +31,12 @@ package com.soomla.store.exceptions;
  * InsufficientFundsException extends Exception
  */
 public class InsufficientFundsException extends Exception {
+
+    /**
+     * Constructor
+     *
+     * @param itemId id of the item that was attempted to buy with
+     */
     public InsufficientFundsException(String itemId) {
         super("You tried to buy with itemId: " + itemId + " but you don't have enough of it.");
 
@@ -38,9 +44,13 @@ public class InsufficientFundsException extends Exception {
     }
 
     /** Setters and Getters */
+
     public String getItemId() {
         return mItemId;
     }
+
+
+    /** Private Members */
 
     private String mItemId;
 }

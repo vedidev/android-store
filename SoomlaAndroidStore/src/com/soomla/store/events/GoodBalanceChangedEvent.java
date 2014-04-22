@@ -43,6 +43,7 @@ public class GoodBalanceChangedEvent {
 
 
     /** Setters and Getters */
+
     public VirtualGood getGood() {
         return mGood;
     }

@@ -32,7 +32,7 @@ import org.json.JSONObject;
  * Real Game Examples: 'Hat', 'Sword', 'Muffin'
  *
  * NOTE: In case you want this item to be available for purchase in the market (PurchaseWithMarket),
- * you will need to define the item in Google Play Developer Console.
+ * you will need to define the item in the market (Google Play, Amazon App Store, etc...).
  *
  * SingleUseVG extends VirtualGood extends PurchasableVirtualItem extends VirtualItem
  */
