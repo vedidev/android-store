@@ -22,18 +22,17 @@ import org.json.JSONObject;
  * Represents an in-app billing purchase.
  */
 public class IabPurchase {
-    private String mItemType;  // ITEM_TYPE_INAPP or ITEM_TYPE_SUBS
-    private String mOrderId;
-    private String mPackageName;
-    private String mSku; //the item’s unique product ID in Google Play
-    private long mPurchaseTime;
-    private int mPurchaseState;
-    private String mDeveloperPayload;
-    private String mToken;
-    private String mOriginalJson;
-    private String mSignature;
 
-    public IabPurchase(String itemType, String jsonPurchaseInfo, String signature) throws JSONException {
+    /**
+     * Constructor
+     *
+     * @param itemType
+     * @param jsonPurchaseInfo
+     * @param signature
+     * @throws JSONException
+     */
+    public IabPurchase(String itemType, String jsonPurchaseInfo, String signature)
+            throws JSONException {
         mItemType = itemType;
         mOriginalJson = jsonPurchaseInfo;
         JSONObject o = new JSONObject(mOriginalJson);
@@ -46,6 +45,12 @@ public class IabPurchase {
         mToken = o.optString("token", o.optString("purchaseToken"));
         mSignature = signature;
     }
+
+    @Override
+    public String toString() { return "PurchaseInfo(type:" + mItemType + "):" + mOriginalJson; }
+
+
+    /** Setters and Getters */
 
     public String getItemType() {
         return mItemType;
@@ -87,6 +92,17 @@ public class IabPurchase {
         return mSignature;
     }
 
-    @Override
-    public String toString() { return "PurchaseInfo(type:" + mItemType + "):" + mOriginalJson; }
+
+    /** Private Members */
+
+    private String mItemType;  // ITEM_TYPE_INAPP or ITEM_TYPE_SUBS
+    private String mOrderId;
+    private String mPackageName;
+    private String mSku; //the item’s unique product ID in Google Play
+    private long mPurchaseTime;
+    private int mPurchaseState;
+    private String mDeveloperPayload;
+    private String mToken;
+    private String mOriginalJson;
+    private String mSignature;
 }

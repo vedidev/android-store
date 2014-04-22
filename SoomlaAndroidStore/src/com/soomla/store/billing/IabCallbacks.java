@@ -22,7 +22,6 @@ package com.soomla.store.billing;
   */
 public class IabCallbacks {
 
-
     public interface IabInitListener {
         public void success(boolean alreadyInBg);
         public void fail(String message);
