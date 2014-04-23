@@ -34,10 +34,9 @@ public interface IIabService {
     public boolean isIabServiceInitialized();
 
     /**
-     * Consumes a given in-app product. Consuming can only be done on an item
-     * that's owned, and as a result of consumption, the user will no longer own it.
-     * This method may block or take long to return. Do not call from the UI thread.
-     * For that, see {@link #consumeAsync}.
+     * Consumes the given purchase. In order to consume a product, the product must be owned, and
+     * upon consumption completion, the user will no longer own the product.
+     * This method may block, do not call from UI thread. For that see {@link #consumeAsync}.
      *
      * @param purchase the PurchaseInfo that represents the item to consume.
      * @throws IabException if there is a problem during consumption.
@@ -45,43 +44,38 @@ public interface IIabService {
     public void consume(IabPurchase purchase) throws IabException;
 
     /**
-     * Asynchronous wrapper to item consumption. Works like {@link #consume}, but
-     * performs the consumption in the background and notifies completion through
-     * the provided listener. This method is safe to call from a UI thread.
+     * Works like {@link #consume}, but is asynchronous. Performs the consumption in the background
+     * and notifies the given listener upon completion of consumption.
+     * This method is safe to call from a UI thread.
      *
      * @param purchase the purchase to be consumed
-     * @param consumeListener the listener to notify when the consumption operation finishes.
+     * @param consumeListener the listener to notify when the consumption is finished.
      */
     public void consumeAsync(IabPurchase purchase,
                              final IabCallbacks.OnConsumeListener consumeListener);
 
     /**
-     * Handles an activity result that's part of the purchase flow in in-app billing. If you
-     * are calling {@link #launchPurchaseFlow}, then you must call this method from your
-     * Activity's {@link android.app.Activity@onActivityResult} method. This method
-     * MUST be called from the UI thread of the Activity.
+     * Handles an activity result that's part of the purchase flow in in-app billing.
+     * This method MUST be called from the UI thread of the Activity.
      *
-     * @param requestCode The requestCode as you received it.
-     * @param resultCode The resultCode as you received it.
-     * @param data The data (Intent) as you received it.
-     * @return true if the result was related to a purchase flow and was handled;
-     *     false if the result was not related to a purchase, in which case you should
-     *     handle it normally.
+     * @param requestCode the requestCode
+     * @param resultCode the resultCode
+     * @param data the data (Intent)
+     * @return true if the result was related to a purchase flow and was handled, false otherwise.
      */
     public boolean handleActivityResult(int requestCode, int resultCode, Intent data);
 
     /**
      * Initiates the UI flow for an in-app purchase.
-     * Call this method to initiate an in-app purchase which will involve bringing up the Market
-     * screen. The calling activity will be paused while the user interacts with the Market.
+     * Call this method to initiate an in-app purchase which will bring up the Market screen.
+     * The calling activity will be paused while the user interacts with the Market.
      * This method MUST be called from the UI thread of the Activity.
      *
-     * @param act The calling activity.
-     * @param sku The sku of the item to purchase.
-     * @param purchaseListener The listener to notify when the purchase process finishes
-     * @param extraData Extra data (developer payload), which will be returned with the purchase data
-     *     when the purchase completes. This extra data will be permanently bound to that purchase
-     *     and will always be returned when the purchase is queried.
+     * @param act the calling activity.
+     * @param sku the sku of the item to purchase.
+     * @param purchaseListener the listener to notify when the purchase process finishes
+     * @param extraData extra data (developer payload), which will be returned with the purchase
+     *                  data when the purchase completes.
      */
     public void launchPurchaseFlow(Activity act,
                                    String sku,
@@ -89,39 +83,38 @@ public interface IIabService {
                                    String extraData);
 
     /**
-     * Asynchronous wrapper for inventory query. This queries the inventory - will query all owned
-     * items from the server, as well as information on additional skus, if specified, and will do
-     * so asynchronously and call back the specified listener upon completion.
+     * Queries the inventory asynchronously - will query all owned items from the server according
+     * to the given querySkuDetails. If given, will query moreSkus also, and lastly, will
+     * call back the given queryInventoryListener upon completion.
      * This method is safe to call from a UI thread.
      *
-     * @param querySkuDetails if true, SKU details (price, description, etc) will be queried as well
-     *     as purchase information.
-     * @param moreSkus additional PRODUCT skus to query information on, regardless of ownership.
-     *     Ignored if null or if querySkuDetails is false.
-     * @param queryInventoryListener The listener to notify when the refresh operation completes.
+     * @param querySkuDetails if true, SKU details (price, description, etc) and purchase
+     *                        information will be queried.
+     * @param moreSkus if given, additional PRODUCT skus to query information on.
+     * @param queryInventoryListener the listener to notify when the query operation completes.
      */
     public void queryInventoryAsync(boolean querySkuDetails,
                                     List<String> moreSkus,
                                     IabCallbacks.OnQueryInventoryListener queryInventoryListener);
 
     /**
-     * Initializes in-app billing service
+     * Initializes in-app billing service and notifies the given listener upon completion.
      *
-     * @param initListener
+     * @param initListener the listener to notify when the initialization process completes
      */
     public void initializeBillingService(IabCallbacks.IabInitListener initListener);
 
     /**
-     * Starts in-app billing service in background
+     * Starts in-app billing service in background and notifies the given listener upon completion.
      *
-     * @param initListener
+     * @param initListener the listener to notify when the startIabServiceInBg process completes
      */
     public void startIabServiceInBg(IabCallbacks.IabInitListener initListener);
 
     /**
-     * Stops in-app billing service in background
+     * Stops in-app billing service in background and notifies the given listener upon completion.
      *
-     * @param initListener
+     * @param initListener the listener to notify when the stopIabServiceInBg process completes
      */
     public void stopIabServiceInBg(IabCallbacks.IabInitListener initListener);
 
