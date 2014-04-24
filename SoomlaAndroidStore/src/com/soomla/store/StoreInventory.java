@@ -38,7 +38,7 @@ import java.util.List;
 public class StoreInventory {
 
     /**
-     * Buys item with the given itemId
+     * Buys the item with the given itemId.
      *
      * @param itemId id of item to be purchased
      * @throws InsufficientFundsException
@@ -53,11 +53,11 @@ public class StoreInventory {
     /** VIRTUAL ITEMS **/
 
     /**
-     * Returns the balance of the virtual item with the given itemId
+     * Retrieves the balance of the virtual item with the given itemId.
      *
      * @param itemId id of the virtual item to be fetched - must be of VirtualCurrency or
      *               SingleUseVG or LifetimeVG or EquippableVG
-     * @return balance
+     * @return balance of the virtual item with the given itemId
      * @throws VirtualItemNotFoundException
      */
     public static int getVirtualItemBalance(String itemId) throws VirtualItemNotFoundException {
@@ -85,6 +85,8 @@ public class StoreInventory {
 
     /**
      * Takes from your user the given amount of the virtual item with the given itemId.
+     * For example, when your user requests a refund (and let's say it's not a friendly refund),
+     * you need to TAKE the item he is returning from him (and give him his money back).
      *
      * @param itemId id of the virtual item to be taken
      * @param amount amount of the item to be given
@@ -100,6 +102,8 @@ public class StoreInventory {
 
     /**
      * Equips the virtual good with the given goodItemId.
+     * Equipping means that the user decides to currently use a specific virtual good.
+     * For more details and examples see {@link com.soomla.store.domain.virtualGoods.EquippableVG}.
      *
      * @param goodItemId id of the virtual good to be equipped
      * @throws VirtualItemNotFoundException
@@ -119,7 +123,9 @@ public class StoreInventory {
     }
 
     /**
-     * Unequips the virtual good with the given goodItemId.
+     * Unequips the virtual good with the given goodItemId. Unequipping means that the user decides
+     * to stop using the virtual good he is currently using.
+     * For more details and examples see {@link com.soomla.store.domain.virtualGoods.EquippableVG}.
      *
      * @param goodItemId id of the virtual good to be unequipped
      * @throws VirtualItemNotFoundException
@@ -133,7 +139,7 @@ public class StoreInventory {
     }
 
     /**
-     * Checks if the virtual good with the given goodItemId is equipped.
+     * Checks if the virtual good with the given goodItemId is equipped (currently being used).
      *
      * @param goodItemId id of the virtual good who we want to know if is equipped
      * @return true if the virtual good is equipped, false otherwise
@@ -148,7 +154,17 @@ public class StoreInventory {
     }
 
     /**
-     * Retrieves upgrade level of the virtual good with the given goodItemId
+     * Retrieves the upgrade level of the virtual good with the given goodItemId.
+     *
+     * For Example:
+     * Let's say there's a strength attribute to one of the characters in your game and you provide
+     * your users with the ability to upgrade that strength on a scale of 1-3.
+     * This is what you've created:
+     *  1. SingleUseVG for "strength"
+     *  2. UpgradeVG for strength 'level 1'
+     *  3. UpgradeVG for strength 'level 2'
+     *  4. UpgradeVG for strength 'level 3'
+     * In the example, this function will retrieve the upgrade level for "strength" (1, 2, or 3)
      *
      * @param goodItemId id of the virtual good whose upgrade level we want to know
      * @return upgrade level
@@ -158,7 +174,7 @@ public class StoreInventory {
         VirtualGood good = (VirtualGood) StoreInfo.getVirtualItem(goodItemId);
         UpgradeVG upgradeVG = StorageManager.getVirtualGoodsStorage().getCurrentUpgrade(good);
         if (upgradeVG == null) {
-            return 0;
+            return 0; //no upgrade
         }
 
         UpgradeVG first = StoreInfo.getGoodFirstUpgrade(goodItemId);
@@ -172,10 +188,10 @@ public class StoreInventory {
     }
 
     /**
-     * Retrieves upgrade id, if exists, of the virtual good with the given goodItemId
+     * Retrieves the itemId of the current upgrade of the virtual good with the given goodItemId.
      *
      * @param goodItemId id of the virtual good whose upgrade id we want to know
-     * @return upgrade id if exists, or "" otherwise
+     * @return upgrade id if exists, or empty string otherwise
      * @throws VirtualItemNotFoundException
      */
     public static String getGoodCurrentUpgrade(String goodItemId)
@@ -189,8 +205,13 @@ public class StoreInventory {
     }
 
     /**
-     * Upgrades the virtual good with the given goodItemId
-     * (the 'buy' process is applied)
+     * Upgrades the virtual good with the given goodItemId by doing the following:
+     * 1. Checks if the good is currently upgraded or if this is the first time being upgraded.
+     * 2. If the good is currently upgraded, upgrades to the next upgrade in the series, or in
+     *    other words, buy()s the next upgrade. In case there are no more upgrades available
+     *    (meaning the current upgrade is the last available) the function returns.
+     * 3. If the good has never been upgraded before, the function upgrades it to the first
+     *    available upgrade, or in other words, buy()s the first upgrade in the series.
      *
      * @param goodItemId
      * @throws VirtualItemNotFoundException
@@ -216,7 +237,10 @@ public class StoreInventory {
     }
 
     /**
-     * Forces upgrade (if possible) to the virtual good with the given upgradeItemId
+     * Upgrades the good with the given upgradeItemId for FREE (you are GIVING him the upgrade).
+     * In case that the good is not an upgradeable item, an error message will be produced.
+     * forceUpgrade() is different than upgradeVirtualGood() because forceUpgrade() is a FREE
+     * upgrade.
      *
      * @param upgradeItemId id of the virtual good who we want to force an upgrade upon
      * @throws VirtualItemNotFoundException
@@ -232,9 +256,9 @@ public class StoreInventory {
     }
 
     /**
-     * Removes upgrade from the virtual good with the given upgradeItemId
+     * Removes all upgrades from the virtual good with the given goodItemId.
      *
-     * @param goodItemId id of the virtual good
+     * @param goodItemId id of the virtual good we want to remove all upgrades from
      * @throws VirtualItemNotFoundException
      */
     public static void removeUpgrades(String goodItemId) throws VirtualItemNotFoundException {
@@ -249,9 +273,9 @@ public class StoreInventory {
     /** NON CONSUMABLES **/
 
     /**
-     * Checks if non-consumable item exists according to given nonConsItemId
+     * Checks if the non-consumable with the given nonConsItemId exists in the database.
      *
-     * @param nonConsItemId
+     * @param nonConsItemId the non-consumable to check if exists in the database
      * @return true if non-consumable item with nonConsItemId exists, false otherwise
      * @throws VirtualItemNotFoundException
      * @throws ClassCastException
@@ -269,7 +293,7 @@ public class StoreInventory {
      * Adds the non-consumable item with the given nonConsItemId to the non-consumable items
      * storage.
      *
-     * @param nonConsItemId
+     * @param nonConsItemId the non-consumable to be added to the database
      * @throws VirtualItemNotFoundException
      * @throws ClassCastException
      */
@@ -285,7 +309,7 @@ public class StoreInventory {
      * Removes the non-consumable item with the given nonConsItemId from the non-consumable items
      * storage.
      *
-     * @param nonConsItemId
+     * @param nonConsItemId the non-consumable to be removed to the database
      * @throws VirtualItemNotFoundException
      * @throws ClassCastException
      */

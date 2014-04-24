@@ -20,7 +20,7 @@ import android.app.Application;
 import android.content.Context;
 
 /**
- * SoomlaApp extends Application
+ * SoomlaApp > Application
  */
 public class SoomlaApp extends Application{
 

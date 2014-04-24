@@ -145,7 +145,7 @@ public class MuffinRushAssets implements IStoreAssets {
     );
 
 
-    /** Google Non Consumable (MANAGED) Items **/
+    /** Market Non Consumable (MANAGED) Items **/
 
     public static final NonConsumableItem NO_ADDS_NONCONS  = new NonConsumableItem(
             "No Ads",

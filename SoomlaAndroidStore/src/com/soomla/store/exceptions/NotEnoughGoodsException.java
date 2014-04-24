@@ -11,7 +11,7 @@ package com.soomla.store.exceptions;
  *  You can catch this exception in order to notify the user that he doesn't
  *  own a robot_character (so he cannot equip it!).
  *
- *  NotEnoughGoodsException extends Exception
+ *  NotEnoughGoodsException > Exception
  */
 public class NotEnoughGoodsException extends Exception{
 

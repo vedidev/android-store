@@ -59,10 +59,10 @@ public class StorageManager {
 
     private static final String TAG = "SOOMLA StorageManager"; //used for Log messages
 
-    // storage of all Virtual Goods
+    // storage of all virtual goods
     private static VirtualGoodsStorage mVirtualGoodsStorage = new VirtualGoodsStorage();
 
-    // storage of all Virtual currencies
+    // storage of all virtual currencies
     private static VirtualCurrencyStorage mVirtualCurrencyStorage = new VirtualCurrencyStorage();
 
     // storage of all non-consumable items

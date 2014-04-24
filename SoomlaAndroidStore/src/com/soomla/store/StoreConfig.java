@@ -59,7 +59,7 @@ public class StoreConfig {
     public static final int METADATA_VERSION = 3;
 
     /**
-     * If this is true than the database will be deleted whenever the application loads.
+     * If this is true then the database will be deleted whenever the application loads.
      *
      * WARNING: Do NOT release your game with this option set to true !!!!!!!!!!!!
      * Otherwise, your users will lose all their data every time they load the application.

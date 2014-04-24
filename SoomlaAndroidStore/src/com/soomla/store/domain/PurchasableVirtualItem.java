@@ -30,7 +30,7 @@ import java.util.Iterator;
 /**
  * A representation of a VirtualItem that you can actually purchase.
  *
- * PurchasableVirtualItem extends VirtualItem
+ * PurchasableVirtualItem > VirtualItem
  */
 public abstract class PurchasableVirtualItem extends VirtualItem {
 
@@ -124,8 +124,8 @@ public abstract class PurchasableVirtualItem extends VirtualItem {
     }
 
     /**
-     * Buys a Virtual Item, after checking if user is in a state that allows him to buy.
-     * This action uses the associated PurchaseType to perform the purchase.
+     * Buys the PurchasableVirtualItem, after checking if the user is in a state that allows him
+     * to buy. This action uses the associated PurchaseType to perform the purchase.
      *
      * @throws InsufficientFundsException if the user does not have enough funds to buy()
      */

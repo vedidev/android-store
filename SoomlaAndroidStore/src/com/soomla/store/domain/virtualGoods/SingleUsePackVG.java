@@ -42,7 +42,7 @@ import java.util.Iterator;
  * NOTE: In case you want this item to be available for purchase in the market (PurchaseWithMarket),
  * you will need to define the item in the market (Google Play, Amazon App Store, etc...).
  *
- * SingleUsePackVG extends VirtualGood extends PurchasableVirtualItem extends VirtualItem
+ * SingleUsePackVG > VirtualGood > PurchasableVirtualItem > VirtualItem
  */
 public class SingleUsePackVG extends VirtualGood {
 

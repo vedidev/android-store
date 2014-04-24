@@ -30,7 +30,7 @@ import com.soomla.store.exceptions.VirtualItemNotFoundException;
 /**
  * This class provides basic storage operations on VirtualGoods.
  *
- * VirtualGoodsStorage extends VirtualItemStorage
+ * VirtualGoodsStorage > VirtualItemStorage
  */
 public class VirtualGoodsStorage extends VirtualItemStorage{
 
@@ -57,7 +57,8 @@ public class VirtualGoodsStorage extends VirtualItemStorage{
      * @param notify if notify is true post event to bus
      */
     public void removeUpgrades(VirtualGood good, boolean notify) {
-        StoreUtils.LogDebug(mTag, "Removing upgrade information from virtual good: " + good.getName());
+        StoreUtils.LogDebug(mTag, "Removing upgrade information from virtual good: " +
+                good.getName());
 
         String itemId = good.getItemId();
         String key = KeyValDatabase.keyGoodUpgrade(itemId);
@@ -87,11 +88,13 @@ public class VirtualGoodsStorage extends VirtualItemStorage{
      * @param notify if notify is true post event to bus
      */
     public void assignCurrentUpgrade(VirtualGood good, UpgradeVG upgradeVG, boolean notify) {
-        if (getCurrentUpgrade(good) != null && getCurrentUpgrade(good).getItemId().equals(upgradeVG.getItemId())) {
+        if (getCurrentUpgrade(good) != null && getCurrentUpgrade(good).getItemId().equals(
+                upgradeVG.getItemId())) {
             return;
         }
 
-        StoreUtils.LogDebug(mTag, "Assigning upgrade " + upgradeVG.getName() + " to virtual good: " + good.getName());
+        StoreUtils.LogDebug(mTag, "Assigning upgrade " + upgradeVG.getName() + " to virtual good: "
+                + good.getName());
 
         String itemId = good.getItemId();
         String key = KeyValDatabase.keyGoodUpgrade(itemId);
@@ -119,16 +122,19 @@ public class VirtualGoodsStorage extends VirtualItemStorage{
         String upItemId = StorageManager.getKeyValueStorage().getValue(key);
 
         if (upItemId == null) {
-            StoreUtils.LogDebug(mTag, "You tried to fetch the current upgrade of " + good.getName() + " but there's not upgrade to it.");
+            StoreUtils.LogDebug(mTag, "You tried to fetch the current upgrade of " + good.getName()
+                    + " but there's not upgrade to it.");
             return null;
         }
 
         try {
             return (UpgradeVG) StoreInfo.getVirtualItem(upItemId);
         } catch (VirtualItemNotFoundException e) {
-            StoreUtils.LogError(mTag, "The current upgrade's itemId from the DB is not found in StoreInfo.");
+            StoreUtils.LogError(mTag,
+                    "The current upgrade's itemId from the DB is not found in StoreInfo.");
         } catch (ClassCastException e) {
-            StoreUtils.LogError(mTag, "The current upgrade's itemId from the DB is not an UpgradeVG.");
+            StoreUtils.LogError(mTag,
+                    "The current upgrade's itemId from the DB is not an UpgradeVG.");
         }
 
         return null;
@@ -141,7 +147,8 @@ public class VirtualGoodsStorage extends VirtualItemStorage{
      * @return true if the given good is equipped, false otherwise
      */
     public boolean isEquipped(EquippableVG good){
-        StoreUtils.LogDebug(mTag, "checking if virtual good with itemId: " + good.getItemId() + " is equipped.");
+        StoreUtils.LogDebug(mTag, "checking if virtual good with itemId: " + good.getItemId() +
+                " is equipped.");
 
         String itemId = good.getItemId();
         String key = KeyValDatabase.keyGoodEquipped(itemId);

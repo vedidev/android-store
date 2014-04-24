@@ -20,14 +20,15 @@ import android.os.Looper;
 import com.squareup.otto.Bus;
 
 /**
- * This class represents an event bus, allowing separate parts of your application to communicate.
+ * This class overrides Bus's functions post, register, and unregister.
  *
- * AndroidBus extends Bus
+ * AndroidBus > Bus
  */
 public class AndroidBus extends Bus {
 
     /**
-     * Posts events to let subscribers know that a change that has occurred
+     * Posts the given event so that all of its subscribers will be notified and will handle the
+     * event.
      *
      * @param event an instance of any class may be published on the bus
      */
@@ -46,7 +47,7 @@ public class AndroidBus extends Bus {
     }
 
     /**
-     * Registers to the event bus, in order to receive events.
+     * Registers to the event bus, in order to receive notifications about events.
      *
      * @param object
      */
@@ -65,7 +66,7 @@ public class AndroidBus extends Bus {
     }
 
     /**
-     * Unregisters to the event bus, in order to STOP receiving events.
+     * Unregisters to the event bus, in order to STOP receiving notifications about events.
      *
      * @param object
      */

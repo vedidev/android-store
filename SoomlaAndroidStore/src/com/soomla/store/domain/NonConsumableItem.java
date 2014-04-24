@@ -25,12 +25,14 @@ import org.json.JSONObject;
  * A representation of a non-consumable item in the Market. These kinds of items are bought by the
  * user once and kept for him forever.
  * 
- * NOTE: Don't be confused: this is not a Lifetime VirtualGood. It's just a MANAGED item in the
- * Market. This item will be retrieved when you "restoreTransactions".
- * If you want to make a LifetimeVG available for purchase in the market, you will need
- * to declare it as a NonConsumableItem.
+ * NOTE: Don't be confused: this is not a Lifetime VirtualGood, it's a MANAGED item in the
+ * Market. This means that the product can be purchased only once per user (such as a new level
+ * in a game), and is remembered by the Market (can be restored if this application is uninstalled
+ * and then re-installed).
+ * If you want to make a LifetimeVG available for purchase in the market (purchase with real
+ * money $$), you will need to declare it as a NonConsumableItem.
  *
- * NonConsumableItem extends PurchasableVirtualItem extends VirtualItem
+ * NonConsumableItem > PurchasableVirtualItem > VirtualItem
  */
 public class NonConsumableItem extends PurchasableVirtualItem {
 

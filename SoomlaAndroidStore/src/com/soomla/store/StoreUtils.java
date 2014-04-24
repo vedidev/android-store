@@ -19,13 +19,16 @@ package com.soomla.store;
 import android.provider.Settings;
 import android.util.Log;
 
+/**
+ * This class provides Log functions that output debug, warning, or error messages.
+ */
 public class StoreUtils {
 
     /**
-     * Creates Log Debug message according to given tag and message
+     * Creates Log Debug message according to given tag and message.
      *
-     * @param tag
-     * @param message
+     * @param tag the name of the class whose instance called this function
+     * @param message debug message to output to log
      */
     public static void LogDebug(String tag, String message) {
         if (StoreConfig.logDebug) {
@@ -34,27 +37,27 @@ public class StoreUtils {
     }
 
     /**
-     * Creates Log Warning message according to given tag and message
+     * Creates Log Warning message according to given tag and message.
      *
-     * @param tag
-     * @param message
+     * @param tag the name of the class whose instance called this function
+     * @param message warning message to output to log
      */
     public static void LogWarning(String tag, String message) {
         Log.w(tag, message);
     }
 
     /**
-     * Creates Log Error message according to given tag and message
+     * Creates Log Error message according to given tag and message.
      *
-     * @param tag
-     * @param message
+     * @param tag the name of the class whose instance called this function
+     * @param message error message to output to log
      */
     public static void LogError(String tag, String message) {
         Log.e(tag, message);
     }
 
     /**
-     * Retrieves Android device Id
+     * Retrieves Android device Id.
      *
      * @return androidId which is the id of the device being used
      */

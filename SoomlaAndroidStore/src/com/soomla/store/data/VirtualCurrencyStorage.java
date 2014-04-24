@@ -25,7 +25,7 @@ import com.soomla.store.events.CurrencyBalanceChangedEvent;
 /**
  * This class provides basic storage operations on VirtualCurrencies.
  *
- * VirtualCurrencyStorage extends VirtualItemStorage
+ * VirtualCurrencyStorage > VirtualItemStorage
  */
 public class VirtualCurrencyStorage extends VirtualItemStorage{
 

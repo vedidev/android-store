@@ -60,7 +60,8 @@ public abstract class VirtualItemStorage {
     }
 
     /**
-     * Sets the balance of the given virtual item to be the given balance.
+     * Sets the balance of the given virtual item to be the given balance, and if notify is true
+     * posts the change in the balance to the event bus.
      *
      * @param item the required virtual item
      * @param balance the new balance to be set
@@ -101,7 +102,8 @@ public abstract class VirtualItemStorage {
     }
 
     /**
-     * Adds the given amount of items to the storage.
+     * Adds the given amount of items to the storage, and if notify is true
+     * posts the change in the balance to the event bus.
      *
      * @param item the required virtual item
      * @param amount the amount of items to add
@@ -140,7 +142,8 @@ public abstract class VirtualItemStorage {
     }
 
     /**
-     * Removes the given amount from the given virtual item's balance.
+     * Removes the given amount from the given virtual item's balance, and if notify is true
+     * posts the change in the balance to the event bus.
      *
      * @param item is the virtual item to remove the given amount from.
      * @param amount is the amount to remove.

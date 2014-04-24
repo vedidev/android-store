@@ -28,7 +28,7 @@ package com.soomla.store.exceptions;
  *  You can just catch this exception in order to notify the user that he doesn't have enough
  *  coins to buy a blue_hat.
  *
- * InsufficientFundsException extends Exception
+ * InsufficientFundsException > Exception
  */
 public class InsufficientFundsException extends Exception {
 

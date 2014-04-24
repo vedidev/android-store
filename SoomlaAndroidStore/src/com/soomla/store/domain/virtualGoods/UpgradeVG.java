@@ -34,7 +34,7 @@ import java.util.Iterator;
  * associated VirtualGood.
  *
  * This type of virtual good is best explained with an example:
- * Let's say there's a strength attribute to one of the character in your game and that strength is
+ * Let's say there's a strength attribute to one of the characters in your game and that strength is
  * on a scale of 1-5. You want to provide your users with the ability to upgrade that strength.
  * This is what you'll need to create:
  *  1. SingleUseVG for 'strength'
@@ -50,8 +50,7 @@ import java.util.Iterator;
  * NOTE: In case you want this item to be available for purchase in the market (PurchaseWithMarket),
  * you will need to define the item in the market (Google Play, Amazon App Store, etc...).
  *
- * UpgradeVG extends LifeTimeVG extends VirtualGood extends PurchasableVirtualItem
- * extends VirtualItem
+ * UpgradeVG > LifeTimeVG > VirtualGood > PurchasableVirtualItem > VirtualItem
  */
 public class UpgradeVG extends LifetimeVG {
 

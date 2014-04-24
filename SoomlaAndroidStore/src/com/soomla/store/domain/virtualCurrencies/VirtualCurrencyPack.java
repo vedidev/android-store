@@ -36,7 +36,7 @@ import java.util.Iterator;
  * NOTE: In case you want this item to be available for purchase in the market (PurchaseWithMarket),
  * you will need to define the item in the market (Google Play, Amazon App Store, etc...).
  *
- * VirtualCurrencyPack extends PurchasableVirtualItem extends VirtualItem
+ * VirtualCurrencyPack > PurchasableVirtualItem > VirtualItem
  */
 public class VirtualCurrencyPack extends PurchasableVirtualItem {
 

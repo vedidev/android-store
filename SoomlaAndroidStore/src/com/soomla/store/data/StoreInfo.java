@@ -61,7 +61,7 @@ public class StoreInfo {
             return;
         }
         // we always initialize from the database, unless this is the first time the game is
-        // loaded - in that case we initialize from storeAssets
+        // loaded - in that case we initialize with setStoreAssets
         if (!initializeFromDB()){
             initializeWithStoreAssets(storeAssets);
         }
@@ -101,6 +101,20 @@ public class StoreInfo {
         return false;
 
     }
+
+    /**
+     * Checks if the VirtualGood with the given goodItemId has upgrades.
+     *
+     * @param goodItemId the item id of the VirtualGood that we are checking if has upgrades
+     * @return true if upgrades found for the VirtualGood with the given goodItemId,
+     *     otherwise false
+     */
+    public static boolean hasUpgrades(String goodItemId) {
+        return mGoodsUpgrades.containsKey(goodItemId);
+    }
+
+
+    /** Setters and Getters */
 
     /**
      * Retrieves a single VirtualItem that resides in the metadata.
@@ -202,20 +216,6 @@ public class StoreInfo {
     public static List<UpgradeVG> getGoodUpgrades(String goodItemId) {
         return mGoodsUpgrades.get(goodItemId);
     }
-
-    /**
-     * Checks if the VirtualGood with the given goodItemId has upgrades.
-     *
-     * @param goodItemId the item id of the VirtualGood that we are checking if has upgrades
-     * @return true if upgrades found for the VirtualGood with the given goodItemId,
-     *     otherwise false
-     */
-    public static boolean hasUpgrades(String goodItemId) {
-        return mGoodsUpgrades.containsKey(goodItemId);
-    }
-
-
-    /** Setters and Getters **/
 
     public static List<VirtualCurrency> getCurrencies(){
         return mCurrencies;
