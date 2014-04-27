@@ -154,7 +154,7 @@ public class KeyValDatabase {
                 sqLiteDatabase.execSQL("PRAGMA foreign_key=ON");
             }
 
-            sqLiteDatabase.execSQL("CREATE TABLE IF DOES NOT EXIST " + KEYVAL_TABLE_NAME + "(" +
+            sqLiteDatabase.execSQL("CREATE TABLE IF NOT EXISTS " + KEYVAL_TABLE_NAME + "(" +
                     KEYVAL_COLUMN_KEY + " TEXT PRIMARY KEY, " +
                     KEYVAL_COLUMN_VAL + " TEXT)");
         }
