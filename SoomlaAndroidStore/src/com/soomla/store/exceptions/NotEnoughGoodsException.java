@@ -10,8 +10,6 @@ package com.soomla.store.exceptions;
  *  NotEnoughGoodException will be thrown with "robot_character" as the itemId.
  *  You can catch this exception in order to notify the user that he doesn't
  *  own a robot_character (so he cannot equip it!).
- *
- *  NotEnoughGoodsException > Exception
  */
 public class NotEnoughGoodsException extends Exception{
 

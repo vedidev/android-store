@@ -30,7 +30,6 @@ import java.util.Iterator;
 /**
  * A representation of a VirtualItem that you can actually purchase.
  *
- * PurchasableVirtualItem > VirtualItem
  */
 public abstract class PurchasableVirtualItem extends VirtualItem {
 

@@ -50,7 +50,7 @@ import java.util.Iterator;
  * NOTE: In case you want this item to be available for purchase in the market (PurchaseWithMarket),
  * you will need to define the item in the market (Google Play, Amazon App Store, etc...).
  *
- * UpgradeVG > LifeTimeVG > VirtualGood > PurchasableVirtualItem > VirtualItem
+ * Inheritance: UpgradeVG > LifeTimeVG > VirtualGood > PurchasableVirtualItem > VirtualItem
  */
 public class UpgradeVG extends LifetimeVG {
 

@@ -29,8 +29,6 @@ import com.soomla.store.exceptions.VirtualItemNotFoundException;
 
 /**
  * This class provides basic storage operations on VirtualGoods.
- *
- * VirtualGoodsStorage > VirtualItemStorage
  */
 public class VirtualGoodsStorage extends VirtualItemStorage{
 

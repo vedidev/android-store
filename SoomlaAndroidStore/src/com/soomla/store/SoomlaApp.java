@@ -19,9 +19,6 @@ package com.soomla.store;
 import android.app.Application;
 import android.content.Context;
 
-/**
- * SoomlaApp > Application
- */
 public class SoomlaApp extends Application{
 
 	protected static SoomlaApp mInstance = null;

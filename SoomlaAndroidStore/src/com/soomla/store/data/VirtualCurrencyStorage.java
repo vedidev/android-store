@@ -24,8 +24,6 @@ import com.soomla.store.events.CurrencyBalanceChangedEvent;
 
 /**
  * This class provides basic storage operations on VirtualCurrencies.
- *
- * VirtualCurrencyStorage > VirtualItemStorage
  */
 public class VirtualCurrencyStorage extends VirtualItemStorage{
 
@@ -40,7 +38,7 @@ public class VirtualCurrencyStorage extends VirtualItemStorage{
      * see parent
      *
      * @param itemId id of the virtual item whose balance is to be retrieved
-     * @return
+     * @return see parent
      */
     @Override
     protected String keyBalance(String itemId) {

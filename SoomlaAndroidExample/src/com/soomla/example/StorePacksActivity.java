@@ -25,11 +25,30 @@ import com.squareup.otto.Subscribe;
 
 import java.util.HashMap;
 
+/**
+ * This class represents Muffin Rush's store of available currency-packs.
+ */
 public class StorePacksActivity extends Activity {
 
-    private StoreAdapter mStoreAdapter;
-    private HashMap<String, Object> mImages;
+    /**
+     * Receives the given currencyBalanceChangedEvent, and upon notification, fetches the currency
+     * balance and places it in the balance label.
+     *
+     * @param currencyBalanceChangedEvent event to receive
+     */
+    @Subscribe
+    public void onCurrencyBalanceChanged(CurrencyBalanceChangedEvent currencyBalanceChangedEvent) {
+        TextView muffinsBalance = (TextView)findViewById(R.id.balance);
+        muffinsBalance.setText("" + currencyBalanceChangedEvent.getBalance());
+    }
 
+    /**
+     * Called when the activity starts.
+     *
+     * @param savedInstanceState if the activity should be re-initialized after previously being
+     *                           shut down then this Bundle will contain the most recent data,
+     *                           otherwise it will be null.
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -45,7 +64,6 @@ public class StorePacksActivity extends Activity {
 
         mStoreAdapter = new StoreAdapter();
 
-
         /* configuring the list with an adapter */
 
         final Activity activity = this;
@@ -56,11 +74,11 @@ public class StorePacksActivity extends Activity {
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
 
                /*
-                * the user decided to make and actual purchase of virtual goods. we try to purchase and
-                * StoreController tells us if the user has enough funds to make the purchase. If he won't
-                * have enough than an InsufficientFundsException will be thrown.
+                * The user decided to make an actual purchase of virtual goods. We try to buy() the
+                * user's desired good and StoreController tells us if the user has enough funds to
+                * make the purchase. If he doesn't have enough then an InsufficientFundsException
+                * will be thrown.
                 */
-
                 PurchaseWithMarket pwm = null;
                 if (i == 0) {
                     NonConsumableItem non = StoreInfo.getNonConsumableItems().get(0);
@@ -94,18 +112,24 @@ public class StorePacksActivity extends Activity {
 
     }
 
+    /**
+     * Called after the activity has been paused, and now this activity will start interacting with
+     * your user once again.
+     * Fetches the currency balance and places it in the balance label.
+     */
     @Override
     protected void onResume() {
         super.onResume();
-
         BusProvider.getInstance().register(this);
-
-        /* fetching the currency balance and placing it in the balance label */
         TextView muffinsBalance = (TextView)findViewById(R.id.balance);
         muffinsBalance.setText("" + StorageManager.getVirtualCurrencyStorage().
                 getBalance(StoreInfo.getCurrencies().get(0)));
     }
 
+    /**
+     * Called when your user leaves your activity but does not quit, or in other words, upon a call
+     * to onPause() your activity goes to the background.
+     */
     @Override
     protected void onPause() {
         super.onPause();
@@ -113,9 +137,13 @@ public class StorePacksActivity extends Activity {
         BusProvider.getInstance().unregister(this);
     }
 
+    /**
+     * Creates a hashmap of images of all currency-packs and non-consumable items in Muffin Rush.
+     *
+     * @return hashmap of dessert images needed in Muffin Rush
+     */
     private HashMap<String, Object> generateImagesHash() {
         final HashMap<String, Object> images = new HashMap<String, Object>();
-
         images.put(MuffinRushAssets.NO_ADDS_NONCONS_PRODUCT_ID, R.drawable.no_ads);
         images.put(MuffinRushAssets.TENMUFF_PACK_PRODUCT_ID, R.drawable.muffins01);
         images.put(MuffinRushAssets.FIFTYMUFF_PACK_PRODUCT_ID, R.drawable.muffins02);
@@ -123,13 +151,6 @@ public class StorePacksActivity extends Activity {
         images.put(MuffinRushAssets.THOUSANDMUFF_PACK_PRODUCT_ID, R.drawable.muffins04);
 
         return images;
-    }
-
-    @Subscribe
-    public void onCurrencyBalanceChanged(CurrencyBalanceChangedEvent currencyBalanceChangedEvent) {
-        /* fetching the currency balance and placing it in the balance label */
-        TextView muffinsBalance = (TextView)findViewById(R.id.balance);
-        muffinsBalance.setText("" + currencyBalanceChangedEvent.getBalance());
     }
 
     private class StoreAdapter extends BaseAdapter {
@@ -180,5 +201,12 @@ public class StorePacksActivity extends Activity {
             return vi;
         }
     }
+
+
+    /** Private Members */
+
+    private StoreAdapter mStoreAdapter;
+
+    private HashMap<String, Object> mImages;
 
 }

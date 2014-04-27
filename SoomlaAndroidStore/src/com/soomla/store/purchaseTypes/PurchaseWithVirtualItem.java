@@ -33,8 +33,6 @@ import com.soomla.store.exceptions.VirtualItemNotFoundException;
  *
  * Real Game Example: Purchase a Sword in exchange for 100 Gems. Sword is the item to be purchased,
  * Gem is the target item, and 100 is the amount.
- *
- * PurchaseWithVirtualItem > PurchaseType
  */
 public class PurchaseWithVirtualItem extends PurchaseType {
 

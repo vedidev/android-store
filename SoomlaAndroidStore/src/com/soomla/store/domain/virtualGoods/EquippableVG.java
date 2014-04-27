@@ -41,10 +41,10 @@ import java.util.Iterator;
  *  3. Inherits the definition of LifetimeVG.
  *
  * There are 3 ways to equip an EquippableVG:
- *  1. LOCAL    - The current EquippableVGs equipping status doesn't affect any other EquippableVG.
+ *  1. LOCAL    - The current EquippableVG's equipping status doesn't affect any other EquippableVG.
  *  2. CATEGORY - In the containing category, if this EquippableVG is equipped, all other
  *                EquippableVGs must stay unequipped.
- *  3. GLOBAL   - In the whole game, if this EquippableVG is equipped, all other EquippableVGs
+ *  3. GLOBAL   - In the whole game, if this EquippableVG is equipped, all other EquippableVG's
  *                must stay unequipped.
  *
  * Real Game Examples:
@@ -66,7 +66,7 @@ import java.util.Iterator;
  * NOTE: In case you want this item to be available for purchase in the market (PurchaseWithMarket),
  * you will need to define it in the market (Google Play, Amazon App Store, etc...).
  *
- * EquippableVG > LifeTimeVG > VirtualGood > PurchasableVirtualItem > VirtualItem
+ * Inheritance: EquippableVG > LifeTimeVG > VirtualGood > PurchasableVirtualItem > VirtualItem
  */
 public class EquippableVG extends LifetimeVG{
 
@@ -142,9 +142,7 @@ public class EquippableVG extends LifetimeVG{
 
     /**
      * Equips the current EquippableVG.
-     * If Equipping Model is 'global' or 'category' it is handled accordingly.
-     * If Equipping Model is 'local' there's no need to check anything, because it does not
-     * affect other EquippableVGs.
+     * The equipping is done according to the equipping model ('GLOBAL', 'CATEGORY', or 'LOCAL').
      *
      * @param notify if notify is true post event to bus
      * @throws NotEnoughGoodsException

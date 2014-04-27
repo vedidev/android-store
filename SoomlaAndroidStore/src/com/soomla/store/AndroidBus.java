@@ -21,8 +21,6 @@ import com.squareup.otto.Bus;
 
 /**
  * This class overrides Bus's functions post, register, and unregister.
- *
- * AndroidBus > Bus
  */
 public class AndroidBus extends Bus {
 

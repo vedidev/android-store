@@ -32,7 +32,7 @@ import org.json.JSONObject;
  * If you want to make a LifetimeVG available for purchase in the market (purchase with real
  * money $$), you will need to declare it as a NonConsumableItem.
  *
- * NonConsumableItem > PurchasableVirtualItem > VirtualItem
+ * Inheritance: NonConsumableItem > PurchasableVirtualItem > VirtualItem
  */
 public class NonConsumableItem extends PurchasableVirtualItem {
 

@@ -170,7 +170,9 @@ public class StoreController {
     }
 
     /**
-     * Initiates the refreshInventory process
+     * Queries Google Play store's inventory. Upon success, returns a list of all metadata stored
+     * there (the items that have been purchase). The metadata includes the item's name,
+     * description, price, product id, etc...  Upon failure, returns error message.
      *
      * @param refreshMarketItemsDetails
      */

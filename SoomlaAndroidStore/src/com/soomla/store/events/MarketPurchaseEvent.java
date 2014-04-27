@@ -27,7 +27,7 @@ public class MarketPurchaseEvent {
      *
      * @param purchasableVirtualItem the item that was purchased
      * @param payload the amount paid by the user (with real money!)
-     * @param token
+     * @param token token associated with in-app billing purchase
      */
     public MarketPurchaseEvent(PurchasableVirtualItem purchasableVirtualItem, String payload,
                                String token) {

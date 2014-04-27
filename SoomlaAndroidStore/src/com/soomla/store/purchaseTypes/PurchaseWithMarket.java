@@ -28,8 +28,6 @@ import com.soomla.store.exceptions.InsufficientFundsException;
  * (with real money! $$$).
  *
  * Real Game Example: Purchase a Sword for $1.99.
- *
- * PurchaseWithMarket > PurchaseType
  */
 public class PurchaseWithMarket extends PurchaseType {
 

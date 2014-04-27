@@ -27,7 +27,7 @@ import org.json.JSONObject;
  * and most common virtual good while the descendants of this class define specific definitions
  * of VirtualGood(s).
  *
- * VirtualGood > PurchasableVirtualItem > VirtualItem
+ * Inheritance: VirtualGood > PurchasableVirtualItem > VirtualItem
  */
 public abstract class VirtualGood extends PurchasableVirtualItem {
 

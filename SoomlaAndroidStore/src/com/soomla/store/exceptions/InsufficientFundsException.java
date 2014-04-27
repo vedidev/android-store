@@ -27,8 +27,6 @@ package com.soomla.store.exceptions;
  *  InsufficientFundsException will be thrown with "blue_hat" as the itemId.
  *  You can just catch this exception in order to notify the user that he doesn't have enough
  *  coins to buy a blue_hat.
- *
- * InsufficientFundsException > Exception
  */
 public class InsufficientFundsException extends Exception {
 

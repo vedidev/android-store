@@ -139,8 +139,6 @@ public class KeyValDatabase {
 
     /**
      * DataBase Helper class
-     *
-     * DatabaseHelper extends SQLiteOpenHelper
      */
     private class DatabaseHelper extends SQLiteOpenHelper{
 
