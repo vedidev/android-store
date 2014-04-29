@@ -11,14 +11,14 @@ import com.squareup.otto.Subscribe;
 
 /**
  * This class contains functions that receive events that they are subscribed to. Annotating with
- * @subscribe before each function lets the function receive notification when an event has
+ * @subscribe before each function lets the function receive a notification when an event has
  * occurred.
  */
 public class ExampleEventHandler {
 
     /**
      * Constructor
-     * In order to receive events, we need to register a class instance (this) with the bus.
+     * In order to receive events, this class instance needs to register with the bus.
      *
      * @param handler event handler
      * @param activityI StoreExampleActivity
@@ -26,17 +26,16 @@ public class ExampleEventHandler {
     public ExampleEventHandler(Handler handler, StoreExampleActivity activityI){
         mHandler = handler;
         mActivityI = activityI;
-        //Register this class
         BusProvider.getInstance().register(this);
     }
 
     /**
-     * Receives the given marketPurchaseEvent, and in case the debugging setting is on,
-     * displays a message stating the name of the market item that was purchased.
-     * The item in the given marketPurchasedEvent is an item that was purchase via the Market
-     * (with money, not with virtual items).
+     * Listens for the given marketPurchaseEvent that was fired. Upon receiving such an event, if
+     * the debugging setting is on, displays a message stating the name of the market item that was
+     * purchased. The item in the given marketPurchasedEvent is an item that was purchased via the
+     * Market (with money, not with virtual items).
      *
-     * @param marketPurchaseEvent the event received
+     * @param marketPurchaseEvent the market purchase event that was fired
      */
     @Subscribe
     public void onMarketPurchase(MarketPurchaseEvent marketPurchaseEvent) {
@@ -45,10 +44,10 @@ public class ExampleEventHandler {
     }
 
     /**
-     * Receives the given marketRefundEvent, and in case the debugging setting is on,
-     * displays a message stating the name of the item that was refunded.
+     * Listens for the given marketRefundEvent that was fired. Upon receiving such an event, if the
+     * debugging setting is on, displays a message stating the name of the item that was refunded.
      *
-     * @param marketRefundEvent the event received
+     * @param marketRefundEvent the market refund event that was fired
      */
     @Subscribe
     public void onMarketRefund(MarketRefundEvent marketRefundEvent) {
@@ -57,10 +56,11 @@ public class ExampleEventHandler {
     }
 
     /**
-     * Receives the given itemPurchasedEvent, and in case the debugging setting is on,
-     * displays a message stating the name of the item that was purchased.
+     * Listens for the given itemPurchasedEvent that was fired. Upon receiving such an event, if
+     * the debugging setting is on, displays a message stating the name of the virtual item that
+     * was purchased.
      *
-     * @param itemPurchasedEvent the event received
+     * @param itemPurchasedEvent the item purchased event that was fired
      */
     @Subscribe
     public void onVirtualItemPurchased(ItemPurchasedEvent itemPurchasedEvent) {
@@ -69,10 +69,11 @@ public class ExampleEventHandler {
     }
 
     /**
-     * Receives the given virtualGoodEquippedEvent, and in case the debugging setting is on,
-     * displays a message stating the name of the item that was equipped.
+     * Listens for the given virtualGoodEquippedEvent that was fired. Upon receiving such an event,
+     * if the debugging setting is on, displays a message stating the name of the virtual good that
+     * was equipped.
      *
-     * @param virtualGoodEquippedEvent the event received
+     * @param virtualGoodEquippedEvent the virtual good equipped event that was fired
      */
     @Subscribe
     public void onVirtualGoodEquipped(GoodEquippedEvent virtualGoodEquippedEvent) {
@@ -80,10 +81,11 @@ public class ExampleEventHandler {
     }
 
     /**
-     * Receives the given virtualGoodUnEquippedEvent, and in case the debugging setting is on,
-     * displays a message stating the name of the item that was unequipped.
+     * Listens for the given virtualGoodUnEquippedEvent that was fired. Upon receiving such an
+     * event, if the debugging setting is on, displays a message stating the name of the virtual
+     * good that was unequipped.
      *
-     * @param virtualGoodUnEquippedEvent the event received
+     * @param virtualGoodUnEquippedEvent the virtual good unequipped event that was fired
      */
     @Subscribe
     public void onVirtualGoodUnequipped(GoodUnEquippedEvent virtualGoodUnEquippedEvent) {
@@ -91,10 +93,10 @@ public class ExampleEventHandler {
     }
 
     /**
-     * Receives the given billingSupportedEvent, and in case the debugging setting is on,
-     * displays a message stating that "billing is supported".
+     * Listens for the given billingSupportedEvent that was fired. Upon receiving such an event,
+     * if the debugging setting is on, displays a message stating that billing is supported.
      *
-     * @param billingSupportedEvent the event received
+     * @param billingSupportedEvent the billing supported event that was fired
      */
     @Subscribe
     public void onBillingSupported(BillingSupportedEvent billingSupportedEvent) {
@@ -102,10 +104,10 @@ public class ExampleEventHandler {
     }
 
     /**
-     * Receives the given billingNotSupportedEvent, and in case the debugging setting is on,
-     * displays a message stating that "billing is not supported".
+     * Listens for the given billingNotSupportedEvent that was fired. Upon receiving such an event,
+     * if the debugging setting is on, displays a message stating that billing is not supported.
      *
-     * @param billingNotSupportedEvent the event received
+     * @param billingNotSupportedEvent the billing not supported event that was fired
      */
     @Subscribe
     public void onBillingNotSupported(BillingNotSupportedEvent billingNotSupportedEvent) {
@@ -113,12 +115,12 @@ public class ExampleEventHandler {
     }
 
     /**
-     * Receives the given marketPurchaseStartedEvent, and in case the debugging setting is on,
-     * displays a message stating the name of the market item that is starting to be purchased.
-     * The item in the given marketPurchaseStartedEvent is an item that is being purchased via
-     * the Market (with money, not with virtual items).
+     * Listens for the given marketPurchaseStartedEvent that was fired. Upon receiving such an
+     * event, if the debugging setting is on, displays a message stating the name of the market
+     * item that is starting to be purchased. The item in the given marketPurchaseStartedEvent is
+     * an item that is being purchased via the Market (with money, not with virtual items).
      *
-     * @param marketPurchaseStartedEvent the event received
+     * @param marketPurchaseStartedEvent the market purchase started event that was fired
      */
     @Subscribe
     public void onMarketPurchaseStarted(MarketPurchaseStartedEvent marketPurchaseStartedEvent) {
@@ -127,12 +129,12 @@ public class ExampleEventHandler {
     }
 
     /**
-     * Receives the given marketPurchaseCancelledEvent, and in case the debugging setting is on,
-     * displays a message stating the name of the purchase item that is being cancelled.
-     * The item in the given marketPurchaseCancelledEvent is an item that was purchased via the
-     * Market (with money, not with virtual items).
+     * Listens for the given marketPurchaseCancelledEvent that was fired. Upon receiving such an
+     * event, if the debugging setting is on, displays a message stating the name of the market
+     * item that is being cancelled. The item in the given marketPurchaseCancelledEvent is an item
+     * that was purchased via the Market (with money, not with virtual items).
      *
-     * @param marketPurchaseCancelledEvent the event received
+     * @param marketPurchaseCancelledEvent the market purchase cancelled event that was fired
      */
     @Subscribe
     public void onMarketPurchaseCancelled(
@@ -142,10 +144,11 @@ public class ExampleEventHandler {
     }
 
     /**
-     * Receives the given itemPurchaseStartedEvent, and in case the debugging setting is on,
-     * displays a message stating the name of the item that is starting to be purchased.
+     * Listens for the given itemPurchaseStartedEvent that was fired. Upon receiving such an
+     * event, if the debugging setting is on, displays a message stating the name of the item that
+     * is starting to be purchased.
      *
-     * @param itemPurchaseStartedEvent the event received
+     * @param itemPurchaseStartedEvent the item purchase started event that was fired
      */
     @Subscribe
     public void onItemPurchaseStarted(ItemPurchaseStartedEvent itemPurchaseStartedEvent) {
@@ -154,10 +157,10 @@ public class ExampleEventHandler {
     }
 
     /**
-     * Receives the given unexpectedStoreErrorEvent, and in case the debugging setting is on,
-     * displays a message stating that an error has occurred.
+     * Listens for the given unexpectedStoreErrorEvent that was fired. Upon receiving such an event,
+     * if the debugging setting is on, displays a message stating that an error has occurred.
      *
-     * @param unexpectedStoreErrorEvent the event received
+     * @param unexpectedStoreErrorEvent the unexpected store error event that was fired
      */
     @Subscribe
     public void onUnexpectedErrorInStore(UnexpectedStoreErrorEvent unexpectedStoreErrorEvent) {
@@ -165,10 +168,10 @@ public class ExampleEventHandler {
     }
 
     /**
-     * Receives the given iabServiceStartedEvent, and in case the debugging setting is on,
-     * displays a message stating that the service has started.
+     * Listens for the given iabServiceStartedEvent that was fired. Upon receiving such an event,
+     * if the debugging setting is on, displays a message stating that the service has started.
      *
-     * @param iabServiceStartedEvent the event received
+     * @param iabServiceStartedEvent the in-app billing service started event that was fired
      */
     @Subscribe
     public void onIabServiceStarted(IabServiceStartedEvent iabServiceStartedEvent) {
@@ -176,10 +179,10 @@ public class ExampleEventHandler {
     }
 
     /**
-     * Receives the given iabServiceStoppedEvent, and in case the debugging setting is on,
-     * displays a message stating that the service has stopped.
+     * Listens for the given iabServiceStoppedEvent that was fired. Upon receiving such an event,
+     * if the debugging setting is on, displays a message stating that the service has stopped.
      *
-     * @param iabServiceStoppedEvent the event received
+     * @param iabServiceStoppedEvent the in-app billing service stopped event that was fired
      */
     @Subscribe
     public void onIabServiceStopped(IabServiceStoppedEvent iabServiceStoppedEvent) {
@@ -187,10 +190,11 @@ public class ExampleEventHandler {
     }
 
     /**
-     * Receives the given onCurrencyBalanceChanged, and in case the debugging setting is on,
-     * displays a message stating what currency's balance has changed, and what the new balance is.
+     * Listens for the given currencyBalanceChangedEvent that was fired. Upon receiving such an
+     * event, if the debugging setting is on, displays a message stating which currency's balance
+     * has changed, and what its new balance is.
      *
-     * @param currencyBalanceChangedEvent the event received
+     * @param currencyBalanceChangedEvent the currency balance changed event that was fired
      */
     @Subscribe
     public void onCurrencyBalanceChanged(CurrencyBalanceChangedEvent currencyBalanceChangedEvent) {
@@ -199,10 +203,11 @@ public class ExampleEventHandler {
     }
 
     /**
-     * Receives the given goodBalanceChangedEvent, and in case the debugging setting is on,
-     * displays a message stating what good's balance has changed, and what the new balance is.
+     * Listens for the given goodBalanceChangedEvent that was fired. Upon receiving such an event,
+     * if the debugging setting is on, displays a message stating which good's balance has changed,
+     * and what its new balance is.
      *
-     * @param goodBalanceChangedEvent the event received
+     * @param goodBalanceChangedEvent the good balance changed event that was fired
      */
     @Subscribe
     public void onGoodBalanceChanged(GoodBalanceChangedEvent goodBalanceChangedEvent) {
@@ -211,10 +216,12 @@ public class ExampleEventHandler {
     }
 
     /**
-     * Receives the given restoreTransactionsFinishedEvent, and in case the debugging setting is on,
-     * displays a message stating that restoreTransactions finished successfully/unsuccessfully.
+     * Listens for the given restoreTransactionsFinishedEvent that was fired. Upon receiving such
+     * an event, if the debugging setting is on, displays a message stating that
+     * restoreTransactions finished successfully or unsuccessfully.
      *
-     * @param restoreTransactionsFinishedEvent the event received
+     * @param restoreTransactionsFinishedEvent the restore transactions finished event that was
+     *                                         fired
      */
     @Subscribe
     public void onRestoreTransactionsFinished(
@@ -224,10 +231,11 @@ public class ExampleEventHandler {
     }
 
     /**
-     * Receives the given restoreTransactionsStartedEvent, and in case the debugging setting is on,
-     * displays a message stating that restoreTransactions has started.
+     * Listens for the given restoreTransactionsStartedEvent that was fired. Upon receiving such
+     * an event, if the debugging setting is on, displays a message stating that
+     * restoreTransactions has started.
      *
-     * @param restoreTransactionsStartedEvent the event received
+     * @param restoreTransactionsStartedEvent the restore transactions started event that was fired
      */
     @Subscribe
     public void onRestoreTransactionsStarted(
@@ -236,10 +244,11 @@ public class ExampleEventHandler {
     }
 
     /**
-     * Receives the given storeControllerInitializedEvent, and in case the debugging setting is on,
-     * displays a message stating that StoreController has been initialized.
+     * Listens for the given storeControllerInitializedEvent that was fired. Upon receiving such
+     * an event, if the debugging setting is on, displays a message stating that StoreController
+     * has been initialized.
      *
-     * @param storeControllerInitializedEvent the event received
+     * @param storeControllerInitializedEvent the store controller initialized event that was fired
      */
     @Subscribe
     public void onStoreControllerInitialized(
