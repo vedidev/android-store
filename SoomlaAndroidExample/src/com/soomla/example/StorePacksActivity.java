@@ -24,6 +24,7 @@ import com.soomla.store.purchaseTypes.PurchaseWithMarket;
 import com.squareup.otto.Subscribe;
 
 import java.util.HashMap;
+import java.util.List;
 
 public class StorePacksActivity extends Activity {
 
@@ -62,11 +63,13 @@ public class StorePacksActivity extends Activity {
                 */
 
                 PurchaseWithMarket pwm = null;
-                if (i == 0) {
-                    NonConsumableItem non = StoreInfo.getNonConsumableItems().get(0);
+                final List<NonConsumableItem> nonConsumableItems = StoreInfo.getNonConsumableItems();
+                final int nonConsumablesCount = nonConsumableItems.size();
+                if (i < nonConsumablesCount) {
+                    NonConsumableItem non = StoreInfo.getNonConsumableItems().get(i);
                     pwm = (PurchaseWithMarket) non.getPurchaseType();
                 } else {
-                    VirtualCurrencyPack pack = StoreInfo.getCurrencyPacks().get(i-1);
+                    VirtualCurrencyPack pack = StoreInfo.getCurrencyPacks().get(i-nonConsumablesCount);
                     pwm = (PurchaseWithMarket) pack.getPurchaseType();
                 }
 
@@ -138,7 +141,8 @@ public class StorePacksActivity extends Activity {
         }
 
         public int getCount() {
-            return mImages.size();
+//            return mImages.size();
+            return StoreInfo.getAllProductIds().size();
         }
 
         public Object getItem(int position) {
@@ -161,15 +165,22 @@ public class StorePacksActivity extends Activity {
             ImageView thumb_image=(ImageView)vi.findViewById(R.id.list_image);
 
             // Setting all values in listview
-            if (position == 0) {
-                NonConsumableItem nonConsumableItem = StoreInfo.getNonConsumableItems().get(0);
+            final List<NonConsumableItem> nonConsumableItems = StoreInfo.getNonConsumableItems();
+            final int nonConsumablesCount = nonConsumableItems.size();
+
+            if (position < nonConsumablesCount) {
+                NonConsumableItem nonConsumableItem = nonConsumableItems.get(position);
                 title.setText(nonConsumableItem.getName());
                 content.setText(nonConsumableItem.getDescription());
                 info.setText("");
                 PurchaseWithMarket pwm = (PurchaseWithMarket) nonConsumableItem.getPurchaseType();
-                thumb_image.setImageResource((Integer)mImages.get(pwm.getMarketItem().getProductId()));
+                Integer imgResId = (Integer) mImages.get(pwm.getMarketItem().getProductId());
+                if(imgResId == null) {
+                    imgResId = R.drawable.muffin;
+                }
+                thumb_image.setImageResource(imgResId);
             } else {
-                VirtualCurrencyPack pack = StoreInfo.getCurrencyPacks().get(position-1);
+                VirtualCurrencyPack pack = StoreInfo.getCurrencyPacks().get(position-nonConsumablesCount);
                 title.setText(pack.getName());
                 content.setText(pack.getDescription());
                 PurchaseWithMarket pwm = (PurchaseWithMarket) pack.getPurchaseType();
