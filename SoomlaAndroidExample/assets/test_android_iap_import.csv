@@ -28,4 +28,4 @@ test_prod_56,published,managed_by_android,false,en_US; Test Product 26; Test 26,
 test_prod_57,published,managed_by_android,false,en_US; Test Product 27; Test 27,false,IL; 5000000; DE; 1040000; US; 1440000
 test_prod_58,published,managed_by_android,false,en_US; Test Product 28; Test 28,false,IL; 7000000; DE; 1460000; US; 2020000
 test_prod_59,published,managed_by_android,false,en_US; Test Product 29; Test 29,false,IL; 5000000; DE; 1040000; US; 1440000
-test_prod_60,published,managed_by_android,false,en_US; Test Product 30; Test 30,false,IL; 7000000; DE; 1460000; US; 2020000
+f_test_prod_60,published,managed_by_android,false,en_US; Test Product 30; Test 30,false,IL; 7000000; DE; 1460000; US; 2020000

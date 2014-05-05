@@ -246,8 +246,10 @@ public class StoreController {
                         handleErrorResult(message);
                     }
                 };
-                StoreConfig.InAppBillingService.queryInventoryAsync(refreshMarketItemsDetails,
-                        null, queryInventoryListener);
+
+                final List<String> purchasableProductIds = StoreInfo.getAllProductIds();
+                StoreConfig.InAppBillingService.queryInventoryAsync(refreshMarketItemsDetails, purchasableProductIds, queryInventoryListener);
+
                 BusProvider.getInstance().post(new RestoreTransactionsStartedEvent());
             }
 

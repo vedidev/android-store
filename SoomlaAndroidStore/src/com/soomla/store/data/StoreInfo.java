@@ -242,8 +242,7 @@ public class StoreInfo {
     }
 
 
-    /** Private Functions **/
-
+    /** Private functions **/
     /**
      * Transforms given jsonObject to StoreInfo
      *
