@@ -28,30 +28,35 @@ import com.soomla.store.events.GoodUpgradeEvent;
 import com.soomla.store.exceptions.VirtualItemNotFoundException;
 
 /**
- * This class provide basic storage operations on VirtualGoods.
+ * This class provides basic storage operations on VirtualGoods.
  */
 public class VirtualGoodsStorage extends VirtualItemStorage{
 
-    /** Constructor
-     *
+    /**
+     * Constructor
      */
     public VirtualGoodsStorage() {
         mTag = "SOOMLA VirtualGoodsStorage";
     }
 
-
-    /** Public functions **/
-
     /**
-     * This function removes any upgrade associated with the given VirtualGood.
-     * @param good the VirtualGood to remove upgrade from.
+     * Removes any upgrade associated with the given VirtualGood.
+     *
+     * @param good the VirtualGood to remove upgrade from
      */
     public void removeUpgrades(VirtualGood good) {
         removeUpgrades(good, true);
     }
 
+    /**
+     * Removes any upgrade associated with the given VirtualGood.
+     *
+     * @param good the VirtualGood to remove upgrade from
+     * @param notify if notify is true post event to bus
+     */
     public void removeUpgrades(VirtualGood good, boolean notify) {
-        StoreUtils.LogDebug(mTag, "Removing upgrade information from virtual good: " + good.getName());
+        StoreUtils.LogDebug(mTag, "Removing upgrade information from virtual good: " +
+                good.getName());
 
         String itemId = good.getItemId();
         String key = KeyValDatabase.keyGoodUpgrade(itemId);
@@ -65,18 +70,29 @@ public class VirtualGoodsStorage extends VirtualItemStorage{
 
     /**
      * Assigns a specific upgrade to the given VirtualGood.
+     *
      * @param good the VirtualGood to upgrade.
      * @param upgradeVG the upgrade to assign.
      */
     public void assignCurrentUpgrade(VirtualGood good, UpgradeVG upgradeVG) {
         assignCurrentUpgrade(good, upgradeVG, true);
     }
+
+    /**
+     * Assigns a specific upgrade to the given VirtualGood.
+     *
+     * @param good the VirtualGood to upgrade.
+     * @param upgradeVG the upgrade to assign.
+     * @param notify if notify is true post event to bus
+     */
     public void assignCurrentUpgrade(VirtualGood good, UpgradeVG upgradeVG, boolean notify) {
-        if (getCurrentUpgrade(good) != null && getCurrentUpgrade(good).getItemId().equals(upgradeVG.getItemId())) {
+        if (getCurrentUpgrade(good) != null && getCurrentUpgrade(good).getItemId().equals(
+                upgradeVG.getItemId())) {
             return;
         }
 
-        StoreUtils.LogDebug(mTag, "Assigning upgrade " + upgradeVG.getName() + " to virtual good: " + good.getName());
+        StoreUtils.LogDebug(mTag, "Assigning upgrade " + upgradeVG.getName() + " to virtual good: "
+                + good.getName());
 
         String itemId = good.getItemId();
         String key = KeyValDatabase.keyGoodUpgrade(itemId);
@@ -89,10 +105,9 @@ public class VirtualGoodsStorage extends VirtualItemStorage{
         }
     }
 
-
-
     /**
      * Retrieves the current upgrade for the given VirtualGood.
+     *
      * @param good the VirtualGood to retrieve upgrade for.
      * @return the current upgrade for the given VirtualGood.
      */
@@ -105,28 +120,33 @@ public class VirtualGoodsStorage extends VirtualItemStorage{
         String upItemId = StorageManager.getKeyValueStorage().getValue(key);
 
         if (upItemId == null) {
-            StoreUtils.LogDebug(mTag, "You tried to fetch the current upgrade of " + good.getName() + " but there's not upgrade to it.");
+            StoreUtils.LogDebug(mTag, "You tried to fetch the current upgrade of " + good.getName()
+                    + " but there's not upgrade to it.");
             return null;
         }
 
         try {
             return (UpgradeVG) StoreInfo.getVirtualItem(upItemId);
         } catch (VirtualItemNotFoundException e) {
-            StoreUtils.LogError(mTag, "The current upgrade's itemId from the DB is not found in StoreInfo.");
+            StoreUtils.LogError(mTag,
+                    "The current upgrade's itemId from the DB is not found in StoreInfo.");
         } catch (ClassCastException e) {
-            StoreUtils.LogError(mTag, "The current upgrade's itemId from the DB is not an UpgradeVG.");
+            StoreUtils.LogError(mTag,
+                    "The current upgrade's itemId from the DB is not an UpgradeVG.");
         }
 
         return null;
     }
 
     /**
-     * Check the equipping status of the given EquippableVG.
-     * @param good the EquippableVG to check the status for.
-     * @return the equipping status of the given EquippableVG.
+     * Checks if the given EquippableVG is currently equipped or not.
+     *
+     * @param good the EquippableVG to check the status for
+     * @return true if the given good is equipped, false otherwise
      */
     public boolean isEquipped(EquippableVG good){
-        StoreUtils.LogDebug(mTag, "checking if virtual good with itemId: " + good.getItemId() + " is equipped.");
+        StoreUtils.LogDebug(mTag, "checking if virtual good with itemId: " + good.getItemId() +
+                " is equipped.");
 
         String itemId = good.getItemId();
         String key = KeyValDatabase.keyGoodEquipped(itemId);
@@ -136,35 +156,76 @@ public class VirtualGoodsStorage extends VirtualItemStorage{
     }
 
     /**
-     * Equip the given EquippableVG.
-     * @param good the EquippableVG to equip.
+     * Equips the given EquippableVG.
+     *
+     * @param good the EquippableVG to equip
      */
     public void equip(EquippableVG good) {
         equip(good, true);
     }
+
+    /**
+     * Equips the given EquippableVG.
+     *
+     * @param good the EquippableVG to equip
+     * @param notify if notify is true post event to bus
+     */
     public void equip(EquippableVG good, boolean notify) {
         if (isEquipped(good)) {
             return;
         }
-
         equipPriv(good, true, notify);
     }
 
     /**
-     * UnEquip the given EquippableVG.
-     * @param good the EquippableVG to unequip.
+     * UnEquips the given EquippableVG.
+     *
+     * @param good the EquippableVG to unequip
      */
     public void unequip(EquippableVG good) {
         unequip(good, true);
     }
+
+    /**
+     * UnEquips the given EquippableVG.
+     *
+     * @param good the EquippableVG to unequip
+     * @param notify if notify is true post event to bus
+     */
     public void unequip(EquippableVG good, boolean notify) {
         if (!isEquipped(good)) {
             return;
         }
-
         equipPriv(good, false, notify);
     }
 
+    /**
+     * see parent
+     *
+     * @param itemId id of the virtual item whose balance is to be retrieved
+     * @return
+     */
+    @Override
+    protected String keyBalance(String itemId) {
+        return KeyValDatabase.keyGoodBalance(itemId);
+    }
+
+    /**
+     * see parent
+     *
+     * @param item virtual item whose balance has changed
+     * @param balance the balance that has changed
+     * @param amountAdded the amount added to the item's balance
+     */
+    @Override
+    protected void postBalanceChangeEvent(VirtualItem item, int balance, int amountAdded) {
+        BusProvider.getInstance().post(new GoodBalanceChangedEvent((VirtualGood) item,
+                balance, amountAdded));
+    }
+
+    /**
+     * Helper function for equip and unequip functions
+     */
     private void equipPriv(EquippableVG good, boolean equip, boolean notify){
         StoreUtils.LogDebug(mTag, (!equip ? "unequipping " : "equipping ") + good.getName() + ".");
 
@@ -182,16 +243,6 @@ public class VirtualGoodsStorage extends VirtualItemStorage{
                 BusProvider.getInstance().post(new GoodUnEquippedEvent(good));
             }
         }
-    }
-
-    @Override
-    protected String keyBalance(String itemId) {
-        return KeyValDatabase.keyGoodBalance(itemId);
-    }
-
-    @Override
-    protected void postBalanceChangeEvent(VirtualItem item, int balance, int amountAdded) {
-        BusProvider.getInstance().post(new GoodBalanceChangedEvent((VirtualGood) item, balance, amountAdded));
     }
 
 }

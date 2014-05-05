@@ -27,29 +27,89 @@ import com.squareup.otto.Subscribe;
 import java.io.IOException;
 import java.util.HashMap;
 
+/**
+ * This class represents Muffin Rush's store of available goods.
+ */
 public class StoreGoodsActivity extends Activity {
 
-    private StoreAdapter mStoreAdapter;
-    private HashMap<String, Object> mImages;
+    /**
+     * Starts StorePacksActivity.
+     * This function is called when the "Wants to buy more muffins" button is clicked.
+     *
+     * @param v
+     * @throws IOException
+     */
+    public void wantsToBuyPacks(View v) throws IOException {
+        Intent intent = new Intent(getApplicationContext(), StorePacksActivity.class);
+        startActivity(intent);
+    }
 
+    /**
+     * Queries Google Play store's inventory. Upon success, returns a list of all metadata stored
+     * there (the items that have been purchase). The metadata includes the item's name,
+     * description, price, product id, etc...  Upon failure, returns error message.
+     *
+     * @param v
+     * @throws IOException
+     */
+    public void restoreTransactions(View v) throws IOException{
+        StoreController.getInstance().refreshInventory(false);
+    }
+
+    /**
+     * Receives the given onCurrencyBalanceChanged. Upon notification, fetches the currency
+     * balance and places it in the balance label.
+     *
+     * @param currencyBalanceChangedEvent the event received
+     */
+    @Subscribe
+    public void onCurrencyBalanceChanged(CurrencyBalanceChangedEvent currencyBalanceChangedEvent) {
+        TextView muffinsBalance = (TextView)findViewById(R.id.balance);
+        muffinsBalance.setText("" + currencyBalanceChangedEvent.getBalance());
+    }
+
+    /**
+     * Receives the given goodBalanceChangedEvent. Upon notification, fetches the good associated
+     * with the given goodBalanceChangedEvent and displays its price and the balance.
+     *
+     * @param goodBalanceChangedEvent the event received
+     */
+    @Subscribe
+    public void onGoodBalanceChanged(GoodBalanceChangedEvent goodBalanceChangedEvent) {
+        VirtualGood good = goodBalanceChangedEvent.getGood();
+        int id = 0;
+        for(int i=0; i<StoreInfo.getGoods().size(); i++) {
+            if (StoreInfo.getGoods().get(i).getItemId().equals(good.getItemId())) {
+                id = i;
+                break;
+            }
+        }
+        ListView list = (ListView) findViewById(R.id.list);
+        TextView info = (TextView)list.getChildAt(id).findViewById(R.id.item_info);
+        PurchaseWithVirtualItem pwvi = (PurchaseWithVirtualItem) good.getPurchaseType();
+        info.setText("price: " + pwvi.getAmount() +
+                " balance: " + goodBalanceChangedEvent.getBalance());
+    }
+
+    /**
+     * Called when the activity starts.
+     * Displays the list view of the game, where users can see the available goods for purchase.
+     *
+     * @param savedInstanceState if the activity should be re-initialized after previously being
+     *                           shut down then this Bundle will contain the most recent data,
+     *                           otherwise it will be null.
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.listview);
-
         StoreController.getInstance().startIabServiceInBg();
-
         TextView title = (TextView)findViewById(R.id.title);
-
         title.setText("Virtual Goods");
-
         mImages = generateImagesHash();
-
         mStoreAdapter = new StoreAdapter();
 
-
         /* configuring the list with an adapter */
-
         final Activity activity = this;
         ListView list = (ListView) findViewById(R.id.list);
         list.setAdapter(mStoreAdapter);
@@ -58,11 +118,11 @@ public class StoreGoodsActivity extends Activity {
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
 
                /*
-                * the user decided to make and actual purchase of virtual goods. we try to purchase and
-                * StoreController tells us if the user has enough funds to make the purchase. If he won't
-                * have enough than an InsufficientFundsException will be thrown.
+                * The user decided to make an actual purchase of virtual goods. We try to buy() the
+                * user's desired good and StoreController tells us if the user has enough funds to
+                * make the purchase. If he doesn't have enough then an InsufficientFundsException
+                * will be thrown.
                 */
-
                 VirtualGood good = StoreInfo.getGoods().get(i);
                 try {
                     good.buy();
@@ -84,18 +144,24 @@ public class StoreGoodsActivity extends Activity {
 
     }
 
+    /**
+     * Called after the activity has been paused, and now this activity will start interacting with
+     * your user once again.
+     * Fetches the currency balance and places it in the balance label.
+     */
     @Override
     protected void onResume() {
         super.onResume();
-
         BusProvider.getInstance().register(this);
-
-        /* fetching the currency balance and placing it in the balance label */
         TextView muffinsBalance = (TextView)findViewById(R.id.balance);
         muffinsBalance.setText("" + StorageManager.getVirtualCurrencyStorage().
                 getBalance(StoreInfo.getCurrencies().get(0)));
     }
 
+    /**
+     * Called when your user leaves your activity but does not quit, or in other words, upon a call
+     * to onPause() your activity goes to the background.
+     */
     @Override
     protected void onPause() {
         super.onPause();
@@ -103,12 +169,20 @@ public class StoreGoodsActivity extends Activity {
         BusProvider.getInstance().unregister(this);
     }
 
+    /**
+     * Stops the in-app billing service before the activity gets destroyed.
+     */
     @Override
     protected void onDestroy() {
         StoreController.getInstance().stopIabServiceInBg();
         super.onDestroy();
     }
 
+    /**
+     * Creates a hashmap of images of all goods in Muffin Rush.
+     *
+     * @return hashmap of dessert images needed in Muffin Rush
+     */
     private HashMap<String, Object> generateImagesHash() {
         final HashMap<String, Object> images = new HashMap<String, Object>();
         images.put(MuffinRushAssets.CHOCLATECAKE_ITEM_ID, R.drawable.chocolate_cake);
@@ -116,31 +190,6 @@ public class StoreGoodsActivity extends Activity {
         images.put(MuffinRushAssets.MUFFINCAKE_ITEM_ID, R.drawable.fruit_cake);
         images.put(MuffinRushAssets.PAVLOVA_ITEM_ID, R.drawable.pavlova);
         return images;
-    }
-
-    @Subscribe
-    public void onCurrencyBalanceChanged(CurrencyBalanceChangedEvent currencyBalanceChangedEvent) {
-        /* fetching the currency balance and placing it in the balance label */
-        TextView muffinsBalance = (TextView)findViewById(R.id.balance);
-        muffinsBalance.setText("" + currencyBalanceChangedEvent.getBalance());
-    }
-
-    @Subscribe
-    public void onGoodBalanceChanged(GoodBalanceChangedEvent goodBalanceChangedEvent) {
-        VirtualGood good = goodBalanceChangedEvent.getGood();
-        int id = 0;
-        for(int i=0; i<StoreInfo.getGoods().size(); i++) {
-            if (StoreInfo.getGoods().get(i).getItemId().equals(good.getItemId())) {
-                id = i;
-                break;
-            }
-        }
-
-        ListView list = (ListView) findViewById(R.id.list);
-        TextView info = (TextView)list.getChildAt(id).findViewById(R.id.item_info);
-        PurchaseWithVirtualItem pwvi = (PurchaseWithVirtualItem) good.getPurchaseType();
-        info.setText("price: " + pwvi.getAmount() +
-                " balance: " + goodBalanceChangedEvent.getBalance());
     }
 
     private class StoreAdapter extends BaseAdapter {
@@ -186,13 +235,11 @@ public class StoreGoodsActivity extends Activity {
         }
     }
 
-    public void wantsToBuyPacks(View v) throws IOException {
 
-        Intent intent = new Intent(getApplicationContext(), StorePacksActivity.class);
-        startActivity(intent);
-    }
+    /** Private Members */
 
-    public void restoreTransactions(View v) throws IOException{
-        StoreController.getInstance().refreshInventory(false);
-    }
+    private StoreAdapter mStoreAdapter;
+
+    private HashMap<String, Object> mImages;
+
 }

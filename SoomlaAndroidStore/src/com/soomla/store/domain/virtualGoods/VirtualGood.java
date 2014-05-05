@@ -24,11 +24,15 @@ import org.json.JSONObject;
 /**
  * This is an abstract representation of the application's virtual good.
  * Your game's virtual economy revolves around virtual goods. This class defines the abstract
- * and most common virtual good while the descendants of this class defines specific definitions of VirtualGood.
+ * and most common virtual good while the descendants of this class define specific definitions
+ * of VirtualGood(s).
+ *
+ * Inheritance: VirtualGood > PurchasableVirtualItem > VirtualItem
  */
 public abstract class VirtualGood extends PurchasableVirtualItem {
 
-    /** Constructor
+    /**
+     * Constructor
      *
      * @param mName see parent
      * @param mDescription see parent
@@ -40,9 +44,11 @@ public abstract class VirtualGood extends PurchasableVirtualItem {
         super(mName, mDescription, mItemId, purchaseType);
     }
 
-    /** Constructor
+    /**
+     * Constructor
      *
-     * see parent
+     * @param jsonObject see parent
+     * @throws JSONException
      */
     public VirtualGood(JSONObject jsonObject) throws JSONException{
         super(jsonObject);
@@ -50,6 +56,8 @@ public abstract class VirtualGood extends PurchasableVirtualItem {
 
     /**
      * see parent
+     *
+     * @return see parent
      */
     @Override
     public JSONObject toJSONObject(){
@@ -58,7 +66,9 @@ public abstract class VirtualGood extends PurchasableVirtualItem {
 
     /**
      * see parent
+     *
      * @param balance see parent
+     * @param notify see parent
      * @return see parent
      */
     @Override
@@ -66,6 +76,9 @@ public abstract class VirtualGood extends PurchasableVirtualItem {
         return StorageManager.getVirtualGoodsStorage().setBalance(this, balance, notify);
     }
 
-    /** Private members **/
 
-    private static final String TAG = "SOOMLA VirtualGood";}
+    /** Private Members **/
+
+    private static final String TAG = "SOOMLA VirtualGood"; //used for Log messages
+
+}

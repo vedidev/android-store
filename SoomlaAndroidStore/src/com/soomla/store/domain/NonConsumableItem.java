@@ -22,25 +22,35 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 /**
- * A representation of a non-consumable item in the Market. These kinds of items are bought by the user once and kept for him forever.
+ * A representation of a non-consumable item in the Market. These kinds of items are bought by the
+ * user once and kept for him forever.
  * 
- * Don't get confused... this is not a Lifetime VirtualGood. It's just a MANAGED item in the Market.
- * This item will be retrieved when you "restoreTransactions"
+ * NOTE: Don't be confused: this is not a Lifetime VirtualGood, it's a MANAGED item in the
+ * Market. This means that the product can be purchased only once per user (such as a new level
+ * in a game), and is remembered by the Market (can be restored if this application is uninstalled
+ * and then re-installed).
+ * If you want to make a LifetimeVG available for purchase in the market (purchase with real
+ * money $$), you will need to declare it as a NonConsumableItem.
+ *
+ * Inheritance: NonConsumableItem > PurchasableVirtualItem > VirtualItem
  */
 public class NonConsumableItem extends PurchasableVirtualItem {
 
-    /** Constructor
+    /**
+     * Constructor
      *
      * @param mName see parent
      * @param mDescription see parent
      * @param mItemId see parent
      * @param purchaseType see parent
      */
-    public NonConsumableItem(String mName, String mDescription, String mItemId, PurchaseWithMarket purchaseType) {
+    public NonConsumableItem(String mName, String mDescription, String mItemId,
+                             PurchaseWithMarket purchaseType) {
         super(mName, mDescription, mItemId, purchaseType);
     }
 
-    /** Constructor
+    /**
+     * Constructor
      *
      * see parent
      */
@@ -50,6 +60,8 @@ public class NonConsumableItem extends PurchasableVirtualItem {
 
     /**
      * see parent
+     *
+     * @return see parent
      */
     @Override
     public JSONObject toJSONObject(){
@@ -58,8 +70,9 @@ public class NonConsumableItem extends PurchasableVirtualItem {
 
     /**
      * see parent
-     * @param amount the amount of the specific item to be given.
-     * @return balance after the giving process, can be either 0 or 1
+     *
+     * @param amount see parent
+     * @return see parent
      */
     @Override
     public int give(int amount, boolean notify) {
@@ -68,8 +81,9 @@ public class NonConsumableItem extends PurchasableVirtualItem {
 
     /**
      * see parent
-     * @param amount the amount of the specific item to be taken.
-     * @return balance after the taking process, can be either 0 or 1
+     *
+     * @param amount see parent
+     * @return see parent
      */
     @Override
     public int take(int amount, boolean notify) {
@@ -77,12 +91,17 @@ public class NonConsumableItem extends PurchasableVirtualItem {
     }
 
     /**
-     * see parent
+     * Determines if user is in a state that allows him to buy a NonConsumableItem by checking
+     * if the user already owns such an item. If he does, he cannot purchase this item again
+     * because NonConsumableItems can only be purchased once!
+     *
+     * @return True if the user does NOT own such an item, False otherwise.
      */
     @Override
     protected boolean canBuy() {
         if (StorageManager.getNonConsumableItemsStorage().nonConsumableItemExists(this)) {
-            StoreUtils.LogDebug(TAG, "You can't buy a NonConsumableItem that was already given to the user.");
+            StoreUtils.LogDebug(TAG,
+                    "You can't buy a NonConsumableItem that was already given to the user.");
             return false;
         }
         return true;
@@ -90,6 +109,7 @@ public class NonConsumableItem extends PurchasableVirtualItem {
 
     /**
      * see parent
+     *
      * @param balance see parent
      * @return balance after the resetting process, can be either 0 or 1
      */
@@ -102,7 +122,8 @@ public class NonConsumableItem extends PurchasableVirtualItem {
         }
     }
 
+
     /** Private members **/
 
-    private static final String TAG = "SOOMLA NonConsumableItem";
+    private static final String TAG = "SOOMLA NonConsumableItem"; //used for Log messages
 }

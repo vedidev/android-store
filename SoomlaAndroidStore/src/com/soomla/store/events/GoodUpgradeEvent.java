@@ -20,16 +20,28 @@ import com.soomla.store.domain.virtualGoods.VirtualGood;
 
 /**
  * This event is fired when the balance of a specific EquippableVG has been upgraded/downgraded.
+ *
+ * Real Game Example:
+ *  Example Inventory: { currency_coin: 100, Characters: Robot_X_1 }
+ *  Suppose your user upgrades "Characters". Robot_X_1 is the first Robot_X in the series.
+ *  After the upgrade, his new balance of Characters will be { Characters: Robot_X_2 }.
+ *  A GoodUpgradeEvent is fired.
  */
 public class GoodUpgradeEvent {
 
-    private VirtualGood mGood;
-    private UpgradeVG   mCurrentUpgrade;
-
+    /**
+     * Constructor
+     *
+     * @param good good that has been upgraded/downgraded
+     * @param upgradeVG upgrade details
+     */
     public GoodUpgradeEvent(VirtualGood good, UpgradeVG upgradeVG) {
         mGood = good;
         mCurrentUpgrade = upgradeVG;
     }
+
+
+    /** Setters and Getters */
 
     public VirtualGood getGood() {
         return mGood;
@@ -38,4 +50,12 @@ public class GoodUpgradeEvent {
     public UpgradeVG getCurrentUpgrade() {
         return mCurrentUpgrade;
     }
+
+
+    /** Private Members */
+
+    private VirtualGood mGood; //good that has been upgraded/downgraded
+
+    private UpgradeVG   mCurrentUpgrade; //upgrade details
+
 }

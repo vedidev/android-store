@@ -20,26 +20,25 @@ import com.soomla.store.StoreUtils;
 import com.soomla.store.domain.NonConsumableItem;
 
 /**
- * This class provide basic storage operations on Market's MANAGED items.
+ * This class provides basic storage operations on the Market's MANAGED items.
  */
 public class NonConsumableItemsStorage {
 
-    /** Constructor
-     *
+    /**
+     * Constructor
      */
     public NonConsumableItemsStorage() {
     }
 
-    /** Public functions **/
-
     /**
-     * Figure out if the given non-consumable {@link NonConsumableItem} exists.
-     * @param nonConsumableItem is the required non-consumable {@link NonConsumableItem}.
-     * @return whether the given item exists or not.
+     * Checks if the given non-consumable {@link NonConsumableItem} exists.
+     *
+     * @param nonConsumableItem the required non-consumable {@link NonConsumableItem}.
+     * @return true if the given item exists, false otherwise.
      */
     public boolean nonConsumableItemExists(NonConsumableItem nonConsumableItem){
 
-        StoreUtils.LogDebug(TAG, "trying to figure out if the given MANAGED item exists.");
+        StoreUtils.LogDebug(TAG, "Checking if the given MANAGED item exists.");
 
         String itemId = nonConsumableItem.getItemId();
         String key = KeyValDatabase.keyNonConsExists(itemId);
@@ -50,12 +49,13 @@ public class NonConsumableItemsStorage {
     }
 
     /**
-     * Adds the given google non-consumable item to the storage.
-     * @param nonConsumableItem is the required google non-consumable item.
+     * Adds the given non-consumable item to the storage.
+     *
+     * @param nonConsumableItem the required non-consumable item.
      * @return true
      */
     public boolean add(NonConsumableItem nonConsumableItem){
-        StoreUtils.LogDebug(TAG, "adding " + nonConsumableItem.getItemId());
+        StoreUtils.LogDebug(TAG, "Adding " + nonConsumableItem.getItemId());
 
         String itemId = nonConsumableItem.getItemId();
         String key = KeyValDatabase.keyNonConsExists(itemId);
@@ -66,12 +66,13 @@ public class NonConsumableItemsStorage {
     }
 
     /**
-     * Removes the given google non-consumable item from the storage.
-     * @param nonConsumableItem is the required google non-consumable item.
+     * Removes the given non-consumable item from the storage.
+     *
+     * @param nonConsumableItem the required non-consumable item.
      * @return false
      */
     public boolean remove(NonConsumableItem nonConsumableItem){
-        StoreUtils.LogDebug(TAG, "removing " + nonConsumableItem.getName());
+        StoreUtils.LogDebug(TAG, "Removing " + nonConsumableItem.getName());
 
         String itemId = nonConsumableItem.getItemId();
         String key = KeyValDatabase.keyNonConsExists(itemId);
@@ -81,7 +82,8 @@ public class NonConsumableItemsStorage {
         return false;
     }
 
-    /** Private members **/
 
-    private static final String TAG = "SOOMLA NonConsumableItemsStorage";
+    /** Private Members **/
+
+    private static final String TAG = "SOOMLA NonConsumableItemsStorage"; //used for Log messages
 }

@@ -19,9 +19,17 @@ import android.os.Handler;
 import android.os.Looper;
 import com.squareup.otto.Bus;
 
+/**
+ * This class overrides Bus's functions post, register, and unregister.
+ */
 public class AndroidBus extends Bus {
-    private final Handler mainThread = new Handler(Looper.getMainLooper());
 
+    /**
+     * Posts the given event so that all of its subscribers will be notified and will handle the
+     * event.
+     *
+     * @param event an instance of any class may be published on the bus
+     */
     @Override
     public void post(final Object event) {
         if (Looper.myLooper() == Looper.getMainLooper()) {
@@ -36,6 +44,11 @@ public class AndroidBus extends Bus {
         }
     }
 
+    /**
+     * Registers to the event bus, in order to receive notifications about events.
+     *
+     * @param object
+     */
     @Override
     public void register(final Object object) {
         if (Looper.myLooper() == Looper.getMainLooper()) {
@@ -50,6 +63,11 @@ public class AndroidBus extends Bus {
         }
     }
 
+    /**
+     * Unregisters to the event bus, in order to STOP receiving notifications about events.
+     *
+     * @param object
+     */
     @Override
     public void unregister(final Object object) {
         if (Looper.myLooper() == Looper.getMainLooper()) {
@@ -63,4 +81,9 @@ public class AndroidBus extends Bus {
             });
         }
     }
+
+
+    /** Private Members */
+
+    private final Handler mainThread = new Handler(Looper.getMainLooper());
 }

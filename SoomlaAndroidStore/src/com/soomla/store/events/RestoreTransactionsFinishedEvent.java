@@ -16,16 +16,27 @@
 package com.soomla.store.events;
 
 /**
- * This event is fired when restore transaction was finished.
+ * This event is fired when restore transaction has finished.
  */
 public class RestoreTransactionsFinishedEvent {
-    private boolean mSuccess;
 
+    /**
+     * Constructor
+     *
+     * @param success
+     */
     public RestoreTransactionsFinishedEvent(boolean success) {
         mSuccess = success;
     }
 
+    /** Setters and Getters */
+
     public boolean isSuccess() {
         return mSuccess;
     }
+
+
+    /** Private Members */
+
+    private boolean mSuccess;
 }

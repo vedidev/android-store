@@ -45,20 +45,25 @@ public class AESObfuscator {
     private static final byte[] IV =
             { 16, 74, 71, -80, 32, 101, -47, 72, 117, -14, 0, -29, 70, 65, -12, 74 };
 
-    // For backward compatibility, this value must not change even though it doesn't necessarily match the package name
+    // For backward compatibility, this value must not change even though it doesn't necessarily
+    // match the package name
     private static final String header = "com.soomla.billing.util.AESObfuscator-1|";
 
     private Cipher mEncryptor;
     private Cipher mDecryptor;
 
     /**
+     * Constructor
+     *
      * @param salt an array of random bytes to use for each (un)obfuscation
      * @param applicationId application identifier, e.g. the package name
      * @param deviceId device identifier. Use as many sources as possible to
      *    create this unique identifier.
      */
     public AESObfuscator(byte[] salt, String applicationId, String deviceId) {
-        SharedPreferences prefs = new ObscuredSharedPreferences(SoomlaApp.getAppContext().getSharedPreferences(StoreConfig.PREFS_NAME, Context.MODE_PRIVATE));
+        SharedPreferences prefs = new ObscuredSharedPreferences(
+                SoomlaApp.getAppContext().getSharedPreferences(
+                        StoreConfig.PREFS_NAME, Context.MODE_PRIVATE));
         byte[] passwordData = null;
         String sec = prefs.getString(StoreConfig.CUSTOM_SEC, "SOOMLA_SEC");
         if (sec.equals("SOOMLA_SEC")) {
@@ -74,12 +79,12 @@ public class AESObfuscator {
                     new PBEKeySpec((applicationId + deviceId + sec).toCharArray(), salt, 1024, 256);
             passwordData = factory.generateSecret(keySpec).getEncoded();
         } catch (GeneralSecurityException e) {
-            StoreUtils.LogDebug("SOOMLA AESObfuscator", "probably an incompatible device. trying different approach.");
+            StoreUtils.LogDebug("SOOMLA AESObfuscator",
+                    "Probably an incompatible device. Trying different approach.");
 
             MessageDigest digester = null;
             try {
                 digester = MessageDigest.getInstance("MD5");
-
                 char[] password = (applicationId + deviceId + sec).toCharArray();
                 for (int i = 0; i < password.length; i++) {
                     digester.update((byte) password[i]);

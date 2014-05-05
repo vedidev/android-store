@@ -33,7 +33,7 @@ public class IabSkuDetails {
 //    public IabSkuDetails(String jsonSkuDetails) throws JSONException {
 //        this(IabHelper.ITEM_TYPE_INAPP, jsonSkuDetails);
 //    }
-    
+
     public IabSkuDetails(String itemType, String jsonSkuDetails) throws JSONException {
         mItemType = itemType;
         mJson = jsonSkuDetails;

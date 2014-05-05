@@ -25,18 +25,21 @@ import org.json.JSONObject;
  * SingleUse virtual goods are the most common type of VirtualGood.
  *
  * The SingleUseVG's characteristics are:
- *  1. Can be purchased unlimited number of times.
- *  2. Has a balance and saved in the database. Its balance goes up when you "give" it or "buy" it. The balance goes
- *      down when it's taken or refunded (in case of an unfriendly refund).
+ *  1. Can be purchased an unlimited number of times.
+ *  2. Has a balance that is saved in the database. Its balance goes up when you "give" it or
+ *     "buy" it. The balance goes down when you "take" or (unfriendly) "refund" it.
  *
- * - Usage Examples: 'Hat', 'Sword'
+ * Real Game Examples: 'Hat', 'Sword', 'Muffin'
  *
- * This VirtualItem is purchasable.
- * In case you purchase this item in the Market (PurchaseWithMarket).
+ * NOTE: In case you want this item to be available for purchase in the market (PurchaseWithMarket),
+ * you will need to define the item in the market (Google Play, Amazon App Store, etc...).
+ *
+ * Inheritance: SingleUseVG > VirtualGood > PurchasableVirtualItem > VirtualItem
  */
 public class SingleUseVG extends VirtualGood{
 
-    /** Constructor
+    /**
+     * Constructor
      *
      * @param mName see parent
      * @param mDescription see parent
@@ -47,9 +50,11 @@ public class SingleUseVG extends VirtualGood{
         super(mName, mDescription, mItemId, purchaseType);
     }
 
-    /** Constructor
+    /**
+     * Constructor
      *
-     * see parent
+     * @param jsonObject see parent
+     * @throws JSONException
      */
     public SingleUseVG(JSONObject jsonObject) throws JSONException {
         super(jsonObject);
@@ -57,6 +62,8 @@ public class SingleUseVG extends VirtualGood{
 
     /**
      * see parent
+     *
+     * @return see parent
      */
     @Override
     public JSONObject toJSONObject() {
@@ -65,8 +72,9 @@ public class SingleUseVG extends VirtualGood{
 
     /**
      * see parent
-     * @param amount the amount of the specific item to be given.
-     * @return balance after the giving process
+     *
+     * @param amount see parent
+     * @return see parent
      */
     @Override
     public int give(int amount, boolean notify) {
@@ -75,8 +83,9 @@ public class SingleUseVG extends VirtualGood{
 
     /**
      * see parent
-     * @param amount the amount of the specific item to be taken.
-     * @return balance after the taking process
+     *
+     * @param amount see parent
+     * @return see parent
      */
     @Override
     public int take(int amount, boolean notify) {
@@ -84,7 +93,9 @@ public class SingleUseVG extends VirtualGood{
     }
 
     /**
-     * see parent
+     * Determines if user is in a state that allows him to buy a SingleUseVG.
+     *
+     * @return true - users can ALWAYS purchase SingleUseVGs
      */
     @Override
     protected boolean canBuy() {

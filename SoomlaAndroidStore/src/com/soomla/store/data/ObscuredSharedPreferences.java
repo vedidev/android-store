@@ -1,13 +1,10 @@
 package com.soomla.store.data;
 
-
 import android.content.SharedPreferences;
-import android.provider.Settings;
 import android.util.Base64;
 import com.soomla.store.SoomlaApp;
 import com.soomla.store.StoreConfig;
 import com.soomla.store.StoreUtils;
-
 import javax.crypto.Cipher;
 import javax.crypto.SecretKey;
 import javax.crypto.SecretKeyFactory;

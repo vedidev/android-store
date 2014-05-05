@@ -23,24 +23,38 @@ import com.soomla.store.domain.virtualCurrencies.VirtualCurrency;
 import com.soomla.store.events.CurrencyBalanceChangedEvent;
 
 /**
- * This class provide basic storage operations on virtualCurrencies.
+ * This class provides basic storage operations on VirtualCurrencies.
  */
 public class VirtualCurrencyStorage extends VirtualItemStorage{
 
-    /** Constructor
-     *
+    /**
+     * Constructor
      */
     public VirtualCurrencyStorage() {
         mTag = "SOOMLA VirtualCurrencyStorage";
     }
 
+    /**
+     * see parent
+     *
+     * @param itemId id of the virtual item whose balance is to be retrieved
+     * @return see parent
+     */
     @Override
     protected String keyBalance(String itemId) {
         return KeyValDatabase.keyCurrencyBalance(itemId);
     }
 
+    /**
+     * see parent
+     *
+     * @param item virtual item whose balance has changed
+     * @param balance the balance that has changed
+     * @param amountAdded the amount added to the item's balance
+     */
     @Override
     protected void postBalanceChangeEvent(VirtualItem item, int balance, int amountAdded) {
-        BusProvider.getInstance().post(new CurrencyBalanceChangedEvent((VirtualCurrency) item, balance, amountAdded));
+        BusProvider.getInstance().post(new CurrencyBalanceChangedEvent((VirtualCurrency) item,
+                balance, amountAdded));
     }
 }

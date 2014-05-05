@@ -20,9 +20,20 @@ import com.soomla.store.data.ObscuredSharedPreferences;
 import com.soomla.store.domain.virtualCurrencies.VirtualCurrency;
 import com.soomla.store.exceptions.VirtualItemNotFoundException;
 
+/**
+ * In this class StoreController and EventHandler are initialized, and then the store is opened.
+ * This class is responsible for displaying the initial screen of the game, which contains a drag
+ * and drop image that, when used, leads us to the next display and activity (StoreGoodsActivity).
+ */
 public class StoreExampleActivity extends Activity {
+
     /**
-     * Called when the activity is first created.
+     * Called when the activity starts.
+     * Displays the main UI screen of the game.
+     *
+     * @param savedInstanceState if the activity should be re-initialized after previously being
+     *                           shut down then this Bundle will contain the most recent data,
+     *                           otherwise it will be null.
      */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,32 +49,33 @@ public class StoreExampleActivity extends Activity {
         ((TextView) findViewById(R.id.main_text)).setTypeface(font);
 
         /**
-         * We initialize StoreController and initialize event handler before
-         * we open the store.
-         */
-
-        /**
+         * Initialize StoreController and EventHandler before the store is opened.
+         *
          * Compute your public key (that you got from the Android Market publisher site).
          *
-         * Instead of just storing the entire literal string here embedded in the
-         * program,  construct the key at runtime from pieces or
-         * use bit manipulation (for example, XOR with some other string) to hide
-         * the actual key.  The key itself is not secret information, but we don't
-         * want to make it easy for an adversary to replace the public key with one
-         * of their own and then fake messages from the server.
+         * Instead of just storing the entire literal string here embedded in the program,
+         * construct the key at runtime from pieces or use bit manipulation (for example,
+         * XOR with some other string) to hide the actual key. The key itself is not secret
+         * information, but we don't want to make it easy for an adversary to replace the
+         * public key with one of their own and then fake messages from the server.
          *
-         * Generally, encryption keys / passwords should only be kept in memory
+         * Generally, encryption keys/passwords should only be kept in memory
          * long enough to perform the operation they need to perform.
          */
         IStoreAssets storeAssets = new MuffinRushAssets();
         mEventHandler = new ExampleEventHandler(mHandler, this);
         StoreController.getInstance().initialize(storeAssets,
-                "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAphC8H7OYag8u8l1WayR7dHMKFC+XC09tLk9A6FnxqsJPF4+Y4iJ4NTs24PVYWB4y/DQjfo3b7z6DqXBYgAOMYn7I3VIbjzgbit+DgGWfmiKWCQotcG5jWEsTiGMy+yRkJ6mwvWyVt8c3EfYrgrIfDMYrzIpk+F0PK/ybDiQmj4j2H9PB3NwOMpaGCkKM3IrEY66fclnJpO3nDqN7Lun5mGAlni5eMKkwM5f5O8DUD65y/MmXTwUddXKnIaurY6giRcJktK6zWsFopxf2EzDb1byP3ISiwxZAgic5BfQYh3HAbeEMD0CvRCHQIctJ8k7zn63NmaemPR7lFjY1GNWeowIDAQAB",
+                "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAphC8H7OYag8u8l1WayR7dHMKFC+XC09tLk9A"
+                + "6FnxqsJPF4+Y4iJ4NTs24PVYWB4y/DQjfo3b7z6DqXBYgAOMYn7I3VIbjzgbit+DgGWfmiKWCQotcG"
+                + "5jWEsTiGMy+yRkJ6mwvWyVt8c3EfYrgrIfDMYrzIpk+F0PK/ybDiQmj4j2H9PB3NwOMpaGCkKM3IrE"
+                + "Y66fclnJpO3nDqN7Lun5mGAlni5eMKkwM5f5O8DUD65y/MmXTwUddXKnIaurY6giRcJktK6zWsFopx"
+                + "f2EzDb1byP3ISiwxZAgic5BfQYh3HAbeEMD0CvRCHQIctJ8k7zn63NmaemPR7lFjY1GNWeowIDAQAB",
                 "aaaaabbbbbb");
 
-        // Checking if it's a first run and adding 10000 currencies if it is.
-        // OFCOURSE... THIS IS JUST FOR TESTING.
-        SharedPreferences prefs = new ObscuredSharedPreferences(SoomlaApp.getAppContext().getSharedPreferences(StoreConfig.PREFS_NAME, Context.MODE_PRIVATE));
+        //FOR TESTING PURPOSES ONLY: Check if it's a first run and if so, add 10000 currencies.
+        SharedPreferences prefs = new ObscuredSharedPreferences(
+                SoomlaApp.getAppContext().getSharedPreferences(StoreConfig.PREFS_NAME,
+                        Context.MODE_PRIVATE));
         boolean initialized = prefs.getBoolean(FIRST_RUN, false);
         if (!initialized) {
             try {
@@ -80,6 +92,10 @@ public class StoreExampleActivity extends Activity {
 
     }
 
+    /**
+     * Puts the SOOMBOT back on the left side of the screen after it was dragged by the user to
+     * the right side (the empty box).
+     */
     public void robotBackHome(){
         mHandler.post(new Runnable() {
             @Override
@@ -96,7 +112,6 @@ public class StoreExampleActivity extends Activity {
     }
 
     private final class MyTouchListener implements View.OnTouchListener {
-
         @Override
         public boolean onTouch(View view, MotionEvent motionEvent) {
             if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
@@ -130,6 +145,7 @@ public class StoreExampleActivity extends Activity {
                     v.setBackgroundDrawable(normalShape);
                     break;
                 case DragEvent.ACTION_DROP:
+
                     // Dropped, reassign View to ViewGroup
 
                     ViewGroup left = (ViewGroup)findViewById(R.id.leftbox);
@@ -140,6 +156,7 @@ public class StoreExampleActivity extends Activity {
                         right.addView(view);
                         view.setVisibility(View.VISIBLE);
 
+                        // Once the user drags the SOOMBOT to the empty box, we open the store.
                         openStore();
                     }
                     break;
@@ -160,11 +177,17 @@ public class StoreExampleActivity extends Activity {
         robotBackHome();
     }
 
+
+    /** Private Members */
+
     private Handler mHandler = new Handler();
+
     private ImageView mRobotView;
+
     private ExampleEventHandler mEventHandler;
 
-    private static final String PREFS_NAME      = "store.prefs";
-    private static final String FIRST_RUN       = "a#AA#BB#C";
+    private static final String PREFS_NAME = "store.prefs";
+
+    private static final String FIRST_RUN = "a#AA#BB#C";
 }
 

@@ -17,8 +17,8 @@ package com.soomla.store;
  */
 
 /**
- * Maintains a singleton instance for obtaining the bus. Ideally this would be replaced with a more efficient means
- * such as through injection directly into interested classes.
+ * Maintains a singleton instance for obtaining the bus. Ideally this would be replaced with a
+ * more efficient means such as through injection directly into interested classes.
  */
 public final class BusProvider {
     private static final AndroidBus BUS = new AndroidBus();

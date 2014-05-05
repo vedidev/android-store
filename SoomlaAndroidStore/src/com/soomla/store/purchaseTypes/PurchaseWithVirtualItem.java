@@ -28,14 +28,20 @@ import com.soomla.store.exceptions.InsufficientFundsException;
 import com.soomla.store.exceptions.VirtualItemNotFoundException;
 
 /**
- * This type of IabPurchase allows users to purchase PurchasableVirtualItems with other VirtualItems.
+ * This type of IabPurchase allows users to purchase PurchasableVirtualItems with other
+ * VirtualItems.
+ *
+ * Real Game Example: Purchase a Sword in exchange for 100 Gems. Sword is the item to be purchased,
+ * Gem is the target item, and 100 is the amount.
  */
 public class PurchaseWithVirtualItem extends PurchaseType {
 
-    /** Constructor
+    /**
+     * Constructor
      *
-     * @param targetItemId is the itemId of the VirtualItem that is used to "pay" in order to make the purchase.
-     * @param amount is the number of items to purchase.
+     * @param targetItemId the itemId of the VirtualItem that is used to "pay" in order to
+     *                     make the purchase
+     * @param amount the number of target items needed in order to make the purchase
      */
     public PurchaseWithVirtualItem(String targetItemId, int amount) {
         mTargetItemId = targetItemId;
@@ -43,12 +49,13 @@ public class PurchaseWithVirtualItem extends PurchaseType {
     }
 
     /**
-     * see parent
+     * Buys the virtual item with other virtual items.
      */
     @Override
     public void buy() throws InsufficientFundsException{
 
-        StoreUtils.LogDebug(TAG, "Trying to buy a " + getAssociatedItem().getName() + " with " + mAmount + " pieces of " + mTargetItemId);
+        StoreUtils.LogDebug(TAG, "Trying to buy a " + getAssociatedItem().getName() + " with "
+                + mAmount + " pieces of " + mTargetItemId);
 
         VirtualItem item = null;
         try {
@@ -74,6 +81,9 @@ public class PurchaseWithVirtualItem extends PurchaseType {
         BusProvider.getInstance().post(new ItemPurchasedEvent(getAssociatedItem()));
     }
 
+
+    /** Setters and Getters */
+
     public String getTargetItemId() {
         return mTargetItemId;
     }
@@ -86,8 +96,14 @@ public class PurchaseWithVirtualItem extends PurchaseType {
         this.mAmount = mAmount;
     }
 
+
+    /** Private Members */
+
+    //used for Log messages
     private static final String TAG = "SOOMLA PurchaseWithVirtualItem";
 
-    private String      mTargetItemId;
-    private int         mAmount;
+    //the itemId of the VirtualItem that is used to "pay" with in order to make the purchase
+    private String mTargetItemId;
+
+    private int mAmount; //the number of items to purchase.
 }

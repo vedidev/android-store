@@ -22,15 +22,22 @@ import com.soomla.store.domain.PurchasableVirtualItem;
  */
 public class MarketPurchaseEvent {
 
-    private PurchasableVirtualItem mPurchasableVirtualItem;
-    private String                 mPayload;
-    private String                 mToken;
-
-    public MarketPurchaseEvent(PurchasableVirtualItem purchasableVirtualItem, String payload, String token) {
+    /**
+     * Constructor
+     *
+     * @param purchasableVirtualItem the item that was purchased
+     * @param payload the amount paid by the user (with real money!)
+     * @param token token associated with in-app billing purchase
+     */
+    public MarketPurchaseEvent(PurchasableVirtualItem purchasableVirtualItem, String payload,
+                               String token) {
         mPurchasableVirtualItem = purchasableVirtualItem;
         mPayload = payload;
         mToken = token;
     }
+
+
+    /** Setters and Getters */
 
     public PurchasableVirtualItem getPurchasableVirtualItem() {
         return mPurchasableVirtualItem;
@@ -43,4 +50,13 @@ public class MarketPurchaseEvent {
     public String getToken() {
         return mToken;
     }
+
+
+    /** Private Members */
+
+    private PurchasableVirtualItem mPurchasableVirtualItem;
+
+    private String mPayload;
+
+    private String mToken;
 }

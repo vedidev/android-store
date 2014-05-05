@@ -25,12 +25,14 @@ import com.soomla.store.domain.VirtualItem;
 public abstract class VirtualItemStorage {
 
     /**
-     * Fetch the balance of the given virtual item.
-     * @param item is the required virtual item.
+     * Retrieves the balance of the given virtual item.
+     *
+     * @param item the required virtual item.
      * @return the balance of the required virtual item.
      */
     public int getBalance(VirtualItem item){
-        StoreUtils.LogDebug(mTag, "trying to fetch balance for virtual item with itemId: " + item.getItemId());
+        StoreUtils.LogDebug(mTag, "fetching balance for virtual item with itemId: "
+                + item.getItemId());
 
         String itemId = item.getItemId();
         String key = keyBalance(itemId);
@@ -47,13 +49,25 @@ public abstract class VirtualItemStorage {
     }
 
     /**
-     * Set the balance of the given virtual item.
-     * @param item is the required virtual item.
-     * @return the balance of the required virtual item.
+     * Sets the balance of the given virtual item to be the given balance.
+     *
+     * @param item the required virtual item
+     * @param balance the new balance to be set
+     * @return the balance of the required virtual item
      */
     public int setBalance(VirtualItem item, int balance) {
         return setBalance(item, balance, true);
     }
+
+    /**
+     * Sets the balance of the given virtual item to be the given balance, and if notify is true
+     * posts the change in the balance to the event bus.
+     *
+     * @param item the required virtual item
+     * @param balance the new balance to be set
+     * @param notify if notify is true post balance change event
+     * @return the balance of the required virtual item
+     */
     public int setBalance(VirtualItem item, int balance, boolean notify) {
         StoreUtils.LogDebug(mTag, "setting balance " + balance + " to " + item.getName() + ".");
 
@@ -78,12 +92,24 @@ public abstract class VirtualItemStorage {
 
     /**
      * Adds the given amount of items to the storage.
-     * @param item is the required virtual item.
-     * @param amount is the amount of items to add.
+     *
+     * @param item the required virtual item
+     * @param amount the amount of items to add
+     * @return new balance
      */
     public int add(VirtualItem item, int amount){
         return add(item, amount, true);
     }
+
+    /**
+     * Adds the given amount of items to the storage, and if notify is true
+     * posts the change in the balance to the event bus.
+     *
+     * @param item the required virtual item
+     * @param amount the amount of items to add
+     * @param notify if notify is true post balance change event
+     * @return new balance
+     */
     public int add(VirtualItem item, int amount, boolean notify){
         StoreUtils.LogDebug(mTag, "adding " + amount + " " + item.getName());
 
@@ -106,14 +132,26 @@ public abstract class VirtualItemStorage {
 
     /**
      * Removes the given amount from the given virtual item's balance.
+     *
      * @param item is the virtual item to remove the given amount from.
      * @param amount is the amount to remove.
+     * @return new balance
      */
     public int remove(VirtualItem item, int amount){
         return remove(item, amount, true);
     }
+
+    /**
+     * Removes the given amount from the given virtual item's balance, and if notify is true
+     * posts the change in the balance to the event bus.
+     *
+     * @param item is the virtual item to remove the given amount from.
+     * @param amount is the amount to remove.
+     * @param notify if notify is true post balance change event
+     * @return new balance
+     */
     public int remove(VirtualItem item, int amount, boolean notify){
-        StoreUtils.LogDebug(mTag, "removing " + amount + " " + item.getName() + ".");
+        StoreUtils.LogDebug(mTag, "Removing " + amount + " " + item.getName() + ".");
 
         String itemId = item.getItemId();
         int balance = getBalance(item) - amount;
@@ -132,8 +170,25 @@ public abstract class VirtualItemStorage {
         return balance;
     }
 
+    /**
+     * Retrieves the balance of the virtual item with the given itemId (from the KeyValDatabase).
+     *
+     * @param itemId id of the virtual item whose balance is to be retrieved
+     * @return String containing name of storage base, itemId, and balance
+     */
     protected abstract String keyBalance(String itemId);
+
+    /**
+     * Posts the given amount changed in the given balance of the given virtual item.
+     *
+     * @param item virtual item whose balance has changed
+     * @param balance the balance that has changed
+     * @param amountAdded the amount added to the item's balance
+     */
     protected abstract void postBalanceChangeEvent(VirtualItem item, int balance, int amountAdded);
 
-    protected String mTag = "SOOMLA VirtualItemStorage";
+
+    /** Private Members */
+
+    protected String mTag = "SOOMLA VirtualItemStorage"; //used for Log messages
 }

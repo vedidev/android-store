@@ -29,34 +29,41 @@ import java.util.Iterator;
 
 /**
  * Every game has its virtualCurrencies. Here you represent a pack of a specific VirtualCurrency.
- * For example: If you have a "Coin" as a virtual currency, you will
- * sell packs of "Coins". e.g. "10 Coins Set" or "Super Saver Pack".
  *
- * This VirtualItem is purchasable.
- * In case you purchase this item in the Market (PurchaseWithMarket), You need to define the market items in the dev console.
+ * Real Game Example: If virtual currency in your game is a 'Coin', you will sell packs of 'Coins'
+ * (e.g. "10 Coins Set" or "Super Saver Pack").
+ *
+ * NOTE: In case you want this item to be available for purchase in the market (PurchaseWithMarket),
+ * you will need to define the item in the market (Google Play, Amazon App Store, etc...).
+ *
+ * Inheritance: VirtualCurrencyPack > PurchasableVirtualItem > VirtualItem
  */
 public class VirtualCurrencyPack extends PurchasableVirtualItem {
 
-    /** Constructor
+    /**
+     * Constructor
      *
      * @param mName see parent
      * @param mDescription see parent
      * @param mItemId see parent
-     * @param mCurrencyAmount is the amount of currency in the pack.
-     * @param mCurrencyItemId is the itemId of the currency associated with this pack.
      * @param purchaseType see parent
+     * @param mCurrencyAmount the amount of currency in the pack
+     * @param mCurrencyItemId the itemId of the currency associated with this pack
      */
     public VirtualCurrencyPack(String mName, String mDescription, String mItemId,
                                int mCurrencyAmount,
-                               String mCurrencyItemId, PurchaseType purchaseType) {
+                               String mCurrencyItemId,
+                               PurchaseType purchaseType) {
         super(mName, mDescription, mItemId, purchaseType);
         this.mCurrencyItemId = mCurrencyItemId;
         this.mCurrencyAmount = mCurrencyAmount;
     }
 
-    /** Constructor
+    /**
+     * Constructor
      *
-     * see parent
+     * @param jsonObject see parent
+     * @throws JSONException
      */
     public VirtualCurrencyPack(JSONObject jsonObject) throws JSONException {
         super(jsonObject);
@@ -67,7 +74,10 @@ public class VirtualCurrencyPack extends PurchasableVirtualItem {
 
     /**
      * see parent
+     *
+     * @return see parent
      */
+    @Override
     public JSONObject toJSONObject(){
         JSONObject parentJsonObject = super.toJSONObject();
         JSONObject jsonObject = new JSONObject();
@@ -83,7 +93,7 @@ public class VirtualCurrencyPack extends PurchasableVirtualItem {
             }
 
         } catch (JSONException e) {
-            StoreUtils.LogError(TAG, "An error occured while generating JSON object.");
+            StoreUtils.LogError(TAG, "An error occurred while generating JSON object.");
         }
 
         return jsonObject;
@@ -91,8 +101,10 @@ public class VirtualCurrencyPack extends PurchasableVirtualItem {
 
     /**
      * see parent
-     * @param amount the amount of the specific item to be given.
-     * @return balance after the giving process
+     *
+     * @param amount see parent
+     * @param notify see parent
+     * @return see parent
      */
     @Override
     public int give(int amount, boolean notify) {
@@ -100,16 +112,20 @@ public class VirtualCurrencyPack extends PurchasableVirtualItem {
         try {
             currency = (VirtualCurrency)StoreInfo.getVirtualItem(mCurrencyItemId);
         } catch (VirtualItemNotFoundException e) {
-            StoreUtils.LogError(TAG, "VirtualCurrency with itemId: " + mCurrencyItemId + " doesn't exist! Can't give this pack.");
+            StoreUtils.LogError(TAG, "VirtualCurrency with itemId: " + mCurrencyItemId
+                    + " doesn't exist! Can't give this pack.");
             return 0;
         }
-        return StorageManager.getVirtualCurrencyStorage().add(currency, mCurrencyAmount*amount, notify);
+        return StorageManager.getVirtualCurrencyStorage().add(
+                currency, mCurrencyAmount*amount, notify);
     }
 
     /**
      * see parent
-     * @param amount the amount of the specific item to be taken.
-     * @return balance after the taking process
+     *
+     * @param amount see parent
+     * @param notify see parent
+     * @return see parent
      */
     @Override
     public int take(int amount, boolean notify) {
@@ -117,32 +133,39 @@ public class VirtualCurrencyPack extends PurchasableVirtualItem {
         try {
             currency = (VirtualCurrency)StoreInfo.getVirtualItem(mCurrencyItemId);
         } catch (VirtualItemNotFoundException e) {
-            StoreUtils.LogError(TAG, "VirtualCurrency with itemId: " + mCurrencyItemId + " doesn't exist! Can't take this pack.");
+            StoreUtils.LogError(TAG, "VirtualCurrency with itemId: " + mCurrencyItemId +
+                    " doesn't exist! Can't take this pack.");
             return 0;
         }
-        return StorageManager.getVirtualCurrencyStorage().remove(currency, mCurrencyAmount * amount, notify);
+        return StorageManager.getVirtualCurrencyStorage().remove(currency,
+                mCurrencyAmount * amount, notify);
     }
 
     /**
      * see parent
+     *
      * @param balance see parent
      */
     @Override
     public int resetBalance(int balance, boolean notify) {
         // Not supported for VirtualCurrencyPacks !
-        StoreUtils.LogError(TAG, "Someone tried to reset balance of CurrencyPack. That's not right.");
+        StoreUtils.LogError(TAG, "Someone tried to reset balance of CurrencyPack. "
+                + "That's not right.");
         return 0;
     }
 
     /**
      * see parent
+     *
+     * @return see parent
      */
     @Override
     protected boolean canBuy() {
         return true;
     }
 
-    /** Getters **/
+
+    /** Setters and Getters **/
 
     public int getCurrencyAmount() {
         return mCurrencyAmount;
@@ -152,10 +175,12 @@ public class VirtualCurrencyPack extends PurchasableVirtualItem {
         return mCurrencyItemId;
     }
 
-    /** Private members **/
 
-    private static final String TAG = "SOOMLA VirtualCurrencyPack";
+    /** Private Members **/
 
-    private int              mCurrencyAmount;
-    private String           mCurrencyItemId;
+    private static final String TAG = "SOOMLA VirtualCurrencyPack"; //used for Log messages
+
+    private int mCurrencyAmount; //the amount of currency in the pack
+
+    private String mCurrencyItemId; //the itemId of the currency associated with this pack
 }

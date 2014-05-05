@@ -27,10 +27,15 @@ import java.util.HashMap;
 import java.util.List;
 
 /**
- * The KeyValDatabase provides basic key-value store above SQLite.
+ * The KeyValDatabase provides a basic key-value store above SQLite.
  */
 public class KeyValDatabase {
 
+    /**
+     * Constructor
+     *
+     * @param context
+     */
     public KeyValDatabase(Context context) {
 
         if (StoreConfig.DB_DELETE){
@@ -49,7 +54,9 @@ public class KeyValDatabase {
     }
 
     /**
-     * Deletes the database completely !
+     * Deletes the database completely!
+     *
+     * @param context
      */
     public void purgeDatabase(Context context) {
         context.deleteDatabase(DATABASE_NAME);
@@ -57,6 +64,7 @@ public class KeyValDatabase {
 
     /**
      * Sets the given value to the given key
+     *
      * @param key the key of the key-val pair.
      * @param val the val of the key-val pair.
      */
@@ -64,7 +72,8 @@ public class KeyValDatabase {
         ContentValues values = new ContentValues();
         values.put(KEYVAL_COLUMN_VAL, val);
 
-        int affected = mStoreDB.update(KEYVAL_TABLE_NAME, values, KEYVAL_COLUMN_KEY + "='" + key + "'", null);
+        int affected = mStoreDB.update(KEYVAL_TABLE_NAME, values, KEYVAL_COLUMN_KEY + "='"
+                + key + "'", null);
         if (affected == 0){
             values.put(KEYVAL_COLUMN_KEY, key);
             mStoreDB.replace(KEYVAL_TABLE_NAME, null, values);
@@ -72,12 +81,14 @@ public class KeyValDatabase {
     }
 
     /**
-     * Gets the value for the given key.
+     * Retrieves the value for the given key.
+     *
      * @param key the key of the key-val pair.
      * @return a value for the given key.
      */
     public synchronized String getKeyVal(String key) {
-        Cursor cursor = mStoreDB.query(KEYVAL_TABLE_NAME, KEYVAL_COLUMNS, KEYVAL_COLUMN_KEY + "='" + key + "'",
+        Cursor cursor = mStoreDB.query(KEYVAL_TABLE_NAME, KEYVAL_COLUMNS, KEYVAL_COLUMN_KEY
+                + "='" + key + "'",
                 null, null, null, null);
  
         if (cursor != null && cursor.moveToNext()) {
@@ -94,13 +105,19 @@ public class KeyValDatabase {
         return null;
     }
 
+    /**
+     * Deletes the key-val pair.
+     *
+     * @param key the key of the key-val pair.
+     */
     public synchronized void deleteKeyVal(String key) {
         mStoreDB.delete(KEYVAL_TABLE_NAME, KEYVAL_COLUMN_KEY + "=?", new String[] { key });
     }
 
     public synchronized HashMap<String, String> getQueryVals(String query) {
         query = query.replace('*', '%');
-        Cursor cursor = mStoreDB.query(KEYVAL_TABLE_NAME, KEYVAL_COLUMNS, KEYVAL_COLUMN_KEY + " LIKE '" + query + "'",
+        Cursor cursor = mStoreDB.query(KEYVAL_TABLE_NAME, KEYVAL_COLUMNS, KEYVAL_COLUMN_KEY
+                + " LIKE '" + query + "'",
                 null, null, null, null);
 
         HashMap<String, String> ret = new HashMap<String, String>();
@@ -120,6 +137,9 @@ public class KeyValDatabase {
         return ret;
     }
 
+    /**
+     * DataBase Helper class
+     */
     private class DatabaseHelper extends SQLiteOpenHelper{
 
         public DatabaseHelper(Context context) {
@@ -144,7 +164,7 @@ public class KeyValDatabase {
     }
 
 
-    /** SOOMLA keys **/
+    /** SOOMLA Keys **/
 
     public static String keyGoodBalance(String itemId) {
         return "good." + itemId + ".balance";
@@ -171,7 +191,8 @@ public class KeyValDatabase {
     }
 
 
-    // General key-value storage
+    /** General key-value storage */
+
     private static final String KEYVAL_TABLE_NAME = "kv_store";
     public static final String KEYVAL_COLUMN_KEY = "key";
     public static final String KEYVAL_COLUMN_VAL = "val";
@@ -180,11 +201,13 @@ public class KeyValDatabase {
     };
 
 
-    /** Private Members**/
+    /** Private Members **/
 
-    private static final String TAG            = "KeyValDatabase";
+    private static final String TAG = "KeyValDatabase"; //used for Log messages
+
     private static final String DATABASE_NAME  = "store.kv.db";
 
     private SQLiteDatabase mStoreDB;
+
     private DatabaseHelper mDatabaseHelper;
 }

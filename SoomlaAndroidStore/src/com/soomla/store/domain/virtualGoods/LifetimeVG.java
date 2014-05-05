@@ -24,16 +24,19 @@ import org.json.JSONObject;
 
 
 /**
- * A Lifetime virtual good is a special time that allows you to offer virtual goods that are bought only once.
+ * A LifetimeVG is a virtual good that is bought only once and kept forever.
  *
  * The LifetimeVG's characteristics are:
  *  1. Can only be purchased once.
- *  2. Your users can't have more than one of this item. In other words, (0 <= [LifetimeVG's balance] <= 1) == true.
+ *  2. Your users cannot have more than one of this item.
  *
- * - Example usage: 'No Ads', 'Double Coins'
+ * Real Games Examples: 'No Ads', 'Double Coins'
  *
  * This VirtualItem is purchasable.
- * In case you purchase this item in the Market (PurchaseWithMarket).
+ * In case you want this item to be available for purchase in the market (PurchaseWithMarket),
+ * you will need to define the item in the market (Google Play, Amazon App Store, etc...).
+ *
+ * Inheritance: LifeTimeVG > VirtualGood > PurchasableVirtualItem > VirtualItem
  */
     public class LifetimeVG extends VirtualGood{
 
@@ -50,9 +53,11 @@ import org.json.JSONObject;
         super(mName, mDescription, mItemId, purchaseType);
     }
 
-    /** Constructor
+    /**
+     * Constructor
      *
-     * see parent
+     * @param jsonObject see parent
+     * @throws JSONException
      */
     public LifetimeVG(JSONObject jsonObject) throws JSONException {
         super(jsonObject);
@@ -60,6 +65,8 @@ import org.json.JSONObject;
 
     /**
      * see parent
+     *
+     * @return see parent
      */
     @Override
     public JSONObject toJSONObject() {
@@ -67,14 +74,17 @@ import org.json.JSONObject;
     }
 
     /**
-     * see parent
-     * @param amount the amount of the specific item to be given.
-     * @return 1 if the user was given the good, 0 otherwise
+     * Gives your user exactly one LifetimeVG
+     *
+     * @param amount the amount of the specific item to be given - if this input is greater than 1,
+     *               we force the amount to equal 1, because a LifetimeVG can only be given once.
+     * @return 1 to indicate that the user was given the good
      */
     @Override
     public int give(int amount, boolean notify) {
         if(amount > 1) {
-            StoreUtils.LogDebug(TAG, "You tried to give more than one LifetimeVG. Will try to give one anyway.");
+            StoreUtils.LogDebug(TAG, "You tried to give more than one LifetimeVG."
+                    + "Will try to give one anyway.");
             amount = 1;
         }
 
@@ -87,9 +97,12 @@ import org.json.JSONObject;
     }
 
     /**
-     * see parent
-     * @param amount the amount of the specific item to be taken.
-     * @return balance after taking process, should be 0
+     * Takes from your user exactly one LifetimeVG
+     *
+     * @param amount the amount of the specific item to be taken - if this input is greater than 1,
+     *               we force amount to equal 1, because a LifetimeVG can only be given once and
+     *               therefore, taken once.
+     * @return 1 to indicate that the user was given the good
      */
     @Override
     public int take(int amount, boolean notify) {
@@ -106,7 +119,13 @@ import org.json.JSONObject;
     }
 
     /**
-     * see parent
+     * Determines if the user is in a state that allows him to buy a LifetimeVG, by checking his
+     * balance of LifetimeVGs.
+     * From the definition of a LifetimeVG:
+     * If the user has a balance of 0 - he can buy
+     * If the user has a balance of 1 or more - he cannot buy more.
+     *
+     * @return true if he can buy, false otherwise
      */
     @Override
     protected boolean canBuy() {
@@ -115,5 +134,8 @@ import org.json.JSONObject;
         return balance < 1;
     }
 
-    private static String TAG = "SOOMLA LifetimeVG";
+
+    /** Private Members **/
+
+    private static String TAG = "SOOMLA LifetimeVG"; //used for Log messages
 }

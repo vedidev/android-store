@@ -20,21 +20,19 @@ import com.soomla.store.domain.virtualCurrencies.VirtualCurrency;
 import com.soomla.store.domain.virtualGoods.VirtualGood;
 
 /**
- * This is the place where all the relevant storage classes are created.
- * This class contains static methods for you to retrieve the various storages.
- *
- * s
- *
+ * In this class all the relevant storage classes are created.
+ * This class contains static methods for you to retrieve the various storage bases.
  */
 public class StorageManager {
 
-    /** Getters **/
+    /** Setters and Getters **/
 
-    public static VirtualCurrencyStorage getVirtualCurrencyStorage(){
+    public static VirtualCurrencyStorage getVirtualCurrencyStorage() {
+
         return mVirtualCurrencyStorage;
     }
 
-    public static VirtualGoodsStorage getVirtualGoodsStorage(){
+    public static VirtualGoodsStorage getVirtualGoodsStorage() {
         return mVirtualGoodsStorage;
     }
 
@@ -48,8 +46,6 @@ public class StorageManager {
 
     public static VirtualItemStorage getVirtualItemStorage(VirtualItem item) {
         VirtualItemStorage storage = null;
-
-
         if (item instanceof VirtualGood) {
             storage = getVirtualGoodsStorage();
         } else if (item instanceof VirtualCurrency) {
@@ -59,12 +55,21 @@ public class StorageManager {
     }
 
 
-    /** Private members **/
-    private static final String TAG = "SOOMLA StorageManager";
+    /** Private Members **/
 
-    private static VirtualGoodsStorage     mVirtualGoodsStorage         = new VirtualGoodsStorage();
-    private static VirtualCurrencyStorage  mVirtualCurrencyStorage      = new VirtualCurrencyStorage();
-    private static NonConsumableItemsStorage mNonConsumableItemsStorage = new NonConsumableItemsStorage();
-    private static KeyValueStorage         mKeyValueStorage             = new KeyValueStorage();
+    private static final String TAG = "SOOMLA StorageManager"; //used for Log messages
+
+    // storage of all virtual goods
+    private static VirtualGoodsStorage mVirtualGoodsStorage = new VirtualGoodsStorage();
+
+    // storage of all virtual currencies
+    private static VirtualCurrencyStorage mVirtualCurrencyStorage = new VirtualCurrencyStorage();
+
+    // storage of all non-consumable items
+    private static NonConsumableItemsStorage mNonConsumableItemsStorage =
+            new NonConsumableItemsStorage();
+
+    // key-value storage
+    private static KeyValueStorage mKeyValueStorage = new KeyValueStorage();
 
 }
