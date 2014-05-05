@@ -3,6 +3,7 @@ package com.soomla.example;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
@@ -195,13 +196,20 @@ public class StorePacksActivity extends Activity {
                 content.setText(nonConsumableItem.getDescription());
                 info.setText("");
                 PurchaseWithMarket pwm = (PurchaseWithMarket) nonConsumableItem.getPurchaseType();
+                // mark items that did not actually fetch market details
+                boolean noMarketItemData = pwm.getMarketItem() == null ||
+                                           pwm.getMarketItem().getMarketPrice() == null;
+                if (noMarketItemData) {
+                    content.setTextColor(Color.RED);
+                    content.setText(content.getText() + " [no market data]");
+                }
                 Integer imgResId = (Integer) mImages.get(pwm.getMarketItem().getProductId());
                 if(imgResId == null) {
-                    imgResId = R.drawable.muffin;
+                    imgResId = noMarketItemData ? R.drawable.ic_launcher : R.drawable.muffin;
                 }
                 thumb_image.setImageResource(imgResId);
             } else {
-                VirtualCurrencyPack pack = StoreInfo.getCurrencyPacks().get(position-nonConsumablesCount);
+                VirtualCurrencyPack pack = StoreInfo.getCurrencyPacks().get(position - nonConsumablesCount);
                 title.setText(pack.getName());
                 content.setText(pack.getDescription());
                 PurchaseWithMarket pwm = (PurchaseWithMarket) pack.getPurchaseType();

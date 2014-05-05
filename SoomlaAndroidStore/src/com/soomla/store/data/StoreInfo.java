@@ -242,15 +242,6 @@ public class StoreInfo {
     }
 
 
-    public static List<String> getNonConsumableProductIds() {
-        List<String> productIds = new ArrayList<String>(mNonConsumables.size());
-        for (NonConsumableItem next : mNonConsumables) {
-            productIds.add(next.getItemId());
-        }
-
-        return productIds;
-    }
-
     /** Private functions **/
     /**
      * Transforms given jsonObject to StoreInfo
