@@ -1,3 +1,13 @@
+### v3.3.3 [view commit logs](https://github.com/soomla/android-store/compare/v3.3.2...v3.3.3)
+
+* Fixes
+  * Correctly fetching products' details from market.
+  * Handle large sku-details query (Google limits to no more than 20 skus)
+
+* New Features
+  * Added docs
+
+
 ### v3.3.2 [view commit logs](https://github.com/soomla/android-store/compare/v3.3.1...v3.3.2)
 
 * New Features
