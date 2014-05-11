@@ -1,17 +1,23 @@
-/*
- * Copyright (C) 2012 Soomla Inc.
+/**
+ * Copyright (C) 2012-2014 Soomla Inc.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
  */
 
 package com.soomla.store.domain.virtualGoods;
@@ -24,19 +30,22 @@ import org.json.JSONObject;
 
 
 /**
- * A LifetimeVG is a virtual good that is bought only once and kept forever.
+ * A <code>LifetimeVG</code> is a virtual good that is bought once and kept forever.
  *
- * The LifetimeVG's characteristics are:
+ * The <code>LifetimeVG</code>'s characteristics are:
  *  1. Can only be purchased once.
  *  2. Your users cannot have more than one of this item.
  *
  * Real Games Examples: 'No Ads', 'Double Coins'
  *
- * This VirtualItem is purchasable.
+ * This <code>VirtualItem</code> is purchasable.
  * In case you want this item to be available for purchase in the market (PurchaseWithMarket),
  * you will need to define the item in the market (Google Play, Amazon App Store, etc...).
  *
- * Inheritance: LifeTimeVG > VirtualGood > PurchasableVirtualItem > VirtualItem
+ * Inheritance:{@link com.soomla.store.domain.virtualGoods.LifetimeVG} >
+ * {@link com.soomla.store.domain.virtualGoods.VirtualGood} >
+ * {@link com.soomla.store.domain.PurchasableVirtualItem} >
+ * {@link com.soomla.store.domain.VirtualItem}
  */
     public class LifetimeVG extends VirtualGood{
 
@@ -74,10 +83,10 @@ import org.json.JSONObject;
     }
 
     /**
-     * Gives your user exactly one LifetimeVG
+     * Gives your user exactly one <code>LifetimeVG</code>.
      *
      * @param amount the amount of the specific item to be given - if this input is greater than 1,
-     *               we force the amount to equal 1, because a LifetimeVG can only be given once.
+     *               we force the amount to equal 1, because a <code>LifetimeVG</code> can only be given once.
      * @return 1 to indicate that the user was given the good
      */
     @Override
@@ -97,11 +106,11 @@ import org.json.JSONObject;
     }
 
     /**
-     * Takes from your user exactly one LifetimeVG
+     * Takes from your user exactly one <code>LifetimeVG</code>.
      *
      * @param amount the amount of the specific item to be taken - if this input is greater than 1,
-     *               we force amount to equal 1, because a LifetimeVG can only be given once and
-     *               therefore, taken once.
+     *               we force amount to equal 1, because a <code>LifetimeVG</code> can only be
+     *               given once and therefore, taken once.
      * @return 1 to indicate that the user was given the good
      */
     @Override
@@ -119,10 +128,10 @@ import org.json.JSONObject;
     }
 
     /**
-     * Determines if the user is in a state that allows him to buy a LifetimeVG, by checking his
-     * balance of LifetimeVGs.
-     * From the definition of a LifetimeVG:
-     * If the user has a balance of 0 - he can buy
+     * Determines if the user is in a state that allows him to buy a <code>LifetimeVG</code>, by
+     * checking his balance of <code>LifetimeVG</code>s.
+     * From the definition of a <code>LifetimeVG</code>:
+     * If the user has a balance of 0 - he can buy.
      * If the user has a balance of 1 or more - he cannot buy more.
      *
      * @return true if he can buy, false otherwise

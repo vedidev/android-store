@@ -1,18 +1,25 @@
-/*
- * Copyright (C) 2012 Soomla Inc.
+/**
+ * Copyright (C) 2012-2014 Soomla Inc.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
  */
+
 package com.soomla.store.domain.virtualCurrencies;
 
 import com.soomla.store.StoreUtils;
@@ -28,15 +35,18 @@ import org.json.JSONObject;
 import java.util.Iterator;
 
 /**
- * Every game has its virtualCurrencies. Here you represent a pack of a specific VirtualCurrency.
+ * Every game has its virtual currencies. Here you represent a pack of a specific
+ * <code>VirtualCurrency</code>.
  *
- * Real Game Example: If virtual currency in your game is a 'Coin', you will sell packs of 'Coins'
- * (e.g. "10 Coins Set" or "Super Saver Pack").
+ * Real Game Example: If the virtual currency in your game is a 'Coin', you will sell packs of
+ * 'Coins' such as "10 Coins Set" or "Super Saver Pack".
  *
- * NOTE: In case you want this item to be available for purchase in the market (PurchaseWithMarket),
- * you will need to define the item in the market (Google Play, Amazon App Store, etc...).
+ * NOTE: In case you want this item to be available for purchase with real money  you will need to
+ * define the item in the market (Google Play, Amazon App Store, etc...).
  *
- * Inheritance: VirtualCurrencyPack > PurchasableVirtualItem > VirtualItem
+ * Inheritance: {@link com.soomla.store.domain.virtualCurrencies.VirtualCurrencyPack} >
+ * {@link com.soomla.store.domain.PurchasableVirtualItem} >
+ * {@link com.soomla.store.domain.VirtualItem}
  */
 public class VirtualCurrencyPack extends PurchasableVirtualItem {
 
@@ -46,9 +56,9 @@ public class VirtualCurrencyPack extends PurchasableVirtualItem {
      * @param mName see parent
      * @param mDescription see parent
      * @param mItemId see parent
-     * @param purchaseType see parent
      * @param mCurrencyAmount the amount of currency in the pack
-     * @param mCurrencyItemId the itemId of the currency associated with this pack
+     * @param mCurrencyItemId the item id of the currency associated with this pack
+     * @param purchaseType see parent
      */
     public VirtualCurrencyPack(String mName, String mDescription, String mItemId,
                                int mCurrencyAmount,
@@ -102,8 +112,8 @@ public class VirtualCurrencyPack extends PurchasableVirtualItem {
     /**
      * see parent
      *
-     * @param amount see parent
-     * @param notify see parent
+     * @param amount the amount of the specific item to be given
+     * @param notify notify of change in user's balance of current virtual item
      * @return see parent
      */
     @Override
@@ -117,14 +127,14 @@ public class VirtualCurrencyPack extends PurchasableVirtualItem {
             return 0;
         }
         return StorageManager.getVirtualCurrencyStorage().add(
-                currency, mCurrencyAmount*amount, notify);
+                currency, mCurrencyAmount * amount, notify);
     }
 
     /**
      * see parent
      *
-     * @param amount see parent
-     * @param notify see parent
+     * @param amount the amount of the specific item to be taken
+     * @param notify notify of change in user's balance of current virtual item
      * @return see parent
      */
     @Override
@@ -144,7 +154,9 @@ public class VirtualCurrencyPack extends PurchasableVirtualItem {
     /**
      * see parent
      *
-     * @param balance see parent
+     * @param balance the balance of the current virtual item
+     * @param notify notify of change in user's balance of current virtual item
+     * @return see parent
      */
     @Override
     public int resetBalance(int balance, boolean notify) {

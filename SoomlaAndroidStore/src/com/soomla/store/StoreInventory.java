@@ -1,18 +1,25 @@
-/*
- * Copyright (C) 2012 Soomla Inc.
+/**
+ * Copyright (C) 2012-2014 Soomla Inc.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
  */
+
 package com.soomla.store;
 
 import android.text.TextUtils;
@@ -53,7 +60,7 @@ public class StoreInventory {
     /** VIRTUAL ITEMS **/
 
     /**
-     * Retrieves the balance of the virtual item with the given itemId.
+     * Retrieves the balance of the virtual item with the given <code>itemId</code>.
      *
      * @param itemId id of the virtual item to be fetched - must be of VirtualCurrency or
      *               SingleUseVG or LifetimeVG or EquippableVG
@@ -70,8 +77,8 @@ public class StoreInventory {
      * For example, when your user plays your game for the first time you GIVE him 1000 gems.
      *
      * NOTE: This action is different than buy -
-     * You use give(int amount) to give your user something for free.
-     * You use buy() to give your user something and you get something in return.
+     * You use <code>give(int amount)</code> to give your user something for free.
+     * You use <code>buy()</code> to give your user something and you get something in return.
      *
      * @param itemId id of the virtual item to be given
      * @param amount amount of the item to be given
@@ -84,7 +91,7 @@ public class StoreInventory {
     }
 
     /**
-     * Takes from your user the given amount of the virtual item with the given itemId.
+     * Takes from your user the given amount of the virtual item with the given <code>itemId</code>.
      * For example, when your user requests a refund (and let's say it's not a friendly refund),
      * you need to TAKE the item he is returning from him (and give him his money back).
      *
@@ -101,7 +108,7 @@ public class StoreInventory {
     /** VIRTUAL GOODS **/
 
     /**
-     * Equips the virtual good with the given goodItemId.
+     * Equips the virtual good with the given <code>goodItemId</code>.
      * Equipping means that the user decides to currently use a specific virtual good.
      * For more details and examples see {@link com.soomla.store.domain.virtualGoods.EquippableVG}.
      *
@@ -123,8 +130,8 @@ public class StoreInventory {
     }
 
     /**
-     * Unequips the virtual good with the given goodItemId. Unequipping means that the user decides
-     * to stop using the virtual good he is currently using.
+     * Unequips the virtual good with the given <code>goodItemId</code>. Unequipping means that the
+     * user decides to stop using the virtual good he is currently using.
      * For more details and examples see {@link com.soomla.store.domain.virtualGoods.EquippableVG}.
      *
      * @param goodItemId id of the virtual good to be unequipped
@@ -139,7 +146,8 @@ public class StoreInventory {
     }
 
     /**
-     * Checks if the virtual good with the given goodItemId is equipped (currently being used).
+     * Checks if the virtual good with the given <code>goodItemId</code> is equipped
+     * (currently being used).
      *
      * @param goodItemId id of the virtual good who we want to know if is equipped
      * @return true if the virtual good is equipped, false otherwise
@@ -154,16 +162,16 @@ public class StoreInventory {
     }
 
     /**
-     * Retrieves the upgrade level of the virtual good with the given goodItemId.
+     * Retrieves the upgrade level of the virtual good with the given <code>goodItemId</code>.
      *
      * For Example:
      * Let's say there's a strength attribute to one of the characters in your game and you provide
      * your users with the ability to upgrade that strength on a scale of 1-3.
      * This is what you've created:
-     *  1. SingleUseVG for "strength"
-     *  2. UpgradeVG for strength 'level 1'
-     *  3. UpgradeVG for strength 'level 2'
-     *  4. UpgradeVG for strength 'level 3'
+     *  1. <code>SingleUseVG</code> for "strength"
+     *  2. <code>UpgradeVG</code> for strength 'level 1'
+     *  3. <code>UpgradeVG</code> for strength 'level 2'
+     *  4. <code>UpgradeVG</code> for strength 'level 3'
      * In the example, this function will retrieve the upgrade level for "strength" (1, 2, or 3)
      *
      * @param goodItemId id of the virtual good whose upgrade level we want to know
@@ -188,7 +196,7 @@ public class StoreInventory {
     }
 
     /**
-     * Retrieves the itemId of the current upgrade of the virtual good with the given goodItemId.
+     * Retrieves the itemId of the current upgrade of the virtual good with the given <code>goodItemId</code>.
      *
      * @param goodItemId id of the virtual good whose upgrade id we want to know
      * @return upgrade id if exists, or empty string otherwise
@@ -205,15 +213,15 @@ public class StoreInventory {
     }
 
     /**
-     * Upgrades the virtual good with the given goodItemId by doing the following:
+     * Upgrades the virtual good with the given <code>goodItemId</code> by doing the following:
      * 1. Checks if the good is currently upgraded or if this is the first time being upgraded.
      * 2. If the good is currently upgraded, upgrades to the next upgrade in the series, or in
-     *    other words, buy()s the next upgrade. In case there are no more upgrades available
-     *    (meaning the current upgrade is the last available) the function returns.
+     *    other words, <code>buy()</code>s the next upgrade. In case there are no more upgrades
+     *    available(meaning the current upgrade is the last available), the function returns.
      * 3. If the good has never been upgraded before, the function upgrades it to the first
-     *    available upgrade, or in other words, buy()s the first upgrade in the series.
+     *    available upgrade, or in other words, <code>buy()</code>s the first upgrade in the series.
      *
-     * @param goodItemId
+     * @param goodItemId the id of the virtual good to be upgraded
      * @throws VirtualItemNotFoundException
      * @throws InsufficientFundsException
      */
@@ -237,10 +245,10 @@ public class StoreInventory {
     }
 
     /**
-     * Upgrades the good with the given upgradeItemId for FREE (you are GIVING him the upgrade).
-     * In case that the good is not an upgradeable item, an error message will be produced.
-     * forceUpgrade() is different than upgradeVirtualGood() because forceUpgrade() is a FREE
-     * upgrade.
+     * Upgrades the good with the given <code>upgradeItemId</code> for FREE (you are GIVING him the
+     * upgrade). In case that the good is not an upgradeable item, an error message will be produced.
+     * <code>forceUpgrade()</code> is different than <code>upgradeVirtualGood()<code> because
+     * <code>forceUpgrade()</code> is a FREE upgrade.
      *
      * @param upgradeItemId id of the virtual good who we want to force an upgrade upon
      * @throws VirtualItemNotFoundException
@@ -256,7 +264,7 @@ public class StoreInventory {
     }
 
     /**
-     * Removes all upgrades from the virtual good with the given goodItemId.
+     * Removes all upgrades from the virtual good with the given <code>goodItemId</code>.
      *
      * @param goodItemId id of the virtual good we want to remove all upgrades from
      * @throws VirtualItemNotFoundException
@@ -273,7 +281,7 @@ public class StoreInventory {
     /** NON CONSUMABLES **/
 
     /**
-     * Checks if the non-consumable with the given nonConsItemId exists in the database.
+     * Checks if the non-consumable with the given <code>nonConsItemId</code> exists in the database.
      *
      * @param nonConsItemId the non-consumable to check if exists in the database
      * @return true if non-consumable item with nonConsItemId exists, false otherwise
@@ -290,8 +298,8 @@ public class StoreInventory {
     }
 
     /**
-     * Adds the non-consumable item with the given nonConsItemId to the non-consumable items
-     * storage.
+     * Adds the non-consumable item with the given <code>nonConsItemId</code> to the non-consumable
+     * items storage.
      *
      * @param nonConsItemId the non-consumable to be added to the database
      * @throws VirtualItemNotFoundException
@@ -306,8 +314,8 @@ public class StoreInventory {
     }
 
     /**
-     * Removes the non-consumable item with the given nonConsItemId from the non-consumable items
-     * storage.
+     * Removes the non-consumable item with the given <code>nonConsItemId</code> from the
+     * non-consumable items storage.
      *
      * @param nonConsItemId the non-consumable to be removed to the database
      * @throws VirtualItemNotFoundException

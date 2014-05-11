@@ -1,18 +1,25 @@
-/*
- * Copyright (C) 2012 Soomla Inc.
+/**
+ * Copyright (C) 2012-2014 Soomla Inc.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
  */
+
 package com.soomla.store;
 
 import com.soomla.store.domain.NonConsumableItem;
@@ -30,25 +37,26 @@ public interface IStoreAssets {
     /** Setters and Getters */
 
     /**
-     * Retrieves the current version of your IStoreAssets.
+     * Retrieves the current version of your <code>IStoreAssets</code>.
      *
      * This value will determine if the saved data in the database will be deleted or not.
      * Bump the version every time you want to delete the old data in the DB.
      *
      * Real Game Example:
-     *   Suppose that your game has a VirtualGood called "Hat".
-     *   Let's say your game's IStoreAssets version is currently 0.
+     *   Suppose that your game has a <code>VirtualGood</code> called "Hat".
+     *   Let's say your game's <code>IStoreAssets</code> version is currently 0.
      *   Now you want to change the name "Hat" to "Green Hat" - you will need to bump the version
      *   from 0 to 1, in order for the new name, "Green Hat" to replace the old one, "Hat".
      *
      * Explanation: The local database on every one of your users' devices keeps your economy's
-     * metadata, such as the VirtualGood's name "Hat". When you change IStoreAssets, you must bump
-     * the version in order for the data to change in your users' local databases.
+     * metadata, such as the <code>VirtualGood</code>'s name "Hat". When you change
+     * <code>IStoreAssets</code>, you must bump the version in order for the data to change in
+     * your users' local databases.
      *
-     * You need to bump the version after ANY change in IStoreAssets for the local database to
-     * realize it needs to refresh its data.
+     * You need to bump the version after ANY change in <code>IStoreAssets</code> for the local
+     * database to realize it needs to refresh its data.
      *
-     * @return the version of your specific IStoreAssets.
+     * @return the version of your specific <code>IStoreAssets</code>.
      */
     int getVersion();
 

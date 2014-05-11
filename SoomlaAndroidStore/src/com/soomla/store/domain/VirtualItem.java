@@ -1,18 +1,25 @@
-/*
- * Copyright (C) 2012 Soomla Inc.
+/**
+ * Copyright (C) 2012-2014 Soomla Inc.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
  */
+
 package com.soomla.store.domain;
 
 import com.soomla.store.StoreUtils;
@@ -24,7 +31,7 @@ import org.json.JSONObject;
  * This is the parent class of all virtual items in the application.
  * Almost every entity in your virtual economy will be a virtual item. There are many types
  * of virtual items, each one will extend this class. Each one of the various types extends
- * VirtualItem and adds its own behavior on top of it.
+ * <code>VirtualItem</code> and adds its own behavior on top of it.
  */
 public abstract class VirtualItem {
 
@@ -43,7 +50,7 @@ public abstract class VirtualItem {
 
     /**
      * Constructor
-     * Generates an instance of VirtualItem from a {@link JSONObject}.
+     * Generates an instance of <code>VirtualItem</code> from a <code>JSONObject</code>.
      *
      * @param jsonObject a JSONObject representation of the wanted VirtualItem.
      * @throws JSONException
@@ -58,9 +65,9 @@ public abstract class VirtualItem {
     }
 
     /**
-     * Converts the current VirtualItem to a {@link JSONObject}.
+     * Converts the current <code>VirtualItem</code> to a JSONObject.
      *
-     * @return a {@link JSONObject} representation of the current VirtualItem.
+     * @return a <code>JSONObject</code> representation of the current <code>VirtualItem</code>.
      */
     public JSONObject toJSONObject(){
         JSONObject jsonObject = new JSONObject();
@@ -79,9 +86,9 @@ public abstract class VirtualItem {
      * Gives your user the given amount of the specific virtual item.
      * For example, when your user plays your game for the first time you GIVE him 1000 gems.
      *
-     * NOTE: This action is different than buy() (a method of PurchasableVirtualItems):
-     * You use give(int amount) to give your user something for free.
-     * You use buy() to give your user something and get something in return.
+     * NOTE: This action is different than <code>PurchasableVirtualItem</code>'s <code>buy()</code>:
+     * You use <code>give(int amount)</code> to give your user something for free.
+     * You use <code>buy()</code> to give your user something and get something in return.
      *
      * @param amount the amount of the specific item to be given
      * @return balance after the giving process
@@ -102,6 +109,8 @@ public abstract class VirtualItem {
 
     /**
      * Takes from your user the given amount of the specific virtual item.
+     * For example, when your user requests a refund (and let's say it's not a friendly refund),
+     * you need to TAKE the item he is returning from him (and give him his money back).
      *
      * @param amount the amount of the specific item to be taken
      * @return balance after the taking process
@@ -121,7 +130,7 @@ public abstract class VirtualItem {
     public abstract int take(int amount, boolean notify);
 
     /**
-     * Resets the balance to the given balance.
+     * Resets this Virtual Item's balance to the given balance.
      *
      * @param balance the balance of the current virtual item
      * @return balance after the reset process

@@ -1,3 +1,26 @@
+/**
+ * Copyright (C) 2012-2014 Soomla Inc.
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
+
+
 package com.soomla.example;
 
 import android.app.Activity;
@@ -21,9 +44,10 @@ import com.soomla.store.domain.virtualCurrencies.VirtualCurrency;
 import com.soomla.store.exceptions.VirtualItemNotFoundException;
 
 /**
- * In this class StoreController and EventHandler are initialized, and then the store is opened.
- * This class is responsible for displaying the initial screen of the game, which contains a drag
- * and drop image that, when used, leads us to the next display and activity (StoreGoodsActivity).
+ * In this class <code>StoreController</code> and <code>EventHandler</code> are initialized before
+ * the store is opened. This class is responsible for displaying the initial screen of the game,
+ * which contains a drag and drop image which leads to the next display and activity:
+ * <code>StoreGoodsActivity</code>.
  */
 public class StoreExampleActivity extends Activity {
 
@@ -32,8 +56,8 @@ public class StoreExampleActivity extends Activity {
      * Displays the main UI screen of the game.
      *
      * @param savedInstanceState if the activity should be re-initialized after previously being
-     *                           shut down then this Bundle will contain the most recent data,
-     *                           otherwise it will be null.
+     *                           shut down then this <code>Bundle</code> will contain the most
+     *                           recent data, otherwise it will be null.
      */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,22 +72,23 @@ public class StoreExampleActivity extends Activity {
         ((TextView) findViewById(R.id.title_text)).setTypeface(font);
         ((TextView) findViewById(R.id.main_text)).setTypeface(font);
 
-        /**
-         * Initialize StoreController and EventHandler before the store is opened.
-         *
-         * Compute your public key (that you got from the Android Market publisher site).
-         *
-         * Instead of just storing the entire literal string here embedded in the program,
-         * construct the key at runtime from pieces or use bit manipulation (for example,
-         * XOR with some other string) to hide the actual key. The key itself is not secret
-         * information, but we don't want to make it easy for an adversary to replace the
-         * public key with one of their own and then fake messages from the server.
-         *
-         * Generally, encryption keys/passwords should only be kept in memory
-         * long enough to perform the operation they need to perform.
-         */
+        /*
+         Initialize StoreController and EventHandler before the store is opened.
+
+         Compute your public key (that you got from the Android Market publisher site).
+
+         Instead of just storing the entire literal string here embedded in the program,
+         construct the key at runtime from pieces or use bit manipulation (for example,
+         XOR with some other string) to hide the actual key. The key itself is not secret
+         information, but we don't want to make it easy for an adversary to replace the
+         public key with one of their own and then fake messages from the server.
+
+         Generally, encryption keys/passwords should only be kept in memory
+         long enough to perform the operation they need to perform.
+        */
         IStoreAssets storeAssets = new MuffinRushAssets();
         mEventHandler = new ExampleEventHandler(mHandler, this);
+
         StoreController.getInstance().initialize(storeAssets,
                 "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAphC8H7OYag8u8l1WayR7dHMKFC+XC09tLk9A"
                 + "6FnxqsJPF4+Y4iJ4NTs24PVYWB4y/DQjfo3b7z6DqXBYgAOMYn7I3VIbjzgbit+DgGWfmiKWCQotcG"
@@ -72,7 +97,7 @@ public class StoreExampleActivity extends Activity {
                 + "f2EzDb1byP3ISiwxZAgic5BfQYh3HAbeEMD0CvRCHQIctJ8k7zn63NmaemPR7lFjY1GNWeowIDAQAB",
                 "aaaaabbbbbb");
 
-        //FOR TESTING PURPOSES ONLY: Check if it's a first run and if so, add 10000 currencies.
+        //FOR TESTING PURPOSES ONLY: Check if it's a first run, if so add 10000 currencies.
         SharedPreferences prefs = new ObscuredSharedPreferences(
                 SoomlaApp.getAppContext().getSharedPreferences(StoreConfig.PREFS_NAME,
                         Context.MODE_PRIVATE));
@@ -94,7 +119,7 @@ public class StoreExampleActivity extends Activity {
 
     /**
      * Puts the SOOMBOT back on the left side of the screen after it was dragged by the user to
-     * the right side (the empty box).
+     * the right (the empty box).
      */
     public void robotBackHome(){
         mHandler.post(new Runnable() {

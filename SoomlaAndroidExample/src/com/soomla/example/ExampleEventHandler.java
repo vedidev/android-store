@@ -1,5 +1,27 @@
-package com.soomla.example;
+/**
+ * Copyright (C) 2012-2014 Soomla Inc.
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
 
+
+package com.soomla.example;
 
 import android.os.Handler;
 import android.widget.Toast;
@@ -11,13 +33,13 @@ import com.squareup.otto.Subscribe;
 
 /**
  * This class contains functions that receive events that they are subscribed to. Annotating with
- * @subscribe before each function lets the function receive a notification when an event has
+ * <code>@subscribe</code> before each function lets the function receive a notification when an event has
  * occurred.
  */
 public class ExampleEventHandler {
 
     /**
-     * Constructor
+     * Constructor method.
      * In order to receive events, this class instance needs to register with the bus.
      *
      * @param handler event handler
@@ -30,12 +52,13 @@ public class ExampleEventHandler {
     }
 
     /**
-     * Listens for the given marketPurchaseEvent that was fired. Upon receiving such an event, if
-     * the debugging setting is on, displays a message stating the name of the market item that was
-     * purchased. The item in the given marketPurchasedEvent is an item that was purchased via the
-     * Market (with money, not with virtual items).
+     * Listens for the given <code>marketPurchaseEvent</code> that was fired. Upon receiving such
+     * an event, if the debugging setting is on, displays a message stating the name of the market
+     * item that was purchased.
+     * Note: The item in the given <code>marketPurchasedEvent</code> is an item that was purchased
+     * via the Market (with money, not with virtual items).
      *
-     * @param marketPurchaseEvent the market purchase event that was fired
+     * @param marketPurchaseEvent the "market purchase" event that was fired
      */
     @Subscribe
     public void onMarketPurchase(MarketPurchaseEvent marketPurchaseEvent) {
@@ -44,10 +67,11 @@ public class ExampleEventHandler {
     }
 
     /**
-     * Listens for the given marketRefundEvent that was fired. Upon receiving such an event, if the
-     * debugging setting is on, displays a message stating the name of the item that was refunded.
+     * Listens for the given <code>marketRefundEvent</code> that was fired. Upon receiving such an
+     * event, if the debugging setting is on, displays a message stating the name of the item that
+     * was refunded.
      *
-     * @param marketRefundEvent the market refund event that was fired
+     * @param marketRefundEvent the "market refund" event that was fired
      */
     @Subscribe
     public void onMarketRefund(MarketRefundEvent marketRefundEvent) {
@@ -56,11 +80,11 @@ public class ExampleEventHandler {
     }
 
     /**
-     * Listens for the given itemPurchasedEvent that was fired. Upon receiving such an event, if
-     * the debugging setting is on, displays a message stating the name of the virtual item that
-     * was purchased.
+     * Listens for the given <code>itemPurchasedEvent</code> that was fired. Upon receiving such an
+     * event, if the debugging setting is on, displays a message stating the name of the virtual
+     * item that was purchased.
      *
-     * @param itemPurchasedEvent the item purchased event that was fired
+     * @param itemPurchasedEvent the "item purchased" event that was fired
      */
     @Subscribe
     public void onVirtualItemPurchased(ItemPurchasedEvent itemPurchasedEvent) {
@@ -69,11 +93,11 @@ public class ExampleEventHandler {
     }
 
     /**
-     * Listens for the given virtualGoodEquippedEvent that was fired. Upon receiving such an event,
-     * if the debugging setting is on, displays a message stating the name of the virtual good that
-     * was equipped.
+     * Listens for the given <code>virtualGoodEquippedEvent</code> that was fired. Upon receiving
+     * such an event, if the debugging setting is on, displays a message stating the name of the
+     * virtual good that was equipped.
      *
-     * @param virtualGoodEquippedEvent the virtual good equipped event that was fired
+     * @param virtualGoodEquippedEvent the "virtual good equipped" event that was fired
      */
     @Subscribe
     public void onVirtualGoodEquipped(GoodEquippedEvent virtualGoodEquippedEvent) {
@@ -81,9 +105,9 @@ public class ExampleEventHandler {
     }
 
     /**
-     * Listens for the given virtualGoodUnEquippedEvent that was fired. Upon receiving such an
-     * event, if the debugging setting is on, displays a message stating the name of the virtual
-     * good that was unequipped.
+     * Listens for the given <code>virtualGoodUnEquippedEvent</code> that was fired. Upon receiving
+     * such an event, if the debugging setting is on, displays a message stating the name of the
+     * virtual good that was unequipped.
      *
      * @param virtualGoodUnEquippedEvent the virtual good unequipped event that was fired
      */
@@ -93,8 +117,9 @@ public class ExampleEventHandler {
     }
 
     /**
-     * Listens for the given billingSupportedEvent that was fired. Upon receiving such an event,
-     * if the debugging setting is on, displays a message stating that billing is supported.
+     * Listens for the given <code>billingSupportedEvent</code> that was fired. Upon receiving such
+     * an event, if the debugging setting is on, displays a message stating that billing is
+     * supported.
      *
      * @param billingSupportedEvent the billing supported event that was fired
      */
@@ -104,8 +129,9 @@ public class ExampleEventHandler {
     }
 
     /**
-     * Listens for the given billingNotSupportedEvent that was fired. Upon receiving such an event,
-     * if the debugging setting is on, displays a message stating that billing is not supported.
+     * Listens for the given <code>billingNotSupportedEvent</code> that was fired. Upon receiving
+     * such an event, if the debugging setting is on, displays a message stating that billing is
+     * not supported.
      *
      * @param billingNotSupportedEvent the billing not supported event that was fired
      */
@@ -115,10 +141,11 @@ public class ExampleEventHandler {
     }
 
     /**
-     * Listens for the given marketPurchaseStartedEvent that was fired. Upon receiving such an
-     * event, if the debugging setting is on, displays a message stating the name of the market
-     * item that is starting to be purchased. The item in the given marketPurchaseStartedEvent is
-     * an item that is being purchased via the Market (with money, not with virtual items).
+     * Listens for the given <code>marketPurchaseStartedEvent</code> that was fired. Upon receiving
+     * such an event, if the debugging setting is on, displays a message stating the name of the
+     * market item that is starting to be purchased.
+     * Note: The item in the given <code>marketPurchaseStartedEvent</code> is an item that is being
+     * purchased via the Market (with money, not with virtual items).
      *
      * @param marketPurchaseStartedEvent the market purchase started event that was fired
      */
@@ -129,9 +156,10 @@ public class ExampleEventHandler {
     }
 
     /**
-     * Listens for the given marketPurchaseCancelledEvent that was fired. Upon receiving such an
-     * event, if the debugging setting is on, displays a message stating the name of the market
-     * item that is being cancelled. The item in the given marketPurchaseCancelledEvent is an item
+     * Listens for the given <code>marketPurchaseCancelledEvent</code> that was fired. Upon
+     * receiving such an event, if the debugging setting is on, displays a message stating the name
+     * of the market item that is being cancelled.
+     * Note: The item in the given <code>marketPurchaseCancelledEvent</code> is an item
      * that was purchased via the Market (with money, not with virtual items).
      *
      * @param marketPurchaseCancelledEvent the market purchase cancelled event that was fired
@@ -144,9 +172,9 @@ public class ExampleEventHandler {
     }
 
     /**
-     * Listens for the given itemPurchaseStartedEvent that was fired. Upon receiving such an
-     * event, if the debugging setting is on, displays a message stating the name of the item that
-     * is starting to be purchased.
+     * Listens for the given <code>itemPurchaseStartedEvent</code> that was fired. Upon receiving
+     * such an event, if the debugging setting is on, displays a message stating the name of the
+     * item that is starting to be purchased.
      *
      * @param itemPurchaseStartedEvent the item purchase started event that was fired
      */
@@ -157,8 +185,9 @@ public class ExampleEventHandler {
     }
 
     /**
-     * Listens for the given unexpectedStoreErrorEvent that was fired. Upon receiving such an event,
-     * if the debugging setting is on, displays a message stating that an error has occurred.
+     * Listens for the given <code>unexpectedStoreErrorEvent</code> that was fired. Upon receiving
+     * such an event, if the debugging setting is on, displays a message stating that an error has
+     * occurred.
      *
      * @param unexpectedStoreErrorEvent the unexpected store error event that was fired
      */
@@ -168,8 +197,9 @@ public class ExampleEventHandler {
     }
 
     /**
-     * Listens for the given iabServiceStartedEvent that was fired. Upon receiving such an event,
-     * if the debugging setting is on, displays a message stating that the service has started.
+     * Listens for the given <code>iabServiceStartedEvent</code> that was fired. Upon receiving
+     * such an event, if the debugging setting is on, displays a message stating that the service
+     * has started.
      *
      * @param iabServiceStartedEvent the in-app billing service started event that was fired
      */
@@ -179,8 +209,9 @@ public class ExampleEventHandler {
     }
 
     /**
-     * Listens for the given iabServiceStoppedEvent that was fired. Upon receiving such an event,
-     * if the debugging setting is on, displays a message stating that the service has stopped.
+     * Listens for the given <code>iabServiceStoppedEvent</code> that was fired. Upon receiving
+     * such an event, if the debugging setting is on, displays a message stating that the service
+     * has stopped.
      *
      * @param iabServiceStoppedEvent the in-app billing service stopped event that was fired
      */
@@ -190,9 +221,9 @@ public class ExampleEventHandler {
     }
 
     /**
-     * Listens for the given currencyBalanceChangedEvent that was fired. Upon receiving such an
-     * event, if the debugging setting is on, displays a message stating which currency's balance
-     * has changed, and what its new balance is.
+     * Listens for the given <code>currencyBalanceChangedEvent</code> that was fired. Upon
+     * receiving such an event, if the debugging setting is on, displays a message stating which
+     * currency's balance has changed, and what its new balance is.
      *
      * @param currencyBalanceChangedEvent the currency balance changed event that was fired
      */
@@ -203,9 +234,9 @@ public class ExampleEventHandler {
     }
 
     /**
-     * Listens for the given goodBalanceChangedEvent that was fired. Upon receiving such an event,
-     * if the debugging setting is on, displays a message stating which good's balance has changed,
-     * and what its new balance is.
+     * Listens for the given <code>goodBalanceChangedEvent</code> that was fired. Upon receiving
+     * such an event, if the debugging setting is on, displays a message stating which good's
+     * balance has changed, and what its new balance is.
      *
      * @param goodBalanceChangedEvent the good balance changed event that was fired
      */
@@ -216,9 +247,9 @@ public class ExampleEventHandler {
     }
 
     /**
-     * Listens for the given restoreTransactionsFinishedEvent that was fired. Upon receiving such
-     * an event, if the debugging setting is on, displays a message stating that
-     * restoreTransactions finished successfully or unsuccessfully.
+     * Listens for the given <code>restoreTransactionsFinishedEvent</code> that was fired. Upon
+     * receiving such an event, if the debugging setting is on, displays a message stating that
+     * <code>restoreTransactions</code> finished successfully or unsuccessfully.
      *
      * @param restoreTransactionsFinishedEvent the restore transactions finished event that was
      *                                         fired
@@ -231,9 +262,9 @@ public class ExampleEventHandler {
     }
 
     /**
-     * Listens for the given restoreTransactionsStartedEvent that was fired. Upon receiving such
-     * an event, if the debugging setting is on, displays a message stating that
-     * restoreTransactions has started.
+     * Listens for the given <code>restoreTransactionsStartedEvent</code> that was fired. Upon
+     * receiving such an event, if the debugging setting is on, displays a message stating that
+     * <code>restoreTransactions</code> has started.
      *
      * @param restoreTransactionsStartedEvent the restore transactions started event that was fired
      */
@@ -244,9 +275,9 @@ public class ExampleEventHandler {
     }
 
     /**
-     * Listens for the given storeControllerInitializedEvent that was fired. Upon receiving such
-     * an event, if the debugging setting is on, displays a message stating that StoreController
-     * has been initialized.
+     * Listens for the given <code>storeControllerInitializedEvent</code> that was fired. Upon
+     * receiving such an event, if the debugging setting is on, displays a message stating that
+     * <code>StoreController</code> has been initialized.
      *
      * @param storeControllerInitializedEvent the store controller initialized event that was fired
      */
@@ -259,10 +290,11 @@ public class ExampleEventHandler {
     }
 
     /**
-     * Posts to Handler if logDebug is set to true. Enqueues a Runnable object to be called
-     * by the message queue when it is received. The Runnable displays a debug message.
+     * Posts to Handler if <code>StoreConfig</code>'s <code>logDebug</code> is set to true.
+     * Enqueues a <code>Runnable</code> object to be called by the message queue when it is
+     * received. The <code>Runnable</code> displays a debug message.
      *
-     * @param msg message to be displayed as a part of the Runnable's run method.
+     * @param msg message to be displayed as a part of the <code>Runnable</code>'s <code>run</code> method.
      */
     private void showToastIfDebug(final String msg) {
         if (StoreConfig.logDebug){

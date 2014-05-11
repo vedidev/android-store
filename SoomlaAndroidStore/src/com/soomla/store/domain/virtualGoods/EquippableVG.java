@@ -1,17 +1,23 @@
-/*
- * Copyright (C) 2012 Soomla Inc.
+/**
+ * Copyright (C) 2012-2014 Soomla Inc.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
  */
 
 package com.soomla.store.domain.virtualGoods;
@@ -38,14 +44,15 @@ import java.util.Iterator;
  * The EquippableVG's characteristics are:
  *  1. Can be purchased only once.
  *  2. Can be equipped by the user.
- *  3. Inherits the definition of LifetimeVG.
+ *  3. Inherits the definition of <code>LifetimeVG</code>.
  *
- * There are 3 ways to equip an EquippableVG:
- *  1. LOCAL    - The current EquippableVG's equipping status doesn't affect any other EquippableVG.
- *  2. CATEGORY - In the containing category, if this EquippableVG is equipped, all other
- *                EquippableVGs must stay unequipped.
- *  3. GLOBAL   - In the whole game, if this EquippableVG is equipped, all other EquippableVG's
- *                must stay unequipped.
+ * There are 3 ways to equip an <code>EquippableVG</code>:
+ *  1. LOCAL    - The current <code>EquippableVG</code>'s equipping status doesn't affect any other
+ *     <code>EquippableVG</code>.
+ *  2. CATEGORY - In the containing category, if this <code>EquippableVG</code> is equipped, all other
+ *                <code>EquippableVG</code>s must stay unequipped.
+ *  3. GLOBAL   - In the whole game, if this <code>EquippableVG</code> is equipped, all other
+ *  <code>EquippableVG</code>'s must stay unequipped.
  *
  * Real Game Examples:
  *  1. LOCAL: Say your game offers 3 weapons: a sword, a gun, and an axe (LifetimeVGs). Let’s
@@ -58,21 +65,26 @@ import java.util.Iterator;
  *  or more than 1 hat at the same time. In other words, he can equip at most one of each clothing
  *  category (shirts, hats)!
  *
- *  3. GLOBAL: Suppose your game offers multiple characters (LifetimeVGs): RobotX and RobotY.
- *  Let’s say your user has bought both. In other words he owns both characters and will own them
- *  forever (because they are LifetimeVGs) . Your user can only play as (i.e. Equip) one character
+ *  3. GLOBAL: Suppose your game offers multiple characters (<code>LifetimeVGs</code>): RobotX and
+ *  RobotY. Let’s say your user owns both characters. He will own them forever (because they are
+ *  <code>LifetimeVG</code>'s). Your user can only play as (i.e. Equip) one character
  *  at a time, either RobotX or RobotY, but never both at the same time!
  *
- * NOTE: In case you want this item to be available for purchase in the market (PurchaseWithMarket),
+ * NOTE: In case you want this item to be available for purchase with real money
  * you will need to define it in the market (Google Play, Amazon App Store, etc...).
  *
- * Inheritance: EquippableVG > LifeTimeVG > VirtualGood > PurchasableVirtualItem > VirtualItem
+ * Inheritance: {@link com.soomla.store.domain.virtualGoods.EquippableVG} >
+ * {@link com.soomla.store.domain.virtualGoods.LifetimeVG} >
+ * {@link com.soomla.store.domain.virtualGoods.VirtualGood} >
+ * {@link com.soomla.store.domain.PurchasableVirtualItem} >
+ * {@link com.soomla.store.domain.VirtualItem}
  */
 public class EquippableVG extends LifetimeVG{
 
     /** Constructor
      *
-     * @param equippingModel the way this EquippableVG is equipped - local, category, or global
+     * @param equippingModel the way this <code>EquippableVG</code> is equipped - local, category,
+     *                       or global
      * @param mName see parent
      * @param mDescription see parent
      * @param mItemId see parent
@@ -132,7 +144,7 @@ public class EquippableVG extends LifetimeVG{
     }
 
     /**
-     * Equips the current EquippableVG
+     * Equips the current <code>EquippableVG</code>
      *
      * @throws NotEnoughGoodsException
      */
@@ -141,10 +153,10 @@ public class EquippableVG extends LifetimeVG{
     }
 
     /**
-     * Equips the current EquippableVG.
+     * Equips the current <code>EquippableVG</code>.
      * The equipping is done according to the equipping model ('GLOBAL', 'CATEGORY', or 'LOCAL').
      *
-     * @param notify if notify is true post event to bus
+     * @param notify if true post event to bus
      * @throws NotEnoughGoodsException
      */
     public void equip(boolean notify) throws NotEnoughGoodsException {
@@ -197,14 +209,14 @@ public class EquippableVG extends LifetimeVG{
     }
 
     /**
-     * Unequips the current EquippableVG
+     * Unequips the current <code>EquippableVG</code>
      */
     public void unequip() {
         unequip(true);
     }
 
     /**
-     * Unequips the current EquippableVG
+     * Unequips the current <code>EquippableVG</code>
      *
      * @param notify
      */

@@ -1,3 +1,26 @@
+/**
+ * Copyright (C) 2012-2014 Soomla Inc.
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
+
+
 package com.soomla.example;
 
 import com.soomla.store.IStoreAssets;
@@ -16,7 +39,8 @@ import java.util.Arrays;
 public class MuffinRushAssets implements IStoreAssets {
 
     /**
-     * see {@link com.soomla.store.IStoreAssets#getVersion()}
+     *
+     * @return version of <code>MuffinRushAssets</code>
      */
     @Override
     public int getVersion() {
@@ -24,7 +48,8 @@ public class MuffinRushAssets implements IStoreAssets {
     }
 
     /**
-     * see {@link com.soomla.store.IStoreAssets#getCurrencies()}
+     *
+     * @return virtual currencies
      */
     @Override
     public VirtualCurrency[] getCurrencies(){
@@ -34,7 +59,8 @@ public class MuffinRushAssets implements IStoreAssets {
     }
 
     /**
-     * see {@link com.soomla.store.IStoreAssets#getGoods()}
+     *
+     * @return virtual goods
      */
     @Override
     public VirtualGood[] getGoods(){
@@ -45,7 +71,8 @@ public class MuffinRushAssets implements IStoreAssets {
     }
 
     /**
-     * see {@link com.soomla.store.IStoreAssets#getCurrencyPacks()}
+     *
+     * @return virtual currency packs
      */
     @Override
     public VirtualCurrencyPack[] getCurrencyPacks(){
@@ -55,7 +82,8 @@ public class MuffinRushAssets implements IStoreAssets {
     }
 
     /**
-     * see {@link com.soomla.store.IStoreAssets#getCategories()}
+     *
+     * @return virtual categories
      */
     @Override
     public VirtualCategory[] getCategories() {
@@ -65,7 +93,8 @@ public class MuffinRushAssets implements IStoreAssets {
     }
 
     /**
-     * see {@link com.soomla.store.IStoreAssets#getNonConsumableItems()}
+     *
+     * @return non consumable items
      */
     @Override
     public NonConsumableItem[] getNonConsumableItems() {
@@ -106,6 +135,7 @@ public class MuffinRushAssets implements IStoreAssets {
             MUFFIN_CURRENCY_ITEM_ID                     // item id
     );
 
+
     /** Virtual Currency Packs **/
 
     public static final VirtualCurrencyPack TENMUFF_PACK = new VirtualCurrencyPack(
@@ -143,6 +173,7 @@ public class MuffinRushAssets implements IStoreAssets {
             new PurchaseWithMarket(THOUSANDMUFF_PACK_PRODUCT_ID, 8.99) // purchase type
     );
 
+
     /** Virtual Goods **/
 
     public static final VirtualGood MUFFINCAKE_GOOD = new SingleUseVG(
@@ -163,23 +194,21 @@ public class MuffinRushAssets implements IStoreAssets {
             "Chocolate Cake",                                               // name
             "A classic cake to maximize customer satisfaction",             // description
             "chocolate_cake",                                               // item id
-            new PurchaseWithVirtualItem(MUFFIN_CURRENCY_ITEM_ID, 250));     // purchase type
-
+            new PurchaseWithVirtualItem(MUFFIN_CURRENCY_ITEM_ID, 250)       // purchase type
+    );
 
     public static final VirtualGood CREAMCUP_GOOD = new SingleUseVG(
             "Cream Cup",                                                    // name
             "Increase bakery reputation with this original pastry",         // description
             "cream_cup",                                                    // item id
-            new PurchaseWithVirtualItem(MUFFIN_CURRENCY_ITEM_ID, 50));      // purchase type
-
+            new PurchaseWithVirtualItem(MUFFIN_CURRENCY_ITEM_ID, 50)        // purchase type
+    );
 
 
     /** Virtual Categories **/
 
-    // The Muffin Rush theme doesn't support categories, so we just put everything under
-    // a general category.
-    // NOTE: In case you're using Soomla's storefront, the order of the virtual
-    // goods in this array matters!
+    // The Muffin Rush theme doesn't support categories, so we just put everything under a general
+    // category.
     public static final VirtualCategory GENERAL_CATEGORY = new VirtualCategory(
             "General", new ArrayList<String>(Arrays.asList(new String[]
             { MUFFINCAKE_ITEM_ID, PAVLOVA_ITEM_ID, CHOCLATECAKE_ITEM_ID, CREAMCUP_ITEM_ID }))

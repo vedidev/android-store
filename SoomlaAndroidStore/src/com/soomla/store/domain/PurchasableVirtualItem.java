@@ -1,17 +1,23 @@
-/*
- * Copyright (C) 2012 Soomla Inc.
+/**
+ * Copyright (C) 2012-2014 Soomla Inc.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
  */
 
 package com.soomla.store.domain;
@@ -28,7 +34,7 @@ import org.json.JSONObject;
 import java.util.Iterator;
 
 /**
- * A representation of a VirtualItem that you can actually purchase.
+ * A representation of a <code>VirtualItem</code> that you can actually purchase.
  *
  */
 public abstract class PurchasableVirtualItem extends VirtualItem {
@@ -123,8 +129,8 @@ public abstract class PurchasableVirtualItem extends VirtualItem {
     }
 
     /**
-     * Buys the PurchasableVirtualItem, after checking if the user is in a state that allows him
-     * to buy. This action uses the associated PurchaseType to perform the purchase.
+     * Buys the <code>PurchasableVirtualItem</code>, after checking if the user is in a state that allows him
+     * to buy. This action uses the associated <code>PurchaseType</code> to perform the purchase.
      *
      * @throws InsufficientFundsException if the user does not have enough funds to buy()
      */
@@ -135,7 +141,7 @@ public abstract class PurchasableVirtualItem extends VirtualItem {
     }
 
     /**
-     * Determines if user is in a state that allows him to buy a specific VirtualItem.
+     * Determines if user is in a state that allows him to buy a specific <code>VirtualItem</code>.
      *
      * @return true if can buy, false otherwise
      */

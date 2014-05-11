@@ -1,18 +1,25 @@
-/*
- * Copyright (C) 2012 Soomla Inc.
+/**
+ * Copyright (C) 2012-2014 Soomla Inc.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
  */
+
 package com.soomla.store;
 
 import android.app.Activity;
@@ -57,12 +64,12 @@ import java.util.List;
  *
  * This is the only class you need to initialize in order to use the SOOMLA SDK.
  *
- * To properly work with this class you must initialize it with the @{link #initialize} method.
+ * To properly work with this class you must initialize it with the {@link #initialize} method.
  */
 public class StoreController {
 
     /**
-     * Initializes the SOOMLA SDK
+     * Initializes the SOOMLA SDK.
      * This initializer also initializes {@link com.soomla.store.data.StoreInfo}.
      *
      * @param storeAssets the definition of your application specific assets.
@@ -126,7 +133,7 @@ public class StoreController {
     }
 
     /**
-     * Starts in-app billing service in background
+     * Starts in-app billing service in background.
      */
     public void startIabServiceInBg() {
         StoreConfig.InAppBillingService.startIabServiceInBg(new IabCallbacks.IabInitListener() {
@@ -151,7 +158,7 @@ public class StoreController {
     }
 
     /**
-     *  Stops in-app billing service in background
+     * Stops in-app billing service in background.
      */
     public void stopIabServiceInBg() {
         StoreConfig.InAppBillingService.stopIabServiceInBg(new IabCallbacks.IabInitListener() {
@@ -170,11 +177,13 @@ public class StoreController {
     }
 
     /**
-     * Queries Google Play store's inventory. Upon success, returns a list of all metadata stored
-     * there (the items that have been purchase). The metadata includes the item's name,
-     * description, price, product id, etc...  Upon failure, returns error message.
+     * Creates a list of all metadata stored in the Market (the items that have been purchased).
+     * The metadata includes the item's name, description, price, product id, etc...
+     * Posts a <code>MarketItemsRefreshed</code> event with the list just created.
+     * Upon failure, returns error message.
      *
-     * @param refreshMarketItemsDetails
+     * @param refreshMarketItemsDetails if true, SKU details (price, description, etc) and purchase
+     *                        information will be queried.
      */
     public void refreshInventory(final boolean refreshMarketItemsDetails) {
         StoreConfig.InAppBillingService.initializeBillingService(
@@ -317,9 +326,6 @@ public class StoreController {
 
     /*==================== Common callbacks for success \ failure \ finish ====================*/
 
-    /**
-     *
-     */
     private void notifyIabServiceStarted() {
         BusProvider.getInstance().post(new BillingSupportedEvent());
         BusProvider.getInstance().post(new IabServiceStartedEvent());
@@ -474,8 +480,9 @@ public class StoreController {
     }
 
     /**
-     * Handles a cancelled purchase by either posting an event containing a PurchasableVirtualItem
-     * corresponding to the given purchase, or an unexpected error event if the item was not found.
+     * Handles a cancelled purchase by either posting an event containing a
+     * <code>PurchasableVirtualItem</code> corresponding to the given purchase, or an unexpected
+     * error event if the item was not found.
      *
      * @param purchase cancelled purchase to handle
      */
@@ -532,9 +539,9 @@ public class StoreController {
     private static StoreController sInstance = null;
 
     /**
-     * Retrieves the singleton instance of StoreController
+     * Retrieves the singleton instance of <code>StoreController</code>
      *
-     * @return singleton instance of StoreController
+     * @return singleton instance of <code>StoreController</code>
      */
     public static StoreController getInstance() {
         if (sInstance == null) {
