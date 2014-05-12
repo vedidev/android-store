@@ -8,15 +8,15 @@ Haven't you ever wanted an in-app purchase one liner that looks like this!?
 
 ## android-store
 
-**April 1st, 2014**: We've added the option to refresh market items details from the IAB Service (default is Google Play). You can call 'refreshInventory(true)' from StoreController when you want and all your PurchasableItems that has a PurchaseType of PurchaseWithMarket will update the values of: MarketPrice, MarketTitle, MarketDescription. android-store automatically running the operation when you intialize StoreController.
+**April 1st, 2014**: We've added the option to refresh market items details from the IAB Service (default is Google Play). You can call 'refreshInventory(true)' from StoreController when you want and all your PurchasableItems that has a PurchaseType of PurchaseWithMarket will update the values of: MarketPrice, MarketTitle, MarketDescription. android-store automatically running the operation when you initialize StoreController.
 
 **March 26th, 2014**: We've split out Google Play to a plugin so we'll be able to add more billing providers to android-store.  http://blog.soom.la/2014/03/google-play-will-not-be-the-only-option-for-long.html
 
-**December 11th, 2013**: Refunds have been readded. *android-store* now checks if owned items have been refunded and takes them away when `StoreController` is initialized.
+**December 11th, 2013**: Refunds have been re-added. *android-store* now checks if owned items have been refunded and takes them away when `StoreController` is initialized.
 
 > Note: removal of refunded items may take a while due to the way IABv3 caches information on the device. Try disabling and enabling WiFi on the device to refresh the cache.
 
-The current virtual economny model is called **modelV3**. Want to learn more about it? Try these:  
+The current virtual economy model is called **modelV3**. Want to learn more about it? Try these:  
 * [Economy Model Objects](https://github.com/soomla/android-store/wiki/Economy-Model-Objects)  
 * [Handling Store Operations](https://github.com/soomla/android-store/wiki/Handling-Store-Operations)
 
@@ -113,7 +113,7 @@ We currently support Google Play as the default IAB service. We're working to ad
 
 The billing service is started and stopped for every operation you're running on StoreContoroller (buyWithMarket, restoreTransactions ...).
 
-We recommend that you open the IAB Serbice and keep it open in the background in cases where you have an in-game storefront. This is how you do that:
+We recommend that you open the IAB Service and keep it open in the background in cases where you have an in-game storefront. This is how you do that:
 
 When you open the store, call:  
 ```Java
@@ -135,7 +135,7 @@ In order to debug android-store, set `StoreConfig.logDebug` to `true`. This will
 ## Storage & Meta-Data
 
 
-When you initialize _StoreController_, it automatically initializes two other classes: _StorageManager_ and _StoreInfo_. _StorageManager_ is the father of all storage related instances in your game. Use it to access tha balances of virtual currencies and virtual goods (usually, using their itemIds). _StoreInfo_ is the mother of all meta data information about your specific game. It is initialized with your implementation of `IStoreAssets` and you can use it to retrieve information about your specific game.  
+When you initialize _StoreController_, it automatically initializes two other classes: _StorageManager_ and _StoreInfo_. _StorageManager_ is the father of all storage related instances in your game. Use it to access the balances of virtual currencies and virtual goods (usually, using their itemIds). _StoreInfo_ is the mother of all meta data information about your specific game. It is initialized with your implementation of `IStoreAssets` and you can use it to retrieve information about your specific game.  
 We've also added _StoreInventory_ which is a utility class to help you do store related operations even easier.
 
 The on-device storage is encrypted and kept in a SQLite database. SOOMLA is preparing a cloud-based storage service that will allow this SQLite to be synced to a cloud-based repository that you'll define.
@@ -172,9 +172,9 @@ If you want to protect your game from 'bad people' (and who doesn't?!), you migh
 ## Event Handling
 
 
-For event handling, we use Square's great open-source project [otto](http://square.github.com/otto/). In ordered to be notified of store related events, you can register for specific events and create your game-specific behaviour to handle them.
+For event handling, we use Square's great open-source project [otto](http://square.github.com/otto/). In ordered to be notified of store related events, you can register for specific events and create your game-specific behavior to handle them.
 
-> Your behaviour is an addition to the default behaviour implemented by SOOMLA. You don't replace SOOMLA's behaviour.
+> Your behavior is an addition to the default behavior implemented by SOOMLA. You don't replace SOOMLA's behavior.
 
 In order to register for events:
 
@@ -214,7 +214,7 @@ Fork -> Clone -> Implement -> Test -> Pull-Request. We have great RESPECT for co
 ## Code Documentation
 
 
-android-store follows strict code documentation conventions. If you would like to contribute please read our [Coding Conventions] and follow them. Clear, consistent  comments will make our code easy to understand.
+android-store follows strict code documentation conventions. If you would like to contribute please read our [Coding Conventions](https://github.com/soomla/android-store/blob/master/android-storeDocConventions.md) and follow them. Clear, consistent  comments will make our code easy to understand.
 
 ## SOOMLA, Elsewhere ...
 
