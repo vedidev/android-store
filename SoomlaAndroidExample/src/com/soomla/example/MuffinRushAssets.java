@@ -23,14 +23,21 @@
 
 package com.soomla.example;
 
+import android.content.res.AssetManager;
+
 import com.soomla.store.IStoreAssets;
+import com.soomla.store.SoomlaApp;
 import com.soomla.store.domain.*;
 import com.soomla.store.domain.virtualCurrencies.*;
 import com.soomla.store.domain.virtualGoods.*;
 import com.soomla.store.purchaseTypes.*;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 /**
  * This class defines our game's economy model, which includes virtual goods, virtual currencies
@@ -98,11 +105,62 @@ public class MuffinRushAssets implements IStoreAssets {
      */
     @Override
     public NonConsumableItem[] getNonConsumableItems() {
-        return new NonConsumableItem[]{
-                NO_ADDS_NONCONS
-        };
+        final NonConsumableItem[] nonConsumableItems = readCsvNCItems("test_android_iap_import.csv");
+        if (nonConsumableItems == null || nonConsumableItems.length < 1) {
+            return new NonConsumableItem[]{
+                    NO_ADDS_NONCONS
+            };
+        }
+
+        return nonConsumableItems;
     }
 
+    /**
+     *
+     * @param csvFile - exported from Google Developer Console for format
+     *                and appended to as needed. save in assets.
+     * @return
+     */
+    private NonConsumableItem[] readCsvNCItems(String csvFile) {
+        List<NonConsumableItem> nonConsumableItems = new ArrayList<NonConsumableItem>();
+        AssetManager assetManager = SoomlaApp.getAppContext().getAssets();
+        String contents = "";
+
+        try {
+            final InputStream stream = assetManager.open(csvFile);
+
+            int size = stream.available();
+            byte[] buffer = new byte[size];
+            stream.read(buffer);
+            stream.close();
+            contents = new String(buffer);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        final String[] lines = contents.split("\n");
+        int lineNumber = 0;
+        for (String line : lines) {
+            lineNumber++;
+            // skip first line
+            if (lineNumber == 1) {
+                continue;
+            }
+
+            String[] tokens = line.split("[,;]");
+            String prodId = tokens[0];
+            String name = tokens[5];
+            String desc = tokens[6];
+            String price = tokens[9].trim().substring(0, 1);//hacky, but fast for now
+            final PurchaseWithMarket purchaseWithMarket = new PurchaseWithMarket(
+                    new MarketItem(prodId, MarketItem.Managed.MANAGED, Double.valueOf(price)));
+
+            NonConsumableItem item = new NonConsumableItem(name, desc, prodId, purchaseWithMarket);
+            nonConsumableItems.add(item);
+        }
+
+        return nonConsumableItems.toArray(new NonConsumableItem[nonConsumableItems.size()]);
+    }
 
     /** Static Final Members **/
 

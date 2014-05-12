@@ -76,6 +76,22 @@ public class IabInventory {
         return result;
     }
 
+    /**
+     * Returns a list of all past-queried product IDs (sku)
+     * in the current session
+     * @param excludeOwned - if true, filters ids also present in
+     *                     purchases
+     * @return list of skus
+     */
+    public List<String> getAllQueriedSkus(boolean excludeOwned) {
+        List<String> result = new ArrayList<String>();
+        for (IabSkuDetails p : mSkuMap.values()) {
+            if (! (excludeOwned && mPurchaseMap.containsKey(p.getSku())) )
+                result.add(p.getSku());
+        }
+        return result;
+    }
+
     /** Returns a list of all purchases. */
     public List<IabPurchase> getAllPurchases() {
         return new ArrayList<IabPurchase>(mPurchaseMap.values());
