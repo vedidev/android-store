@@ -211,6 +211,11 @@ We want you!
 
 Fork -> Clone -> Implement -> Test -> Pull-Request. We have great RESPECT for contributors.
 
+## Code Documentation
+
+
+android-store follows strict code documentation conventions. If you would like to contribute please read our [Coding Conventions] and follow them. Clear, consistent  comments will make our code easy to understand.
+
 ## SOOMLA, Elsewhere ...
 
 
@@ -220,7 +225,7 @@ Fork -> Clone -> Implement -> Test -> Pull-Request. We have great RESPECT for co
 
 ## License
 
-MIT License. Copyright (c) 2012 SOOMLA. http://project.soom.la
-+ http://www.opensource.org/licenses/MIT
+Apache License. Copyright (c) 2012-2014 SOOMLA. http://project.soom.la
++ http://opensource.org/licenses/Apache-2.0
 
 

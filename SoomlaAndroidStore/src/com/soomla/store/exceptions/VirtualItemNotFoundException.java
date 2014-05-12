@@ -30,8 +30,8 @@ public class VirtualItemNotFoundException extends Exception {
     /**
      * Constructor
      *
-     * @param lookupBy
-     * @param lookupVal
+     * @param lookupBy the field of the virtual item to look for
+     * @param lookupVal the value of the field to look for
      */
     public VirtualItemNotFoundException(String lookupBy, String lookupVal) {
         super("Virtual item was not found when searching with " + lookupBy + "=" + lookupVal);

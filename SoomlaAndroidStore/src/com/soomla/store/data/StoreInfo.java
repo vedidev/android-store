@@ -492,7 +492,7 @@ public class StoreInfo {
     /**
      * Replaces the given virtual item, and then saves the store's metadata.
      *
-     * @param virtualItem
+     * @param virtualItem the virtual item to replace
      */
     public static void save(VirtualItem virtualItem) {
         replaceVirtualItem(virtualItem);
