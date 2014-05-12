@@ -1,23 +1,17 @@
-/**
+/*
  * Copyright (C) 2012-2014 Soomla Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package com.soomla.store;
@@ -62,33 +56,40 @@ public interface IStoreAssets {
 
     /**
      * Retrieves the array of your game's virtual currencies.
+     *
+     * @return all virtual currencies in your game
      */
     VirtualCurrency[] getCurrencies();
 
     /**
      * Retrieves the array of all virtual goods served by your store (all kinds in one array).
+     *
+     * @return all virtual goods in your game
      */
     VirtualGood[] getGoods();
 
     /**
      * Retrieves the array of all virtual currency packs served by your store.
+     *
+     * @return all virtual currency packs in your game
      */
     VirtualCurrencyPack[] getCurrencyPacks();
 
     /**
      * Retrieves the array of all virtual categories handled in your store.
+     *
+     * @return all virtual categories in your game
      */
     VirtualCategory[] getCategories();
 
     /**
      * Retrieves the array of all non-consumable items served by your store.
-     * You can define non-consumable items that you'd like to use for your needs.
      * CONSUMABLE (or UNMANAGED) items are usually just currency packs.
      * NON-CONSUMABLE (or MANAGED) items are usually used to let users purchase a "no-ads" token.
      *
      * NOTE: Make sure you set the type of the items you add here as Managed.MANAGED.
      *
-     * @return an array of all non-consumables served in your game.
+     * @return all non-consumables served in your game.
      */
     NonConsumableItem[] getNonConsumableItems();
 }

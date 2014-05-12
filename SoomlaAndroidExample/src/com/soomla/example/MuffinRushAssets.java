@@ -1,23 +1,17 @@
-/**
+/*
  * Copyright (C) 2012-2014 Soomla Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 
@@ -40,14 +34,15 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * This class defines our game's economy model, which includes virtual goods, virtual currencies
+ * This class defines our game's economy, which includes virtual goods, virtual currencies
  * and currency packs, virtual categories, and non-consumable items.
  */
 public class MuffinRushAssets implements IStoreAssets {
 
     /**
+     * see parent
      *
-     * @return version of <code>MuffinRushAssets</code>
+     * @return see parent
      */
     @Override
     public int getVersion() {
@@ -55,8 +50,9 @@ public class MuffinRushAssets implements IStoreAssets {
     }
 
     /**
+     * see parent
      *
-     * @return virtual currencies
+     * @return see parent
      */
     @Override
     public VirtualCurrency[] getCurrencies(){
@@ -66,8 +62,9 @@ public class MuffinRushAssets implements IStoreAssets {
     }
 
     /**
+     * see parent
      *
-     * @return virtual goods
+     * @return see parent
      */
     @Override
     public VirtualGood[] getGoods(){
@@ -78,8 +75,9 @@ public class MuffinRushAssets implements IStoreAssets {
     }
 
     /**
+     * see parent
      *
-     * @return virtual currency packs
+     * @return see parent
      */
     @Override
     public VirtualCurrencyPack[] getCurrencyPacks(){
@@ -89,8 +87,9 @@ public class MuffinRushAssets implements IStoreAssets {
     }
 
     /**
+     * see parent
      *
-     * @return virtual categories
+     * @return see parent
      */
     @Override
     public VirtualCategory[] getCategories() {
@@ -100,8 +99,9 @@ public class MuffinRushAssets implements IStoreAssets {
     }
 
     /**
+     * see parent
      *
-     * @return non consumable items
+     * @return see parent
      */
     @Override
     public NonConsumableItem[] getNonConsumableItems() {
@@ -116,10 +116,10 @@ public class MuffinRushAssets implements IStoreAssets {
     }
 
     /**
+     * Creates an array of <code>NonConsumableItems</code>, taken from the given CSV file.
      *
-     * @param csvFile - exported from Google Developer Console for format
-     *                and appended to as needed. save in assets.
-     * @return
+     * @param csvFile exported from Google Developer Console for format and appended to as needed.
+     * @return array of the non-consumable items in your game
      */
     private NonConsumableItem[] readCsvNCItems(String csvFile) {
         List<NonConsumableItem> nonConsumableItems = new ArrayList<NonConsumableItem>();
