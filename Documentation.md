@@ -1,4 +1,4 @@
-**android-store Documentation Conventions**	{#title}
+**android-store Documentation Conventions**
 =====================
 
 
