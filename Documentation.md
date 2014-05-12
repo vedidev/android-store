@@ -1,9 +1,9 @@
 **android-store Documentation Conventions**	{#title}
 =====================
-----------
 
-Order of Code
--------------
+
+##Order of Code
+
 
  1. SOOMLA Copyright message (see below)
  2. Imports
@@ -14,10 +14,10 @@ Order of Code
  7. Private methods
  8. All class members
 
-----------
 
-SOOMLA's Copyright Message
---------------------------
+
+##SOOMLA's Copyright Message
+
 
 SOOMLA is licensed under the Apache License. This copyright message must be included in every file at the top before the package declaration.
 
@@ -39,9 +39,9 @@ SOOMLA is licensed under the Apache License. This copyright message must be incl
  package com.soomla.store.domain;
 
 ```
-----------
-General Guidelines
----------
+
+##General Guidelines
+
 
  - A doc comment must precede a class, public/protected method declaration, constructor, or field.
  - For private methods, documentation comments are optional - if the method is non-trivial and complex, you should document it, otherwise leave it with no comments.
@@ -57,9 +57,9 @@ General Guidelines
  - Each line in between the begin-comment delimiter and end-comment delimiter should start with * .
  - Limit any doc-comment lines to 80 characters.
 
-----------
-Use of HTML Tags
----------
+
+##Use of HTML Tags
+
 This will be used by Javadoc.
 
  - `@param [param] [description]`: Describe what value this parameter should receive.
@@ -72,9 +72,9 @@ This will be used by Javadoc.
 
 For more information about Javadoc conventions see http://www.oracle.com/technetwork/java/javase/documentation/index-137868.html#tag.
 
-----------
-Description and Examples
----------
+
+##Description and Examples
+
 Please note that the order is important!
 <br>
 

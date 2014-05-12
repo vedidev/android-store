@@ -209,12 +209,14 @@ You can find a full event handler example [here](https://github.com/soomla/andro
 
 We want you!
 
-Fork -> Clone -> Implement -> Test -> Pull-Request. We have great RESPECT for contributors.
+Fork -> Clone -> Implement -> Insert Comments -> Test -> Pull-Request. 
+
+We have great RESPECT for contributors.
 
 ## Code Documentation
 
 
-android-store follows strict code documentation conventions. If you would like to contribute please read our [Coding Conventions](https://github.com/soomla/android-store/blob/master/android-storeDocConventions.md) and follow them. Clear, consistent  comments will make our code easy to understand.
+android-store follows strict code documentation conventions. If you would like to contribute please read our [Coding Conventions](https://github.com/soomla/android-store/blob/docs/Documentation.md) and follow them. Clear, consistent  comments will make our code easy to understand.
 
 ## SOOMLA, Elsewhere ...
 
