@@ -216,7 +216,7 @@ We have great RESPECT for contributors.
 ## Code Documentation
 
 
-android-store follows strict code documentation conventions. If you would like to contribute please read our [Coding Conventions](https://github.com/soomla/android-store/blob/docs/Documentation.md) and follow them. Clear, consistent  comments will make our code easy to understand.
+android-store follows strict code documentation conventions. If you would like to contribute please read our [Coding Conventions](https://github.com/soomla/android-store/blob/master/Documentation.md) and follow them. Clear, consistent  comments will make our code easy to understand.
 
 ## SOOMLA, Elsewhere ...
 
