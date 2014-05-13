@@ -587,6 +587,7 @@ public class StoreController {
             }catch (Exception e) {
                 StoreUtils.LogError(TAG, "Error purchasing item " + e.getMessage());
                 BusProvider.getInstance().post(new UnexpectedStoreErrorEvent(e.getMessage()));
+                StoreController.getInstance().mWaitingServiceResponse = false;
                 finish();
             }
         }
