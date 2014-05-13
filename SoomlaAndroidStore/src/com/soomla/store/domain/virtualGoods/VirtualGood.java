@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Soomla Inc.
+ * Copyright (C) 2012-2014 Soomla Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.soomla.store.domain.virtualGoods;
 
 import com.soomla.store.data.StorageManager;
@@ -25,9 +26,11 @@ import org.json.JSONObject;
  * This is an abstract representation of the application's virtual good.
  * Your game's virtual economy revolves around virtual goods. This class defines the abstract
  * and most common virtual good while the descendants of this class define specific definitions
- * of VirtualGood(s).
+ * of virtual good(s).
  *
- * Inheritance: VirtualGood > PurchasableVirtualItem > VirtualItem
+ * Inheritance: VirtualGood >
+ * {@link com.soomla.store.domain.PurchasableVirtualItem} >
+ * {@link com.soomla.store.domain.VirtualItem}
  */
 public abstract class VirtualGood extends PurchasableVirtualItem {
 
@@ -75,7 +78,6 @@ public abstract class VirtualGood extends PurchasableVirtualItem {
     public int resetBalance(int balance, boolean notify) {
         return StorageManager.getVirtualGoodsStorage().setBalance(this, balance, notify);
     }
-
 
     /** Private Members **/
 

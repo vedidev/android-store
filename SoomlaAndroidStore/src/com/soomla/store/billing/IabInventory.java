@@ -51,7 +51,7 @@ public class IabInventory {
     }
 
     /**
-     * Erase a purchase (locally) from the inventory, given its product ID. This just
+     * Erases a purchase (locally) from the inventory, given its product ID. This just
      * modifies the IabInventory object locally and has no effect on the server! This is
      * useful when you have an existing IabInventory object which you know to be up to date,
      * and you have just consumed an item successfully, which means that erasing its
@@ -77,11 +77,10 @@ public class IabInventory {
     }
 
     /**
-     * Returns a list of all past-queried product IDs (sku)
-     * in the current session
-     * @param excludeOwned - if true, filters ids also present in
-     *                     purchases
-     * @return list of skus
+     * Returns a list of all past-queried product IDs (SKU) in the current session.
+     *
+     * @param excludeOwned if true, filters ids also present in purchases
+     * @return list of SKUs
      */
     public List<String> getAllQueriedSkus(boolean excludeOwned) {
         List<String> result = new ArrayList<String>();

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Soomla Inc.
+ * Copyright (C) 2012-2014 Soomla Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,7 +28,7 @@ import org.json.JSONObject;
 import java.util.Iterator;
 
 /**
- * SingleUsePacks are just bundles of SingleUse virtual goods.
+ * SingleUsePacks are just bundles of <code>SingleUseVG</code>'s.
  * This kind of virtual good can be used to let your users buy more than one SingleUseVG at once.
  *
  * The SingleUsePackVG's characteristics are:
@@ -42,7 +42,10 @@ import java.util.Iterator;
  * NOTE: In case you want this item to be available for purchase in the market (PurchaseWithMarket),
  * you will need to define the item in the market (Google Play, Amazon App Store, etc...).
  *
- * Inheritance: SingleUsePackVG > VirtualGood > PurchasableVirtualItem > VirtualItem
+ * Inheritance: SingleUsePackVG >
+ * {@link com.soomla.store.domain.virtualGoods.VirtualGood} >
+ * {@link com.soomla.store.domain.PurchasableVirtualItem} >
+ * {@link com.soomla.store.domain.VirtualItem}
  */
 public class SingleUsePackVG extends VirtualGood {
 

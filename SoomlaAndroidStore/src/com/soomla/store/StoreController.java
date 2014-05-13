@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Soomla Inc.
+ * Copyright (C) 2012-2014 Soomla Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.soomla.store;
 
 import android.app.Activity;
@@ -57,12 +58,12 @@ import java.util.List;
  *
  * This is the only class you need to initialize in order to use the SOOMLA SDK.
  *
- * To properly work with this class you must initialize it with the @{link #initialize} method.
+ * To properly work with this class you must initialize it with the {@link #initialize} method.
  */
 public class StoreController {
 
     /**
-     * Initializes the SOOMLA SDK
+     * Initializes the SOOMLA SDK.
      * This initializer also initializes {@link com.soomla.store.data.StoreInfo}.
      *
      * @param storeAssets the definition of your application specific assets.
@@ -126,7 +127,7 @@ public class StoreController {
     }
 
     /**
-     * Starts in-app billing service in background
+     * Starts in-app billing service in background.
      */
     public void startIabServiceInBg() {
         StoreConfig.InAppBillingService.startIabServiceInBg(new IabCallbacks.IabInitListener() {
@@ -151,7 +152,7 @@ public class StoreController {
     }
 
     /**
-     *  Stops in-app billing service in background
+     * Stops in-app billing service in background.
      */
     public void stopIabServiceInBg() {
         StoreConfig.InAppBillingService.stopIabServiceInBg(new IabCallbacks.IabInitListener() {
@@ -170,11 +171,13 @@ public class StoreController {
     }
 
     /**
-     * Queries Google Play store's inventory. Upon success, returns a list of all metadata stored
-     * there (the items that have been purchase). The metadata includes the item's name,
-     * description, price, product id, etc...  Upon failure, returns error message.
+     * Creates a list of all metadata stored in the Market (the items that have been purchased).
+     * The metadata includes the item's name, description, price, product id, etc...
+     * Posts a <code>MarketItemsRefreshed</code> event with the list just created.
+     * Upon failure, prints error message.
      *
-     * @param refreshMarketItemsDetails
+     * @param refreshMarketItemsDetails if true, SKU details (price, description, etc) and purchase
+     *                        information will be queried.
      */
     public void refreshInventory(final boolean refreshMarketItemsDetails) {
         StoreConfig.InAppBillingService.initializeBillingService(
@@ -262,11 +265,11 @@ public class StoreController {
     }
 
     /**
-     * Starts a purchase process with the market.
+     * Starts a purchase process in the market.
      *
-     * @param marketItem is the item to purchase. This item has to be defined EXACTLY the same in
+     * @param marketItem The item to purchase - this item has to be defined EXACTLY the same in
      *                   the market
-     * @param payload a payload to get back when this purchase is finished.
+     * @param payload A payload to get back when this purchase is finished.
      * @throws IllegalStateException
      */
     public void buyWithMarket(MarketItem marketItem, String payload) throws IllegalStateException {
@@ -319,9 +322,6 @@ public class StoreController {
 
     /*==================== Common callbacks for success \ failure \ finish ====================*/
 
-    /**
-     *
-     */
     private void notifyIabServiceStarted() {
         BusProvider.getInstance().post(new BillingSupportedEvent());
         BusProvider.getInstance().post(new IabServiceStartedEvent());
@@ -330,7 +330,7 @@ public class StoreController {
     /**
      * Reports that in-app billing service initialization failed
      *
-     * @param message
+     * @param message error message
      */
     private void reportIabInitFailure(String message) {
         String msg = "There's no connectivity with the billing service. error: " + message;
@@ -343,10 +343,10 @@ public class StoreController {
      * Used for internal starting of purchase with the market.
      * Do *NOT* call this on your own.
      *
-     * @param activity
+     * @param activity activity
      * @param sku product id
      * @param payload a payload to get back when this purchase is finished
-     * @return
+     * @return true if successful, false upon failure
      */
     private boolean buyWithMarketInner(final Activity activity, final String sku,
                                        final String payload) {
@@ -420,7 +420,7 @@ public class StoreController {
      * Checks the state of the purchase and responds accordingly, giving the user an item,
      * throwing an error, or taking the item away and paying him back.
      *
-     * @param purchase
+     * @param purchase purchase whose state is to be checked
      */
     private void handleSuccessfulPurchase(IabPurchase purchase) {
         String sku = purchase.getSku();
@@ -476,8 +476,9 @@ public class StoreController {
     }
 
     /**
-     * Handles a cancelled purchase by either posting an event containing a PurchasableVirtualItem
-     * corresponding to the given purchase, or an unexpected error event if the item was not found.
+     * Handles a cancelled purchase by either posting an event containing a
+     * <code>PurchasableVirtualItem</code> corresponding to the given purchase, or an unexpected
+     * error event if the item was not found.
      *
      * @param purchase cancelled purchase to handle
      */
@@ -522,7 +523,7 @@ public class StoreController {
     /**
      * Posts an unexpected error event saying the purchase failed.
      *
-     * @param message
+     * @param message error message
      */
     private void handleErrorResult(String message) {
         BusProvider.getInstance().post(new UnexpectedStoreErrorEvent(message));
@@ -534,9 +535,9 @@ public class StoreController {
     private static StoreController sInstance = null;
 
     /**
-     * Retrieves the singleton instance of StoreController
+     * Retrieves the singleton instance of <code>StoreController</code>
      *
-     * @return singleton instance of StoreController
+     * @return singleton instance of <code>StoreController</code>
      */
     public static StoreController getInstance() {
         if (sInstance == null) {

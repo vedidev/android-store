@@ -1,3 +1,20 @@
+/*
+ * Copyright (C) 2012-2014 Soomla Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+
 package com.soomla.example;
 
 import android.app.Activity;
@@ -21,9 +38,10 @@ import com.soomla.store.domain.virtualCurrencies.VirtualCurrency;
 import com.soomla.store.exceptions.VirtualItemNotFoundException;
 
 /**
- * In this class StoreController and EventHandler are initialized, and then the store is opened.
- * This class is responsible for displaying the initial screen of the game, which contains a drag
- * and drop image that, when used, leads us to the next display and activity (StoreGoodsActivity).
+ * In this class <code>StoreController</code> and <code>EventHandler</code> are initialized before
+ * the store is opened. This class is responsible for displaying the initial screen of the game,
+ * which contains a drag and drop image which leads to the next display and activity:
+ * <code>StoreGoodsActivity</code>.
  */
 public class StoreExampleActivity extends Activity {
 
@@ -32,8 +50,8 @@ public class StoreExampleActivity extends Activity {
      * Displays the main UI screen of the game.
      *
      * @param savedInstanceState if the activity should be re-initialized after previously being
-     *                           shut down then this Bundle will contain the most recent data,
-     *                           otherwise it will be null.
+     *                           shut down then this <code>Bundle</code> will contain the most
+     *                           recent data, otherwise it will be null.
      */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,22 +66,23 @@ public class StoreExampleActivity extends Activity {
         ((TextView) findViewById(R.id.title_text)).setTypeface(font);
         ((TextView) findViewById(R.id.main_text)).setTypeface(font);
 
-        /**
-         * Initialize StoreController and EventHandler before the store is opened.
-         *
-         * Compute your public key (that you got from the Android Market publisher site).
-         *
-         * Instead of just storing the entire literal string here embedded in the program,
-         * construct the key at runtime from pieces or use bit manipulation (for example,
-         * XOR with some other string) to hide the actual key. The key itself is not secret
-         * information, but we don't want to make it easy for an adversary to replace the
-         * public key with one of their own and then fake messages from the server.
-         *
-         * Generally, encryption keys/passwords should only be kept in memory
-         * long enough to perform the operation they need to perform.
-         */
+        /*
+         Initialize StoreController and EventHandler before the store is opened.
+
+         Compute your public key (that you got from the Android Market publisher site).
+
+         Instead of just storing the entire literal string here embedded in the program,
+         construct the key at runtime from pieces or use bit manipulation (for example,
+         XOR with some other string) to hide the actual key. The key itself is not secret
+         information, but we don't want to make it easy for an adversary to replace the
+         public key with one of their own and then fake messages from the server.
+
+         Generally, encryption keys/passwords should only be kept in memory
+         long enough to perform the operation they need to perform.
+        */
         IStoreAssets storeAssets = new MuffinRushAssets();
         mEventHandler = new ExampleEventHandler(mHandler, this);
+
         StoreController.getInstance().initialize(storeAssets,
                 "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAphC8H7OYag8u8l1WayR7dHMKFC+XC09tLk9A"
                 + "6FnxqsJPF4+Y4iJ4NTs24PVYWB4y/DQjfo3b7z6DqXBYgAOMYn7I3VIbjzgbit+DgGWfmiKWCQotcG"
@@ -72,7 +91,7 @@ public class StoreExampleActivity extends Activity {
                 + "f2EzDb1byP3ISiwxZAgic5BfQYh3HAbeEMD0CvRCHQIctJ8k7zn63NmaemPR7lFjY1GNWeowIDAQAB",
                 "aaaaabbbbbb");
 
-        //FOR TESTING PURPOSES ONLY: Check if it's a first run and if so, add 10000 currencies.
+        //FOR TESTING PURPOSES ONLY: Check if it's a first run, if so add 10000 currencies.
         SharedPreferences prefs = new ObscuredSharedPreferences(
                 SoomlaApp.getAppContext().getSharedPreferences(StoreConfig.PREFS_NAME,
                         Context.MODE_PRIVATE));
@@ -94,7 +113,7 @@ public class StoreExampleActivity extends Activity {
 
     /**
      * Puts the SOOMBOT back on the left side of the screen after it was dragged by the user to
-     * the right side (the empty box).
+     * the right (the empty box).
      */
     public void robotBackHome(){
         mHandler.post(new Runnable() {
