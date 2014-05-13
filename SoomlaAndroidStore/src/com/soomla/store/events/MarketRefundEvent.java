@@ -19,7 +19,7 @@ package com.soomla.store.events;
 import com.soomla.store.domain.PurchasableVirtualItem;
 
 /**
- * This event is fired when a Market refund was issued.
+ * This event is fired when a Market refund has been issued.
  */
 public class MarketRefundEvent {
 

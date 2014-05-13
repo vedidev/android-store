@@ -46,9 +46,9 @@ SOOMLA is licensed under the Apache License. This copyright message must be incl
  - A doc comment must precede a class, public/protected method declaration, constructor, or field.
  - For private methods, documentation comments are optional - if the method is non-trivial and complex, you should document it, otherwise leave it with no comments.
  - Do not write documentation for trivial getter and setter methods.
-     - Insert: 	/** Setters and Getters **/    before the entire group of setters and getters, following 2 blank lines, and followed by 1 blank line.
+     - Insert: `/** Setters and Getters **/` before the entire group of setters and getters, following 2 blank lines, and followed by 1 blank line.
  - Do not write documentation for trivial fields.
-     - Insert: 	/** Private Members **/    before the entire list of fields, following 2 blank lines, and followed by 1 blank line.
+     - Insert: `/** Private Members **/` before the entire list of fields, following 2 blank lines, and followed by 1 blank line.
  - A doc comment is made up of two parts: a description and @tags 
  - If @tag descriptions do not fit on one line, the next lines should be indented at least 4 spaces.
  - Insert a blank line between the description and the list of tags.
@@ -123,8 +123,9 @@ public class SingleUseVG extends VirtualGood {
      - CORRECT: “Checks…”, “Converts…”, “Retrieves...”, etc.. 
      - INCORRECT: “Check”, “This method does…” 
      - The description of the method cannot begin with “Returns…”
- - Include possible examples to make the purpose of the method clearer
- - Include any important notes or warnings the user should know
+ - The description should be a complete sentence that ends with a period.
+ - Include possible examples to make the purpose of the method clearer.
+ - Include any important notes or warnings the user should know.
  - Insert a blank line between the description and the @tags (`@param`, `@return`, `@throws`, etc...).
  - Overriding Methods: 
      - If the overriding method’s description is exactly the same as its parent method’s description, write: “see parent”. Otherwise, write a description.
@@ -180,7 +181,8 @@ private static final String TAG = "SOOMLA VirtualItem"; //used for Log error mes
 private static final String TAG = "SOOMLA VirtualItem"; 
 
 /** 
- * TAG is used for Log error messages ...more-text more-text more-text more-text more-text more-text more-text more-text more-text more-text...
+ * TAG is used for Log error messages ...more-text more-text more-text more-text more-text 
+ * more-text more-text more-text more-text more-text...
  */
 private static final String TAG = "SOOMLA VirtualItem"; 
 

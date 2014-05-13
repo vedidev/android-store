@@ -39,7 +39,7 @@ import java.util.List;
 public class StoreInventory {
 
     /**
-     * Buys the item with the given itemId.
+     * Buys the item with the given <code>itemId</code>.
      *
      * @param itemId id of item to be purchased
      * @throws InsufficientFundsException
@@ -56,9 +56,8 @@ public class StoreInventory {
     /**
      * Retrieves the balance of the virtual item with the given <code>itemId</code>.
      *
-     * @param itemId id of the virtual item to be fetched - must be of VirtualCurrency or
-     *               SingleUseVG or LifetimeVG or EquippableVG
-     * @return balance of the virtual item with the given itemId
+     * @param itemId id of the virtual item to be fetched.
+     * @return balance of the virtual item with the given <code>itemId</code>.
      * @throws VirtualItemNotFoundException
      */
     public static int getVirtualItemBalance(String itemId) throws VirtualItemNotFoundException {
@@ -67,7 +66,7 @@ public class StoreInventory {
     }
 
     /**
-     * Gives your user the given amount of the virtual item with the given itemId.
+     * Gives your user the given amount of the virtual item with the given <code>itemId</code>.
      * For example, when your user plays your game for the first time you GIVE him 1000 gems.
      *
      * NOTE: This action is different than buy -
@@ -86,8 +85,8 @@ public class StoreInventory {
 
     /**
      * Takes from your user the given amount of the virtual item with the given <code>itemId</code>.
-     * For example, when your user requests a refund (and let's say it's not a friendly refund),
-     * you need to TAKE the item he is returning from him (and give him his money back).
+     * For example, when your user requests a refund you need to TAKE the item he is returning
+     * from him.
      *
      * @param itemId id of the virtual item to be taken
      * @param amount amount of the item to be given
@@ -140,8 +139,7 @@ public class StoreInventory {
     }
 
     /**
-     * Checks if the virtual good with the given <code>goodItemId</code> is equipped
-     * (currently being used).
+     * Checks if the virtual good with the given <code>goodItemId</code> is currently equipped.
      *
      * @param goodItemId id of the virtual good who we want to know if is equipped
      * @return true if the virtual good is equipped, false otherwise
@@ -163,13 +161,13 @@ public class StoreInventory {
      * your users with the ability to upgrade that strength on a scale of 1-3.
      * This is what you've created:
      *  1. <code>SingleUseVG</code> for "strength"
-     *  2. <code>UpgradeVG</code> for strength 'level 1'
-     *  3. <code>UpgradeVG</code> for strength 'level 2'
-     *  4. <code>UpgradeVG</code> for strength 'level 3'
-     * In the example, this function will retrieve the upgrade level for "strength" (1, 2, or 3)
+     *  2. <code>UpgradeVG</code> for strength 'level 1'.
+     *  3. <code>UpgradeVG</code> for strength 'level 2'.
+     *  4. <code>UpgradeVG</code> for strength 'level 3'.
+     * In the example, this function will retrieve the upgrade level for "strength" (1, 2, or 3).
      *
      * @param goodItemId id of the virtual good whose upgrade level we want to know
-     * @return upgrade level
+     * @return upgrade level of the good with the given id
      * @throws VirtualItemNotFoundException
      */
     public static int getGoodUpgradeLevel(String goodItemId) throws VirtualItemNotFoundException {
@@ -190,7 +188,8 @@ public class StoreInventory {
     }
 
     /**
-     * Retrieves the itemId of the current upgrade of the virtual good with the given <code>goodItemId</code>.
+     * Retrieves the itemId of the current upgrade of the virtual good with the given
+     * <code>goodItemId</code>.
      *
      * @param goodItemId id of the virtual good whose upgrade id we want to know
      * @return upgrade id if exists, or empty string otherwise
@@ -275,7 +274,7 @@ public class StoreInventory {
     /** NON CONSUMABLES **/
 
     /**
-     * Checks if the non-consumable with the given <code>nonConsItemId</code> exists in the database.
+     * Checks if the non-consumable with the given <code>nonConsItemId</code> exists.
      *
      * @param nonConsItemId the non-consumable to check if exists in the database
      * @return true if non-consumable item with nonConsItemId exists, false otherwise

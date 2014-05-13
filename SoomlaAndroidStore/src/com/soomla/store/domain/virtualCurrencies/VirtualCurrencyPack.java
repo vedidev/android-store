@@ -29,8 +29,8 @@ import org.json.JSONObject;
 import java.util.Iterator;
 
 /**
- * Every game has its virtual currencies. Here you represent a pack of a specific
- * <code>VirtualCurrency</code>.
+ * Every game has its virtual currencies. This class represents a pack of a specific
+ * {@link com.soomla.store.domain.virtualCurrencies.VirtualCurrency}.
  *
  * Real Game Example: If the virtual currency in your game is a 'Coin', you will sell packs of
  * 'Coins' such as "10 Coins Set" or "Super Saver Pack".
@@ -38,7 +38,7 @@ import java.util.Iterator;
  * NOTE: In case you want this item to be available for purchase with real money  you will need to
  * define the item in the market (Google Play, Amazon App Store, etc...).
  *
- * Inheritance: {@link com.soomla.store.domain.virtualCurrencies.VirtualCurrencyPack} >
+ * Inheritance: VirtualCurrencyPack >
  * {@link com.soomla.store.domain.PurchasableVirtualItem} >
  * {@link com.soomla.store.domain.VirtualItem}
  */

@@ -28,7 +28,7 @@ import java.util.List;
 public interface IIabService {
 
     /**
-     * Checks if in-app billing service is initialized
+     * Checks if in-app billing service is initialized.
      *
      * @return true if Iab is initialized, false otherwise
      */

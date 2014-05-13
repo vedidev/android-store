@@ -37,19 +37,19 @@ import java.util.*;
 
 /**
  * This class holds the store's metadata including:
- * - Virtual Currencies
- * - Virtual Currency Packs
- * - All kinds of Virtual Goods
- * - Virtual Categories
- * - NonConsumable Items
+ * virtual currencies,
+ * virtual currency packs,
+ * all kinds of virtual goods,
+ * virtual categories, and
+ * non-consumable items
  */
 public class StoreInfo {
 
     /**
      * Initializes <code>StoreInfo</code>.
      * On first initialization, when the database doesn't have any previous version of the store
-     * metadata, StoreInfo gets loaded from the given {@link IStoreAssets}.
-     * After the first initialization, StoreInfo will be initialized from the database.
+     * metadata, <code>StoreInfo</code> gets loaded from the given <code>IStoreAssets</code>.
+     * After the first initialization, <code>StoreInfo</code> will be initialized from the database.
      *
      * IMPORTANT: If you want to override the current <code>StoreInfo</code>, you'll have to bump
      * the version of your implementation of <code>IStoreAssets</code> in order to remove the
@@ -103,7 +103,7 @@ public class StoreInfo {
     }
 
     /**
-     * Checks if the <code>VirtualGoo</code>d with the given <code>goodItemId</code> has upgrades.
+     * Checks if the <code>VirtualGood</code>d with the given <code>goodItemId</code> has upgrades.
      *
      * @param goodItemId the item id of the <code>VirtualGood</code> to check if has upgrades.
      * @return true if upgrades found for the <code>VirtualGood</code> with the given
@@ -172,11 +172,12 @@ public class StoreInfo {
     }
 
     /**
-     * Retrieves the first <code>UpgradeVG</code> for the given goodItemId.
+     * Retrieves the first <code>UpgradeVG</code> for the given <code>goodItemId</code>.
      *
-     * @param goodItemId the item id of the <code>VirtualGood</code> whose upgrade we are looking for
-     * @return the first upgrade for the virtual good with the given <code>goodItemId</code>, or
-     * null if it has no upgrades
+     * @param goodItemId The item id of the <code>VirtualGood</code> whose upgrade we are looking
+     *                   for.
+     * @return The first upgrade for the virtual good with the given <code>goodItemId</code>, or
+     * null if it has no upgrades.
      */
     public static UpgradeVG getGoodFirstUpgrade(String goodItemId) {
         List<UpgradeVG> upgrades = mGoodsUpgrades.get(goodItemId);
@@ -193,9 +194,10 @@ public class StoreInfo {
     /**
      * Retrieves the last <code>UpgradeVG</code> for the given <code>goodItemId</code>.
      *
-     * @param goodItemId the item id of the <code>VirtualGood</code> whose upgrade we are looking for
-     * @return the last upgrade for the virtual good with the given <code>goodItemId</code> or null
-     *     if there are no upgrades
+     * @param goodItemId The item id of the <code>VirtualGood</code> whose upgrade we are looking
+     *                   for.
+     * @return The last upgrade for the virtual good with the given <code>goodItemId</code> or null
+     *     if there are no upgrades.
      */
     public static UpgradeVG getGoodLastUpgrade(String goodItemId) {
         List<UpgradeVG> upgrades = mGoodsUpgrades.get(goodItemId);
@@ -213,7 +215,8 @@ public class StoreInfo {
      * Retrieves all <code>UpgradeVGs</code> for the virtual good with the given
      * <code>goodItemId</code>.
      *
-     * @param goodItemId the item id of the <code>VirtualGood</code> whose upgrades we are looking for
+     * @param goodItemId The item id of the <code>VirtualGood</code> whose upgrades we are looking
+     *                   for.
      * @return list of all UpgradeVGs for the virtual good with the given <code>goodItemId</code>
      */
     public static List<UpgradeVG> getGoodUpgrades(String goodItemId) {

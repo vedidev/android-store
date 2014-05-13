@@ -19,7 +19,8 @@ package com.soomla.store.events;
 import com.soomla.store.domain.PurchasableVirtualItem;
 
 /**
- * This event is fired when a specific <code>PurchasableVirtualItem</code> purchase process has started.
+ * This event is fired when a specific <code>PurchasableVirtualItem</code> purchase process has
+ * started.
  */
 public class ItemPurchaseStartedEvent {
 

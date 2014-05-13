@@ -24,15 +24,15 @@ import com.soomla.store.events.ItemPurchaseStartedEvent;
 import com.soomla.store.exceptions.InsufficientFundsException;
 
 /**
- * This type of IabPurchase allows users to purchase <code>PurchasableVirtualItems</code> with the
- * Market (with real money! $$$).
+ * This type of Purchase is used to let users purchase <code>PurchasableVirtualItem</code>s in the
+ * market with real money $$$.
  *
  * Real Game Example: Purchase a Sword for $1.99.
  */
 public class PurchaseWithMarket extends PurchaseType {
 
     /**
-     * Constructor
+     * Constructor.
      * Constructs a PurchaseWithMarket object by constructing a new <code>MarketItem</code> object
      * with the given <code>productId</code> and price, and declaring it as UNMANAGED.
      *
@@ -44,7 +44,7 @@ public class PurchaseWithMarket extends PurchaseType {
     }
 
     /**
-     * Constructor
+     * Constructor.
      *
      * @param marketItem the representation of the item in the market
      */

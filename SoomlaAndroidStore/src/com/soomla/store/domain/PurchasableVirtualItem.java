@@ -29,12 +29,11 @@ import java.util.Iterator;
 
 /**
  * A representation of a <code>VirtualItem</code> that you can actually purchase.
- *
  */
 public abstract class PurchasableVirtualItem extends VirtualItem {
 
     /**
-     * Constructor
+     * Constructor.
      *
      * @param mName see parent
      * @param mDescription see parent
@@ -51,7 +50,7 @@ public abstract class PurchasableVirtualItem extends VirtualItem {
     }
 
     /**
-     * Constructor
+     * Constructor.
      *
      * @param jsonObject see parent
      * @throws JSONException
@@ -123,10 +122,11 @@ public abstract class PurchasableVirtualItem extends VirtualItem {
     }
 
     /**
-     * Buys the <code>PurchasableVirtualItem</code>, after checking if the user is in a state that allows him
-     * to buy. This action uses the associated <code>PurchaseType</code> to perform the purchase.
+     * Buys the <code>PurchasableVirtualItem</code>, after checking if the user is in a state that
+     * allows himto buy. This action uses the associated <code>PurchaseType</code> to perform the
+     * purchase.
      *
-     * @throws InsufficientFundsException if the user does not have enough funds to buy()
+     * @throws InsufficientFundsException if the user does not have enough funds for buying.
      */
     public void buy() throws InsufficientFundsException {
         if (!canBuy()) return;

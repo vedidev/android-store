@@ -30,7 +30,7 @@ import org.json.JSONObject;
 public abstract class VirtualItem {
 
     /**
-     * Constructor
+     * Constructor.
      *
      * @param mName the name of the virtual item
      * @param mDescription the description of the virtual item
@@ -43,10 +43,10 @@ public abstract class VirtualItem {
     }
 
     /**
-     * Constructor
-     * Generates an instance of <code>VirtualItem</code> from a <code>JSONObject</code>.
+     * Constructor.
+     * Generates an instance of <code>VirtualItem</code> from the given <code>JSONObject</code>.
      *
-     * @param jsonObject a JSONObject representation of the wanted VirtualItem.
+     * @param jsonObject A JSONObject representation of the wanted <code>VirtualItem</code>.
      * @throws JSONException
      */
     public VirtualItem(JSONObject jsonObject) throws JSONException{
@@ -61,7 +61,7 @@ public abstract class VirtualItem {
     /**
      * Converts the current <code>VirtualItem</code> to a JSONObject.
      *
-     * @return a <code>JSONObject</code> representation of the current <code>VirtualItem</code>.
+     * @return A <code>JSONObject</code> representation of the current <code>VirtualItem</code>.
      */
     public JSONObject toJSONObject(){
         JSONObject jsonObject = new JSONObject();
@@ -124,7 +124,7 @@ public abstract class VirtualItem {
     public abstract int take(int amount, boolean notify);
 
     /**
-     * Resets this Virtual Item's balance to the given balance.
+     * Resets this <code>VirtualItem</code>'s balance to the given balance.
      *
      * @param balance the balance of the current virtual item
      * @return balance after the reset process
@@ -145,7 +145,7 @@ public abstract class VirtualItem {
 
     /**
      * Checks if the given object is equal to this object, by comparing the given object's
-     * item id with this VirtualItem's itemId
+     * item id with this <code>VirtualItem</code>'s itemId
      *
      * @param o the object to compare
      * @return true if the objects are equal, otherwise false
@@ -161,9 +161,9 @@ public abstract class VirtualItem {
     }
 
     /**
-     * Returns the hashCode of mItemId if it exists
+     * Returns the hashCode of <code>mItemId</code> if it exists
      *
-     * @return the hashCode of mItemId
+     * @return the hashCode of <code>mItemId</code>
      */
     @Override
     public int hashCode() {

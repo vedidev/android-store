@@ -33,7 +33,7 @@ import org.json.JSONObject;
  * If you want to make a <code>LifetimeVG</code> available for purchase in the market (purchase with
  * real money $$), you will need to declare it as a <code>NonConsumableItem</code>.
  *
- * Inheritance: {@link com.soomla.store.domain.NonConsumableItem} >
+ * Inheritance: NonConsumableItem >
  * {@link com.soomla.store.domain.PurchasableVirtualItem} >
  * {@link com.soomla.store.domain.VirtualItem}
  */
@@ -94,9 +94,9 @@ public class NonConsumableItem extends PurchasableVirtualItem {
     }
 
     /**
-     * Determines if user is in a state that allows him to buy a <code>NonConsumableItem</code> by checking
-     * if the user already owns such an item. If he does, he cannot purchase this item again
-     * because <code>NonConsumableItems</code> can only be purchased once!
+     * Determines if user is in a state that allows him to buy a <code>NonConsumableItem</code> by
+     * checking if the user already owns such an item. If he does, he cannot purchase this item
+     * again because <code>NonConsumableItems</code> can only be purchased once!
      *
      * @return True if the user does NOT own such an item, False otherwise.
      */

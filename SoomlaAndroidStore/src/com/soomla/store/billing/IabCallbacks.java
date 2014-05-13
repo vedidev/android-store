@@ -45,32 +45,35 @@ public class IabCallbacks {
     }
 
      /**
-      * Listens for in-app purchases being made
+      * Listens for in-app purchases being made.
       */
     public interface OnPurchaseListener {
 
          /**
           * The user has successfully completed a purchase.
           *
-          * @param purchase
+          * @param purchase the successful purchase
           */
         public void success(IabPurchase purchase);
 
          /**
+          * The user has cancelled a purchase.
           *
-          * @param purchase
+          * @param purchase the cancelled purchase
           */
         public void cancelled(IabPurchase purchase);
 
          /**
+          * The user tries to buy an item he already owns.
           *
-          * @param purchase
+          * @param purchase the purchase that is already owned
           */
         public void alreadyOwned(IabPurchase purchase);
 
          /**
+          * The user fails to make the purchase.
           *
-          * @param message
+          * @param message reason for failure
           */
         public void fail(String message);
     }
@@ -81,15 +84,17 @@ public class IabCallbacks {
     public interface OnQueryInventoryListener {
 
          /**
+          * Query inventory is successful.
           *
-          * @param purchases
-          * @param skuDetails
+          * @param purchases list of purchases from he inventory
+          * @param skuDetails list of sku details
           */
         public void success(List<IabPurchase> purchases, List<IabSkuDetails> skuDetails);
 
          /**
+          * Query inventory fails.
           *
-          * @param message
+          * @param message reason for failure
           */
         public void fail(String message);
     }
@@ -100,14 +105,16 @@ public class IabCallbacks {
       */
     public interface OnConsumeListener {
          /**
+          * Purchase consumption is successful
           *
-          * @param purchase
+          * @param purchase consumed purchase
           */
         public void success(IabPurchase purchase);
 
          /**
+          * Purchase consumption fails
           *
-          * @param message
+          * @param message reason for failure
           */
         public void fail(String message);
     }

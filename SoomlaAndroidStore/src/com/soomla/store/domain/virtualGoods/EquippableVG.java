@@ -67,7 +67,7 @@ import java.util.Iterator;
  * NOTE: In case you want this item to be available for purchase with real money
  * you will need to define it in the market (Google Play, Amazon App Store, etc...).
  *
- * Inheritance: {@link com.soomla.store.domain.virtualGoods.EquippableVG} >
+ * Inheritance: EquippableVG >
  * {@link com.soomla.store.domain.virtualGoods.LifetimeVG} >
  * {@link com.soomla.store.domain.virtualGoods.VirtualGood} >
  * {@link com.soomla.store.domain.PurchasableVirtualItem} >

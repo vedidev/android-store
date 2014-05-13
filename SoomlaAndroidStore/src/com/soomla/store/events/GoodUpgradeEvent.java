@@ -20,8 +20,7 @@ import com.soomla.store.domain.virtualGoods.UpgradeVG;
 import com.soomla.store.domain.virtualGoods.VirtualGood;
 
 /**
- * This event is fired when the balance of a specific <code>EquippableVG</code> has been
- * upgraded/downgraded.
+ * This event is fired when a specific <code>UpgradeVG</code> has been upgraded/downgraded.
  *
  * Real Game Example:
  *  Example Inventory: { currency_coin: 100, Characters: Robot_X_1 }

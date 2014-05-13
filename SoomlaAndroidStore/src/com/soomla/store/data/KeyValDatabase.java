@@ -33,9 +33,9 @@ import java.util.List;
 public class KeyValDatabase {
 
     /**
-     * Constructor
+     * Constructor.
      *
-     * @param context global information about the application environment.
+     * @param context global information about the application environment
      */
     public KeyValDatabase(Context context) {
 
@@ -57,7 +57,7 @@ public class KeyValDatabase {
     /**
      * Deletes the database completely!
      *
-     * @param context global information about the application environment.
+     * @param context global information about the application environment
      */
     public void purgeDatabase(Context context) {
         context.deleteDatabase(DATABASE_NAME);
@@ -66,8 +66,8 @@ public class KeyValDatabase {
     /**
      * Sets the given value to the given key.
      *
-     * @param key the key of the key-val pair.
-     * @param val the val of the key-val pair.
+     * @param key the key of the key-val pair
+     * @param val the val of the key-val pair
      */
     public synchronized void setKeyVal(String key, String val) {
         ContentValues values = new ContentValues();
@@ -84,8 +84,8 @@ public class KeyValDatabase {
     /**
      * Retrieves the value for the given key.
      *
-     * @param key the key of the key-val pair.
-     * @return a value for the given key.
+     * @param key the key of the key-val pair
+     * @return a value for the given key
      */
     public synchronized String getKeyVal(String key) {
         Cursor cursor = mStoreDB.query(KEYVAL_TABLE_NAME, KEYVAL_COLUMNS, KEYVAL_COLUMN_KEY
@@ -109,7 +109,7 @@ public class KeyValDatabase {
     /**
      * Deletes the key-val pair.
      *
-     * @param key the key of the key-val pair.
+     * @param key the key of the key-val pair
      */
     public synchronized void deleteKeyVal(String key) {
         mStoreDB.delete(KEYVAL_TABLE_NAME, KEYVAL_COLUMN_KEY + "=?", new String[] { key });

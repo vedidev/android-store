@@ -48,7 +48,7 @@ public class AndroidBus extends Bus {
     /**
      * Registers to the event bus, in order to receive notifications about events.
      *
-     * @param object
+     * @param object the object to register
      */
     @Override
     public void register(final Object object) {
@@ -67,7 +67,7 @@ public class AndroidBus extends Bus {
     /**
      * Unregisters to the event bus, in order to STOP receiving notifications about events.
      *
-     * @param object
+     * @param object the object to register
      */
     @Override
     public void unregister(final Object object) {

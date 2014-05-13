@@ -36,7 +36,7 @@ import org.json.JSONObject;
  * In case you want this item to be available for purchase in the market (PurchaseWithMarket),
  * you will need to define the item in the market (Google Play, Amazon App Store, etc...).
  *
- * Inheritance:{@link com.soomla.store.domain.virtualGoods.LifetimeVG} >
+ * Inheritance: LifetimeVG >
  * {@link com.soomla.store.domain.virtualGoods.VirtualGood} >
  * {@link com.soomla.store.domain.PurchasableVirtualItem} >
  * {@link com.soomla.store.domain.VirtualItem}

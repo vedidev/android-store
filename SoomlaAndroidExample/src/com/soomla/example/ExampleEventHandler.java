@@ -27,8 +27,8 @@ import com.squareup.otto.Subscribe;
 
 /**
  * This class contains functions that receive events that they are subscribed to. Annotating with
- * <code>@subscribe</code> before each function lets the function receive a notification when an event has
- * occurred.
+ * <code>@subscribe</code> before each function lets the function receive a notification when an
+ * event has occurred.
  */
 public class ExampleEventHandler {
 

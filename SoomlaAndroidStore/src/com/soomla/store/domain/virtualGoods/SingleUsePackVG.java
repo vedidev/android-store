@@ -42,7 +42,7 @@ import java.util.Iterator;
  * NOTE: In case you want this item to be available for purchase in the market (PurchaseWithMarket),
  * you will need to define the item in the market (Google Play, Amazon App Store, etc...).
  *
- * Inheritance: {@link com.soomla.store.domain.virtualGoods.SingleUsePackVG} >
+ * Inheritance: SingleUsePackVG >
  * {@link com.soomla.store.domain.virtualGoods.VirtualGood} >
  * {@link com.soomla.store.domain.PurchasableVirtualItem} >
  * {@link com.soomla.store.domain.VirtualItem}

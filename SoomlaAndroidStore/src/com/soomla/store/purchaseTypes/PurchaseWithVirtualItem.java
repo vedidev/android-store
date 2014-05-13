@@ -31,8 +31,8 @@ import com.soomla.store.exceptions.VirtualItemNotFoundException;
  * This type of purchase allows users to purchase <code>PurchasableVirtualItems</code> with other
  * <code>VirtualItems</code>.
  *
- * Real Game Example: Purchase a Sword in exchange for 100 Gems. Sword is the item to be purchased,
- * Gem is the target item, and 100 is the amount.
+ * Real Game Example: Purchase a Sword in exchange for 100 Gems. 'Sword' is the item to be
+ * purchased, 'Gem' is the target item, and 100 is the amount.
  */
 public class PurchaseWithVirtualItem extends PurchaseType {
 
@@ -40,8 +40,8 @@ public class PurchaseWithVirtualItem extends PurchaseType {
      * Constructor
      *
      * @param targetItemId the itemId of the <code>VirtualItem</code> that is used to "pay" in
-     *                     order to make the purchase
-     * @param amount the number of target items needed in order to make the purchase
+     *                     order to make the purchase.
+     * @param amount the number of target items needed in order to make the purchase.
      */
     public PurchaseWithVirtualItem(String targetItemId, int amount) {
         mTargetItemId = targetItemId;

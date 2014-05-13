@@ -28,11 +28,11 @@ import org.json.JSONObject;
 public class MarketItem {
 
     /**
-     * Constructor
+     * Constructor.
      *
-     * @param mProductId the Id of the current item in the market.
-     * @param mManaged the Managed type of the current item in the market.
-     * @param mPrice the actual $$ cost of the current item in the market.
+     * @param mProductId the id of the current item in the market
+     * @param mManaged the Managed type of the current item in the market
+     * @param mPrice the actual $$ cost of the current item in the market
      */
     public MarketItem(String mProductId, Managed mManaged, double mPrice) {
         this.mProductId = mProductId;
@@ -41,10 +41,11 @@ public class MarketItem {
     }
 
     /**
-     * Constructor
-     * Generates an instance of {@link MarketItem} from a <code>JSONObject<code>
+     * Constructor.
+     * Generates an instance of <code>MarketItem</code> from a <code>JSONObject</code>.
      *
-     * @param jsonObject a <code>JSONObject<code> representation of the wanted {@link MarketItem}
+     * @param jsonObject a <code>JSONObject</code> representation of the wanted
+     *                   <code>MarketItem</code>.
      * @throws JSONException
      */
     public MarketItem(JSONObject jsonObject) throws JSONException {
@@ -62,9 +63,9 @@ public class MarketItem {
     }
 
     /**
-     * Converts the current <code>VirtualItem</code> to a <code>JSONObject</code>.
+     * Converts the current <code>MarketItem</code> to a <code>JSONObject</code>.
      *
-     * @return a <code>JSONObject</code> representation of the current <code>VirtualItem</code>.
+     * @return A <code>JSONObject</code> representation of the current <code>MarketItem</code>.
      */
     public JSONObject toJSONObject(){
         JSONObject jsonObject = new JSONObject();

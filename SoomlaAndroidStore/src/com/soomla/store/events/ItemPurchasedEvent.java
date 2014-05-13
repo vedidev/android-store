@@ -19,8 +19,7 @@ package com.soomla.store.events;
 import com.soomla.store.domain.PurchasableVirtualItem;
 
 /**
- * This event is fired when the balance of a specific <code>PurchasableVirtualItem</code> was
- * purchased.
+ * This event is fired when a specific <code>PurchasableVirtualItem</code> has been purchased.
  */
 public class ItemPurchasedEvent {
 

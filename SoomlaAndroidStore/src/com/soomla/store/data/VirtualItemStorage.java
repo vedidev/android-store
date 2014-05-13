@@ -33,8 +33,8 @@ public abstract class VirtualItemStorage {
     /**
      * Retrieves the balance of the given virtual item.
      *
-     * @param item the required virtual item.
-     * @return the balance of the required virtual item.
+     * @param item the required virtual item
+     * @return the balance of the required virtual item
      */
     public int getBalance(VirtualItem item){
         StoreUtils.LogDebug(mTag, "fetching balance for virtual item with itemId: "
@@ -139,8 +139,8 @@ public abstract class VirtualItemStorage {
     /**
      * Removes the given amount from the given virtual item's balance.
      *
-     * @param item is the virtual item to remove the given amount from.
-     * @param amount is the amount to remove.
+     * @param item is the virtual item to remove the given amount from
+     * @param amount is the amount to remove
      * @return new balance
      */
     public int remove(VirtualItem item, int amount){
@@ -151,8 +151,8 @@ public abstract class VirtualItemStorage {
      * Removes the given amount from the given virtual item's balance, and if notify is true
      * posts the change in the balance to the event bus.
      *
-     * @param item is the virtual item to remove the given amount from.
-     * @param amount is the amount to remove.
+     * @param item is the virtual item to remove the given amount from
+     * @param amount is the amount to remove
      * @param notify if notify is true post balance change event
      * @return new balance
      */

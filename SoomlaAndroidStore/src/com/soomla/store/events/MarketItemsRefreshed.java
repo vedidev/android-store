@@ -22,12 +22,12 @@ import com.soomla.store.domain.MarketItem;
 import java.util.List;
 
 /**
- * This event is fired when items associated with market are refreshed (prices, titles ...)
+ * This event is fired when items associated with market are refreshed (prices, titles ...).
  */
 public class MarketItemsRefreshed {
 
     /**
-     * Constructor
+     * Constructor.
      *
      * @param marketItems
      */

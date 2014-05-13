@@ -23,7 +23,7 @@ import com.soomla.store.domain.virtualCurrencies.VirtualCurrencyPack;
 import com.soomla.store.domain.virtualGoods.VirtualGood;
 
 /**
- * This interface represents a single game's metadata. Use this interface to create your assets
+ * This interface represents a single game's economy. Use this interface to create your assets
  * class that will be transferred to StoreInfo upon initialization.
  */
 public interface IStoreAssets {
@@ -32,7 +32,6 @@ public interface IStoreAssets {
 
     /**
      * Retrieves the current version of your <code>IStoreAssets</code>.
-     *
      * This value will determine if the saved data in the database will be deleted or not.
      * Bump the version every time you want to delete the old data in the DB.
      *

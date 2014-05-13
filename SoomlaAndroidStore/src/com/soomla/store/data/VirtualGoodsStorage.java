@@ -72,8 +72,8 @@ public class VirtualGoodsStorage extends VirtualItemStorage{
     /**
      * Assigns a specific upgrade to the given virtual good.
      *
-     * @param good the virtual good to upgrade.
-     * @param upgradeVG the upgrade to assign.
+     * @param good the virtual good to upgrade
+     * @param upgradeVG the upgrade to assign
      */
     public void assignCurrentUpgrade(VirtualGood good, UpgradeVG upgradeVG) {
         assignCurrentUpgrade(good, upgradeVG, true);
@@ -82,8 +82,8 @@ public class VirtualGoodsStorage extends VirtualItemStorage{
     /**
      * Assigns a specific upgrade to the given virtual good.
      *
-     * @param good the VirtualGood to upgrade.
-     * @param upgradeVG the upgrade to assign.
+     * @param good the VirtualGood to upgrade
+     * @param upgradeVG the upgrade to assign
      * @param notify if true post event to bus
      */
     public void assignCurrentUpgrade(VirtualGood good, UpgradeVG upgradeVG, boolean notify) {
@@ -109,8 +109,8 @@ public class VirtualGoodsStorage extends VirtualItemStorage{
     /**
      * Retrieves the current upgrade for the given virtual good.
      *
-     * @param good the virtual good to retrieve upgrade for.
-     * @return the current upgrade for the given virtual good.
+     * @param good the virtual good to retrieve upgrade for
+     * @return the current upgrade for the given virtual good
      */
     public UpgradeVG getCurrentUpgrade(VirtualGood good) {
         StoreUtils.LogDebug(mTag, "Fetching upgrade to virtual good: " + good.getName());
@@ -225,7 +225,7 @@ public class VirtualGoodsStorage extends VirtualItemStorage{
     }
 
     /**
-     * Helper function for <code>equip</code> and <code>unequip</code> functions
+     * Helper function for <code>equip</code> and <code>unequip</code> functions.
      */
     private void equipPriv(EquippableVG good, boolean equip, boolean notify){
         StoreUtils.LogDebug(mTag, (!equip ? "unequipping " : "equipping ") + good.getName() + ".");

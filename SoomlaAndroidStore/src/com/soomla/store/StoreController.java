@@ -174,7 +174,7 @@ public class StoreController {
      * Creates a list of all metadata stored in the Market (the items that have been purchased).
      * The metadata includes the item's name, description, price, product id, etc...
      * Posts a <code>MarketItemsRefreshed</code> event with the list just created.
-     * Upon failure, returns error message.
+     * Upon failure, prints error message.
      *
      * @param refreshMarketItemsDetails if true, SKU details (price, description, etc) and purchase
      *                        information will be queried.
@@ -265,11 +265,11 @@ public class StoreController {
     }
 
     /**
-     * Starts a purchase process with the market.
+     * Starts a purchase process in the market.
      *
-     * @param marketItem is the item to purchase. This item has to be defined EXACTLY the same in
+     * @param marketItem The item to purchase - this item has to be defined EXACTLY the same in
      *                   the market
-     * @param payload a payload to get back when this purchase is finished.
+     * @param payload A payload to get back when this purchase is finished.
      * @throws IllegalStateException
      */
     public void buyWithMarket(MarketItem marketItem, String payload) throws IllegalStateException {
@@ -330,7 +330,7 @@ public class StoreController {
     /**
      * Reports that in-app billing service initialization failed
      *
-     * @param message
+     * @param message error message
      */
     private void reportIabInitFailure(String message) {
         String msg = "There's no connectivity with the billing service. error: " + message;
@@ -343,10 +343,10 @@ public class StoreController {
      * Used for internal starting of purchase with the market.
      * Do *NOT* call this on your own.
      *
-     * @param activity
+     * @param activity activity
      * @param sku product id
      * @param payload a payload to get back when this purchase is finished
-     * @return
+     * @return true if successful, false upon failure
      */
     private boolean buyWithMarketInner(final Activity activity, final String sku,
                                        final String payload) {
@@ -420,7 +420,7 @@ public class StoreController {
      * Checks the state of the purchase and responds accordingly, giving the user an item,
      * throwing an error, or taking the item away and paying him back.
      *
-     * @param purchase
+     * @param purchase purchase whose state is to be checked
      */
     private void handleSuccessfulPurchase(IabPurchase purchase) {
         String sku = purchase.getSku();
@@ -523,7 +523,7 @@ public class StoreController {
     /**
      * Posts an unexpected error event saying the purchase failed.
      *
-     * @param message
+     * @param message error message
      */
     private void handleErrorResult(String message) {
         BusProvider.getInstance().post(new UnexpectedStoreErrorEvent(message));

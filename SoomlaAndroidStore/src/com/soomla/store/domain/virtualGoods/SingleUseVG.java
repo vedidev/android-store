@@ -34,7 +34,7 @@ import org.json.JSONObject;
  * NOTE: In case you want this item to be available for purchase with real money
  * you will need to define the item in the market (Google Play, Amazon App Store, etc...).
  *
- * Inheritance: {@link com.soomla.store.domain.virtualGoods.SingleUseVG} >
+ * Inheritance: SingleUseVG} >
  * {@link com.soomla.store.domain.virtualGoods.VirtualGood} >
  * {@link com.soomla.store.domain.PurchasableVirtualItem} >
  * {@link com.soomla.store.domain.VirtualItem}

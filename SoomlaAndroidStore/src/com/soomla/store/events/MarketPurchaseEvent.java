@@ -19,7 +19,7 @@ package com.soomla.store.events;
 import com.soomla.store.domain.PurchasableVirtualItem;
 
 /**
- * This event is fired when a Market purchase has finished.
+ * This event is fired when a Market purchase has occurred.
  */
 public class MarketPurchaseEvent {
 

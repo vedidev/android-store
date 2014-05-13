@@ -19,7 +19,7 @@ package com.soomla.store.events;
 import com.soomla.store.domain.virtualGoods.EquippableVG;
 
 /**
- * This event is fired when the balance of a specific EquippableVG has been equipped.
+ * This event is fired when a specific <code>EquippableVG</code> has been equipped.
  *
  * Real Game Example:
  *  Example Inventory: { currency_coin: 100, Characters: Robot_X, Robot_Y }

@@ -28,7 +28,7 @@ import org.json.JSONObject;
  * and most common virtual good while the descendants of this class define specific definitions
  * of virtual good(s).
  *
- * Inheritance: {@link com.soomla.store.domain.virtualGoods.VirtualGood} >
+ * Inheritance: VirtualGood >
  * {@link com.soomla.store.domain.PurchasableVirtualItem} >
  * {@link com.soomla.store.domain.VirtualItem}
  */
