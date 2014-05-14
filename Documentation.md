@@ -5,7 +5,7 @@
 ##Order of Code
 
 
- 1. SOOMLA Copyright message (see below)
+ 1. SOOMLA Copyright message
  2. Imports
  3. Constructors
  4. Public methods
