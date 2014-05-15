@@ -85,8 +85,7 @@ public class StoreInventory {
 
     /**
      * Takes from your user the given amount of the virtual item with the given <code>itemId</code>.
-     * For example, when your user requests a refund you need to TAKE the item he is returning
-     * from him.
+     * For example, when your user requests a refund you need to TAKE the item he/she is returning.
      *
      * @param itemId id of the virtual item to be taken
      * @param amount amount of the item to be given
@@ -124,7 +123,7 @@ public class StoreInventory {
 
     /**
      * Unequips the virtual good with the given <code>goodItemId</code>. Unequipping means that the
-     * user decides to stop using the virtual good he is currently using.
+     * user decides to stop using the virtual good he/she is currently using.
      * For more details and examples see {@link com.soomla.store.domain.virtualGoods.EquippableVG}.
      *
      * @param goodItemId id of the virtual good to be unequipped

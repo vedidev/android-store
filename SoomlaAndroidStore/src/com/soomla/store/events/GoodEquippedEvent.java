@@ -24,7 +24,7 @@ import com.soomla.store.domain.virtualGoods.EquippableVG;
  * Real Game Example:
  *  Example Inventory: { currency_coin: 100, Characters: Robot_X, Robot_Y }
  *  Suppose your user equips Robot_X.
- *  His new balance of Characters will be { Characters: Robot_Y }.
+ *  His/her new balance of Characters will be { Characters: Robot_Y }.
  *  A <code>GoodEquippedEvent</code> is fired.
  */
 public class GoodEquippedEvent {

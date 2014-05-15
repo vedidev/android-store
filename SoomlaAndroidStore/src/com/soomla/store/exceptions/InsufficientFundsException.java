@@ -25,7 +25,7 @@ package com.soomla.store.exceptions;
  *  Suppose that you have a user that wants to buy a blue_hat.
  *  You'll probably call <code>StoreInventory.buy("blue_hat")</code>.
  *  <code>InsufficientFundsException</code> will be thrown with "blue_hat" as the itemId.
- *  You can just catch this exception in order to notify the user that he doesn't have enough
+ *  You can just catch this exception in order to notify the user that they don't have enough
  *  coins to buy a blue_hat.
  */
 public class InsufficientFundsException extends Exception {

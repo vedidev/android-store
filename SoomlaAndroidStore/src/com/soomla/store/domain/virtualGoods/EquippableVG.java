@@ -51,16 +51,16 @@ import java.util.Iterator;
  * Real Game Examples:
  *  1. LOCAL: Say your game offers 3 weapons: a sword, a gun, and an axe (LifetimeVGs). Let’s
  *  suppose your user has already bought all 3. These are euippables that do not affect one another
- *  - your user can “carry” the sword, gun, and axe at the same time if he chooses to!
+ *  - your user can “carry” the sword, gun, and axe at the same time if they chooses to!
  *
  *  2. CATEGORY: Suppose your game offers “shirts” and “hats”. Let’s say there are 4 available
  *  shirts and 2 available hats, and your user has already purchased all of the clothing items
- *  available. He can equip a shirt and a hat at the same time, but cannot equip more than 1 shirt
- *  or more than 1 hat at the same time. In other words, he can equip at most one of each clothing
+ *  available. They can equip a shirt and a hat at the same time, but cannot equip more than 1 shirt
+ *  or more than 1 hat at the same time. In other words, they can equip at most one of each clothing
  *  category (shirts, hats)!
  *
  *  3. GLOBAL: Suppose your game offers multiple characters (<code>LifetimeVGs</code>): RobotX and
- *  RobotY. Let’s say your user owns both characters. He will own them forever (because they are
+ *  RobotY. Let’s say your user owns both characters. They will own them forever (because they are
  *  <code>LifetimeVG</code>'s). Your user can only play as (i.e. Equip) one character
  *  at a time, either RobotX or RobotY, but never both at the same time!
  *

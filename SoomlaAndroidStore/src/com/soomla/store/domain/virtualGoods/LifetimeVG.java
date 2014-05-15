@@ -122,13 +122,13 @@ import org.json.JSONObject;
     }
 
     /**
-     * Determines if the user is in a state that allows him to buy a <code>LifetimeVG</code>, by
-     * checking his balance of <code>LifetimeVG</code>s.
+     * Determines if the user is in a state that allows him/her to buy a <code>LifetimeVG</code>,
+     * by checking his/her balance of <code>LifetimeVG</code>s.
      * From the definition of a <code>LifetimeVG</code>:
-     * If the user has a balance of 0 - he can buy.
-     * If the user has a balance of 1 or more - he cannot buy more.
+     * If the user has a balance of 0 - he/she can buy.
+     * If the user has a balance of 1 or more - he/she cannot buy more.
      *
-     * @return true if he can buy, false otherwise
+     * @return true if buying is allowed, false otherwise
      */
     @Override
     protected boolean canBuy() {

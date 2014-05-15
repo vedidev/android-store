@@ -123,7 +123,7 @@ public abstract class PurchasableVirtualItem extends VirtualItem {
 
     /**
      * Buys the <code>PurchasableVirtualItem</code>, after checking if the user is in a state that
-     * allows himto buy. This action uses the associated <code>PurchaseType</code> to perform the
+     * allows him/her to buy. This action uses the associated <code>PurchaseType</code> to perform the
      * purchase.
      *
      * @throws InsufficientFundsException if the user does not have enough funds for buying.
@@ -135,7 +135,8 @@ public abstract class PurchasableVirtualItem extends VirtualItem {
     }
 
     /**
-     * Determines if user is in a state that allows him to buy a specific <code>VirtualItem</code>.
+     * Determines if user is in a state that allows him/her to buy a specific
+     * <code>VirtualItem</code>.
      *
      * @return true if can buy, false otherwise
      */

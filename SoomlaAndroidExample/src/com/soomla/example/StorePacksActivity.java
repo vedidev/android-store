@@ -95,8 +95,8 @@ public class StorePacksActivity extends Activity {
                /*
                 * The user decided to make an actual purchase of virtual goods. We try to buy() the
                 * user's desired good and StoreController tells us if the user has enough funds to
-                * make the purchase. If he doesn't have enough then an InsufficientFundsException
-                * will be thrown.
+                * make the purchase. If he/she doesn't have enough then an
+                * InsufficientFundsException will be thrown.
                 */
                 PurchaseWithMarket pwm = null;
                 final List<NonConsumableItem> nonConsumableItems = StoreInfo.getNonConsumableItems();

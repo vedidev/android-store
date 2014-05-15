@@ -78,7 +78,7 @@ public abstract class VirtualItem {
 
     /**
      * Gives your user the given amount of the specific virtual item.
-     * For example, when your user plays your game for the first time you GIVE him 1000 gems.
+     * For example, when your users play your game for the first time you GIVE them 1000 gems.
      *
      * NOTE: This action is different than <code>PurchasableVirtualItem</code>'s <code>buy()</code>:
      * You use <code>give(int amount)</code> to give your user something for free.
@@ -103,8 +103,7 @@ public abstract class VirtualItem {
 
     /**
      * Takes from your user the given amount of the specific virtual item.
-     * For example, when your user requests a refund (and let's say it's not a friendly refund),
-     * you need to TAKE the item he is returning from him (and give him his money back).
+     * For example, when your user requests a refund, you need to TAKE the item he/she is returning.
      *
      * @param amount the amount of the specific item to be taken
      * @return balance after the taking process

@@ -24,7 +24,7 @@ import com.soomla.store.domain.virtualCurrencies.VirtualCurrency;
  * Real Game Example:
  *  Example Inventory: { currency_coin: 100, green_hat: 3, blue_hat: 5 }
  *  Suppose your user buys something for 10 "Coins".
- *  His new balance of currency_coin will now be 90.
+ *  His/her new balance of currency_coin will now be 90.
  *  A <code>CurrencyBalanceChangedEvent</code> is fired.
  */
 public class CurrencyBalanceChangedEvent {

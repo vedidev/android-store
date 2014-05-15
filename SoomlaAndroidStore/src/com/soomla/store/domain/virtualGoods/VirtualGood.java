@@ -23,10 +23,10 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 /**
- * This is an abstract representation of the application's virtual good.
+ * This is an abstract representation of the application's virtual goods.
  * Your game's virtual economy revolves around virtual goods. This class defines the abstract
- * and most common virtual good while the descendants of this class define specific definitions
- * of virtual good(s).
+ * and most common virtual goods while the descendants of this class define specific definitions
+ * of virtual goods.
  *
  * Inheritance: VirtualGood >
  * {@link com.soomla.store.domain.PurchasableVirtualItem} >
