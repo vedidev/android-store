@@ -72,7 +72,7 @@ public class MarketItem {
         try {
             jsonObject.put(JSONConsts.MARKETITEM_MANAGED, mManaged.ordinal());
             jsonObject.put(JSONConsts.MARKETITEM_ANDROID_ID, mProductId);
-            jsonObject.put(JSONConsts.MARKETITEM_PRICE, new Double(mPrice));
+            jsonObject.put(JSONConsts.MARKETITEM_PRICE, Double.valueOf(mPrice));
         } catch (JSONException e) {
             StoreUtils.LogError(TAG, "An error occurred while generating JSON object.");
         }
