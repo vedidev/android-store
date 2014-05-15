@@ -64,7 +64,7 @@ public class IabCallbacks {
         public void cancelled(IabPurchase purchase);
 
          /**
-          * The user tries to buy an item he already owns.
+          * The user tries to buy an item he/she already owns.
           *
           * @param purchase the purchase that is already owned
           */
@@ -86,7 +86,7 @@ public class IabCallbacks {
          /**
           * Query inventory is successful.
           *
-          * @param purchases list of purchases from he inventory
+          * @param purchases list of purchases from he/she inventory
           * @param skuDetails list of sku details
           */
         public void success(List<IabPurchase> purchases, List<IabSkuDetails> skuDetails);

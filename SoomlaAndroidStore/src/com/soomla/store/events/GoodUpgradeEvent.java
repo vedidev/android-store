@@ -25,7 +25,7 @@ import com.soomla.store.domain.virtualGoods.VirtualGood;
  * Real Game Example:
  *  Example Inventory: { currency_coin: 100, Characters: Robot_X_1 }
  *  Suppose your user upgrades "Characters". Robot_X_1 is the first Robot_X in the series.
- *  After the upgrade, his new balance of Characters will be { Characters: Robot_X_2 }.
+ *  After the upgrade, his/her new balance of Characters will be { Characters: Robot_X_2 }.
  *  A <code>GoodUpgradeEvent</code> is fired.
  */
 public class GoodUpgradeEvent {

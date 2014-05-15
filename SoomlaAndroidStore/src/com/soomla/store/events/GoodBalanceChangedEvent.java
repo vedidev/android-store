@@ -24,7 +24,7 @@ import com.soomla.store.domain.virtualGoods.VirtualGood;
  * Real Game Example:
  *  Example Inventory: { currency_coin: 100, green_hat: 3, blue_hat: 5 }
  *  Suppose your user buys something for 4 "blue_hat"s.
- *  His new balance of "blue_hat" will now be 1.
+ *  His/her new balance of "blue_hat" will now be 1.
  *  A <code>GoodBalanceChangedEvent</code> is fired.
  */
 public class GoodBalanceChangedEvent {

@@ -36,7 +36,7 @@ SOOMLA is licensed under the Apache License. This copyright message must be incl
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- package com.soomla.store.domain;
+ package ...
 
 ```
 
@@ -58,7 +58,7 @@ SOOMLA is licensed under the Apache License. This copyright message must be incl
  - Limit any doc-comment lines to 80 characters.
 
 
-##Use of HTML Tags
+##Special Tags
 
 This will be used by Javadoc.
 
@@ -75,7 +75,7 @@ For more information about Javadoc conventions see http://www.oracle.com/technet
 
 ##Description and Examples
 
-Please note that the order is important!
+> In the following examples, the order is important!
 <br>
 
 **Classes and Interfaces**

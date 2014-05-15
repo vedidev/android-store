@@ -24,7 +24,7 @@ import org.json.JSONObject;
 
 /**
  * A representation of a non-consumable item in the Market. These kinds of items are bought by the
- * user once and kept for him forever.
+ * user once and kept for him/her forever.
  * 
  * NOTE: Don't be confused: this is not a Lifetime <code>VirtualGood</code>, it's a MANAGED item in
  * the Market. This means that the product can be purchased only once per user (such as a new level
@@ -94,8 +94,8 @@ public class NonConsumableItem extends PurchasableVirtualItem {
     }
 
     /**
-     * Determines if user is in a state that allows him to buy a <code>NonConsumableItem</code> by
-     * checking if the user already owns such an item. If he does, he cannot purchase this item
+     * Determines if user is in a state that allows him/her to buy a <code>NonConsumableItem</code>
+     * by checking if the user already owns such an item. If so, he/she cannot purchase this item
      * again because <code>NonConsumableItems</code> can only be purchased once!
      *
      * @return True if the user does NOT own such an item, False otherwise.

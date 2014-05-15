@@ -496,11 +496,13 @@ public class StoreInfo {
     }
 
     /**
-     * Replaces an old virtual item with the given one by removing the given virtual item from the
-     * relevant list if it exists, and then adds the given virtual item.
+     * Replaces an old virtual item with a new one by doing the following:
+     * 1. Determines the type of the given virtual item.
+     * 2. Looks for the given virtual item in the relevant list, according to its type.
+     * 3. If found, removes it.
+     * 4. Adds the given virtual item.
      *
-     * @param virtualItem if the given virtual item exists in relevant list, replace with the
-     *                    given virtual item, otherwise add the given virtual item.
+     * @param virtualItem the virtual item that replaces the old one if exists.
      */
     public static void replaceVirtualItem(VirtualItem virtualItem) {
         mVirtualItems.put(virtualItem.getItemId(), virtualItem);

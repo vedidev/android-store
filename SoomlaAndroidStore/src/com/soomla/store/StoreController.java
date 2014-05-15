@@ -418,7 +418,7 @@ public class StoreController {
 
     /**
      * Checks the state of the purchase and responds accordingly, giving the user an item,
-     * throwing an error, or taking the item away and paying him back.
+     * throwing an error, or taking the item away and paying the user back.
      *
      * @param purchase purchase whose state is to be checked
      */

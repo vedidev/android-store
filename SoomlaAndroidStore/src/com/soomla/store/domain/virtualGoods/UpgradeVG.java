@@ -212,7 +212,7 @@ public class UpgradeVG extends LifetimeVG {
     }
 
     /**
-     * Determines if the user is in a state that allows him to buy an <code>UpgradeVG</code>
+     * Determines if the user is in a state that allows him/her to buy an <code>UpgradeVG</code>
      * This method enforces allowing/rejecting of upgrades here so users won't buy them when
      * they are not supposed to.
      * If you want to give your users free upgrades, use the <code>give</code> function.

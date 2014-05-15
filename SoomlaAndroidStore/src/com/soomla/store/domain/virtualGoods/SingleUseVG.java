@@ -96,7 +96,7 @@ public class SingleUseVG extends VirtualGood{
     }
 
     /**
-     * Determines if user is in a state that allows him to buy a <code>SingleUseVG</code>.
+     * Determines if user is in a state that allows him/her to buy a <code>SingleUseVG</code>.
      *
      * @return true - users can ALWAYS purchase <code>SingleUseVG</code>s.
      */
