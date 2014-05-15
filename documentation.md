@@ -58,7 +58,7 @@ SOOMLA is licensed under the Apache License. This copyright message must be incl
  - Limit any doc-comment lines to 80 characters.
 
 
-##Use of HTML Tags
+##Special Tags
 
 This will be used by Javadoc.
 
