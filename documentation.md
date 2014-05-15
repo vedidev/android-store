@@ -75,7 +75,7 @@ For more information about Javadoc conventions see http://www.oracle.com/technet
 
 ##Description and Examples
 
-Please note that the order is important!
+> In the following examples, the order is important!
 <br>
 
 **Classes and Interfaces**
