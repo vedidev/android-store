@@ -79,17 +79,16 @@ public class IabCallbacks {
     }
 
      /**
-      * Listens for inventory queries
+      * Listens for restore purchases queries
       */
-    public interface OnQueryInventoryListener {
+    public interface OnRestorePurchasesListener {
 
          /**
-          * Query inventory is successful.
+          * Restore Purchase is successful.
           *
           * @param purchases list of purchases from he/she inventory
-          * @param skuDetails list of sku details
           */
-        public void success(List<IabPurchase> purchases, List<IabSkuDetails> skuDetails);
+        public void success(List<IabPurchase> purchases);
 
          /**
           * Query inventory fails.
@@ -97,6 +96,25 @@ public class IabCallbacks {
           * @param message reason for failure
           */
         public void fail(String message);
+    }
+
+     /**
+      * Listens for fetch skus details queries
+      */
+    public interface OnFetchSkusDetailsListener {
+
+        /**
+         * Fetch skus details is successful.
+         *
+         * @param skuDetails list of skus details
+         */
+        public void success(List<IabSkuDetails> skuDetails);
+        /**
+         * Query inventory fails.
+         *
+         * @param message reason for failure
+         */
+         public void fail(String message);
     }
 
 

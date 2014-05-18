@@ -26,7 +26,6 @@ import com.soomla.store.billing.IabCallbacks;
 import com.soomla.store.billing.IabException;
 import com.soomla.store.billing.IabPurchase;
 import com.soomla.store.billing.IabSkuDetails;
-import com.soomla.store.data.NonConsumableItemsStorage;
 import com.soomla.store.data.ObscuredSharedPreferences;
 import com.soomla.store.data.StorageManager;
 import com.soomla.store.data.StoreInfo;
@@ -36,7 +35,8 @@ import com.soomla.store.domain.PurchasableVirtualItem;
 import com.soomla.store.events.BillingNotSupportedEvent;
 import com.soomla.store.events.BillingSupportedEvent;
 import com.soomla.store.events.IabServiceStartedEvent;
-import com.soomla.store.events.MarketItemsRefreshed;
+import com.soomla.store.events.MarketItemsRefreshFinishedEvent;
+import com.soomla.store.events.MarketItemsRefreshStartedEvent;
 import com.soomla.store.events.MarketPurchaseCancelledEvent;
 import com.soomla.store.events.MarketPurchaseEvent;
 import com.soomla.store.events.MarketPurchaseStartedEvent;
@@ -119,7 +119,7 @@ public class StoreController {
         // Update SOOMLA store from DB
         StoreInfo.initializeFromDB();
 
-        refreshInventory(true);
+        refreshInventory();
 
         mInitialized = true;
         BusProvider.getInstance().post(new StoreControllerInitializedEvent());
@@ -171,97 +171,156 @@ public class StoreController {
     }
 
     /**
-     * Creates a list of all metadata stored in the Market (the items that have been purchased).
-     * The metadata includes the item's name, description, price, product id, etc...
-     * Posts a <code>MarketItemsRefreshed</code> event with the list just created.
-     * Upon failure, prints error message.
-     *
-     * @param refreshMarketItemsDetails if true, SKU details (price, description, etc) and purchase
-     *                        information will be queried.
+     * Restoring old purchases for the current user (device).
+     * Here we just call the private function without refreshing market items details.
      */
-    public void refreshInventory(final boolean refreshMarketItemsDetails) {
+    public void restoreTransactions() {
+        restoreTransactions(false);
+    }
+
+    /**
+     * Restoring old purchases for the current user (device).
+     *
+     * @param followedByRefreshItemsDetails determines weather we should perform a refresh market
+     *                                      items operation right after a restore purchase success.
+     */
+    private void restoreTransactions(final boolean followedByRefreshItemsDetails) {
         StoreConfig.InAppBillingService.initializeBillingService(
                 new IabCallbacks.IabInitListener() {
 
-            @Override
-            public void success(boolean alreadyInBg) {
-                if (!alreadyInBg) {
-                    notifyIabServiceStarted();
-                }
-                StoreUtils.LogDebug(TAG,
-                        "Setup successful, consuming unconsumed items and handling refunds");
-                IabCallbacks.OnQueryInventoryListener queryInventoryListener =
-                        new IabCallbacks.OnQueryInventoryListener() {
-
                     @Override
-                    public void success(List<IabPurchase> purchases,
-                                        List<IabSkuDetails> skuDetailsList) {
-                        if (purchases.size() > 0) {
-                            for (IabPurchase iabPurchase : purchases) {
-                                StoreUtils.LogDebug(TAG, "Got owned item: " +iabPurchase.getSku());
-
-                                handleSuccessfulPurchase(iabPurchase);
-                            }
-
-                            BusProvider.getInstance().post(
-                                    new RestoreTransactionsFinishedEvent(true));
+                    public void success(boolean alreadyInBg) {
+                        if (!alreadyInBg) {
+                            notifyIabServiceStarted();
                         }
 
-                        if (skuDetailsList.size() > 0) {
+                        StoreUtils.LogDebug(TAG,
+                                "Setup successful, restoring purchases");
 
-                            List<MarketItem> marketItems = new ArrayList<MarketItem>();
-                            for (IabSkuDetails iabSkuDetails : skuDetailsList) {
-                                String productId = iabSkuDetails.getSku();
-                                String price = iabSkuDetails.getPrice();
-                                String title = iabSkuDetails.getTitle();
-                                String desc = iabSkuDetails.getDescription();
+                        IabCallbacks.OnRestorePurchasesListener restorePurchasesListener = new IabCallbacks.OnRestorePurchasesListener() {
+                            @Override
+                            public void success(List<IabPurchase> purchases) {
+                                StoreUtils.LogDebug(TAG, "Transactions restored");
 
-                                StoreUtils.LogDebug(TAG, "Got item details: " +
-                                        "\ntitle:\t" + iabSkuDetails.getTitle() +
-                                        "\nprice:\t" + iabSkuDetails.getPrice() +
-                                        "\nproductId:\t" + iabSkuDetails.getSku() +
-                                        "\ndesc:\t" + iabSkuDetails.getDescription());
+                                if (purchases.size() > 0) {
+                                    for (IabPurchase iabPurchase : purchases) {
+                                        StoreUtils.LogDebug(TAG, "Got owned item: " +iabPurchase.getSku());
 
-                                try {
-                                    PurchasableVirtualItem pvi = StoreInfo.
-                                            getPurchasableItem(productId);
-                                    MarketItem mi = ((PurchaseWithMarket)
-                                            pvi.getPurchaseType()).getMarketItem();
-                                    mi.setMarketTitle(title);
-                                    mi.setMarketPrice(price);
-                                    mi.setMarketDescription(desc);
+                                        handleSuccessfulPurchase(iabPurchase);
+                                    }
+                                }
 
-                                    marketItems.add(mi);
-                                } catch (VirtualItemNotFoundException e) {
-                                    String msg = "(refreshInventory) Couldn't find a "
-                                    + "purchasable item associated with: " + productId;
-                                    StoreUtils.LogError(TAG, msg);
+                                BusProvider.getInstance().post(
+                                        new RestoreTransactionsFinishedEvent(true));
+
+                                if (followedByRefreshItemsDetails) {
+                                    refreshMarketItemsDetails();
                                 }
                             }
 
-                            BusProvider.getInstance().post(new MarketItemsRefreshed(marketItems));
-                        }
+                            @Override
+                            public void fail(String message) {
+                                BusProvider.getInstance().post(new RestoreTransactionsFinishedEvent(false));
+                                handleErrorResult(message);
+                            }
+                        };
+
+                        StoreConfig.InAppBillingService.restorePurchasesAsync(restorePurchasesListener);
+
+                        BusProvider.getInstance().post(new RestoreTransactionsStartedEvent());
                     }
 
                     @Override
                     public void fail(String message) {
-                        BusProvider.getInstance().post(new RestoreTransactionsFinishedEvent(false));
-                        handleErrorResult(message);
+                        reportIabInitFailure(message);
                     }
-                };
+                });
+    }
 
-                final List<String> purchasableProductIds = StoreInfo.getAllProductIds();
-                StoreConfig.InAppBillingService.queryInventoryAsync(refreshMarketItemsDetails, purchasableProductIds, queryInventoryListener);
+    /**
+     * Queries the store for the details for all of the game's market items by product ids.
+     * This operation will "fill" up the MarketItem objects with the information you provided in
+     * the developer console including: localized price (as string), title and description.
+     */
+    public void refreshMarketItemsDetails() {
+        StoreConfig.InAppBillingService.initializeBillingService(
+                new IabCallbacks.IabInitListener() {
 
-                BusProvider.getInstance().post(new RestoreTransactionsStartedEvent());
-            }
+                    @Override
+                    public void success(boolean alreadyInBg) {
+                        if (!alreadyInBg) {
+                            notifyIabServiceStarted();
+                        }
+                        StoreUtils.LogDebug(TAG,
+                                "Setup successful, refreshing market items details");
 
-            @Override
-            public void fail(String message) {
-                reportIabInitFailure(message);
-            }
+                        IabCallbacks.OnFetchSkusDetailsListener fetchSkusDetailsListener =
+                                new IabCallbacks.OnFetchSkusDetailsListener() {
 
-        });
+                                    @Override
+                                    public void success(List<IabSkuDetails> skuDetails) {
+                                        StoreUtils.LogDebug(TAG, "Market items details refreshed");
+
+                                        List<MarketItem> marketItems = new ArrayList<MarketItem>();
+                                        if (skuDetails.size() > 0) {
+                                            for (IabSkuDetails iabSkuDetails : skuDetails) {
+                                                String productId = iabSkuDetails.getSku();
+                                                String price = iabSkuDetails.getPrice();
+                                                String title = iabSkuDetails.getTitle();
+                                                String desc = iabSkuDetails.getDescription();
+
+                                                StoreUtils.LogDebug(TAG, "Got item details: " +
+                                                        "\ntitle:\t" + iabSkuDetails.getTitle() +
+                                                        "\nprice:\t" + iabSkuDetails.getPrice() +
+                                                        "\nproductId:\t" + iabSkuDetails.getSku() +
+                                                        "\ndesc:\t" + iabSkuDetails.getDescription());
+
+                                                try {
+                                                    PurchasableVirtualItem pvi = StoreInfo.
+                                                            getPurchasableItem(productId);
+                                                    MarketItem mi = ((PurchaseWithMarket)
+                                                            pvi.getPurchaseType()).getMarketItem();
+                                                    mi.setMarketTitle(title);
+                                                    mi.setMarketPrice(price);
+                                                    mi.setMarketDescription(desc);
+
+                                                    marketItems.add(mi);
+                                                } catch (VirtualItemNotFoundException e) {
+                                                    String msg = "(refreshInventory) Couldn't find a "
+                                                            + "purchasable item associated with: " + productId;
+                                                    StoreUtils.LogError(TAG, msg);
+                                                }
+                                            }
+                                        }
+                                        BusProvider.getInstance().post(new MarketItemsRefreshFinishedEvent(marketItems));
+                                    }
+
+                                    @Override
+                                    public void fail(String message) {
+
+                                    }
+                                };
+
+                        final List<String> purchasableProductIds = StoreInfo.getAllProductIds();
+                        StoreConfig.InAppBillingService.fetchSkusDetailsAsync(purchasableProductIds, fetchSkusDetailsListener);
+
+                        BusProvider.getInstance().post(new MarketItemsRefreshStartedEvent());
+                    }
+
+                    @Override
+                    public void fail(String message) {
+                        reportIabInitFailure(message);
+                    }
+                });
+    }
+
+    /**
+     * This runs restoreTransactions followed by market items refresh.
+     * There are docs that explains restoreTransactions and refreshMarketItemsDetails on the actual
+     * functions in this file.
+     */
+    public void refreshInventory() {
+        restoreTransactions(true);
     }
 
     /**

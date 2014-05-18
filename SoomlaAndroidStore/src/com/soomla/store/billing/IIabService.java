@@ -94,9 +94,9 @@ public interface IIabService {
      * @param moreSkus if given, additional PRODUCT skus to query information on.
      * @param queryInventoryListener the listener to notify when the query operation completes.
      */
-    public void queryInventoryAsync(boolean querySkuDetails,
-                                    List<String> moreSkus,
-                                    IabCallbacks.OnQueryInventoryListener queryInventoryListener);
+    public void restorePurchasesAsync(IabCallbacks.OnRestorePurchasesListener restorePurchasesListener);
+
+    public void fetchSkusDetailsAsync(List<String> skus, IabCallbacks.OnFetchSkusDetailsListener fetchSkusDetailsListener);
 
     /**
      * Initializes in-app billing service and notifies the given <code>initListener</code> upon

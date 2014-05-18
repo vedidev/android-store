@@ -24,14 +24,14 @@ import java.util.List;
 /**
  * This event is fired when items associated with market are refreshed (prices, titles ...).
  */
-public class MarketItemsRefreshed {
+public class MarketItemsRefreshFinishedEvent {
 
     /**
      * Constructor.
      *
      * @param marketItems
      */
-    public MarketItemsRefreshed(List<MarketItem> marketItems) {
+    public MarketItemsRefreshFinishedEvent(List<MarketItem> marketItems) {
         this.mMarketItems = marketItems;
     }
 
