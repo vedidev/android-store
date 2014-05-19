@@ -86,7 +86,7 @@ public class MarketItem {
      * a game). This purchase is remembered by the Market and can be restored if this
      * application is uninstalled and then re-installed.
      * UNMANAGED is used for products that can be used up and purchased multiple times (such as
-     * poker chips). It is up to the application to keep track of UNMANAGED products for the user.
+     * "gold coins"). It is up to the application to keep track of UNMANAGED products for the user.
      * SUBSCRIPTION is just like MANAGED except that the user gets charged periodically (monthly
      * or yearly).
      */

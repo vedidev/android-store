@@ -67,7 +67,7 @@ public class StoreInventory {
 
     /**
      * Gives your user the given amount of the virtual item with the given <code>itemId</code>.
-     * For example, when your user plays your game for the first time you GIVE him 1000 gems.
+     * For example, when your user plays your game for the first time you GIVE him/her 1000 gems.
      *
      * NOTE: This action is different than buy -
      * You use <code>give(int amount)</code> to give your user something for free.
@@ -237,10 +237,10 @@ public class StoreInventory {
     }
 
     /**
-     * Upgrades the good with the given <code>upgradeItemId</code> for FREE (you are GIVING him the
-     * upgrade). In case that the good is not an upgradeable item, an error message will be produced.
-     * <code>forceUpgrade()</code> is different than <code>upgradeVirtualGood()<code> because
-     * <code>forceUpgrade()</code> is a FREE upgrade.
+     * Upgrades the good with the given <code>upgradeItemId</code> for FREE (you are GIVING him/her
+     * the upgrade). In case that the good is not an upgradeable item, an error message will be
+     * produced. <code>forceUpgrade()</code> is different than <code>upgradeVirtualGood()<code>
+     * because <code>forceUpgrade()</code> is a FREE upgrade.
      *
      * @param upgradeItemId id of the virtual good who we want to force an upgrade upon
      * @throws VirtualItemNotFoundException
