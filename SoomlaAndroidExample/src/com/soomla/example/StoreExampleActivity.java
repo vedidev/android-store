@@ -32,6 +32,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.amazon.inapp.purchasing.PurchasingManager;
 import com.soomla.store.*;
 import com.soomla.store.data.ObscuredSharedPreferences;
 import com.soomla.store.domain.virtualCurrencies.VirtualCurrency;
@@ -45,6 +47,12 @@ import com.soomla.store.exceptions.VirtualItemNotFoundException;
  */
 public class StoreExampleActivity extends Activity {
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        PurchasingManager.initiateGetUserIdRequest();
+    }
+
     /**
      * Called when the activity starts.
      * Displays the main UI screen of the game.
@@ -57,6 +65,9 @@ public class StoreExampleActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
+
+//        PurchasingManager.registerObserver(new PurchasingObserver(this));
+
 
         mRobotView = (ImageView) findViewById(R.id.drag_img);
         mRobotView.setOnTouchListener(new MyTouchListener());

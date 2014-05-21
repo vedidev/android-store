@@ -70,7 +70,7 @@ public class StoreGoodsActivity extends Activity {
      * @throws IOException
      */
     public void restoreTransactions(View v) throws IOException{
-        StoreController.getInstance().refreshInventory(false);
+        StoreController.getInstance().restoreTransactions();
     }
 
     /**

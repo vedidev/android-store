@@ -78,13 +78,13 @@ public class StoreController {
             return false;
         }
 
-        if (StoreConfig.InAppBillingService == null) {
-            String err = "You didn't set up an in-app billing service. "
-            + "StoreController will stop now.";
-            StoreUtils.LogError(TAG, err);
-            BusProvider.getInstance().post(new UnexpectedStoreErrorEvent(err));
-            return false;
-        }
+//        if (StoreConfig.InAppBillingService == null) {
+//            String err = "You didn't set up an in-app billing service. "
+//            + "StoreController will stop now.";
+//            StoreUtils.LogError(TAG, err);
+//            BusProvider.getInstance().post(new UnexpectedStoreErrorEvent(err));
+//            return false;
+//        }
 
         StoreUtils.LogDebug(TAG, "StoreController Initializing ...");
 
@@ -644,7 +644,7 @@ public class StoreController {
                 if (!StoreController.getInstance().buyWithMarketInner(this, productId, payload)) {
                     finish();
                 }
-            }catch (Exception e) {
+            } catch (Exception e) {
                 StoreUtils.LogError(TAG, "Error purchasing item " + e.getMessage());
                 BusProvider.getInstance().post(new UnexpectedStoreErrorEvent(e.getMessage()));
                 StoreController.getInstance().mWaitingServiceResponse = false;

@@ -19,6 +19,10 @@ package com.soomla.store.billing;
 import android.app.Activity;
 import android.content.Intent;
 
+import com.soomla.store.StoreController;
+
+import org.apache.http.MethodNotSupportedException;
+
 import java.util.List;
 
 /**
@@ -84,18 +88,19 @@ public interface IIabService {
                                    String extraData);
 
     /**
-     * Queries the inventory asynchronously - will query all owned items from the server according
-     * to the given <code>querySkuDetails</code>. If given, will query moreSkus also, and lastly,
-     * will call back the given queryInventoryListener upon completion.
-     * This method is safe to call from a UI thread.
+     * Restores transactions asynchronously. This operation will get all previously purchased
+     * non-consumables and invoke the given callback.
      *
-     * @param querySkuDetails if true, SKU details (price, description, etc) and purchase
-     *                        information will be queried.
-     * @param moreSkus if given, additional PRODUCT skus to query information on.
-     * @param queryInventoryListener the listener to notify when the query operation completes.
+     * @param restorePurchasesListener the listener to notify when the query operation completes.
      */
     public void restorePurchasesAsync(IabCallbacks.OnRestorePurchasesListener restorePurchasesListener);
 
+    /**
+     * Fetches all details for the given skus. The details is what the developer provided on
+     * the developer console.
+     *
+     * @param fetchSkusDetailsListener the listener to notify when the query operation completes.
+     */
     public void fetchSkusDetailsAsync(List<String> skus, IabCallbacks.OnFetchSkusDetailsListener fetchSkusDetailsListener);
 
     /**

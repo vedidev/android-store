@@ -53,7 +53,7 @@ public abstract class IabHelper {
      * which will involve bringing up the Google Play screen. The calling activity will be paused while
      * the user interacts with Google Play, and the result will be delivered via the activity's
      * {@link android.app.Activity#onActivityResult} method, at which point you must call
-     * this object's {@link #handleActivityResult} method to continue the purchase flow. This method
+     * this object's {@link #} method to continue the purchase flow. This method
      * MUST be called from the UI thread of the Activity.
      *
      * @param act The calling activity.
@@ -152,6 +152,13 @@ public abstract class IabHelper {
     }
 
 
+    /** Public Consts **/
+
+    // Item types
+    public static final String ITEM_TYPE_INAPP = "inapp";
+//    public static final String ITEM_TYPE_SUBS = "subs"; // Not supported
+
+
 
     /** Protected Functions **/
 
@@ -183,13 +190,15 @@ public abstract class IabHelper {
 
     /** restore transactions and refresh market items handlers **/
 
-    protected void restorePurchasesSuccess(final IabResult result, final IabInventory inventory) {
+    protected void restorePurchasesSuccess(final IabInventory inventory) {
         if (mRestorePurchasessFinishedListener != null) {
             final Handler handler = new Handler(Looper.getMainLooper());
             handler.post(new Runnable() {
                 public void run() {
+                    IabResult result = new IabResult(IabResult.BILLING_RESPONSE_RESULT_OK, "IabInventory restore successful.");
                     mRestorePurchasessFinishedListener.onRestorePurchasessFinished(
                             result, inventory);
+                    mRestorePurchasessFinishedListener = null;
                 }
             });
         }
@@ -197,17 +206,51 @@ public abstract class IabHelper {
         flagEndAsync();
     }
 
-    protected void fetchSkusDetailsSuccess(final IabResult result, final IabInventory inventory) {
+    protected void restorePurchasesFailed() {
+        if (mRestorePurchasessFinishedListener != null) {
+            final Handler handler = new Handler(Looper.getMainLooper());
+            handler.post(new Runnable() {
+                @Override
+                public void run() {
+                    IabResult result = new IabResult(IabResult.BILLING_RESPONSE_RESULT_ERROR,
+                            "Couldn't complete restore purchases operation.");
+                    mRestorePurchasessFinishedListener.onRestorePurchasessFinished(result, null);
+                    mRestorePurchasessFinishedListener = null;
+                }
+            });
+        }
+        flagEndAsync();
+    }
+
+    protected void fetchSkusDetailsSuccess(final IabInventory inventory) {
         if (mFetchSkusDetailsFinishedListener != null) {
             final Handler handler = new Handler(Looper.getMainLooper());
             handler.post(new Runnable() {
                 public void run() {
+                    IabResult result = new IabResult(IabResult.BILLING_RESPONSE_RESULT_OK, "IabInventory fetch details successful.");
                     mFetchSkusDetailsFinishedListener.onFetchSkusDetailsFinished(
                             result, inventory);
+                    mFetchSkusDetailsFinishedListener = null;
                 }
             });
         }
         // make sure to end the async operation...
+        flagEndAsync();
+    }
+
+    protected void fetchSkusDetailsFailed() {
+        if (mFetchSkusDetailsFinishedListener != null) {
+            final Handler handler = new Handler(Looper.getMainLooper());
+            handler.post(new Runnable() {
+                @Override
+                public void run() {
+                    IabResult result = new IabResult(IabResult.BILLING_RESPONSE_RESULT_ERROR,
+                            "Couldn't complete refresh operation.");
+                    mFetchSkusDetailsFinishedListener.onFetchSkusDetailsFinished(result, null);
+                    mFetchSkusDetailsFinishedListener = null;
+                }
+            });
+        }
         flagEndAsync();
     }
 
@@ -310,6 +353,9 @@ public abstract class IabHelper {
     }
 
 
+    protected void setRvsProductionMode(boolean rvsProductionMode) {
+        mRvsProductionMode = rvsProductionMode;
+    }
 
     /** Private Members **/
 
