@@ -8,7 +8,7 @@ Haven't you ever wanted an in-app purchase one liner that looks like this!?
 
 ## android-store
 
-**May 25th, 2014**: Amazon billing service is now our second billing service implementation. See [Billing Services](https://github.com/soomla/android-store#event-handling)) for details.
+**May 25th, 2014**: Amazon billing service is now our second billing service implementation. See [Billing Services](https://github.com/soomla/android-store#whats-next-selecting-a-billing-service) for details.
 
 **April 1st, 2014**: We've added the option to refresh market items details from the IAB Service (default is Google Play). You can call 'refreshInventory(true)' from StoreController when you want and all your PurchasableItems that has a PurchaseType of PurchaseWithMarket will update the values of: MarketPrice, MarketTitle, MarketDescription. android-store automatically running the operation when you initialize StoreController.
 
@@ -54,7 +54,7 @@ Check out our [Wiki] (https://github.com/soomla/android-store/wiki) for more inf
 
     > Initialize `StoreController` ONLY ONCE when your application loads.
 
-5. Refer to the next section for information of selecting your Billing Service and setting it up.
+5. Refer to the [next section](https://github.com/soomla/android-store#whats-next-selecting-a-billing-service) for information of selecting your Billing Service and setting it up.
 
 And that's it ! You have storage and in-app purchasing capabilities... ALL-IN-ONE.
 
