@@ -34,6 +34,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.soomla.store.*;
+import com.soomla.store.billing.google.GooglePlayIabService;
 import com.soomla.store.data.ObscuredSharedPreferences;
 import com.soomla.store.domain.virtualCurrencies.VirtualCurrency;
 import com.soomla.store.exceptions.VirtualItemNotFoundException;
@@ -93,13 +94,9 @@ public class StoreExampleActivity extends Activity {
         IStoreAssets storeAssets = new MuffinRushAssets();
         mEventHandler = new ExampleEventHandler(mHandler, this);
 
-        StoreController.getInstance().initialize(storeAssets, "aaaaabbbbbb");
-//        GooglePlayIabService.getInstance().setPublicKey(
-//                "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAphC8H7OYag8u8l1WayR7dHMKFC+XC09tLk9A"
-//                + "6FnxqsJPF4+Y4iJ4NTs24PVYWB4y/DQjfo3b7z6DqXBYgAOMYn7I3VIbjzgbit+DgGWfmiKWCQotcG"
-//                + "5jWEsTiGMy+yRkJ6mwvWyVt8c3EfYrgrIfDMYrzIpk+F0PK/ybDiQmj4j2H9PB3NwOMpaGCkKM3IrE"
-//                + "Y66fclnJpO3nDqN7Lun5mGAlni5eMKkwM5f5O8DUD65y/MmXTwUddXKnIaurY6giRcJktK6zWsFopx"
-//                + "f2EzDb1byP3ISiwxZAgic5BfQYh3HAbeEMD0CvRCHQIctJ8k7zn63NmaemPR7lFjY1GNWeowIDAQAB");
+        StoreController.getInstance().initialize(storeAssets, "[CUSTOM SECRET HERE]");
+        GooglePlayIabService.getInstance().setPublicKey("[YOUR PUBLIC KEY FROM THE MARKET]");
+        GooglePlayIabService.AllowAndroidTestPurchases = true;
 
 
         //FOR TESTING PURPOSES ONLY: Check if it's a first run, if so add 10000 currencies.
