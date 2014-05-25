@@ -39,7 +39,7 @@
     <orderEntry type="module-library">
       <library>
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/../../plugins/android-store-google-play/build/AndroidStoreGooglePlay.jar!/" />
+          <root url="jar://$MODULE_DIR$/../billing-services/google-play/AndroidStoreGooglePlay.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
