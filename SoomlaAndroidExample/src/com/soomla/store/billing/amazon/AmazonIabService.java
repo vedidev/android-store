@@ -15,11 +15,6 @@
  */
 package com.soomla.store.billing.amazon;
 
-import android.app.Activity;
-import android.content.Intent;
-
-import com.amazon.inapp.purchasing.PurchasingManager;
-import com.soomla.store.StoreController;
 import com.soomla.store.StoreUtils;
 import com.soomla.store.billing.IIabService;
 import com.soomla.store.billing.IabCallbacks;
@@ -29,12 +24,8 @@ import com.soomla.store.billing.IabResult;
 import com.soomla.store.billing.IabInventory;
 import com.soomla.store.billing.IabPurchase;
 import com.soomla.store.billing.IabSkuDetails;
-import com.soomla.store.data.StoreInfo;
-
-import org.apache.http.MethodNotSupportedException;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 public class AmazonIabService implements IIabService {
@@ -53,15 +44,7 @@ public class AmazonIabService implements IIabService {
 
     @Override
     public void stopIabServiceInBg(IabCallbacks.IabInitListener iabListener) {
-        StoreUtils.LogError(TAG, "This method is not supported for Amazon IAP.");
-    }
-
-    /**
-     *  A wrapper to access IabHelper.handleActivityResult from outside
-     */
-    public boolean handleActivityResult(int requestCode, int resultCode, Intent data)  {
-        StoreUtils.LogError(TAG, "This method is not supported for Amazon IAP.");
-        return false;
+        StoreUtils.LogDebug(TAG, "stopIabServiceInBg method is not supported for Amazon IAP.");
     }
 
     @Override
@@ -82,21 +65,21 @@ public class AmazonIabService implements IIabService {
 
     @Override
     public void consume(IabPurchase purchase) throws IabException{
-        StoreUtils.LogError(TAG, "This method is not supported for Amazon IAP.");
+        StoreUtils.LogDebug(TAG, "consume method is not supported for Amazon IAP.");
     }
 
     @Override
     public void consumeAsync(IabPurchase purchase, final IabCallbacks.OnConsumeListener consumeListener) {
-        consumeListener.fail("This method is not supported for Amazon SDK");
+        StoreUtils.LogDebug(TAG, "consumeAsync method is not supported for Amazon IAP.");
+        consumeListener.success(purchase);
     }
     
     @Override
-    public void launchPurchaseFlow(Activity act,
-                                   String sku,
+    public void launchPurchaseFlow(String sku,
                                    final IabCallbacks.OnPurchaseListener purchaseListener,
                                    String extraData) {
 
-        mAmazonIabHelper.launchPurchaseFlow(act, sku, new IabHelper.OnIabPurchaseFinishedListener() {
+        mAmazonIabHelper.launchPurchaseFlow(null, sku, new IabHelper.OnIabPurchaseFinishedListener() {
             @Override
             public void onIabPurchaseFinished(IabResult result, IabPurchase purchase) {
 

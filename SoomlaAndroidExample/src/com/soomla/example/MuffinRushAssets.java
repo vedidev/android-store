@@ -105,14 +105,14 @@ public class MuffinRushAssets implements IStoreAssets {
      */
     @Override
     public NonConsumableItem[] getNonConsumableItems() {
-        final NonConsumableItem[] nonConsumableItems = readCsvNCItems("test_android_iap_import.csv");
-        if (nonConsumableItems == null || nonConsumableItems.length < 1) {
+//        final NonConsumableItem[] nonConsumableItems = readCsvNCItems("test_android_iap_import.csv");
+//        if (nonConsumableItems == null || nonConsumableItems.length < 1) {
             return new NonConsumableItem[]{
                     NO_ADDS_NONCONS
             };
-        }
+//        }
 
-        return nonConsumableItems;
+//        return nonConsumableItems;
     }
 
     /**

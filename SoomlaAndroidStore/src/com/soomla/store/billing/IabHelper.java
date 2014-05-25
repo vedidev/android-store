@@ -69,6 +69,7 @@ public abstract class IabHelper {
         flagStartAsync("launchPurchaseFlow");
 
         mPurchaseListener = listener;
+        mLastOperationSKU = sku;
         launchPurchaseFlowInner(act, sku, extraData);
     }
 
@@ -206,14 +207,14 @@ public abstract class IabHelper {
         flagEndAsync();
     }
 
-    protected void restorePurchasesFailed() {
+    protected void restorePurchasesFailed(final IabResult result) {
         if (mRestorePurchasessFinishedListener != null) {
             final Handler handler = new Handler(Looper.getMainLooper());
             handler.post(new Runnable() {
                 @Override
                 public void run() {
-                    IabResult result = new IabResult(IabResult.BILLING_RESPONSE_RESULT_ERROR,
-                            "Couldn't complete restore purchases operation.");
+//                    IabResult result = new IabResult(IabResult.BILLING_RESPONSE_RESULT_ERROR,
+//                            "Couldn't complete restore purchases operation.");
                     mRestorePurchasessFinishedListener.onRestorePurchasessFinished(result, null);
                     mRestorePurchasessFinishedListener = null;
                 }
@@ -238,14 +239,14 @@ public abstract class IabHelper {
         flagEndAsync();
     }
 
-    protected void fetchSkusDetailsFailed() {
+    protected void fetchSkusDetailsFailed(final IabResult result) {
         if (mFetchSkusDetailsFinishedListener != null) {
             final Handler handler = new Handler(Looper.getMainLooper());
             handler.post(new Runnable() {
                 @Override
                 public void run() {
-                    IabResult result = new IabResult(IabResult.BILLING_RESPONSE_RESULT_ERROR,
-                            "Couldn't complete refresh operation.");
+//                    IabResult result = new IabResult(IabResult.BILLING_RESPONSE_RESULT_ERROR,
+//                            "Couldn't complete refresh operation.");
                     mFetchSkusDetailsFinishedListener.onFetchSkusDetailsFinished(result, null);
                     mFetchSkusDetailsFinishedListener = null;
                 }
@@ -361,6 +362,7 @@ public abstract class IabHelper {
 
     private static String TAG = "SOOMLA PurchaseObserver";
 
+
     // This tells us if we're on production or sandbox environment (for server validation)
     private boolean mRvsProductionMode = false;
     // Is setup done?
@@ -380,6 +382,7 @@ public abstract class IabHelper {
     // the purchase finishes.
     // We only keep one and not a list b/c the purchase operation can only run one-at-a-time
     private OnIabPurchaseFinishedListener mPurchaseListener;
+    protected String mLastOperationSKU;
     // The listener registered on restore purchases, which we have to call back when
     // the restore process finishes.
     private RestorePurchasessFinishedListener mRestorePurchasessFinishedListener;

@@ -34,13 +34,13 @@ public class StoreConfig {
      * The default is Google Play using https://github.com/soomla/android-store-google-play
      * If this value is left empty, you will not be able to release your game to the market.
      */
-    public static final IIabService InAppBillingService = null;
+//    public static final IIabService InAppBillingService = null;
 
     //CHANGE THIS SECRET!!!
     public static String SOOM_SEC = "SINC_SSEEKK";
 
     //Set to true if you want to print out debug messages
-    public static final boolean logDebug = false;
+    public static final boolean logDebug = true;
 
     // A friendlyRefunds tells android-store if to let your refunded users keep their VirtualItems
     // after a refund or not. (default: false)
@@ -76,14 +76,5 @@ public class StoreConfig {
     /** Shared Preferences **/
     public static final String PREFS_NAME      = "store.prefs";
     public static final String DB_INITIALIZED  = "db_initialized";
-    public static final String PUBLIC_KEY      = "PO#SU#SO#GU";
     public static final String CUSTOM_SEC      = "SU#LL#SE#RE";
-
-    /**
-     * When set to true, this removes the need to verify purchases when there's no signature.
-     * This is useful while you are in development and testing stages of your game.
-     *
-     * WARNING: Do NOT publish your app with this set to true!!!
-     */
-    public static boolean AllowAndroidTestPurchases = false;
 }

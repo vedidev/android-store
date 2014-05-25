@@ -95,7 +95,9 @@ public class AmazonIabHelper extends IabHelper {
                     break;
 
                 case FAILED: // Fail gracefully on failed responses.
-                    AmazonIabHelper.this.fetchSkusDetailsFailed();
+                    IabResult result = new IabResult(IabResult.BILLING_RESPONSE_RESULT_ERROR,
+                            "Couldn't complete refresh operation.");
+                    AmazonIabHelper.this.fetchSkusDetailsFailed(result);
 //                    Log.v(TAG, "ItemDataRequestStatus: FAILED");
                     break;
             }
@@ -123,10 +125,13 @@ public class AmazonIabHelper extends IabHelper {
                     purchaseFailed(result, null);
                     break;
                 case ALREADY_ENTITLED:
+
+                    purchase = new IabPurchase(ITEM_TYPE_INAPP, mLastOperationSKU, "", response.getRequestId(), 0);
+
                     msg = "The purchase has failed. Entitlement already entitled.";
                     StoreUtils.LogError(TAG, msg);
                     result = new IabResult(IabResult.BILLING_RESPONSE_RESULT_ITEM_ALREADY_OWNED, msg);
-                    purchaseFailed(result, null);
+                    purchaseFailed(result, purchase);
                     break;
                 default:
                     msg = "The purchase has failed. No message.";
@@ -142,7 +147,9 @@ public class AmazonIabHelper extends IabHelper {
         public void onPurchaseUpdatesResponse(final PurchaseUpdatesResponse response) {
             if (mCurrentUserID != null && !mCurrentUserID.equals(response.getUserId())) {
                 StoreUtils.LogError(TAG, "The updates is not for the current user id.");
-                AmazonIabHelper.this.restorePurchasesFailed();
+                IabResult result = new IabResult(IabResult.BILLING_RESPONSE_RESULT_ERROR,
+                            "Couldn't complete restore purchases operation.");
+                AmazonIabHelper.this.restorePurchasesFailed(result);
                 return;
             }
 
@@ -191,7 +198,9 @@ public class AmazonIabHelper extends IabHelper {
                         AmazonIabHelper.this.restorePurchasesSuccess(mInventory);
                         mInventory = null;
                     } else {
-                        AmazonIabHelper.this.restorePurchasesFailed();
+                        IabResult result = new IabResult(IabResult.BILLING_RESPONSE_RESULT_ERROR,
+                            "Couldn't complete restore purchases operation.");
+                        AmazonIabHelper.this.restorePurchasesFailed(result);
                     }
                     break;
             }

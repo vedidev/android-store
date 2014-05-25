@@ -16,13 +16,6 @@
 
 package com.soomla.store.billing;
 
-import android.app.Activity;
-import android.content.Intent;
-
-import com.soomla.store.StoreController;
-
-import org.apache.http.MethodNotSupportedException;
-
 import java.util.List;
 
 /**
@@ -60,30 +53,17 @@ public interface IIabService {
                              final IabCallbacks.OnConsumeListener consumeListener);
 
     /**
-     * Handles an activity result that's part of the purchase flow in in-app billing.
-     * This method MUST be called from the UI thread of the Activity.
-     *
-     * @param requestCode the requestCode
-     * @param resultCode the resultCode
-     * @param data the data (Intent)
-     * @return true if the result was related to a purchase flow and was handled, false otherwise.
-     */
-    public boolean handleActivityResult(int requestCode, int resultCode, Intent data);
-
-    /**
      * Initiates the UI flow for an in-app purchase.
      * Call this method to initiate an in-app purchase which will bring up the Market screen.
      * The calling activity will be paused while the user interacts with the Market.
      * This method MUST be called from the UI thread of the Activity.
      *
-     * @param act the calling activity.
      * @param sku the sku of the item to purchase.
      * @param purchaseListener the listener to notify when the purchase process finishes
      * @param extraData extra data (developer payload), which will be returned with the purchase
      *                  data when the purchase completes.
      */
-    public void launchPurchaseFlow(Activity act,
-                                   String sku,
+    public void launchPurchaseFlow(String sku,
                                    final IabCallbacks.OnPurchaseListener purchaseListener,
                                    String extraData);
 
