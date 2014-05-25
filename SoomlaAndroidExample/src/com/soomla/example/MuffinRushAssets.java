@@ -40,9 +40,7 @@ import java.util.List;
 public class MuffinRushAssets implements IStoreAssets {
 
     /**
-     * see parent
-     *
-     * @return see parent
+     * @{inheritDoc}
      */
     @Override
     public int getVersion() {
@@ -50,9 +48,7 @@ public class MuffinRushAssets implements IStoreAssets {
     }
 
     /**
-     * see parent
-     *
-     * @return see parent
+     * @{inheritDoc}
      */
     @Override
     public VirtualCurrency[] getCurrencies(){
@@ -62,9 +58,7 @@ public class MuffinRushAssets implements IStoreAssets {
     }
 
     /**
-     * see parent
-     *
-     * @return see parent
+     * @{inheritDoc}
      */
     @Override
     public VirtualGood[] getGoods(){
@@ -75,9 +69,7 @@ public class MuffinRushAssets implements IStoreAssets {
     }
 
     /**
-     * see parent
-     *
-     * @return see parent
+     * @{inheritDoc}
      */
     @Override
     public VirtualCurrencyPack[] getCurrencyPacks(){
@@ -87,9 +79,7 @@ public class MuffinRushAssets implements IStoreAssets {
     }
 
     /**
-     * see parent
-     *
-     * @return see parent
+     * @{inheritDoc}
      */
     @Override
     public VirtualCategory[] getCategories() {
@@ -99,9 +89,7 @@ public class MuffinRushAssets implements IStoreAssets {
     }
 
     /**
-     * see parent
-     *
-     * @return see parent
+     * @{inheritDoc}
      */
     @Override
     public NonConsumableItem[] getNonConsumableItems() {

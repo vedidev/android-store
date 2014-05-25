@@ -113,9 +113,7 @@ public class EquippableVG extends LifetimeVG{
     }
 
     /**
-     * see parent
-     *
-     * @return see parent
+     * @{inheritDoc}
      */
     @Override
     public JSONObject toJSONObject() {

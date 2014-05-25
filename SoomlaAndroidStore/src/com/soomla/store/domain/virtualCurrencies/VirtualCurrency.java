@@ -69,11 +69,7 @@ public class VirtualCurrency extends VirtualItem {
     }
 
     /**
-     * see parent
-     *
-     * @param amount the amount of the specific item to be given
-     * @param notify notify of change in user's balance of current virtual item
-     * @return see parent
+     * @{inheritDoc}
      */
     @Override
     public int give(int amount, boolean notify) {
@@ -81,11 +77,7 @@ public class VirtualCurrency extends VirtualItem {
     }
 
     /**
-     * see parent
-     *
-     * @param amount the amount of the specific item to be taken
-     * @param notify notify of change in user's balance of current virtual item
-     * @return see parent
+     * @{inheritDoc}
      */
     @Override
     public int take(int amount, boolean notify) {
@@ -93,11 +85,7 @@ public class VirtualCurrency extends VirtualItem {
     }
 
     /**
-     * see parent
-     *
-     * @param balance the balance of the current virtual item
-     * @param notify notify of change in user's balance of current virtual item
-     * @return see parent
+     * @{inheritDoc}
      */
     @Override
     public int resetBalance(int balance, boolean notify) {

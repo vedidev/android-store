@@ -160,9 +160,7 @@ public abstract class VirtualItem {
     }
 
     /**
-     * Returns the hashCode of <code>mItemId</code> if it exists
-     *
-     * @return the hashCode of <code>mItemId</code>
+     * @{inheritDoc}
      */
     @Override
     public int hashCode() {

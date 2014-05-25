@@ -96,9 +96,7 @@ public class UpgradeVG extends LifetimeVG {
     }
 
     /**
-     * see parent
-     *
-     * @return see parent
+     * @{inheritDoc}
      */
     @Override
     public JSONObject toJSONObject(){
@@ -216,6 +214,8 @@ public class UpgradeVG extends LifetimeVG {
      * This method enforces allowing/rejecting of upgrades here so users won't buy them when
      * they are not supposed to.
      * If you want to give your users free upgrades, use the <code>give</code> function.
+     *
+     * @return true if can buy, false otherwise
      */
     @Override
     protected boolean canBuy() {

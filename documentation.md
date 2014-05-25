@@ -128,13 +128,11 @@ public class SingleUseVG extends VirtualGood {
  - Include any important notes or warnings the user should know.
  - Insert a blank line between the description and the @tags (`@param`, `@return`, `@throws`, etc...).
  - Overriding Methods: 
-     - If the overriding method’s description is exactly the same as its parent method’s description, write: “see parent”. Otherwise, write a description.
+     - If the overriding method’s description is exactly the same as its parent method’s description use the `{@inheritDoc}` tag. Otherwise, write a description.
      - Insert @override after the end-delimiter of the comment, and right before the method code.
 ```     
    /**
-     * see parent
-     *
-     * @return see parent
+     * {@inheritDoc}
      */
     @Override
     public JSONObject toJSONObject() {

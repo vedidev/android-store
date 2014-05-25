@@ -64,9 +64,7 @@ public class SingleUseVG extends VirtualGood{
     }
 
     /**
-     * see parent
-     *
-     * @return see parent
+     * @{inheritDoc}
      */
     @Override
     public JSONObject toJSONObject() {
@@ -74,10 +72,7 @@ public class SingleUseVG extends VirtualGood{
     }
 
     /**
-     * see parent
-     *
-     * @param amount see parent
-     * @return see parent
+     * @{inheritDoc}
      */
     @Override
     public int give(int amount, boolean notify) {
@@ -85,10 +80,7 @@ public class SingleUseVG extends VirtualGood{
     }
 
     /**
-     * see parent
-     *
-     * @param amount see parent
-     * @return see parent
+     * @{inheritDoc}
      */
     @Override
     public int take(int amount, boolean notify) {

@@ -81,9 +81,7 @@ public abstract class PurchasableVirtualItem extends VirtualItem {
     }
 
     /**
-     * see parent
-     *
-     * @return see parent
+     * @{inheritDoc}
      */
     @Override
     public JSONObject toJSONObject(){
@@ -123,8 +121,8 @@ public abstract class PurchasableVirtualItem extends VirtualItem {
 
     /**
      * Buys the <code>PurchasableVirtualItem</code>, after checking if the user is in a state that
-     * allows him/her to buy. This action uses the associated <code>PurchaseType</code> to perform the
-     * purchase.
+     * allows him/her to buy. This action uses the associated <code>PurchaseType</code> to perform
+     * the purchase.
      *
      * @throws InsufficientFundsException if the user does not have enough funds for buying.
      */
