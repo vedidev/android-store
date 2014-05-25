@@ -71,7 +71,7 @@ Be careful with that. Don't leave the service running in the background without 
 
 You must select a billing service for android-store to work properly. The integration of a billing service is pretty easy:
 
-#### Google Play
+#### [Google Play](https://github.com/soomla/android-store-google-play)
 
 1. Add `AndroidStoreGooglePlay.jar` from the folder `billing-services/google-play` to your project.
 2. Make the following changes in AndroidManifest.xml:
@@ -115,7 +115,7 @@ When the store is closed, call:
       StoreController.getInstance().stopIabServiceInBg();
   ```
 
-#### Amazon
+#### [Amazon](https://github.com/soomla/android-store-amazon)
 
 1. Add `in-app-purchasing-1.0.3.jar` and `AndroidStoreAmazon.jar` from the folder `billing-services/amazon` to your project.
 
