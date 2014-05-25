@@ -1,3 +1,14 @@
+### v3.4.0 [view commit logs](https://github.com/soomla/android-store/compare/v3.3.3...v3.4.0)
+
+* Fixes
+  * Fixed an issue with crashes in some situations. Thanks @HolymarsHsieh
+
+* New Features
+  * Added and Fixed docs
+  * We now support multiple billing services. Officially: Google Play and Amazon.
+  * You can now restore purchases and refresh market items separately (and also query inventory which does both).
+  * Removed submodules and added billing services' jars to billing-services folder.
+
 ### v3.3.3 [view commit logs](https://github.com/soomla/android-store/compare/v3.3.2...v3.3.3)
 
 * Fixes
