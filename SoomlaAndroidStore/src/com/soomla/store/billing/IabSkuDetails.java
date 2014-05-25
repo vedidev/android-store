@@ -30,10 +30,6 @@ public class IabSkuDetails {
     private String mDescription;
     private String mJson;
 
-//    public IabSkuDetails(String jsonSkuDetails) throws JSONException {
-//        this(IabHelper.ITEM_TYPE_INAPP, jsonSkuDetails);
-//    }
-
     public IabSkuDetails(String itemType, String sku, String price, String title,
                          String description) {
         mItemType = itemType;
@@ -42,6 +38,7 @@ public class IabSkuDetails {
         mTitle = title;
         mDescription = description;
     }
+
     public IabSkuDetails(String itemType, String jsonSkuDetails) throws JSONException {
         mItemType = itemType;
         mJson = jsonSkuDetails;

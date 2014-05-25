@@ -54,7 +54,7 @@ import java.util.List;
 
 /**
  * This class holds the basic assets needed to operate the Store.
- * You can use it to purchase products from the mobile store.
+ * You can use it to perform any operation related to the mobile store.
  *
  * This is the only class you need to initialize in order to use the SOOMLA SDK.
  *
@@ -75,6 +75,8 @@ public class StoreController {
             handleErrorResult(err);
             return false;
         }
+
+        StoreUtils.LogDebug(TAG, "StoreController Initializing ...");
 
         if (mInAppBillingService == null) {
             StoreUtils.LogDebug(TAG, "Searching for the attached IAB Service.");
@@ -97,8 +99,6 @@ public class StoreController {
                 return false;
             }
         }
-
-        StoreUtils.LogDebug(TAG, "StoreController Initializing ...");
 
         SharedPreferences prefs = new ObscuredSharedPreferences(SoomlaApp.getAppContext().
                 getSharedPreferences(StoreConfig.PREFS_NAME, Context.MODE_PRIVATE));
@@ -129,27 +129,6 @@ public class StoreController {
         return true;
     }
 
-    private Class<?> tryFetchIabService() {
-        String iabServiceClassName;
-        try {
-            ApplicationInfo ai = SoomlaApp.getAppContext().getPackageManager().getApplicationInfo(SoomlaApp.getAppContext().getPackageName(), PackageManager.GET_META_DATA);
-            assert ai.metaData != null;
-            iabServiceClassName = ai.metaData.getString("billing.service");
-        } catch (Exception e) {
-            StoreUtils.LogError(TAG, "Failed to load billing service from AndroidManifest.xml, NullPointer: " + e.getMessage());
-            return null;
-        }
-
-        Class<?> aClass = null;
-        try {
-            StoreUtils.LogDebug(TAG, "Trying to find " + iabServiceClassName);
-            aClass = Class.forName("com.soomla.store.billing." + iabServiceClassName);
-        } catch (ClassNotFoundException e) {
-            StoreUtils.LogDebug(TAG, "Failed finding " + iabServiceClassName);
-        }
-        return aClass;
-    }
-
     /**
      * Starts in-app billing service in background.
      */
@@ -177,6 +156,8 @@ public class StoreController {
 
     /**
      * Stops in-app billing service in background.
+     *
+     * IMPORTANT: This function is not supported in all billing providers (Amazon for example).
      */
     public void stopIabServiceInBg() {
         mInAppBillingService.stopIabServiceInBg(new IabCallbacks.IabInitListener() {
@@ -425,18 +406,29 @@ public class StoreController {
     }
 
 
+    /**
+     * Fetches the current billing service.
+     *
+     * @return the current billing service.
+     */
+    public IIabService getInAppBillingService() {
+        return mInAppBillingService;
+    }
 
     /*==================== Common callbacks for success \ failure \ finish ====================*/
 
+    /**
+     * Notifies the user that the billing service is supported and started.
+     */
     private void notifyIabServiceStarted() {
         BusProvider.getInstance().post(new BillingSupportedEvent());
         BusProvider.getInstance().post(new IabServiceStartedEvent());
     }
 
     /**
-     * Reports that in-app billing service initialization failed
+     * Reports that in-app billing service initialization failed.
      *
-     * @param message error message
+     * @param message error message.
      */
     private void reportIabInitFailure(String message) {
         String msg = "There's no connectivity with the billing service. error: " + message;
@@ -451,7 +443,7 @@ public class StoreController {
      * Checks the state of the purchase and responds accordingly, giving the user an item,
      * throwing an error, or taking the item away and paying the user back.
      *
-     * @param purchase purchase whose state is to be checked
+     * @param purchase purchase whose state is to be checked.
      */
     private void handleSuccessfulPurchase(IabPurchase purchase) {
         String sku = purchase.getSku();
@@ -511,7 +503,7 @@ public class StoreController {
      * <code>PurchasableVirtualItem</code> corresponding to the given purchase, or an unexpected
      * error event if the item was not found.
      *
-     * @param purchase cancelled purchase to handle
+     * @param purchase cancelled purchase to handle.
      */
     private void handleCancelledPurchase(IabPurchase purchase) {
         String sku = purchase.getSku();
@@ -550,19 +542,41 @@ public class StoreController {
         }
     }
 
+    /**
+     * Fetches the associated billing service according to the meta-data tag in AndroidManifest.xml.
+     *
+     * @return the Main class of the associated billing service or null if none was found.
+     */
+    private Class<?> tryFetchIabService() {
+        String iabServiceClassName;
+        try {
+            ApplicationInfo ai = SoomlaApp.getAppContext().getPackageManager().getApplicationInfo(
+                    SoomlaApp.getAppContext().getPackageName(), PackageManager.GET_META_DATA);
+            assert ai.metaData != null;
+            iabServiceClassName = ai.metaData.getString("billing.service");
+        } catch (Exception e) {
+            StoreUtils.LogError(TAG, "Failed to load billing service from AndroidManifest.xml, NullPointer: " + e.getMessage());
+            return null;
+        }
+
+        Class<?> aClass = null;
+        try {
+            StoreUtils.LogDebug(TAG, "Trying to find " + iabServiceClassName);
+            aClass = Class.forName("com.soomla.store.billing." + iabServiceClassName);
+        } catch (ClassNotFoundException e) {
+            StoreUtils.LogDebug(TAG, "Failed finding " + iabServiceClassName);
+        }
+        return aClass;
+    }
 
     /**
      * Posts an unexpected error event saying the purchase failed.
      *
-     * @param message error message
+     * @param message error message.
      */
     private void handleErrorResult(String message) {
         BusProvider.getInstance().post(new UnexpectedStoreErrorEvent(message));
         StoreUtils.LogError(TAG, "ERROR: IabPurchase failed: " + message);
-    }
-
-    public IIabService getInAppBillingService() {
-        return mInAppBillingService;
     }
 
     /* Singleton */
@@ -590,9 +604,7 @@ public class StoreController {
     /* Private Members */
 
     private static final String TAG = "SOOMLA StoreController"; //used for Log messages
-
     private boolean mInitialized = false;
-
     private IIabService mInAppBillingService;
 
 }

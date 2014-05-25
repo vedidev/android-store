@@ -9,8 +9,19 @@ import com.soomla.store.StoreUtils;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * This abstract class should be implemented by any billing service plugin to android-store.
+ *
+ * This class is the main class used by the implementations of the IIabService implementations.
+ *
+ */
 public abstract class IabHelper {
 
+    /**
+     * Determines if the setup process has already been called and completed.
+     *
+     * @return the status of the setup process of the service.
+     */
     public boolean isSetupDone() {
         return mSetupDone;
     }
@@ -73,6 +84,13 @@ public abstract class IabHelper {
         launchPurchaseFlowInner(act, sku, extraData);
     }
 
+    /**
+     * Initiates the restore purchases process. All purchases that weren't consumed will be fetched
+     * and returned to the user.
+     * This method is asynchronous and will invoke the listener when the process is finished.
+     *
+     * @param listener The listener to notify when the restore purchases process finishes
+     */
     public void restorePurchasesAsync(RestorePurchasessFinishedListener listener) {
         checkSetupDoneAndThrow("restorePurchases");
         flagStartAsync("restore purchases");
@@ -81,6 +99,13 @@ public abstract class IabHelper {
         restorePurchasesAsyncInner();
     }
 
+    /**
+     * Initiates the fetching of items details. This will fetch the price, title, description or
+     * any other information associated with your items in the market.
+     * This method is asynchronous and will invoke the listener when the process is finished.
+     *
+     * @param listener The listener to notify when the fetching of items details finishes
+     */
     public void fetchSkusDetailsAsync(List<String> skus, final FetchSkusDetailsFinishedListener listener) {
         checkSetupDoneAndThrow("fetchSkusDetails");
         flagStartAsync("fetch skus details");
@@ -89,7 +114,11 @@ public abstract class IabHelper {
         fetchSkusDetailsAsyncInner(skus);
     }
 
-
+    /**
+     * Determines if an asynchronous process is in progress.
+     *
+     * @return true if an asynchronous process is in progress.
+     */
     public boolean isAsyncInProgress() {
         return mAsyncInProgress;
     }
@@ -157,7 +186,7 @@ public abstract class IabHelper {
 
     // Item types
     public static final String ITEM_TYPE_INAPP = "inapp";
-//    public static final String ITEM_TYPE_SUBS = "subs"; // Not supported
+//    public static final String ITEM_TYPE_SUBS = "subs"; // Subscriptions are not supported
 
 
 
@@ -183,6 +212,9 @@ public abstract class IabHelper {
      */
     protected abstract void fetchSkusDetailsAsyncInner(final List<String> skus);
 
+    /**
+     * This will be called when the helper is disposed.
+     */
     protected void dispose() {
         mSetupDone = false;
         mSetupFinishedListeners = null;
@@ -191,6 +223,12 @@ public abstract class IabHelper {
 
     /** restore transactions and refresh market items handlers **/
 
+    /**
+     * This is a utility function for the classes that inherits IabHelper to call when a restore
+     * purchases process succeeds.
+     *
+     * @param inventory the inventory that was just restored.
+     */
     protected void restorePurchasesSuccess(final IabInventory inventory) {
         if (mRestorePurchasessFinishedListener != null) {
             final Handler handler = new Handler(Looper.getMainLooper());
@@ -207,14 +245,18 @@ public abstract class IabHelper {
         flagEndAsync();
     }
 
+    /**
+     * This is a utility function for the classes that inherits IabHelper to call when a restore
+     * purchases process fails.
+     *
+     * @param result the result containing the cause of the failure.
+     */
     protected void restorePurchasesFailed(final IabResult result) {
         if (mRestorePurchasessFinishedListener != null) {
             final Handler handler = new Handler(Looper.getMainLooper());
             handler.post(new Runnable() {
                 @Override
                 public void run() {
-//                    IabResult result = new IabResult(IabResult.BILLING_RESPONSE_RESULT_ERROR,
-//                            "Couldn't complete restore purchases operation.");
                     mRestorePurchasessFinishedListener.onRestorePurchasessFinished(result, null);
                     mRestorePurchasessFinishedListener = null;
                 }
@@ -223,6 +265,12 @@ public abstract class IabHelper {
         flagEndAsync();
     }
 
+    /**
+     * This is a utility function for the classes that inherits IabHelper to call when a fetching
+     * of items details succeeds.
+     *
+     * @param inventory the inventory that was just fetched.
+     */
     protected void fetchSkusDetailsSuccess(final IabInventory inventory) {
         if (mFetchSkusDetailsFinishedListener != null) {
             final Handler handler = new Handler(Looper.getMainLooper());
@@ -239,14 +287,18 @@ public abstract class IabHelper {
         flagEndAsync();
     }
 
+    /**
+     * This is a utility function for the classes that inherits IabHelper to call when the fetching
+     * process fails.
+     *
+     * @param result the result containing the cause of the failure.
+     */
     protected void fetchSkusDetailsFailed(final IabResult result) {
         if (mFetchSkusDetailsFinishedListener != null) {
             final Handler handler = new Handler(Looper.getMainLooper());
             handler.post(new Runnable() {
                 @Override
                 public void run() {
-//                    IabResult result = new IabResult(IabResult.BILLING_RESPONSE_RESULT_ERROR,
-//                            "Couldn't complete refresh operation.");
                     mFetchSkusDetailsFinishedListener.onFetchSkusDetailsFinished(result, null);
                     mFetchSkusDetailsFinishedListener = null;
                 }
@@ -257,6 +309,13 @@ public abstract class IabHelper {
 
     /** purchase flow handlers **/
 
+    /**
+     * This is a utility function for the classes that inherits IabHelper to call when the purchase
+     * process fails.
+     *
+     * @param result the result containing the cause of the failure.
+     * @param purchase the purchase that just failed.
+     */
     protected void purchaseFailed(final IabResult result, final IabPurchase purchase) {
         final Handler handler = new Handler(Looper.getMainLooper());
         if (mPurchaseListener != null) {
@@ -273,6 +332,12 @@ public abstract class IabHelper {
         flagEndAsync();
     }
 
+    /**
+     * This is a utility function for the classes that inherits IabHelper to call when a purchase
+     * process succeeds.
+     *
+     * @param purchase the purchase that just succeeded.
+     */
     protected void purchaseSucceeded(final IabPurchase purchase) {
         if (mPurchaseListener != null) {
             final Handler handler = new Handler(Looper.getMainLooper());
@@ -287,13 +352,19 @@ public abstract class IabHelper {
                 }
             });
         }
+
         // make sure to end the async operation...
         flagEndAsync();
     }
 
 
+
     /** setup related checkers and handlers **/
 
+    /**
+     * This is a utility function for the classes that inherits IabHelper to call when a setup
+     * process succeeds.
+     */
     protected void setupSuccess() {
         mSetupDone = true;
         if (mSetupFinishedListeners != null) {
@@ -310,6 +381,13 @@ public abstract class IabHelper {
             }
         }
     }
+
+    /**
+     * This is a utility function for the classes that inherits IabHelper to call when the setup
+     * process fails.
+     *
+     * @param result the result containing the cause of the failure.
+     */
     protected void setupFailed(final IabResult result) {
         mSetupDone = false;
         if (mSetupFinishedListeners != null) {
@@ -327,7 +405,11 @@ public abstract class IabHelper {
         }
     }
 
-    // Checks that setup was done; if not, throws an exception.
+    /**
+     * Checks that setup was done; if not, throws an exception.
+     *
+     * @param operation is the operation that was just trying to be made.
+     */
     protected void checkSetupDoneAndThrow(String operation) {
         if (!isSetupDone()) {
             StoreUtils.LogError(TAG, "Illegal state for operation (" + operation + "): IAB helper is not set up.");
@@ -339,6 +421,11 @@ public abstract class IabHelper {
 
     /** Async related functions **/
 
+    /**
+     * Sets necessary params when an async process starts.
+     *
+     * @param operation the async process's name.
+     */
     protected synchronized void flagStartAsync(String operation) {
         if (mAsyncInProgress) throw new IllegalStateException("Can't start async operation (" +
                 operation + ") because another async operation(" + mAsyncOperation + ") is in progress.");
@@ -347,16 +434,29 @@ public abstract class IabHelper {
         StoreUtils.LogDebug(TAG, "Starting async operation: " + operation);
     }
 
+    /**
+     * Sets necessary params when an async process ends.
+     */
     protected synchronized void flagEndAsync() {
         StoreUtils.LogDebug(TAG, "Ending async operation: " + mAsyncOperation);
         mAsyncOperation = "";
         mAsyncInProgress = false;
     }
 
-
+    /**
+     * Sets the the mode of the current environment (mainly for Amazon's server side verification
+     * but has been put here for future use).
+     *
+     * @param rvsProductionMode the mode of the current environment. If production then the value
+     *                          will be "true".
+     */
     protected void setRvsProductionMode(boolean rvsProductionMode) {
         mRvsProductionMode = rvsProductionMode;
     }
+
+    /** Protected Members **/
+    protected String mLastOperationSKU;
+
 
     /** Private Members **/
 
@@ -382,7 +482,6 @@ public abstract class IabHelper {
     // the purchase finishes.
     // We only keep one and not a list b/c the purchase operation can only run one-at-a-time
     private OnIabPurchaseFinishedListener mPurchaseListener;
-    protected String mLastOperationSKU;
     // The listener registered on restore purchases, which we have to call back when
     // the restore process finishes.
     private RestorePurchasessFinishedListener mRestorePurchasessFinishedListener;

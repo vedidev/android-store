@@ -22,7 +22,7 @@ import java.util.Map;
 
 /**
  * Represents a block of information about in-app items.
- * An IabInventory is returned by such methods as {@link IabHelper#queryInventory}.
+ * An IabInventory is returned by such methods as {@link IabHelper#restorePurchasesAsync}.
  */
 public class IabInventory {
     private Map<String,IabSkuDetails> mSkuMap = new HashMap<String,IabSkuDetails>();
