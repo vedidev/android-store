@@ -62,9 +62,7 @@ public class NonConsumableItem extends PurchasableVirtualItem {
     }
 
     /**
-     * see parent
-     *
-     * @return see parent
+     * @{inheritDoc}
      */
     @Override
     public JSONObject toJSONObject(){
@@ -72,10 +70,7 @@ public class NonConsumableItem extends PurchasableVirtualItem {
     }
 
     /**
-     * see parent
-     *
-     * @param amount see parent
-     * @return see parent
+     * @{inheritDoc}
      */
     @Override
     public int give(int amount, boolean notify) {
@@ -83,10 +78,7 @@ public class NonConsumableItem extends PurchasableVirtualItem {
     }
 
     /**
-     * see parent
-     *
-     * @param amount see parent
-     * @return see parent
+     * @{inheritDoc}
      */
     @Override
     public int take(int amount, boolean notify) {
@@ -111,10 +103,7 @@ public class NonConsumableItem extends PurchasableVirtualItem {
     }
 
     /**
-     * see parent
-     *
-     * @param balance see parent
-     * @return balance after the resetting process, can be either 0 or 1
+     * @{inheritDoc}
      */
     @Override
     public int resetBalance(int balance, boolean notify) {

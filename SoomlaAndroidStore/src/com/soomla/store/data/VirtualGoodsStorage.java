@@ -201,10 +201,7 @@ public class VirtualGoodsStorage extends VirtualItemStorage{
     }
 
     /**
-     * see parent
-     *
-     * @param itemId id of the virtual item whose balance is to be retrieved
-     * @return see parent
+     * @{inheritDoc}
      */
     @Override
     protected String keyBalance(String itemId) {
@@ -212,11 +209,7 @@ public class VirtualGoodsStorage extends VirtualItemStorage{
     }
 
     /**
-     * see parent
-     *
-     * @param item virtual item whose balance has changed
-     * @param balance the balance that has changed
-     * @param amountAdded the amount added to the item's balance
+     * @{inheritDoc}
      */
     @Override
     protected void postBalanceChangeEvent(VirtualItem item, int balance, int amountAdded) {

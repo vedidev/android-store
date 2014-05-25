@@ -58,9 +58,7 @@ public abstract class VirtualGood extends PurchasableVirtualItem {
     }
 
     /**
-     * see parent
-     *
-     * @return see parent
+     * @{inheritDoc}
      */
     @Override
     public JSONObject toJSONObject(){
@@ -68,11 +66,7 @@ public abstract class VirtualGood extends PurchasableVirtualItem {
     }
 
     /**
-     * see parent
-     *
-     * @param balance see parent
-     * @param notify see parent
-     * @return see parent
+     * @{inheritDoc}
      */
     @Override
     public int resetBalance(int balance, boolean notify) {

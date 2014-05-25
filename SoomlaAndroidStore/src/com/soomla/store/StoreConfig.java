@@ -77,4 +77,5 @@ public class StoreConfig {
     public static final String PREFS_NAME      = "store.prefs";
     public static final String DB_INITIALIZED  = "db_initialized";
     public static final String CUSTOM_SEC      = "SU#LL#SE#RE";
+
 }

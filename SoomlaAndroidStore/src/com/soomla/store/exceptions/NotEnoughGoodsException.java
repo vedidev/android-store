@@ -25,7 +25,7 @@ package com.soomla.store.exceptions;
  *  You'll probably call <code>equipVirtualGood("robot_character")</code>.
  *  <code>NotEnoughGoodException</code> will be thrown with "robot_character" as the itemId.
  *  You can catch this exception in order to notify the user that he/she doesn't
- *  own a robot_character (so he cannot equip it!).
+ *  own a robot_character (so he/she cannot equip it!).
  */
 public class NotEnoughGoodsException extends Exception{
 
