@@ -8,7 +8,7 @@ Haven't you ever wanted an in-app purchase one liner that looks like this!?
 
 ## android-store
 
-**May 25th, 2014**: Amazon billing service is now our second billing service implementation. See [Billing Services](https://github.com/soomla/android-store#whats-next-selecting-a-billing-service) for details.
+**May 25th, 2014**: Amazon billing service is now our second billing service implementation. See [Billing Services](#whats-next-selecting-a-billing-service) for details.
 
 **April 1st, 2014**: We've added the option to refresh market items details from the IAB Service (default is Google Play). You can call 'refreshInventory(true)' from StoreController when you want and all your PurchasableItems that has a PurchaseType of PurchaseWithMarket will update the values of: MarketPrice, MarketTitle, MarketDescription. android-store automatically running the operation when you initialize StoreController.
 
@@ -61,20 +61,20 @@ And that's it ! You have storage and in-app purchasing capabilities... ALL-IN-ON
 
 ## What's next? Selecting a Billing Service
 
-android-store can be used on all android based devices meaning that you might want to use IAP with different billing services.
+android-store can be used on all Android based devices meaning that you might want to use IAP with different billing services.
 
-We created 2 Billing Services for you: Google Play and Amazon. (According to your demand)
+We've created two billing services for you: Google Play and Amazon (according to your demand).
 
-The billing service is automatically started and stopped for every operation you're running on StoreContoroller (buyWithMarket, restoreTransactions ...).
+The billing service is automatically started and stopped for every operation you're running on `StoreContoroller` (`buyWithMarket`, `restoreTransactions` ...).
 
 Be careful with that. Don't leave the service running in the background without closing it.
 
-You must select a billing service for android-store to work properly. The integration of a billing service is pretty easy:
+You must select a billing service for android-store to work properly. The integration of a billing service is very easy:
 
 #### [Google Play](https://github.com/soomla/android-store-google-play)
 
 1. Add `AndroidStoreGooglePlay.jar` from the folder `billing-services/google-play` to your project.
-2. Make the following changes in AndroidManifest.xml:
+2. Make the following changes in `AndroidManifest.xml`:
 
 Add the following permission (for Google Play):
 
@@ -82,7 +82,7 @@ Add the following permission (for Google Play):
       <uses-permission android:name="com.android.vending.BILLING" />
   ```
 
-Add the IabActivity to your `application` element, the plugin will spawn a transparent activity to make purchases. Also, you need to tell us what plugin you're using so add a meta-data tag for that:
+Add the `IabActivity` to your `application` element, the plugin will spawn a transparent activity to make purchases. Also, you need to tell us what plugin you're using so add a meta-data tag for that:
 
   ```xml
       <activity android:name="com.soomla.store.billing.google.GooglePlayIabService$IabActivity"
@@ -90,7 +90,7 @@ Add the IabActivity to your `application` element, the plugin will spawn a trans
       <meta-data android:name="billing.service" android:value="google.GooglePlayIabService" />
   ```
 
-3. After you initialize StoreController, let the plugin know your public key from the dev console:
+3. After you initialize `StoreController`, let the plugin know your public key from the dev console:
 
   ```Java
       GooglePlayIabService.getInstance().setPublicKey("[YOUR PUBLIC KEY FROM THE MARKET]");
@@ -119,9 +119,9 @@ When the store is closed, call:
 
 1. Add `in-app-purchasing-1.0.3.jar` and `AndroidStoreAmazon.jar` from the folder `billing-services/amazon` to your project.
 
-2. Make the following changes in AndroidManifest.xml:
+2. Make the following changes in `AndroidManifest.xml`:
 
-Add amazon's ResponseReceiver to your `application` element. Also, you need to tell us what plugin you're using so add a meta-data tag for that:
+Add Amazon's `ResponseReceiver` to your `application` element. Also, you need to tell us what plugin you're using so add a meta-data tag for that:
 
   ```xml
         <receiver android:name = "com.amazon.inapp.purchasing.ResponseReceiver" >
