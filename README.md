@@ -76,13 +76,13 @@ You must select a billing service for android-store to work properly. The integr
 1. Add `AndroidStoreGooglePlay.jar` from the folder `billing-services/google-play` to your project.
 2. Make the following changes in `AndroidManifest.xml`:
 
-Add the following permission (for Google Play):
+  Add the following permission (for Google Play):
 
   ```xml
       <uses-permission android:name="com.android.vending.BILLING" />
   ```
 
-Add the `IabActivity` to your `application` element, the plugin will spawn a transparent activity to make purchases. Also, you need to tell us what plugin you're using so add a meta-data tag for that:
+  Add the `IabActivity` to your `application` element, the plugin will spawn a transparent activity to make purchases. Also, you need to tell us what plugin you're using so add a meta-data tag for that:
 
   ```xml
       <activity android:name="com.soomla.store.billing.google.GooglePlayIabService$IabActivity"
@@ -121,7 +121,7 @@ When the store is closed, call:
 
 2. Make the following changes in `AndroidManifest.xml`:
 
-Add Amazon's `ResponseReceiver` to your `application` element. Also, you need to tell us what plugin you're using so add a meta-data tag for that:
+  Add Amazon's `ResponseReceiver` to your `application` element. Also, you need to tell us what plugin you're using so add a meta-data tag for that:
 
   ```xml
         <receiver android:name = "com.amazon.inapp.purchasing.ResponseReceiver" >
