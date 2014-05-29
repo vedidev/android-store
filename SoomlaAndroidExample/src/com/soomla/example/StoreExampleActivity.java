@@ -33,6 +33,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.soomla.profile.SoomlaProfile;
 import com.soomla.store.*;
 import com.soomla.store.billing.google.GooglePlayIabService;
 import com.soomla.store.data.ObscuredSharedPreferences;
@@ -97,6 +98,8 @@ public class StoreExampleActivity extends Activity {
         StoreController.getInstance().initialize(storeAssets, "[CUSTOM SECRET HERE]");
         GooglePlayIabService.getInstance().setPublicKey("[YOUR PUBLIC KEY FROM THE MARKET]");
         GooglePlayIabService.AllowAndroidTestPurchases = true;
+
+        SoomlaProfile.getInstance().initialize();
 
 
         //FOR TESTING PURPOSES ONLY: Check if it's a first run, if so add 10000 currencies.

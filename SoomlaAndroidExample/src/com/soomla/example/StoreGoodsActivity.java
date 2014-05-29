@@ -26,6 +26,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -54,7 +55,7 @@ public class StoreGoodsActivity extends Activity {
      * This function is called when the button "Wants to buy more muffins" is clicked.
      *
      * @param v View
-     * @throws IOException
+     * @throws java.io.IOException
      */
     public void wantsToBuyPacks(View v) throws IOException {
         Intent intent = new Intent(getApplicationContext(), StorePacksActivity.class);
@@ -67,10 +68,20 @@ public class StoreGoodsActivity extends Activity {
      * description, price, product id, etc...  Upon failure, returns error message.
      *
      * @param v View
-     * @throws IOException
+     * @throws java.io.IOException
      */
     public void restoreTransactions(View v) throws IOException{
         StoreController.getInstance().restoreTransactions();
+    }
+
+    /**
+     * Starts ExampleSocialActivity
+     * called when "buy with Facebook" is clicked.
+     * @param view
+     */
+    public void fbPurchases(View view) {
+        final Intent intent = new Intent(getApplicationContext(), ExampleSocialActivity.class);
+        startActivity(intent);
     }
 
     /**
@@ -142,6 +153,7 @@ public class StoreGoodsActivity extends Activity {
                 will be thrown.
                 */
                 VirtualGood good = StoreInfo.getGoods().get(i);
+
                 try {
                     good.buy();
                 } catch (InsufficientFundsException e) {
@@ -174,6 +186,9 @@ public class StoreGoodsActivity extends Activity {
         TextView muffinsBalance = (TextView)findViewById(R.id.balance);
         muffinsBalance.setText("" + StorageManager.getVirtualCurrencyStorage().
                 getBalance(StoreInfo.getCurrencies().get(0)));
+        if(mStoreAdapter != null) {
+            mStoreAdapter.notifyDataSetChanged();
+        }
     }
 
     /**
@@ -201,8 +216,8 @@ public class StoreGoodsActivity extends Activity {
      *
      * @return hashmap of dessert images needed in Muffin Rush
      */
-    private HashMap<String, Object> generateImagesHash() {
-        final HashMap<String, Object> images = new HashMap<String, Object>();
+    private HashMap<String, Integer> generateImagesHash() {
+        final HashMap<String, Integer> images = new HashMap<String, Integer>();
         images.put(MuffinRushAssets.CHOCLATECAKE_ITEM_ID, R.drawable.chocolate_cake);
         images.put(MuffinRushAssets.CREAMCUP_ITEM_ID, R.drawable.cream_cup);
         images.put(MuffinRushAssets.MUFFINCAKE_ITEM_ID, R.drawable.fruit_cake);
@@ -237,8 +252,9 @@ public class StoreGoodsActivity extends Activity {
             TextView content = (TextView)vi.findViewById(R.id.content);
             ImageView thumb_image=(ImageView)vi.findViewById(R.id.list_image);
             TextView info = (TextView)vi.findViewById(R.id.item_info);
+            Button btnBuyFB = (Button)vi.findViewById(R.id.btnFB);
 
-            VirtualGood good = StoreInfo.getGoods().get(position);//VirtualGood) data.get(position).get(StoreGoodsActivity.KEY_GOOD);
+            final VirtualGood good = StoreInfo.getGoods().get(position);//VirtualGood) data.get(position).get(StoreGoodsActivity.KEY_GOOD);
 
             // Setting all values in listview
             vi.setTag(good.getItemId());
@@ -249,6 +265,20 @@ public class StoreGoodsActivity extends Activity {
             info.setText("price: " + pwvi.getAmount() +
                     " balance: " + StorageManager.getVirtualGoodsStorage().getBalance(good));
 
+            btnBuyFB.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    // try buy with FB example if clicked on that button
+                    final Intent intent = new Intent(getApplicationContext(), ExampleSocialActivity.class);
+                    intent.putExtra("id", good.getItemId());
+                    intent.putExtra("name", good.getName());
+                    intent.putExtra("iconResId", mImages.get(good.getItemId()));
+                    intent.putExtra("amount", 1);
+                    startActivity(intent);
+                }
+            });
+
+
             return vi;
         }
     }
@@ -258,6 +288,6 @@ public class StoreGoodsActivity extends Activity {
 
     private StoreAdapter mStoreAdapter;
 
-    private HashMap<String, Object> mImages;
+    private HashMap<String, Integer> mImages; // item id to (android) drawable res id
 
 }

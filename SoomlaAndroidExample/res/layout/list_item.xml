@@ -73,4 +73,18 @@
             android:textColor="#10bcc9"
             android:textStyle="bold"/>
 
+    <Button
+        android:id="@+id/btnFB"
+        android:layout_width="wrap_content"
+        android:layout_height="20dp"
+        android:layout_alignParentBottom="true"
+        android:layout_toRightOf="@+id/thumbnail"
+        android:background="@drawable/fb"
+        android:text="Buy with FB"
+        android:textColor="@android:color/primary_text_dark"
+        android:textSize="8dp"
+        android:gravity="center"
+        android:clickable="true"
+        />
+
 </RelativeLayout>
