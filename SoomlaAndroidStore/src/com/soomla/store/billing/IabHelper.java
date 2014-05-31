@@ -247,6 +247,10 @@ public abstract class IabHelper {
      * @param inventory the inventory that was just restored.
      */
     protected void restorePurchasesSuccess(final IabInventory inventory) {
+
+        // make sure to end the async operation...
+        flagEndAsync();
+
         if (mRestorePurchasessFinishedListener != null) {
             final Handler handler = new Handler(Looper.getMainLooper());
             handler.post(new Runnable() {
@@ -258,8 +262,6 @@ public abstract class IabHelper {
                 }
             });
         }
-        // make sure to end the async operation...
-        flagEndAsync();
     }
 
     /**
@@ -269,6 +271,9 @@ public abstract class IabHelper {
      * @param result the result containing the cause of the failure.
      */
     protected void restorePurchasesFailed(final IabResult result) {
+
+        flagEndAsync();
+
         if (mRestorePurchasessFinishedListener != null) {
             final Handler handler = new Handler(Looper.getMainLooper());
             handler.post(new Runnable() {
@@ -279,7 +284,6 @@ public abstract class IabHelper {
                 }
             });
         }
-        flagEndAsync();
     }
 
     /**
@@ -289,6 +293,10 @@ public abstract class IabHelper {
      * @param inventory the inventory that was just fetched.
      */
     protected void fetchSkusDetailsSuccess(final IabInventory inventory) {
+
+        // make sure to end the async operation...
+        flagEndAsync();
+
         if (mFetchSkusDetailsFinishedListener != null) {
             final Handler handler = new Handler(Looper.getMainLooper());
             handler.post(new Runnable() {
@@ -300,8 +308,7 @@ public abstract class IabHelper {
                 }
             });
         }
-        // make sure to end the async operation...
-        flagEndAsync();
+
     }
 
     /**
@@ -311,6 +318,9 @@ public abstract class IabHelper {
      * @param result the result containing the cause of the failure.
      */
     protected void fetchSkusDetailsFailed(final IabResult result) {
+
+        flagEndAsync();
+
         if (mFetchSkusDetailsFinishedListener != null) {
             final Handler handler = new Handler(Looper.getMainLooper());
             handler.post(new Runnable() {
@@ -321,7 +331,6 @@ public abstract class IabHelper {
                 }
             });
         }
-        flagEndAsync();
     }
 
     /** purchase flow handlers **/
@@ -334,6 +343,10 @@ public abstract class IabHelper {
      * @param purchase the purchase that just failed.
      */
     protected void purchaseFailed(final IabResult result, final IabPurchase purchase) {
+
+        // make sure to end the async operation...
+        flagEndAsync();
+
         final Handler handler = new Handler(Looper.getMainLooper());
         if (mPurchaseListener != null) {
             handler.post(new Runnable() {
@@ -345,8 +358,7 @@ public abstract class IabHelper {
                 }
             });
         }
-        // make sure to end the async operation...
-        flagEndAsync();
+
     }
 
     /**
@@ -356,6 +368,10 @@ public abstract class IabHelper {
      * @param purchase the purchase that just succeeded.
      */
     protected void purchaseSucceeded(final IabPurchase purchase) {
+
+        // make sure to end the async operation...
+        flagEndAsync();
+
         if (mPurchaseListener != null) {
             final Handler handler = new Handler(Looper.getMainLooper());
             handler.post(new Runnable() {
@@ -369,9 +385,6 @@ public abstract class IabHelper {
                 }
             });
         }
-
-        // make sure to end the async operation...
-        flagEndAsync();
     }
 
 
