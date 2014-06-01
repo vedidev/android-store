@@ -12,6 +12,7 @@
     <string name="draw_selector_on_top">Draw on top</string>
     <string name="use_selector_as_background">Use as bg</string>
     <string name="item_desc">choclate cake</string>
+    <string name="app_id">409611972431183</string>
 
     <color name="white">#FFFFFF</color>
     <color name="blue">#0000FF</color>
