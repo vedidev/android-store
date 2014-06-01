@@ -9,6 +9,9 @@
   </component>
   <component name="NewModuleRootManager" inherit-compiler-output="true">
     <exclude-output />
+    <content url="file://$MODULE_DIR$/../../../progs/socialauth-android/socialauth-android/src">
+      <sourceFolder url="file://$MODULE_DIR$/../../../progs/socialauth-android/socialauth-android/src" isTestSource="false" />
+    </content>
     <content url="file://$MODULE_DIR$/../../android-blueprint/SoomlaAndroidBlueprint/src">
       <sourceFolder url="file://$MODULE_DIR$/../../android-blueprint/SoomlaAndroidBlueprint/src" isTestSource="false" />
     </content>
@@ -37,15 +40,6 @@
       <library>
         <CLASSES>
           <root url="jar://$MODULE_DIR$/../billing-services/google-play/AndroidStoreGooglePlay.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-      </library>
-    </orderEntry>
-    <orderEntry type="module-library">
-      <library>
-        <CLASSES>
-          <root url="jar://$MODULE_DIR$/libs/socialauth-android-3.2.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />

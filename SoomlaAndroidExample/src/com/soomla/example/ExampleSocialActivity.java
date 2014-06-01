@@ -37,9 +37,8 @@ import android.widget.Toast;
 
 import com.soomla.blueprint.rewards.Reward;
 import com.soomla.blueprint.rewards.VirtualItemReward;
-import com.soomla.profile.IContextProvider;
+import com.soomla.profile.IProvider;
 import com.soomla.profile.SoomlaProfile;
-import com.soomla.profile.events.UserProfileUpdatedEvent;
 import com.soomla.profile.events.auth.LoginFinishedEvent;
 import com.soomla.profile.exceptions.ProviderNotFoundException;
 import com.soomla.store.BusProvider;
@@ -78,17 +77,24 @@ public class ExampleSocialActivity extends Activity {
 
     private ProgressDialog mProgressDialog;
 
-    private String mItemId = "no_ads";
-    private String mItemName = "No Ads";
-    private int mItemAmount = 1;
+    private String mItemId = "cream_cup";
+    private String mItemName = "Cup Cup";
+    private int mItemAmount = 15;
     private int mItemResId = R.drawable.ic_launcher;
 
-    private String mProvider = "SocialAuth.facebook";
+    private IProvider.Provider mProvider = IProvider.Provider.FACEBOOK;
+
+    Reward gameReward = new VirtualItemReward("blabla", "Update Status for VG", mItemAmount, mItemId);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_social);
+
+
+        gameReward.setRepeatable(true);
+
+
 
         mProgressDialog = new ProgressDialog(this);
 
@@ -124,12 +130,9 @@ public class ExampleSocialActivity extends Activity {
                 // create social action
 
 
-                // optionally attach rewards to it
-                Reward gameReward = new VirtualItemReward("blabla", "Update Status for VG", mItemAmount, mItemId);
-
                 // perform social action
                 try {
-                    SoomlaProfile.getInstance().getSocialController().updateStatus(mProvider, message, gameReward);
+                    SoomlaProfile.getInstance().updateStatus(ExampleSocialActivity.this, mProvider, message, gameReward);
                 } catch (ProviderNotFoundException e) {
                     e.printStackTrace();
                 }
@@ -171,7 +174,7 @@ public class ExampleSocialActivity extends Activity {
 
 
 
-            SoomlaProfile.getInstance().getSocialController().login(this, mProvider, true);
+            SoomlaProfile.getInstance().login(this, mProvider, true);
         } catch (ProviderNotFoundException e) {
             e.printStackTrace();
         }
@@ -204,9 +207,9 @@ public class ExampleSocialActivity extends Activity {
         }
 
         // Get name of provider after authentication
-        final String providerName = loginFinishedEvent.getProvider();
-        Log.d(TAG, "Provider Name = " + providerName);
-        Toast.makeText(this, providerName + " connected", Toast.LENGTH_SHORT).show();
+        final IProvider.Provider provider = loginFinishedEvent.getProvider();
+        Log.d(TAG, "Provider Name = " + provider);
+        Toast.makeText(this, provider + " connected", Toast.LENGTH_SHORT).show();
 
         // Please avoid sending duplicate message. Social Media Providers
         // block duplicate messages.
@@ -216,7 +219,7 @@ public class ExampleSocialActivity extends Activity {
         new DownloadImageTask(mProfileAvatar).execute(loginFinishedEvent.UserProfile.getAvatarLink());
         mProfileName.setText(loginFinishedEvent.UserProfile.getFullName());
 
-        updateUIOnLogin(providerName);
+        updateUIOnLogin(provider);
     }
 //
 //    @Subscribe public void onSocialLoginErrorEvent(SocialLoginErrorEvent socialLoginErrorEvent) {
@@ -235,7 +238,7 @@ public class ExampleSocialActivity extends Activity {
 //        finish(); // nothing much to do here in this example, go back to parent activity
 //    }
 //
-    private void updateUIOnLogin(final String providerName) {
+    private void updateUIOnLogin(final IProvider.Provider provider) {
         mBtnShare.setCompoundDrawablesWithIntrinsicBounds(null, null,
                 getResources().getDrawable(android.R.drawable.ic_lock_power_off),
                 null);
@@ -245,7 +248,7 @@ public class ExampleSocialActivity extends Activity {
             @Override
             public void onClick(View v) {
                 try {
-                    SoomlaProfile.getInstance().getSocialController().logout(mProvider);
+                    SoomlaProfile.getInstance().logout(mProvider);
                 } catch (ProviderNotFoundException e) {
                     e.printStackTrace();
                 }
