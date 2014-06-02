@@ -19,6 +19,7 @@ build
 .idea
 .DS_Store
 
+local.properties
 
 SoomlaAndroidExample/res/.DS_Store
 SoomlaAndroidExample/SoomlaAndroidExample.apk
