@@ -26,11 +26,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.soomla.profile.domain.IProvider;
+import com.soomla.profile.domain.PJSONConsts;
 import com.soomla.store.BusProvider;
 import com.soomla.store.StoreController;
 import com.soomla.store.data.StorageManager;
@@ -81,6 +82,18 @@ public class StoreGoodsActivity extends Activity {
      */
     public void fbPurchases(View view) {
         final Intent intent = new Intent(getApplicationContext(), ExampleSocialActivity.class);
+        intent.putExtra(PJSONConsts.UP_PROVIDER, IProvider.Provider.FACEBOOK.toString());
+        startActivity(intent);
+    }
+
+    /**
+     * Starts ExampleSocialActivity
+     * called when "buy with Twitter" is clicked.
+     * @param view
+     */
+    public void twitterPurchases(View view) {
+        final Intent intent = new Intent(getApplicationContext(), ExampleSocialActivity.class);
+        intent.putExtra(PJSONConsts.UP_PROVIDER, IProvider.Provider.TWITTER.toString());
         startActivity(intent);
     }
 
@@ -252,7 +265,8 @@ public class StoreGoodsActivity extends Activity {
             TextView content = (TextView)vi.findViewById(R.id.content);
             ImageView thumb_image=(ImageView)vi.findViewById(R.id.list_image);
             TextView info = (TextView)vi.findViewById(R.id.item_info);
-            Button btnBuyFB = (Button)vi.findViewById(R.id.btnFB);
+            ImageView btnBuyFB = (ImageView)vi.findViewById(R.id.btnFB);
+            ImageView btnBuyTwitter = (ImageView)vi.findViewById(R.id.btnTwitter);
 
             final VirtualGood good = StoreInfo.getGoods().get(position);//VirtualGood) data.get(position).get(StoreGoodsActivity.KEY_GOOD);
 
@@ -269,17 +283,32 @@ public class StoreGoodsActivity extends Activity {
                 @Override
                 public void onClick(View v) {
                     // try buy with FB example if clicked on that button
-                    final Intent intent = new Intent(getApplicationContext(), ExampleSocialActivity.class);
-                    intent.putExtra("id", good.getItemId());
-                    intent.putExtra("name", good.getName());
-                    intent.putExtra("iconResId", mImages.get(good.getItemId()));
-                    intent.putExtra("amount", 1);
+                    final Intent intent = getSocialBuyIntent(good, IProvider.Provider.FACEBOOK);
+                    startActivity(intent);
+                }
+            });
+
+            btnBuyTwitter.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    // try buy with Twitter example if clicked on that button
+                    final Intent intent = getSocialBuyIntent(good, IProvider.Provider.TWITTER);
                     startActivity(intent);
                 }
             });
 
 
             return vi;
+        }
+
+        private Intent getSocialBuyIntent(VirtualGood good, IProvider.Provider provider) {
+            final Intent intent = new Intent(getApplicationContext(), ExampleSocialActivity.class);
+            intent.putExtra("provider", provider.toString());
+            intent.putExtra("id", good.getItemId());
+            intent.putExtra("name", good.getName());
+            intent.putExtra("iconResId", mImages.get(good.getItemId()));
+            intent.putExtra("amount", 1);
+            return intent;
         }
     }
 

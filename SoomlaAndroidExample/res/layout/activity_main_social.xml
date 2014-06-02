@@ -35,6 +35,8 @@
             android:layout_width="wrap_content"
             android:layout_alignParentLeft="true"
             android:layout_centerVertical="true"
+            tools:drawableLeft="@drawable/facebook"
+            android:drawablePadding="4dp"
             android:textColor="#ffffff"
             android:textSize="14sp"
             android:text="Share to get item!"
@@ -141,6 +143,8 @@
             android:layout_marginLeft="10dp"
             android:layout_marginRight="10dp"
             android:layout_below="@+id/lblStatusUpdate"
+            android:inputType="text"
+            android:imeOptions="actionSend"
             />
         <Button
             android:id="@+id/btnStatusUpdate"
@@ -189,6 +193,7 @@
         android:layout_marginLeft="10dp"
         android:layout_marginRight="10dp"
         android:layout_below="@+id/lblStoryUpdate"
+        android:imeOptions="actionDone"
         tools:text="my wonderful story"
         />
 

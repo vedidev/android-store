@@ -18,4 +18,10 @@
     <color name="blue">#0000FF</color>
     <color name="black">#000000</color>
     <color name="lightGray">#999</color>
+
+    <string-array name="social_providers">
+        <item>socialauth.SoomlaSAFacebook</item>
+        <item>socialauth.SoomlaSATwitter</item>
+    </string-array>
+
 </resources>

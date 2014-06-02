@@ -21,14 +21,18 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.Drawable;
 import android.net.http.AndroidHttpClient;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -37,9 +41,12 @@ import android.widget.Toast;
 
 import com.soomla.blueprint.rewards.Reward;
 import com.soomla.blueprint.rewards.VirtualItemReward;
-import com.soomla.profile.IProvider;
 import com.soomla.profile.SoomlaProfile;
+import com.soomla.profile.domain.IProvider;
+import com.soomla.profile.events.auth.LoginFailedEvent;
 import com.soomla.profile.events.auth.LoginFinishedEvent;
+import com.soomla.profile.events.social.SocialActionFailedEvent;
+import com.soomla.profile.events.social.SocialActionFinishedEvent;
 import com.soomla.profile.exceptions.ProviderNotFoundException;
 import com.soomla.store.BusProvider;
 import com.squareup.otto.Subscribe;
@@ -59,7 +66,7 @@ import java.net.URL;
 
 public class ExampleSocialActivity extends Activity {
 
-    private static final String TAG = "MainSocialActivity";
+    private static final String TAG = "ExampleSocialActivity";
 
     private Button mBtnShare;
 
@@ -91,19 +98,28 @@ public class ExampleSocialActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_social);
 
-
         gameReward.setRepeatable(true);
-
-
 
         mProgressDialog = new ProgressDialog(this);
 
         final Bundle extras = getIntent().getExtras();
         if(extras != null) {
+            final String provider = extras.getString("provider");
+            mProvider = IProvider.Provider.getEnum(provider);
             mItemId = extras.getString("id");
             mItemAmount = extras.getInt("amount", 1);
             mItemName = extras.getString("name");
             mItemResId = extras.getInt("iconResId", R.drawable.ic_launcher);
+
+            // set the social provider logo if possible
+            final int resourceId = getResources().getIdentifier(provider, "drawable", getPackageName());
+            Drawable drawableLogo = getResources().getDrawable(resourceId);
+            if(drawableLogo != null) {
+                final TextView topBarTextView = (TextView) findViewById(R.id.textview);
+                if(topBarTextView != null) {
+                    topBarTextView.setCompoundDrawablesWithIntrinsicBounds(drawableLogo, null, null, null);
+                }
+            }
         }
 
         final TextView vItemDisplay = (TextView) findViewById(R.id.vItem);
@@ -119,23 +135,27 @@ public class ExampleSocialActivity extends Activity {
 
         mPnlStatusUpdate = (ViewGroup) findViewById(R.id.pnlStatusUpdate);
         mEdtStatus = (EditText) findViewById(R.id.edtStatusText);
+
+        mEdtStatus.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                boolean handled = false;
+                if (actionId == EditorInfo.IME_ACTION_SEND) {
+                    doUpdateStatus();
+                    handled = true;
+                }
+
+                return handled;
+            }
+        });
+
         mBtnUpdateStatus = (Button) findViewById(R.id.btnStatusUpdate);
         mBtnUpdateStatus.setEnabled(false);
         mBtnUpdateStatus.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View v) {
-                final String message = mEdtStatus.getText().toString();
-
-                // create social action
-
-
-                // perform social action
-                try {
-                    SoomlaProfile.getInstance().updateStatus(ExampleSocialActivity.this, mProvider, message, gameReward);
-                } catch (ProviderNotFoundException e) {
-                    e.printStackTrace();
-                }
+                doUpdateStatus();
             }
         });
 
@@ -172,16 +192,39 @@ public class ExampleSocialActivity extends Activity {
 
         try {
 
-
-
-            SoomlaProfile.getInstance().login(this, mProvider, true);
+            SoomlaProfile.getInstance().login(this, mProvider, gameReward);
         } catch (ProviderNotFoundException e) {
             e.printStackTrace();
+            Log.w(TAG, "error loading provider: " + mProvider +
+                    "\ndid you remember to define all the providers you need in the AndroidManifest.xml?");
         }
 
 
         mProgressDialog.setMessage("logging in...");
         mProgressDialog.show();
+    }
+
+    @Subscribe public void onSocialActionFinishedEvent(SocialActionFinishedEvent socialActionFinishedEvent) {
+        Log.d(TAG, "SocialActionFinishedEvent:" + socialActionFinishedEvent.SocialActionType.toString());
+        Toast.makeText(this,
+                "action "+socialActionFinishedEvent.SocialActionType.toString()+" success",
+                Toast.LENGTH_SHORT).show();
+
+        mProgressDialog.dismiss();
+
+        if (gameReward.isRepeatable()) {
+            mEdtStatus.setText("");
+        }
+        else {
+            finish();
+        }
+    }
+
+    @Subscribe public void onSocialActionFailedEvent(SocialActionFailedEvent socialActionFailedEvent) {
+        Log.d(TAG, "SocialActionFailedEvent:" + socialActionFailedEvent.SocialActionType.toString());
+        Toast.makeText(this,
+                "action "+socialActionFailedEvent.SocialActionType.toString()+" failed: " +
+                socialActionFailedEvent.ErrorDescription, Toast.LENGTH_SHORT).show();
     }
 
     @Override
@@ -217,17 +260,27 @@ public class ExampleSocialActivity extends Activity {
 
         showView(mProfileBar, true);
         new DownloadImageTask(mProfileAvatar).execute(loginFinishedEvent.UserProfile.getAvatarLink());
-        mProfileName.setText(loginFinishedEvent.UserProfile.getFullName());
+        if(loginFinishedEvent.UserProfile.getFirstName() != null) {
+            mProfileName.setText(loginFinishedEvent.UserProfile.getFullName());
+        }
+        else {
+            mProfileName.setText(loginFinishedEvent.UserProfile.getUsername());
+        }
 
         updateUIOnLogin(provider);
     }
-//
-//    @Subscribe public void onSocialLoginErrorEvent(SocialLoginErrorEvent socialLoginErrorEvent) {
-//        if(mProgressDialog.isShowing()) {
-//            mProgressDialog.dismiss();
-//        }
-//        Log.e(TAG, "login error:" + socialLoginErrorEvent.mException);
-//    }
+
+    @Subscribe public void onSocialLoginErrorEvent(LoginFailedEvent loginFailedEvent) {
+        if(mProgressDialog.isShowing()) {
+            mProgressDialog.dismiss();
+        }
+
+        final String errMsg = "login error:" + loginFailedEvent.ErrorDescription;
+        Log.e(TAG, errMsg);
+
+        Toast.makeText(getApplicationContext(), errMsg, Toast.LENGTH_SHORT).show();
+        finish();
+    }
 
 //    @Subscribe public void onSocialActionPerformedEvent(
 //            SocialActionPerformedEvent socialActionPerformedEvent) {
@@ -238,6 +291,22 @@ public class ExampleSocialActivity extends Activity {
 //        finish(); // nothing much to do here in this example, go back to parent activity
 //    }
 //
+
+    private void doUpdateStatus() {
+        final String message = mEdtStatus.getText().toString();
+        hideSoftKeyboard();
+        // create social action
+        // perform social action
+        try {
+            mProgressDialog.setMessage("updating status...");
+            mProgressDialog.show();
+            SoomlaProfile.getInstance().updateStatus(mProvider, message, gameReward);
+        } catch (ProviderNotFoundException e) {
+            e.printStackTrace();
+            mProgressDialog.dismiss();
+        }
+    }
+
     private void updateUIOnLogin(final IProvider.Provider provider) {
         mBtnShare.setCompoundDrawablesWithIntrinsicBounds(null, null,
                 getResources().getDrawable(android.R.drawable.ic_lock_power_off),
@@ -265,6 +334,14 @@ public class ExampleSocialActivity extends Activity {
 
         mBtnUpdateStatus.setEnabled(true);
 //        mBtnUpdateStory.setEnabled(true);
+    }
+
+    private void hideSoftKeyboard(){
+        if(getCurrentFocus()!=null && getCurrentFocus() instanceof EditText){
+            EditText edtCurrentFocusText = (EditText) getCurrentFocus();
+            InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(edtCurrentFocusText.getWindowToken(), 0);
+        }
     }
 
     private void updateUIOnLogout() {
