@@ -163,6 +163,82 @@
     </RelativeLayout>
 
     <RelativeLayout
+        android:id="@+id/pnlUploadImage"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/pnlStatusUpdate"
+        android:visibility="invisible"
+        tools:visibility="visible"
+        >
+        <TextView
+            android:id="@+id/lblUploadImage"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@android:color/primary_text_dark"
+            android:textSize="14sp"
+            android:text="Upload Image"
+            android:layout_marginTop="30dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:textStyle="bold"
+            />
+        <EditText
+            android:id="@+id/edtImageText"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@android:color/primary_text_light"
+            android:textSize="12sp"
+            android:layout_margin="5dp"
+            android:hint="Enter Message"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_below="@+id/lblUploadImage"
+            android:imeOptions="actionDone"
+            tools:text="great image!"
+            />
+
+        <Button
+            android:id="@+id/btnUploadImage"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:minWidth="100dp"
+            android:background="#fff88361"
+            android:textColor="@android:color/primary_text_dark"
+            android:padding="5dp"
+            android:textSize="12sp"
+            android:text="Upload"
+            android:layout_alignRight="@+id/edtImageText"
+            android:layout_marginRight="10dp"
+            android:layout_below="@+id/edtImageText"
+            />
+
+        <ImageView
+            android:id="@+id/btnChooseImage"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:adjustViewBounds="true"
+            android:scaleType="fitXY"
+            android:textColor="@android:color/primary_text_dark"
+            android:src="@android:drawable/ic_menu_gallery"
+            android:paddingRight="8dp"
+            android:layout_marginTop="-4dp"
+            android:layout_toLeftOf="@+id/btnUploadImage"
+            android:layout_below="@+id/edtImageText"
+            />
+
+        <ImageView
+            android:id="@+id/imagePreview"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingLeft="10dp"
+            android:adjustViewBounds="true"
+            android:scaleType="fitCenter"
+            android:layout_below="@id/edtImageText"
+            tools:src="@drawable/instagram"
+            />
+    </RelativeLayout>
+
+    <RelativeLayout
         android:id="@+id/pnlStoryUpdate"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"

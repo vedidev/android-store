@@ -31,7 +31,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.soomla.profile.domain.IProvider;
-import com.soomla.profile.domain.PJSONConsts;
+import com.soomla.profile.data.PJSONConsts;
 import com.soomla.store.BusProvider;
 import com.soomla.store.StoreController;
 import com.soomla.store.data.StorageManager;

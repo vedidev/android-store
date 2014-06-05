@@ -19,9 +19,11 @@ package com.soomla.example;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.net.http.AndroidHttpClient;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -39,8 +41,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.soomla.blueprint.rewards.Reward;
-import com.soomla.blueprint.rewards.VirtualItemReward;
+import com.soomla.profile.domain.rewards.Reward;
+import com.soomla.profile.domain.rewards.VirtualItemReward;
 import com.soomla.profile.SoomlaProfile;
 import com.soomla.profile.domain.IProvider;
 import com.soomla.profile.events.auth.LoginFailedEvent;
@@ -68,6 +70,8 @@ public class ExampleSocialActivity extends Activity {
 
     private static final String TAG = "ExampleSocialActivity";
 
+    private static final int SELECT_PHOTO_ACTION = 1;
+
     private Button mBtnShare;
 
     private ViewGroup mProfileBar;
@@ -81,6 +85,13 @@ public class ExampleSocialActivity extends Activity {
     private ViewGroup mPnlStoryUpdate;
     private Button mBtnUpdateStory;
     private EditText mEdtStory;
+
+    private ViewGroup mPnlUploadImage;
+    private ImageView mBtnChooseImage;
+    private Button mBtnUploadImage;
+    private EditText mEdtImageText;
+    private String mImagePath;
+    private ImageView mImagePreview;
 
     private ProgressDialog mProgressDialog;
 
@@ -158,6 +169,42 @@ public class ExampleSocialActivity extends Activity {
                 doUpdateStatus();
             }
         });
+
+        mPnlUploadImage = (ViewGroup) findViewById(R.id.pnlUploadImage);
+        mImagePreview = (ImageView) findViewById(R.id.imagePreview);
+        mEdtImageText = (EditText) findViewById(R.id.edtImageText);
+
+        mEdtImageText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                boolean handled = false;
+                if (actionId == EditorInfo.IME_ACTION_SEND) {
+                    doUpdateStatus();
+                    handled = true;
+                }
+
+                return handled;
+            }
+        });
+
+        mBtnChooseImage = (ImageView) findViewById(R.id.btnChooseImage);
+        mBtnChooseImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                chooseImageFile();
+            }
+        });
+
+        mBtnUploadImage = (Button) findViewById(R.id.btnUploadImage);
+        mBtnUploadImage.setEnabled(false);
+        mBtnUploadImage.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                doUploadImage();
+            }
+        });
+
 
         mPnlStoryUpdate = (ViewGroup) findViewById(R.id.pnlStoryUpdate);
         mEdtStory = (EditText) findViewById(R.id.edtStoryText);
@@ -307,6 +354,47 @@ public class ExampleSocialActivity extends Activity {
         }
     }
 
+    private void chooseImageFile() {
+        Intent photoPickerIntent = new Intent(Intent.ACTION_PICK);
+        photoPickerIntent.setType("image/*");
+        startActivityForResult(photoPickerIntent, SELECT_PHOTO_ACTION);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent imageReturnedIntent) {
+        super.onActivityResult(requestCode, resultCode, imageReturnedIntent);
+
+        switch(requestCode) {
+            case SELECT_PHOTO_ACTION:
+                if(resultCode == RESULT_OK){
+                    try {
+                        final Uri imageUri = imageReturnedIntent.getData();
+                        mImagePath = imageUri.toString();
+                        final InputStream imageStream = getContentResolver().openInputStream(imageUri);
+                        final Bitmap selectedImage = BitmapFactory.decodeStream(imageStream);
+                        mImagePreview.setImageBitmap(selectedImage);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+        }
+    }
+
+    private void doUploadImage() {
+        final String message = mEdtImageText.getText().toString();
+        hideSoftKeyboard();
+        // create social action
+        // perform social action
+        try {
+            mProgressDialog.setMessage("uploading image...");
+            mProgressDialog.show();
+            SoomlaProfile.getInstance().uploadImage(mProvider, message, mImagePath, gameReward);
+        } catch (ProviderNotFoundException e) {
+            e.printStackTrace();
+            mProgressDialog.dismiss();
+        }
+    }
+
     private void updateUIOnLogin(final IProvider.Provider provider) {
         mBtnShare.setCompoundDrawablesWithIntrinsicBounds(null, null,
                 getResources().getDrawable(android.R.drawable.ic_lock_power_off),
@@ -329,10 +417,12 @@ public class ExampleSocialActivity extends Activity {
         });
 
         showView(mPnlStatusUpdate, true);
+        showView(mPnlUploadImage, true);
 //        showView(mPnlStoryUpdate, true);
         mBtnShare.setEnabled(true);
 
         mBtnUpdateStatus.setEnabled(true);
+        mBtnUploadImage.setEnabled(true);
 //        mBtnUpdateStory.setEnabled(true);
     }
 
@@ -347,10 +437,12 @@ public class ExampleSocialActivity extends Activity {
     private void updateUIOnLogout() {
 
         mBtnUpdateStatus.setEnabled(false);
+        mBtnUploadImage.setEnabled(false);
         mBtnUpdateStory.setEnabled(false);
 
         showView(mProfileBar, false);
         showView(mPnlStatusUpdate, false);
+        showView(mPnlUploadImage, false);
         showView(mPnlStoryUpdate, false);
 
         mProfileAvatar.setImageBitmap(null);
