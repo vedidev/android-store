@@ -16,9 +16,16 @@
 
 package com.soomla.store.data;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.text.TextUtils;
+
+import com.soomla.SoomlaConfig;
+import com.soomla.data.KeyValueStorage;
 import com.soomla.store.IStoreAssets;
-import com.soomla.store.StoreUtils;
+import com.soomla.store.SoomlaApp;
+import com.soomla.store.StoreConfig;
+import com.soomla.SoomlaUtils;
 import com.soomla.store.domain.NonConsumableItem;
 import com.soomla.store.domain.PurchasableVirtualItem;
 import com.soomla.store.domain.VirtualCategory;
@@ -58,9 +65,12 @@ public class StoreInfo {
      */
     public static void setStoreAssets(IStoreAssets storeAssets){
         if (storeAssets == null){
-            StoreUtils.LogError(TAG, "The given store assets can't be null!");
+            SoomlaUtils.LogError(TAG, "The given store assets can't be null!");
             return;
         }
+
+        checkMetadataVersion();
+
         // we always initialize from the database, unless this is the first time the game is
         // loaded - in that case we initialize with setStoreAssets.
         if (!initializeFromDB()){
@@ -76,15 +86,17 @@ public class StoreInfo {
      * @return success
      */
     public static boolean initializeFromDB() {
-        String key = KeyValDatabase.keyMetaStoreInfo();
-        String val = StorageManager.getKeyValueStorage().getValue(key);
+        checkMetadataVersion();
+
+        String key = keyMetaStoreInfo();
+        String val = KeyValueStorage.getValue(key);
 
         if (val == null && TextUtils.isEmpty(val)){
-            StoreUtils.LogDebug(TAG, "store json is not in DB yet.");
+            SoomlaUtils.LogDebug(TAG, "store json is not in DB yet.");
             return false;
         }
 
-        StoreUtils.LogDebug(TAG, "the metadata-economy json (from DB) is " + val);
+        SoomlaUtils.LogDebug(TAG, "the metadata-economy json (from DB) is " + val);
 
         try {
             fromJSONObject(new JSONObject(val));
@@ -94,7 +106,7 @@ public class StoreInfo {
 
             return true;
         } catch (JSONException e) {
-            StoreUtils.LogDebug(TAG, "Can't parse metadata json. Going to return false and make "
+            SoomlaUtils.LogDebug(TAG, "Can't parse metadata json. Going to return false and make "
                     + "StoreInfo load from static data: " + val);
         }
 
@@ -267,8 +279,8 @@ public class StoreInfo {
         mCurrencies = new LinkedList<VirtualCurrency>();
         mNonConsumables = new LinkedList<NonConsumableItem>();
 
-        if (jsonObject.has(JSONConsts.STORE_CURRENCIES)) {
-            JSONArray virtualCurrencies = jsonObject.getJSONArray(JSONConsts.STORE_CURRENCIES);
+        if (jsonObject.has(StoreJSONConsts.STORE_CURRENCIES)) {
+            JSONArray virtualCurrencies = jsonObject.getJSONArray(StoreJSONConsts.STORE_CURRENCIES);
             for (int i=0; i<virtualCurrencies.length(); i++){
                 JSONObject o = virtualCurrencies.getJSONObject(i);
                 VirtualCurrency c = new VirtualCurrency(o);
@@ -278,8 +290,8 @@ public class StoreInfo {
             }
         }
 
-        if (jsonObject.has(JSONConsts.STORE_CURRENCYPACKS)) {
-            JSONArray currencyPacks = jsonObject.getJSONArray(JSONConsts.STORE_CURRENCYPACKS);
+        if (jsonObject.has(StoreJSONConsts.STORE_CURRENCYPACKS)) {
+            JSONArray currencyPacks = jsonObject.getJSONArray(StoreJSONConsts.STORE_CURRENCYPACKS);
             for (int i=0; i<currencyPacks.length(); i++){
                 JSONObject o = currencyPacks.getJSONObject(i);
                 VirtualCurrencyPack pack = new VirtualCurrencyPack(o);
@@ -297,11 +309,11 @@ public class StoreInfo {
 
         // The order in which VirtualGoods are created matters!
         // For example: VGU and VGP depend on other VGs
-        if (jsonObject.has(JSONConsts.STORE_GOODS)) {
-            JSONObject virtualGoods = jsonObject.getJSONObject(JSONConsts.STORE_GOODS);
+        if (jsonObject.has(StoreJSONConsts.STORE_GOODS)) {
+            JSONObject virtualGoods = jsonObject.getJSONObject(StoreJSONConsts.STORE_GOODS);
 
-            if (virtualGoods.has(JSONConsts.STORE_GOODS_SU)) {
-                JSONArray suGoods = virtualGoods.getJSONArray(JSONConsts.STORE_GOODS_SU);
+            if (virtualGoods.has(StoreJSONConsts.STORE_GOODS_SU)) {
+                JSONArray suGoods = virtualGoods.getJSONArray(StoreJSONConsts.STORE_GOODS_SU);
                 for (int i=0; i<suGoods.length(); i++){
                     JSONObject o = suGoods.getJSONObject(i);
                     SingleUseVG g = new SingleUseVG(o);
@@ -310,8 +322,8 @@ public class StoreInfo {
             }
 
 
-            if (virtualGoods.has(JSONConsts.STORE_GOODS_LT)) {
-                JSONArray ltGoods = virtualGoods.getJSONArray(JSONConsts.STORE_GOODS_LT);
+            if (virtualGoods.has(StoreJSONConsts.STORE_GOODS_LT)) {
+                JSONArray ltGoods = virtualGoods.getJSONArray(StoreJSONConsts.STORE_GOODS_LT);
                 for (int i=0; i<ltGoods.length(); i++){
                     JSONObject o = ltGoods.getJSONObject(i);
                     LifetimeVG g = new LifetimeVG(o);
@@ -320,8 +332,8 @@ public class StoreInfo {
             }
 
 
-            if (virtualGoods.has(JSONConsts.STORE_GOODS_EQ)) {
-                JSONArray eqGoods = virtualGoods.getJSONArray(JSONConsts.STORE_GOODS_EQ);
+            if (virtualGoods.has(StoreJSONConsts.STORE_GOODS_EQ)) {
+                JSONArray eqGoods = virtualGoods.getJSONArray(StoreJSONConsts.STORE_GOODS_EQ);
                 for (int i=0; i<eqGoods.length(); i++){
                     JSONObject o = eqGoods.getJSONObject(i);
                     EquippableVG g = new EquippableVG(o);
@@ -329,8 +341,8 @@ public class StoreInfo {
                 }
             }
 
-            if (virtualGoods.has(JSONConsts.STORE_GOODS_PA)) {
-                JSONArray paGoods = virtualGoods.getJSONArray(JSONConsts.STORE_GOODS_PA);
+            if (virtualGoods.has(StoreJSONConsts.STORE_GOODS_PA)) {
+                JSONArray paGoods = virtualGoods.getJSONArray(StoreJSONConsts.STORE_GOODS_PA);
                 for (int i=0; i<paGoods.length(); i++){
                     JSONObject o = paGoods.getJSONObject(i);
                     SingleUsePackVG g = new SingleUsePackVG(o);
@@ -339,8 +351,8 @@ public class StoreInfo {
             }
 
 
-            if (virtualGoods.has(JSONConsts.STORE_GOODS_UP)) {
-                JSONArray upGoods = virtualGoods.getJSONArray(JSONConsts.STORE_GOODS_UP);
+            if (virtualGoods.has(StoreJSONConsts.STORE_GOODS_UP)) {
+                JSONArray upGoods = virtualGoods.getJSONArray(StoreJSONConsts.STORE_GOODS_UP);
                 for (int i=0; i<upGoods.length(); i++){
                     JSONObject o = upGoods.getJSONObject(i);
                     UpgradeVG g = new UpgradeVG(o);
@@ -358,8 +370,8 @@ public class StoreInfo {
         }
 
         // Categories depend on virtual goods. That's why the have to be initialized after!
-        if (jsonObject.has(JSONConsts.STORE_CATEGORIES)) {
-            JSONArray virtualCategories = jsonObject.getJSONArray(JSONConsts.STORE_CATEGORIES);
+        if (jsonObject.has(StoreJSONConsts.STORE_CATEGORIES)) {
+            JSONArray virtualCategories = jsonObject.getJSONArray(StoreJSONConsts.STORE_CATEGORIES);
             for(int i=0; i<virtualCategories.length(); i++){
                 JSONObject o = virtualCategories.getJSONObject(i);
                 VirtualCategory category = new VirtualCategory(o);
@@ -370,8 +382,8 @@ public class StoreInfo {
             }
         }
 
-        if (jsonObject.has(JSONConsts.STORE_NONCONSUMABLES)) {
-            JSONArray nonConsumables = jsonObject.getJSONArray(JSONConsts.STORE_NONCONSUMABLES);
+        if (jsonObject.has(StoreJSONConsts.STORE_NONCONSUMABLES)) {
+            JSONArray nonConsumables = jsonObject.getJSONArray(StoreJSONConsts.STORE_NONCONSUMABLES);
             for (int i=0; i<nonConsumables.length(); i++){
                 JSONObject o = nonConsumables.getJSONObject(i);
                 NonConsumableItem non = new NonConsumableItem(o);
@@ -457,19 +469,19 @@ public class StoreInfo {
 
         JSONObject jsonObject = new JSONObject();
         try {
-            goods.put(JSONConsts.STORE_GOODS_SU, suGoods);
-            goods.put(JSONConsts.STORE_GOODS_LT, ltGoods);
-            goods.put(JSONConsts.STORE_GOODS_EQ, eqGoods);
-            goods.put(JSONConsts.STORE_GOODS_PA, paGoods);
-            goods.put(JSONConsts.STORE_GOODS_UP, upGoods);
+            goods.put(StoreJSONConsts.STORE_GOODS_SU, suGoods);
+            goods.put(StoreJSONConsts.STORE_GOODS_LT, ltGoods);
+            goods.put(StoreJSONConsts.STORE_GOODS_EQ, eqGoods);
+            goods.put(StoreJSONConsts.STORE_GOODS_PA, paGoods);
+            goods.put(StoreJSONConsts.STORE_GOODS_UP, upGoods);
 
-            jsonObject.put(JSONConsts.STORE_CATEGORIES, categories);
-            jsonObject.put(JSONConsts.STORE_CURRENCIES, currencies);
-            jsonObject.put(JSONConsts.STORE_GOODS, goods);
-            jsonObject.put(JSONConsts.STORE_CURRENCYPACKS, currencyPacks);
-            jsonObject.put(JSONConsts.STORE_NONCONSUMABLES, nonConsumableItems);
+            jsonObject.put(StoreJSONConsts.STORE_CATEGORIES, categories);
+            jsonObject.put(StoreJSONConsts.STORE_CURRENCIES, currencies);
+            jsonObject.put(StoreJSONConsts.STORE_GOODS, goods);
+            jsonObject.put(StoreJSONConsts.STORE_CURRENCYPACKS, currencyPacks);
+            jsonObject.put(StoreJSONConsts.STORE_NONCONSUMABLES, nonConsumableItems);
         } catch (JSONException e) {
-            StoreUtils.LogError(TAG, "An error occurred while generating JSON object.");
+            SoomlaUtils.LogError(TAG, "An error occurred while generating JSON object.");
         }
 
         return jsonObject;
@@ -480,9 +492,9 @@ public class StoreInfo {
      */
     public static void save() {
         String store_json = toJSONObject().toString();
-        StoreUtils.LogDebug(TAG, "saving StoreInfo to DB. json is: " + store_json);
-        String key = KeyValDatabase.keyMetaStoreInfo();
-        StorageManager.getKeyValueStorage().setValue(key, store_json);
+        SoomlaUtils.LogDebug(TAG, "saving StoreInfo to DB. json is: " + store_json);
+        String key = keyMetaStoreInfo();
+        KeyValueStorage.setValue(key, store_json);
     }
 
     /**
@@ -652,8 +664,29 @@ public class StoreInfo {
         save();
     }
 
+    private static void checkMetadataVersion() {
+        SharedPreferences prefs = new ObscuredSharedPreferences(
+                SoomlaApp.getAppContext().getSharedPreferences(SoomlaConfig.PREFS_NAME,
+                        Context.MODE_PRIVATE));
+        int mt_ver = prefs.getInt("MT_VER", 0);
+        int sa_ver_old = prefs.getInt("SA_VER_OLD", -1);
+        int sa_ver_new = prefs.getInt("SA_VER_NEW", 0);
+        if (mt_ver < StoreConfig.METADATA_VERSION || sa_ver_old < sa_ver_new) {
+            SharedPreferences.Editor edit = prefs.edit();
+            edit.putInt("MT_VER", StoreConfig.METADATA_VERSION);
+            edit.putInt("SA_VER_OLD", sa_ver_new);
+            edit.commit();
+
+            KeyValueStorage.deleteKeyValue(keyMetaStoreInfo());
+        }
+    }
+
 
     /** Private Members **/
+
+    private static String keyMetaStoreInfo() {
+        return "meta.storeinfo";
+    }
 
     private static final String TAG = "SOOMLA StoreInfo"; //used for Log messages
 

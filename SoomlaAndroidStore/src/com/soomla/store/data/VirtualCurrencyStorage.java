@@ -17,7 +17,7 @@
 package com.soomla.store.data;
 
 
-import com.soomla.store.BusProvider;
+import com.soomla.BusProvider;
 import com.soomla.store.domain.VirtualItem;
 import com.soomla.store.domain.virtualCurrencies.VirtualCurrency;
 import com.soomla.store.events.CurrencyBalanceChangedEvent;
@@ -39,7 +39,7 @@ public class VirtualCurrencyStorage extends VirtualItemStorage{
      */
     @Override
     protected String keyBalance(String itemId) {
-        return KeyValDatabase.keyCurrencyBalance(itemId);
+        return keyCurrencyBalance(itemId);
     }
 
     /**
@@ -49,5 +49,9 @@ public class VirtualCurrencyStorage extends VirtualItemStorage{
     protected void postBalanceChangeEvent(VirtualItem item, int balance, int amountAdded) {
         BusProvider.getInstance().post(new CurrencyBalanceChangedEvent((VirtualCurrency) item,
                 balance, amountAdded));
+    }
+
+    private static String keyCurrencyBalance(String itemId) {
+        return "currency." + itemId + ".balance";
     }
 }

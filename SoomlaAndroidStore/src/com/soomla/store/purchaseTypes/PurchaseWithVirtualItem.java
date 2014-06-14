@@ -16,8 +16,8 @@
 
 package com.soomla.store.purchaseTypes;
 
-import com.soomla.store.BusProvider;
-import com.soomla.store.StoreUtils;
+import com.soomla.BusProvider;
+import com.soomla.SoomlaUtils;
 import com.soomla.store.data.StorageManager;
 import com.soomla.store.data.StoreInfo;
 import com.soomla.store.data.VirtualItemStorage;
@@ -56,14 +56,14 @@ public class PurchaseWithVirtualItem extends PurchaseType {
     @Override
     public void buy() throws InsufficientFundsException{
 
-        StoreUtils.LogDebug(TAG, "Trying to buy a " + getAssociatedItem().getName() + " with "
+        SoomlaUtils.LogDebug(TAG, "Trying to buy a " + getAssociatedItem().getName() + " with "
                 + mAmount + " pieces of " + mTargetItemId);
 
         VirtualItem item = null;
         try {
             item = StoreInfo.getVirtualItem(mTargetItemId);
         } catch (VirtualItemNotFoundException e) {
-            StoreUtils.LogError(TAG, "Target virtual item doesn't exist !");
+            SoomlaUtils.LogError(TAG, "Target virtual item doesn't exist !");
             return;
         }
 

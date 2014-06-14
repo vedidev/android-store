@@ -16,7 +16,7 @@
 
 package com.soomla.store.domain;
 
-import com.soomla.store.StoreUtils;
+import com.soomla.SoomlaUtils;
 import com.soomla.store.data.StorageManager;
 import com.soomla.store.purchaseTypes.PurchaseWithMarket;
 import org.json.JSONException;
@@ -95,7 +95,7 @@ public class NonConsumableItem extends PurchasableVirtualItem {
     @Override
     protected boolean canBuy() {
         if (StorageManager.getNonConsumableItemsStorage().nonConsumableItemExists(this)) {
-            StoreUtils.LogDebug(TAG,
+            SoomlaUtils.LogDebug(TAG,
                     "You can't buy a NonConsumableItem that was already given to the user.");
             return false;
         }

@@ -17,8 +17,8 @@
 package com.soomla.store.domain.virtualGoods;
 
 import android.text.TextUtils;
-import com.soomla.store.StoreUtils;
-import com.soomla.store.data.JSONConsts;
+import com.soomla.SoomlaUtils;
+import com.soomla.store.data.StoreJSONConsts;
 import com.soomla.store.data.StorageManager;
 import com.soomla.store.data.StoreInfo;
 import com.soomla.store.exceptions.VirtualItemNotFoundException;
@@ -90,9 +90,9 @@ public class UpgradeVG extends LifetimeVG {
     public UpgradeVG(JSONObject jsonObject) throws JSONException {
         super(jsonObject);
 
-        mGoodItemId = jsonObject.getString(JSONConsts.VGU_GOOD_ITEMID);
-        mPrevItemId = jsonObject.getString(JSONConsts.VGU_PREV_ITEMID);
-        mNextItemId = jsonObject.getString(JSONConsts.VGU_NEXT_ITEMID);
+        mGoodItemId = jsonObject.getString(StoreJSONConsts.VGU_GOOD_ITEMID);
+        mPrevItemId = jsonObject.getString(StoreJSONConsts.VGU_PREV_ITEMID);
+        mNextItemId = jsonObject.getString(StoreJSONConsts.VGU_NEXT_ITEMID);
     }
 
     /**
@@ -110,13 +110,13 @@ public class UpgradeVG extends LifetimeVG {
                 jsonObject.put(key, parentJsonObject.get(key));
             }
 
-            jsonObject.put(JSONConsts.VGU_GOOD_ITEMID, mGoodItemId);
-            jsonObject.put(JSONConsts.VGU_PREV_ITEMID, TextUtils.isEmpty(mPrevItemId) ? ""
+            jsonObject.put(StoreJSONConsts.VGU_GOOD_ITEMID, mGoodItemId);
+            jsonObject.put(StoreJSONConsts.VGU_PREV_ITEMID, TextUtils.isEmpty(mPrevItemId) ? ""
                     : mPrevItemId);
-            jsonObject.put(JSONConsts.VGU_NEXT_ITEMID, TextUtils.isEmpty(mNextItemId) ? ""
+            jsonObject.put(StoreJSONConsts.VGU_NEXT_ITEMID, TextUtils.isEmpty(mNextItemId) ? ""
                     : mNextItemId);
         } catch (JSONException e) {
-            StoreUtils.LogError(TAG, "An error occurred while generating JSON object.");
+            SoomlaUtils.LogError(TAG, "An error occurred while generating JSON object.");
         }
 
         return jsonObject;
@@ -133,13 +133,13 @@ public class UpgradeVG extends LifetimeVG {
      */
     @Override
     public int give(int amount, boolean notify) {
-        StoreUtils.LogDebug(TAG, "Assigning " + getName() + " to: " + mGoodItemId);
+        SoomlaUtils.LogDebug(TAG, "Assigning " + getName() + " to: " + mGoodItemId);
 
         VirtualGood good = null;
         try {
             good = (VirtualGood)StoreInfo.getVirtualItem(mGoodItemId);
         } catch (VirtualItemNotFoundException e) {
-            StoreUtils.LogError(TAG, "VirtualGood with itemId: " + mGoodItemId +
+            SoomlaUtils.LogError(TAG, "VirtualGood with itemId: " + mGoodItemId +
                     " doesn't exist! Can't upgrade.");
             return 0;
         }
@@ -168,7 +168,7 @@ public class UpgradeVG extends LifetimeVG {
         try {
             good = (VirtualGood)StoreInfo.getVirtualItem(mGoodItemId);
         } catch (VirtualItemNotFoundException e) {
-            StoreUtils.LogError(TAG, "VirtualGood with itemId: " + mGoodItemId
+            SoomlaUtils.LogError(TAG, "VirtualGood with itemId: " + mGoodItemId
                     + " doesn't exist! Can't downgrade.");
             return 0;
         }
@@ -177,7 +177,7 @@ public class UpgradeVG extends LifetimeVG {
 
         // Case: Upgrade is not assigned to this Virtual Good
         if (upgradeVG != this) {
-            StoreUtils.LogError(TAG, "You can't take an upgrade that's not currently assigned."
+            SoomlaUtils.LogError(TAG, "You can't take an upgrade that's not currently assigned."
                     + "The UpgradeVG " + getName() + " is not assigned to " + "the VirtualGood: "
                     + good.getName());
             return 0;
@@ -189,12 +189,12 @@ public class UpgradeVG extends LifetimeVG {
             try {
                 prevUpgradeVG = (UpgradeVG)StoreInfo.getVirtualItem(mPrevItemId);
             } catch (VirtualItemNotFoundException e) {
-                StoreUtils.LogError(TAG, "Previous UpgradeVG with itemId: " + mPrevItemId
+                SoomlaUtils.LogError(TAG, "Previous UpgradeVG with itemId: " + mPrevItemId
                         + " doesn't exist! Can't downgrade.");
                 return 0;
             }
             // Case: downgrade is successful!
-            StoreUtils.LogDebug(TAG, "Downgrading " + good.getName() + " to: "
+            SoomlaUtils.LogDebug(TAG, "Downgrading " + good.getName() + " to: "
                     + prevUpgradeVG.getName());
             StorageManager.getVirtualGoodsStorage().assignCurrentUpgrade(good,
                     prevUpgradeVG, notify);
@@ -202,7 +202,7 @@ public class UpgradeVG extends LifetimeVG {
 
         // Case: first Upgrade in the series - so we downgrade to NO upgrade.
         else {
-            StoreUtils.LogDebug(TAG, "Downgrading " + good.getName() + " to NO-UPGRADE");
+            SoomlaUtils.LogDebug(TAG, "Downgrading " + good.getName() + " to NO-UPGRADE");
             StorageManager.getVirtualGoodsStorage().removeUpgrades(good, notify);
         }
 
@@ -223,7 +223,7 @@ public class UpgradeVG extends LifetimeVG {
         try {
             good = (VirtualGood)StoreInfo.getVirtualItem(mGoodItemId);
         } catch (VirtualItemNotFoundException e) {
-            StoreUtils.LogError(TAG, "VirtualGood with itemId: " + mGoodItemId +
+            SoomlaUtils.LogError(TAG, "VirtualGood with itemId: " + mGoodItemId +
                     " doesn't exist! Returning NO (can't buy).");
             return false;
         }

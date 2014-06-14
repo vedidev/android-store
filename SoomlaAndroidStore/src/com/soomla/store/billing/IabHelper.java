@@ -20,7 +20,7 @@ import android.app.Activity;
 import android.os.Handler;
 import android.os.Looper;
 
-import com.soomla.store.StoreUtils;
+import com.soomla.SoomlaUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -53,7 +53,7 @@ public abstract class IabHelper {
     public synchronized void startSetup(final OnIabSetupFinishedListener listener) {
         if (mSetupDone)
         {
-            StoreUtils.LogDebug(TAG, "The purchasing observer is already started. Just running the post listener.");
+            SoomlaUtils.LogDebug(TAG, "The purchasing observer is already started. Just running the post listener.");
 
             if (listener != null) {
                 listener.onIabSetupFinished(new IabResult(IabResult.BILLING_RESPONSE_RESULT_OK, "Setup successful."));
@@ -70,7 +70,7 @@ public abstract class IabHelper {
             mSetupStarted = true;
 
             // Connection to IAB service
-            StoreUtils.LogDebug(TAG, "Starting in-app billing setup.");
+            SoomlaUtils.LogDebug(TAG, "Starting in-app billing setup.");
 
             startSetupInner();
         }
@@ -442,7 +442,7 @@ public abstract class IabHelper {
      */
     protected void checkSetupDoneAndThrow(String operation) {
         if (!isSetupDone()) {
-            StoreUtils.LogError(TAG, "Illegal state for operation (" + operation + "): IAB helper is not set up.");
+            SoomlaUtils.LogError(TAG, "Illegal state for operation (" + operation + "): IAB helper is not set up.");
             throw new IllegalStateException("IAB helper is not set up. Can't perform operation: " + operation);
         }
     }
@@ -461,14 +461,14 @@ public abstract class IabHelper {
                 operation + ") because another async operation(" + mAsyncOperation + ") is in progress.");
         mAsyncOperation = operation;
         mAsyncInProgress = true;
-        StoreUtils.LogDebug(TAG, "Starting async operation: " + operation);
+        SoomlaUtils.LogDebug(TAG, "Starting async operation: " + operation);
     }
 
     /**
      * Sets necessary params when an async process ends.
      */
     protected synchronized void flagEndAsync() {
-        StoreUtils.LogDebug(TAG, "Ending async operation: " + mAsyncOperation);
+        SoomlaUtils.LogDebug(TAG, "Ending async operation: " + mAsyncOperation);
         mAsyncOperation = "";
         mAsyncInProgress = false;
     }

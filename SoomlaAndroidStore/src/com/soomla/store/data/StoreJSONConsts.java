@@ -20,7 +20,7 @@ package com.soomla.store.data;
  * This class contains all static final String names of the keys/vals in the JSON being parsed all
  * around the sdk.
  */
-public class JSONConsts {
+public class StoreJSONConsts {
 
     public static final String STORE_CURRENCIES         = "currencies";
     public static final String STORE_CURRENCYPACKS      = "currencyPacks";

@@ -17,6 +17,8 @@
 package com.soomla.store;
 
 import android.text.TextUtils;
+
+import com.soomla.SoomlaUtils;
 import com.soomla.store.data.StorageManager;
 import com.soomla.store.data.StoreInfo;
 import com.soomla.store.domain.NonConsumableItem;
@@ -116,7 +118,7 @@ public class StoreInventory {
         try {
             good.equip();
         } catch (NotEnoughGoodsException e) {
-            StoreUtils.LogError("StoreInventory", "UNEXPECTED! Couldn't equip something");
+            SoomlaUtils.LogError("StoreInventory", "UNEXPECTED! Couldn't equip something");
             throw e;
         }
     }
@@ -250,7 +252,7 @@ public class StoreInventory {
             UpgradeVG upgradeVG = (UpgradeVG) StoreInfo.getVirtualItem(upgradeItemId);
             upgradeVG.give(1);
         } catch (ClassCastException ex) {
-            StoreUtils.LogError("SOOMLA StoreInventory",
+            SoomlaUtils.LogError("SOOMLA StoreInventory",
                     "The given itemId was of a non UpgradeVG VirtualItem. Can't force it.");
         }
     }

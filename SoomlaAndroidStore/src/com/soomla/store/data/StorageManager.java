@@ -41,10 +41,6 @@ public class StorageManager {
         return mNonConsumableItemsStorage;
     }
 
-    public static KeyValueStorage getKeyValueStorage() {
-        return mKeyValueStorage;
-    }
-
     /**
      * Checks whether the given item belongs to <code>VirtualGoodStorage</code> or
      * <code>VirtualCurrencyStorage</code>.
@@ -76,8 +72,5 @@ public class StorageManager {
     // storage of all non-consumable items
     private static NonConsumableItemsStorage mNonConsumableItemsStorage =
             new NonConsumableItemsStorage();
-
-    // key-value storage
-    private static KeyValueStorage mKeyValueStorage = new KeyValueStorage();
 
 }

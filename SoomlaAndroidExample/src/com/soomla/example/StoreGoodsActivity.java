@@ -30,7 +30,7 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.soomla.store.BusProvider;
+import com.soomla.BusProvider;
 import com.soomla.store.StoreController;
 import com.soomla.store.data.StorageManager;
 import com.soomla.store.data.StoreInfo;

@@ -2,9 +2,10 @@ package com.soomla.store.data;
 
 import android.content.SharedPreferences;
 import android.util.Base64;
+
+import com.soomla.SoomlaConfig;
 import com.soomla.store.SoomlaApp;
-import com.soomla.store.StoreConfig;
-import com.soomla.store.StoreUtils;
+import com.soomla.SoomlaUtils;
 import javax.crypto.Cipher;
 import javax.crypto.SecretKey;
 import javax.crypto.SecretKeyFactory;
@@ -156,9 +157,9 @@ public class ObscuredSharedPreferences implements SharedPreferences {
         try {
             final byte[] bytes = value!=null ? value.getBytes(UTF8) : new byte[0];
             SecretKeyFactory keyFactory = SecretKeyFactory.getInstance("PBEWithMD5AndDES");
-            SecretKey key = keyFactory.generateSecret(new PBEKeySpec((StoreConfig.SOOM_SEC + SoomlaApp.getAppContext().getPackageName() + StoreUtils.deviceId()).toCharArray()));
+            SecretKey key = keyFactory.generateSecret(new PBEKeySpec((SoomlaConfig.SOOM_SEC + SoomlaApp.getAppContext().getPackageName() + SoomlaUtils.deviceId()).toCharArray()));
             Cipher pbeCipher = Cipher.getInstance("PBEWithMD5AndDES");
-            pbeCipher.init(Cipher.ENCRYPT_MODE, key, new PBEParameterSpec(StoreUtils.deviceId().getBytes(UTF8), 20));
+            pbeCipher.init(Cipher.ENCRYPT_MODE, key, new PBEParameterSpec(SoomlaUtils.deviceId().getBytes(UTF8), 20));
             return new String(Base64.encode(pbeCipher.doFinal(bytes), Base64.NO_WRAP),UTF8);
 
         } catch( Exception e ) {
@@ -171,9 +172,9 @@ public class ObscuredSharedPreferences implements SharedPreferences {
         try {
             final byte[] bytes = value!=null ? Base64.decode(value,Base64.DEFAULT) : new byte[0];
             SecretKeyFactory keyFactory = SecretKeyFactory.getInstance("PBEWithMD5AndDES");
-            SecretKey key = keyFactory.generateSecret(new PBEKeySpec((StoreConfig.SOOM_SEC + SoomlaApp.getAppContext().getPackageName() + StoreUtils.deviceId()).toCharArray()));
+            SecretKey key = keyFactory.generateSecret(new PBEKeySpec((SoomlaConfig.SOOM_SEC + SoomlaApp.getAppContext().getPackageName() + SoomlaUtils.deviceId()).toCharArray()));
             Cipher pbeCipher = Cipher.getInstance("PBEWithMD5AndDES");
-            pbeCipher.init(Cipher.DECRYPT_MODE, key, new PBEParameterSpec(StoreUtils.deviceId().getBytes(UTF8), 20));
+            pbeCipher.init(Cipher.DECRYPT_MODE, key, new PBEParameterSpec(SoomlaUtils.deviceId().getBytes(UTF8), 20));
             return new String(pbeCipher.doFinal(bytes),UTF8);
 
         } catch( Exception e) {

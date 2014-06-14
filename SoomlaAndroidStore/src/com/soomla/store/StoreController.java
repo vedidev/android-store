@@ -21,6 +21,9 @@ import android.content.SharedPreferences;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 
+import com.soomla.BusProvider;
+import com.soomla.SoomlaConfig;
+import com.soomla.SoomlaUtils;
 import com.soomla.store.billing.IIabService;
 import com.soomla.store.billing.IabCallbacks;
 import com.soomla.store.billing.IabException;
@@ -76,10 +79,10 @@ public class StoreController {
             return false;
         }
 
-        StoreUtils.LogDebug(TAG, "StoreController Initializing ...");
+        SoomlaUtils.LogDebug(TAG, "StoreController Initializing ...");
 
         if (mInAppBillingService == null) {
-            StoreUtils.LogDebug(TAG, "Searching for the attached IAB Service.");
+            SoomlaUtils.LogDebug(TAG, "Searching for the attached IAB Service.");
 
             Class<?> aClass = null;
             aClass = tryFetchIabService();
@@ -101,14 +104,14 @@ public class StoreController {
         }
 
         SharedPreferences prefs = new ObscuredSharedPreferences(SoomlaApp.getAppContext().
-                getSharedPreferences(StoreConfig.PREFS_NAME, Context.MODE_PRIVATE));
+                getSharedPreferences(SoomlaConfig.PREFS_NAME, Context.MODE_PRIVATE));
         SharedPreferences.Editor edit = prefs.edit();
 
         if (customSecret != null && customSecret.length() != 0) {
-            edit.putString(StoreConfig.CUSTOM_SEC, customSecret);
-        } else if (prefs.getString(StoreConfig.CUSTOM_SEC, "").length() == 0) {
+            edit.putString(SoomlaConfig.CUSTOM_SEC, customSecret);
+        } else if (prefs.getString(SoomlaConfig.CUSTOM_SEC, "").length() == 0) {
         	String err = "customSecret is null or empty. Can't initialize store!!";
-            StoreUtils.LogError(TAG, err);
+            SoomlaUtils.LogError(TAG, err);
             BusProvider.getInstance().post(new UnexpectedStoreErrorEvent(err));
             return false;
         }
@@ -139,16 +142,16 @@ public class StoreController {
             public void success(boolean alreadyInBg) {
                 if (!alreadyInBg) {
                     notifyIabServiceStarted();
-                    StoreUtils.LogDebug(TAG, "Successfully started billing service in background.");
+                    SoomlaUtils.LogDebug(TAG, "Successfully started billing service in background.");
                 } else {
-                    StoreUtils.LogDebug(TAG, "Couldn't start billing service in background. "
+                    SoomlaUtils.LogDebug(TAG, "Couldn't start billing service in background. "
                             + "Was already started.");
                 }
             }
 
             @Override
             public void fail(String message) {
-                StoreUtils.LogError(TAG, "Couldn't start billing service in background. error: "
+                SoomlaUtils.LogError(TAG, "Couldn't start billing service in background. error: "
                         + message);
             }
         });
@@ -164,12 +167,12 @@ public class StoreController {
 
             @Override
             public void success(boolean alreadyInBg) {
-                StoreUtils.LogDebug(TAG, "Successfully stopped billing service in background.");
+                SoomlaUtils.LogDebug(TAG, "Successfully stopped billing service in background.");
             }
 
             @Override
             public void fail(String message) {
-                StoreUtils.LogError(TAG, "Couldn't stop billing service in background. error: "
+                SoomlaUtils.LogError(TAG, "Couldn't stop billing service in background. error: "
                         + message);
             }
         });
@@ -199,17 +202,17 @@ public class StoreController {
                             notifyIabServiceStarted();
                         }
 
-                        StoreUtils.LogDebug(TAG,
+                        SoomlaUtils.LogDebug(TAG,
                                 "Setup successful, restoring purchases");
 
                         IabCallbacks.OnRestorePurchasesListener restorePurchasesListener = new IabCallbacks.OnRestorePurchasesListener() {
                             @Override
                             public void success(List<IabPurchase> purchases) {
-                                StoreUtils.LogDebug(TAG, "Transactions restored");
+                                SoomlaUtils.LogDebug(TAG, "Transactions restored");
 
                                 if (purchases.size() > 0) {
                                     for (IabPurchase iabPurchase : purchases) {
-                                        StoreUtils.LogDebug(TAG, "Got owned item: " + iabPurchase.getSku());
+                                        SoomlaUtils.LogDebug(TAG, "Got owned item: " + iabPurchase.getSku());
 
                                         handleSuccessfulPurchase(iabPurchase);
                                     }
@@ -257,7 +260,7 @@ public class StoreController {
                         if (!alreadyInBg) {
                             notifyIabServiceStarted();
                         }
-                        StoreUtils.LogDebug(TAG,
+                        SoomlaUtils.LogDebug(TAG,
                                 "Setup successful, refreshing market items details");
 
                         IabCallbacks.OnFetchSkusDetailsListener fetchSkusDetailsListener =
@@ -265,7 +268,7 @@ public class StoreController {
 
                                     @Override
                                     public void success(List<IabSkuDetails> skuDetails) {
-                                        StoreUtils.LogDebug(TAG, "Market items details refreshed");
+                                        SoomlaUtils.LogDebug(TAG, "Market items details refreshed");
 
                                         List<MarketItem> marketItems = new ArrayList<MarketItem>();
                                         if (skuDetails.size() > 0) {
@@ -275,7 +278,7 @@ public class StoreController {
                                                 String title = iabSkuDetails.getTitle();
                                                 String desc = iabSkuDetails.getDescription();
 
-                                                StoreUtils.LogDebug(TAG, "Got item details: " +
+                                                SoomlaUtils.LogDebug(TAG, "Got item details: " +
                                                         "\ntitle:\t" + iabSkuDetails.getTitle() +
                                                         "\nprice:\t" + iabSkuDetails.getPrice() +
                                                         "\nproductId:\t" + iabSkuDetails.getSku() +
@@ -294,7 +297,7 @@ public class StoreController {
                                                 } catch (VirtualItemNotFoundException e) {
                                                     String msg = "(refreshInventory) Couldn't find a "
                                                             + "purchasable item associated with: " + productId;
-                                                    StoreUtils.LogError(TAG, msg);
+                                                    SoomlaUtils.LogError(TAG, msg);
                                                 }
                                             }
                                         }
@@ -344,7 +347,7 @@ public class StoreController {
             pvi = StoreInfo.getPurchasableItem(marketItem.getProductId());
         } catch (VirtualItemNotFoundException e) {
             String msg = "Couldn't find a purchasable item associated with: " + marketItem.getProductId();
-            StoreUtils.LogError(TAG, msg);
+            SoomlaUtils.LogError(TAG, msg);
             BusProvider.getInstance().post(new UnexpectedStoreErrorEvent(msg));
             return;
         }
@@ -373,7 +376,7 @@ public class StoreController {
 
                                     @Override
                                     public void alreadyOwned(IabPurchase purchase) {
-                                        StoreUtils.LogDebug(TAG, "Tried to buy an item that was not consumed. "
+                                        SoomlaUtils.LogDebug(TAG, "Tried to buy an item that was not consumed. "
                                                 + "Trying to consume it if it's a consumable.");
                                         consumeIfConsumable(purchase);
                                     }
@@ -432,7 +435,7 @@ public class StoreController {
      */
     private void reportIabInitFailure(String message) {
         String msg = "There's no connectivity with the billing service. error: " + message;
-        StoreUtils.LogDebug(TAG, msg);
+        SoomlaUtils.LogDebug(TAG, msg);
         BusProvider.getInstance().post(new BillingNotSupportedEvent());
         //BusProvider.getInstance().post(new UnexpectedStoreErrorEvent(msg));
     }
@@ -454,7 +457,7 @@ public class StoreController {
         try {
             pvi = StoreInfo.getPurchasableItem(sku);
         } catch (VirtualItemNotFoundException e) {
-            StoreUtils.LogError(TAG, "(handleSuccessfulPurchase - purchase or query-inventory) "
+            SoomlaUtils.LogError(TAG, "(handleSuccessfulPurchase - purchase or query-inventory) "
                     + "ERROR : Couldn't find the " +
                     " VirtualCurrencyPack OR MarketItem  with productId: " + sku +
                     ". It's unexpected so an unexpected error is being emitted.");
@@ -465,7 +468,7 @@ public class StoreController {
 
         switch (purchase.getPurchaseState()) {
             case 0:
-                StoreUtils.LogDebug(TAG, "IabPurchase successful.");
+                SoomlaUtils.LogDebug(TAG, "IabPurchase successful.");
 
                 // if the purchasable item is NonConsumableItem and it already exists then we
                 // don't fire any events.
@@ -489,7 +492,7 @@ public class StoreController {
             case 1:
 
             case 2:
-                StoreUtils.LogDebug(TAG, "IabPurchase refunded.");
+                SoomlaUtils.LogDebug(TAG, "IabPurchase refunded.");
                 if (!StoreConfig.friendlyRefunds) {
                     pvi.take(1);
                 }
@@ -511,7 +514,7 @@ public class StoreController {
             PurchasableVirtualItem v = StoreInfo.getPurchasableItem(sku);
             BusProvider.getInstance().post(new MarketPurchaseCancelledEvent(v));
         } catch (VirtualItemNotFoundException e) {
-            StoreUtils.LogError(TAG, "(purchaseActionResultCancelled) ERROR : Couldn't find the "
+            SoomlaUtils.LogError(TAG, "(purchaseActionResultCancelled) ERROR : Couldn't find the "
                     + "VirtualCurrencyPack OR MarketItem  with productId: " + sku
                     + ". It's unexpected so an unexpected error is being emitted.");
             BusProvider.getInstance().post(new UnexpectedStoreErrorEvent());
@@ -532,12 +535,12 @@ public class StoreController {
                 mInAppBillingService.consume(purchase);
             }
         } catch (VirtualItemNotFoundException e) {
-            StoreUtils.LogError(TAG, "(purchaseActionResultCancelled) ERROR : Couldn't find the "
+            SoomlaUtils.LogError(TAG, "(purchaseActionResultCancelled) ERROR : Couldn't find the "
                     + "VirtualCurrencyPack OR MarketItem  with productId: " + sku
                     + ". It's unexpected so an unexpected error is being emitted.");
             BusProvider.getInstance().post(new UnexpectedStoreErrorEvent());
         } catch (IabException e) {
-            StoreUtils.LogDebug(TAG, "Error while consuming: " + sku);
+            SoomlaUtils.LogDebug(TAG, "Error while consuming: " + sku);
             BusProvider.getInstance().post(new UnexpectedStoreErrorEvent(e.getMessage()));
         }
     }
@@ -555,16 +558,16 @@ public class StoreController {
             assert ai.metaData != null;
             iabServiceClassName = ai.metaData.getString("billing.service");
         } catch (Exception e) {
-            StoreUtils.LogError(TAG, "Failed to load billing service from AndroidManifest.xml, NullPointer: " + e.getMessage());
+            SoomlaUtils.LogError(TAG, "Failed to load billing service from AndroidManifest.xml, NullPointer: " + e.getMessage());
             return null;
         }
 
         Class<?> aClass = null;
         try {
-            StoreUtils.LogDebug(TAG, "Trying to find " + iabServiceClassName);
+            SoomlaUtils.LogDebug(TAG, "Trying to find " + iabServiceClassName);
             aClass = Class.forName("com.soomla.store.billing." + iabServiceClassName);
         } catch (ClassNotFoundException e) {
-            StoreUtils.LogDebug(TAG, "Failed finding " + iabServiceClassName);
+            SoomlaUtils.LogDebug(TAG, "Failed finding " + iabServiceClassName);
         }
         return aClass;
     }
@@ -576,7 +579,7 @@ public class StoreController {
      */
     private void handleErrorResult(String message) {
         BusProvider.getInstance().post(new UnexpectedStoreErrorEvent(message));
-        StoreUtils.LogError(TAG, "ERROR: IabPurchase failed: " + message);
+        SoomlaUtils.LogError(TAG, "ERROR: IabPurchase failed: " + message);
     }
 
     /* Singleton */

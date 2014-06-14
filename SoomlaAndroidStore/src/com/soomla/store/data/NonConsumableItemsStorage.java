@@ -16,7 +16,8 @@
 
 package com.soomla.store.data;
 
-import com.soomla.store.StoreUtils;
+import com.soomla.SoomlaUtils;
+import com.soomla.data.KeyValueStorage;
 import com.soomla.store.domain.NonConsumableItem;
 
 /**
@@ -38,12 +39,12 @@ public class NonConsumableItemsStorage {
      */
     public boolean nonConsumableItemExists(NonConsumableItem nonConsumableItem){
 
-        StoreUtils.LogDebug(TAG, "Checking if the given MANAGED item exists.");
+        SoomlaUtils.LogDebug(TAG, "Checking if the given MANAGED item exists.");
 
         String itemId = nonConsumableItem.getItemId();
-        String key = KeyValDatabase.keyNonConsExists(itemId);
+        String key = keyNonConsExists(itemId);
 
-        String val = StorageManager.getKeyValueStorage().getValue(key);
+        String val = KeyValueStorage.getValue(key);
 
         return val != null;
     }
@@ -55,12 +56,12 @@ public class NonConsumableItemsStorage {
      * @return true
      */
     public boolean add(NonConsumableItem nonConsumableItem){
-        StoreUtils.LogDebug(TAG, "Adding " + nonConsumableItem.getItemId());
+        SoomlaUtils.LogDebug(TAG, "Adding " + nonConsumableItem.getItemId());
 
         String itemId = nonConsumableItem.getItemId();
-        String key = KeyValDatabase.keyNonConsExists(itemId);
+        String key = keyNonConsExists(itemId);
 
-        StorageManager.getKeyValueStorage().setValue(key, "");
+        KeyValueStorage.setValue(key, "");
 
         return true;
     }
@@ -72,12 +73,12 @@ public class NonConsumableItemsStorage {
      * @return false
      */
     public boolean remove(NonConsumableItem nonConsumableItem){
-        StoreUtils.LogDebug(TAG, "Removing " + nonConsumableItem.getName());
+        SoomlaUtils.LogDebug(TAG, "Removing " + nonConsumableItem.getName());
 
         String itemId = nonConsumableItem.getItemId();
-        String key = KeyValDatabase.keyNonConsExists(itemId);
+        String key = keyNonConsExists(itemId);
 
-        StorageManager.getKeyValueStorage().deleteKeyValue(key);
+        KeyValueStorage.deleteKeyValue(key);
 
         return false;
     }
@@ -86,4 +87,8 @@ public class NonConsumableItemsStorage {
     /** Private Members **/
 
     private static final String TAG = "SOOMLA NonConsumableItemsStorage"; //used for Log messages
+
+    private static String keyNonConsExists(String productId) {
+        return "nonconsumable." + productId + ".exists";
+    }
 }

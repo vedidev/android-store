@@ -22,7 +22,8 @@
 
 package com.soomla.store.data;
 
-import com.soomla.store.StoreUtils;
+import com.soomla.SoomlaUtils;
+import com.soomla.data.KeyValueStorage;
 import com.soomla.store.domain.VirtualItem;
 
 /**
@@ -37,19 +38,19 @@ public abstract class VirtualItemStorage {
      * @return the balance of the required virtual item
      */
     public int getBalance(VirtualItem item){
-        StoreUtils.LogDebug(mTag, "fetching balance for virtual item with itemId: "
+        SoomlaUtils.LogDebug(mTag, "fetching balance for virtual item with itemId: "
                 + item.getItemId());
 
         String itemId = item.getItemId();
         String key = keyBalance(itemId);
-        String val = StorageManager.getKeyValueStorage().getValue(key);
+        String val = KeyValueStorage.getValue(key);
 
         int balance = 0;
         if (val != null) {
             balance = Integer.parseInt(val);
         }
 
-        StoreUtils.LogDebug(mTag, "the balance for " + item.getItemId() + " is " + balance);
+        SoomlaUtils.LogDebug(mTag, "the balance for " + item.getItemId() + " is " + balance);
 
         return balance;
     }
@@ -75,7 +76,7 @@ public abstract class VirtualItemStorage {
      * @return the balance of the required virtual item
      */
     public int setBalance(VirtualItem item, int balance, boolean notify) {
-        StoreUtils.LogDebug(mTag, "setting balance " + balance + " to " + item.getName() + ".");
+        SoomlaUtils.LogDebug(mTag, "setting balance " + balance + " to " + item.getName() + ".");
 
         int oldBalance = getBalance(item);
         if (oldBalance == balance) {
@@ -87,7 +88,7 @@ public abstract class VirtualItemStorage {
         String balanceStr = "" + balance;
         String key = keyBalance(itemId);
 
-        StorageManager.getKeyValueStorage().setValue(key, balanceStr);
+        KeyValueStorage.setValue(key, balanceStr);
 
         if (notify) {
             postBalanceChangeEvent(item, balance, 0);
@@ -117,7 +118,7 @@ public abstract class VirtualItemStorage {
      * @return new balance
      */
     public int add(VirtualItem item, int amount, boolean notify){
-        StoreUtils.LogDebug(mTag, "adding " + amount + " " + item.getName());
+        SoomlaUtils.LogDebug(mTag, "adding " + amount + " " + item.getName());
 
         String itemId = item.getItemId();
         int balance = getBalance(item);
@@ -127,7 +128,7 @@ public abstract class VirtualItemStorage {
         }
         String balanceStr = "" + (balance + amount);
         String key = keyBalance(itemId);
-        StorageManager.getKeyValueStorage().setValue(key, balanceStr);
+        KeyValueStorage.setValue(key, balanceStr);
 
         if (notify) {
             postBalanceChangeEvent(item, balance+amount, amount);
@@ -157,7 +158,7 @@ public abstract class VirtualItemStorage {
      * @return new balance
      */
     public int remove(VirtualItem item, int amount, boolean notify){
-        StoreUtils.LogDebug(mTag, "Removing " + amount + " " + item.getName() + ".");
+        SoomlaUtils.LogDebug(mTag, "Removing " + amount + " " + item.getName() + ".");
 
         String itemId = item.getItemId();
         int balance = getBalance(item) - amount;
@@ -167,7 +168,7 @@ public abstract class VirtualItemStorage {
         }
         String balanceStr = "" + balance;
         String key = keyBalance(itemId);
-        StorageManager.getKeyValueStorage().setValue(key, balanceStr);
+        KeyValueStorage.setValue(key, balanceStr);
 
         if (notify) {
             postBalanceChangeEvent(item, balance, -1*amount);

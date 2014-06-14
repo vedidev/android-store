@@ -16,8 +16,8 @@
 
 package com.soomla.store.domain;
 
-import com.soomla.store.StoreUtils;
-import com.soomla.store.data.JSONConsts;
+import com.soomla.SoomlaUtils;
+import com.soomla.store.data.StoreJSONConsts;
 import com.soomla.store.exceptions.InsufficientFundsException;
 import com.soomla.store.purchaseTypes.PurchaseType;
 import com.soomla.store.purchaseTypes.PurchaseWithMarket;
@@ -58,21 +58,21 @@ public abstract class PurchasableVirtualItem extends VirtualItem {
     public PurchasableVirtualItem(JSONObject jsonObject) throws JSONException {
         super(jsonObject);
 
-        JSONObject purchasableObj = jsonObject.getJSONObject(JSONConsts.PURCHASABLE_ITEM);
-        String purchaseType = purchasableObj.getString(JSONConsts.PURCHASE_TYPE);
+        JSONObject purchasableObj = jsonObject.getJSONObject(StoreJSONConsts.PURCHASABLE_ITEM);
+        String purchaseType = purchasableObj.getString(StoreJSONConsts.PURCHASE_TYPE);
 
-        if (purchaseType.equals(JSONConsts.PURCHASE_TYPE_MARKET)) {
+        if (purchaseType.equals(StoreJSONConsts.PURCHASE_TYPE_MARKET)) {
             JSONObject marketItemObj =
-                    purchasableObj.getJSONObject(JSONConsts.PURCHASE_MARKET_ITEM);
+                    purchasableObj.getJSONObject(StoreJSONConsts.PURCHASE_MARKET_ITEM);
 
             mPurchaseType = new PurchaseWithMarket(new MarketItem(marketItemObj));
-        } else if (purchaseType.equals(JSONConsts.PURCHASE_TYPE_VI)) {
-            String itemId = purchasableObj.getString(JSONConsts.PURCHASE_VI_ITEMID);
-            int amount = purchasableObj.getInt(JSONConsts.PURCHASE_VI_AMOUNT);
+        } else if (purchaseType.equals(StoreJSONConsts.PURCHASE_TYPE_VI)) {
+            String itemId = purchasableObj.getString(StoreJSONConsts.PURCHASE_VI_ITEMID);
+            int amount = purchasableObj.getInt(StoreJSONConsts.PURCHASE_VI_AMOUNT);
 
             mPurchaseType = new PurchaseWithVirtualItem(itemId, amount);
         } else {
-            StoreUtils.LogError(TAG, "IabPurchase type not recognized !");
+            SoomlaUtils.LogError(TAG, "IabPurchase type not recognized !");
         }
 
         if (mPurchaseType != null) {
@@ -98,22 +98,22 @@ public abstract class PurchasableVirtualItem extends VirtualItem {
             JSONObject purchasableObj = new JSONObject();
 
             if(mPurchaseType instanceof PurchaseWithMarket) {
-                purchasableObj.put(JSONConsts.PURCHASE_TYPE, JSONConsts.PURCHASE_TYPE_MARKET);
+                purchasableObj.put(StoreJSONConsts.PURCHASE_TYPE, StoreJSONConsts.PURCHASE_TYPE_MARKET);
 
                 MarketItem mi = ((PurchaseWithMarket) mPurchaseType).getMarketItem();
-                purchasableObj.put(JSONConsts.PURCHASE_MARKET_ITEM, mi.toJSONObject());
+                purchasableObj.put(StoreJSONConsts.PURCHASE_MARKET_ITEM, mi.toJSONObject());
             } else if(mPurchaseType instanceof PurchaseWithVirtualItem) {
-                purchasableObj.put(JSONConsts.PURCHASE_TYPE, JSONConsts.PURCHASE_TYPE_VI);
+                purchasableObj.put(StoreJSONConsts.PURCHASE_TYPE, StoreJSONConsts.PURCHASE_TYPE_VI);
 
-                purchasableObj.put(JSONConsts.PURCHASE_VI_ITEMID,
+                purchasableObj.put(StoreJSONConsts.PURCHASE_VI_ITEMID,
                         ((PurchaseWithVirtualItem) mPurchaseType).getTargetItemId());
-                purchasableObj.put(JSONConsts.PURCHASE_VI_AMOUNT,
+                purchasableObj.put(StoreJSONConsts.PURCHASE_VI_AMOUNT,
                         ((PurchaseWithVirtualItem) mPurchaseType).getAmount());
             }
 
-            jsonObject.put(JSONConsts.PURCHASABLE_ITEM, purchasableObj);
+            jsonObject.put(StoreJSONConsts.PURCHASABLE_ITEM, purchasableObj);
         } catch (JSONException e) {
-            StoreUtils.LogError(TAG, "An error occurred while generating JSON object.");
+            SoomlaUtils.LogError(TAG, "An error occurred while generating JSON object.");
         }
 
         return jsonObject;

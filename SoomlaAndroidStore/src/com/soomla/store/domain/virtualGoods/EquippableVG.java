@@ -17,8 +17,8 @@
 package com.soomla.store.domain.virtualGoods;
 
 
-import com.soomla.store.StoreUtils;
-import com.soomla.store.data.JSONConsts;
+import com.soomla.SoomlaUtils;
+import com.soomla.store.data.StoreJSONConsts;
 import com.soomla.store.data.StorageManager;
 import com.soomla.store.data.StoreInfo;
 import com.soomla.store.domain.VirtualCategory;
@@ -102,7 +102,7 @@ public class EquippableVG extends LifetimeVG{
     public EquippableVG(JSONObject jsonObject) throws JSONException {
         super(jsonObject);
 
-        String equipping = jsonObject.getString(JSONConsts.EQUIPPABLE_EQUIPPING);
+        String equipping = jsonObject.getString(StoreJSONConsts.EQUIPPABLE_EQUIPPING);
         if (equipping.equals(EquippingModel.LOCAL.toString())) {
             mEquippingModel = EquippingModel.LOCAL;
         } else if (equipping.equals(EquippingModel.CATEGORY.toString())) {
@@ -127,9 +127,9 @@ public class EquippableVG extends LifetimeVG{
                 jsonObject.put(key, parentJsonObject.get(key));
             }
 
-            jsonObject.put(JSONConsts.EQUIPPABLE_EQUIPPING, mEquippingModel.toString());
+            jsonObject.put(StoreJSONConsts.EQUIPPABLE_EQUIPPING, mEquippingModel.toString());
         } catch (JSONException e) {
-            StoreUtils.LogError(TAG, "An error occurred while generating JSON object.");
+            SoomlaUtils.LogError(TAG, "An error occurred while generating JSON object.");
         }
 
         return jsonObject;
@@ -160,7 +160,7 @@ public class EquippableVG extends LifetimeVG{
                 try {
                     category = StoreInfo.getCategory(getItemId());
                 } catch (VirtualItemNotFoundException e) {
-                    StoreUtils.LogError(TAG,
+                    SoomlaUtils.LogError(TAG,
                             "Tried to unequip all other category VirtualGoods but there was no " +
                             "associated category. virtual good itemId: " + getItemId());
                     return;
@@ -175,11 +175,11 @@ public class EquippableVG extends LifetimeVG{
                             equippableVG.unequip(notify);
                         }
                     } catch (VirtualItemNotFoundException e) {
-                        StoreUtils.LogError(TAG, "On equip, couldn't find one of the itemIds "
+                        SoomlaUtils.LogError(TAG, "On equip, couldn't find one of the itemIds "
                                 + "in the category. Continuing to the next one. itemId: "
                                 + goodItemId);
                     } catch (ClassCastException ex) {
-                        StoreUtils.LogDebug(TAG, "On equip, an error occurred. It's a debug "
+                        SoomlaUtils.LogDebug(TAG, "On equip, an error occurred. It's a debug "
                                 + "message b/c the VirtualGood may just not be an EquippableVG. "
                                 + "itemId: " + goodItemId);
                     }

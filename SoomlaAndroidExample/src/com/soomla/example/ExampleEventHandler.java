@@ -19,9 +19,9 @@ package com.soomla.example;
 
 import android.os.Handler;
 import android.widget.Toast;
-import com.soomla.store.BusProvider;
+import com.soomla.BusProvider;
+import com.soomla.SoomlaConfig;
 import com.soomla.store.SoomlaApp;
-import com.soomla.store.StoreConfig;
 import com.soomla.store.events.*;
 import com.squareup.otto.Subscribe;
 
@@ -291,7 +291,7 @@ public class ExampleEventHandler {
      * @param msg message to be displayed as a part of the <code>Runnable</code>'s <code>run</code> method.
      */
     private void showToastIfDebug(final String msg) {
-        if (StoreConfig.logDebug){
+        if (SoomlaConfig.logDebug){
             mHandler.post(new Runnable() {
                 @Override
                 public void run() {

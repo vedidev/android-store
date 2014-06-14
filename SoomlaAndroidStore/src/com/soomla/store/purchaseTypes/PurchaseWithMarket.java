@@ -16,9 +16,9 @@
 
 package com.soomla.store.purchaseTypes;
 
-import com.soomla.store.BusProvider;
+import com.soomla.BusProvider;
 import com.soomla.store.StoreController;
-import com.soomla.store.StoreUtils;
+import com.soomla.SoomlaUtils;
 import com.soomla.store.domain.MarketItem;
 import com.soomla.store.events.ItemPurchaseStartedEvent;
 import com.soomla.store.exceptions.InsufficientFundsException;
@@ -59,14 +59,14 @@ public class PurchaseWithMarket extends PurchaseType {
      */
     @Override
     public void buy() throws InsufficientFundsException {
-        StoreUtils.LogDebug(TAG, "Starting in-app purchase for productId: "
+        SoomlaUtils.LogDebug(TAG, "Starting in-app purchase for productId: "
                 + mMarketItem.getProductId());
         
         BusProvider.getInstance().post(new ItemPurchaseStartedEvent(getAssociatedItem()));
         try {
             StoreController.getInstance().buyWithMarket(mMarketItem, "");
         } catch (IllegalStateException e) {
-            StoreUtils.LogError(TAG, "Error when purchasing item");
+            SoomlaUtils.LogError(TAG, "Error when purchasing item");
         }
     }
 

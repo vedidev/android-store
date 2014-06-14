@@ -16,8 +16,9 @@
 
 package com.soomla.store.domain;
 
-import com.soomla.store.StoreUtils;
-import com.soomla.store.data.JSONConsts;
+import com.soomla.SoomlaUtils;
+import com.soomla.store.data.StoreJSONConsts;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -50,12 +51,12 @@ public abstract class VirtualItem {
      * @throws JSONException
      */
     public VirtualItem(JSONObject jsonObject) throws JSONException{
-        mName = jsonObject.getString(JSONConsts.ITEM_NAME);
+        mName = jsonObject.getString(StoreJSONConsts.ITEM_NAME);
         try{
-            mDescription = jsonObject.getString(JSONConsts.ITEM_DESCRIPTION);
+            mDescription = jsonObject.getString(StoreJSONConsts.ITEM_DESCRIPTION);
         } catch (JSONException ex) {
         }
-        mItemId = jsonObject.getString(JSONConsts.ITEM_ITEMID);
+        mItemId = jsonObject.getString(StoreJSONConsts.ITEM_ITEMID);
     }
 
     /**
@@ -66,11 +67,11 @@ public abstract class VirtualItem {
     public JSONObject toJSONObject(){
         JSONObject jsonObject = new JSONObject();
         try {
-            jsonObject.put(JSONConsts.ITEM_NAME, mName);
-            jsonObject.put(JSONConsts.ITEM_DESCRIPTION, mDescription);
-            jsonObject.put(JSONConsts.ITEM_ITEMID, mItemId);
+            jsonObject.put(StoreJSONConsts.ITEM_NAME, mName);
+            jsonObject.put(StoreJSONConsts.ITEM_DESCRIPTION, mDescription);
+            jsonObject.put(StoreJSONConsts.ITEM_ITEMID, mItemId);
         } catch (JSONException e) {
-            StoreUtils.LogError(TAG, "An error occurred while generating JSON object.");
+            SoomlaUtils.LogError(TAG, "An error occurred while generating JSON object.");
         }
 
         return jsonObject;

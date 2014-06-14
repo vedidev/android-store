@@ -16,8 +16,9 @@
 
 package com.soomla.store.domain;
 
-import com.soomla.store.StoreUtils;
-import com.soomla.store.data.JSONConsts;
+import com.soomla.SoomlaUtils;
+import com.soomla.store.data.StoreJSONConsts;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -49,17 +50,17 @@ public class MarketItem {
      * @throws JSONException
      */
     public MarketItem(JSONObject jsonObject) throws JSONException {
-        if (jsonObject.has(JSONConsts.MARKETITEM_MANAGED)) {
-            this.mManaged = Managed.values()[jsonObject.getInt(JSONConsts.MARKETITEM_MANAGED)];
+        if (jsonObject.has(StoreJSONConsts.MARKETITEM_MANAGED)) {
+            this.mManaged = Managed.values()[jsonObject.getInt(StoreJSONConsts.MARKETITEM_MANAGED)];
         } else {
             this.mManaged = Managed.UNMANAGED;
         }
-        if (jsonObject.has(JSONConsts.MARKETITEM_ANDROID_ID)) {
-            this.mProductId = jsonObject.getString(JSONConsts.MARKETITEM_ANDROID_ID);
+        if (jsonObject.has(StoreJSONConsts.MARKETITEM_ANDROID_ID)) {
+            this.mProductId = jsonObject.getString(StoreJSONConsts.MARKETITEM_ANDROID_ID);
         } else {
-            this.mProductId = jsonObject.getString(JSONConsts.MARKETITEM_PRODUCT_ID);
+            this.mProductId = jsonObject.getString(StoreJSONConsts.MARKETITEM_PRODUCT_ID);
         }
-        this.mPrice = jsonObject.getDouble(JSONConsts.MARKETITEM_PRICE);
+        this.mPrice = jsonObject.getDouble(StoreJSONConsts.MARKETITEM_PRICE);
     }
 
     /**
@@ -70,11 +71,11 @@ public class MarketItem {
     public JSONObject toJSONObject(){
         JSONObject jsonObject = new JSONObject();
         try {
-            jsonObject.put(JSONConsts.MARKETITEM_MANAGED, mManaged.ordinal());
-            jsonObject.put(JSONConsts.MARKETITEM_ANDROID_ID, mProductId);
-            jsonObject.put(JSONConsts.MARKETITEM_PRICE, Double.valueOf(mPrice));
+            jsonObject.put(StoreJSONConsts.MARKETITEM_MANAGED, mManaged.ordinal());
+            jsonObject.put(StoreJSONConsts.MARKETITEM_ANDROID_ID, mProductId);
+            jsonObject.put(StoreJSONConsts.MARKETITEM_PRICE, Double.valueOf(mPrice));
         } catch (JSONException e) {
-            StoreUtils.LogError(TAG, "An error occurred while generating JSON object.");
+            SoomlaUtils.LogError(TAG, "An error occurred while generating JSON object.");
         }
 
         return jsonObject;

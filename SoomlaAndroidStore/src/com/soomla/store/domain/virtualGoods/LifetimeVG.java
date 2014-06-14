@@ -16,7 +16,7 @@
 
 package com.soomla.store.domain.virtualGoods;
 
-import com.soomla.store.StoreUtils;
+import com.soomla.SoomlaUtils;
 import com.soomla.store.data.StorageManager;
 import com.soomla.store.purchaseTypes.PurchaseType;
 import org.json.JSONException;
@@ -86,7 +86,7 @@ import org.json.JSONObject;
     @Override
     public int give(int amount, boolean notify) {
         if(amount > 1) {
-            StoreUtils.LogDebug(TAG, "You tried to give more than one LifetimeVG."
+            SoomlaUtils.LogDebug(TAG, "You tried to give more than one LifetimeVG."
                     + "Will try to give one anyway.");
             amount = 1;
         }

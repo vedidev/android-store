@@ -16,8 +16,8 @@
 
 package com.soomla.store.domain.virtualCurrencies;
 
-import com.soomla.store.StoreUtils;
-import com.soomla.store.data.JSONConsts;
+import com.soomla.SoomlaUtils;
+import com.soomla.store.data.StoreJSONConsts;
 import com.soomla.store.data.StorageManager;
 import com.soomla.store.data.StoreInfo;
 import com.soomla.store.domain.PurchasableVirtualItem;
@@ -71,9 +71,9 @@ public class VirtualCurrencyPack extends PurchasableVirtualItem {
      */
     public VirtualCurrencyPack(JSONObject jsonObject) throws JSONException {
         super(jsonObject);
-        this.mCurrencyAmount = jsonObject.getInt(JSONConsts.CURRENCYPACK_CURRENCYAMOUNT);
+        this.mCurrencyAmount = jsonObject.getInt(StoreJSONConsts.CURRENCYPACK_CURRENCYAMOUNT);
 
-        this.mCurrencyItemId = jsonObject.getString(JSONConsts.CURRENCYPACK_CURRENCYITEMID);
+        this.mCurrencyItemId = jsonObject.getString(StoreJSONConsts.CURRENCYPACK_CURRENCYITEMID);
     }
 
     /**
@@ -84,8 +84,8 @@ public class VirtualCurrencyPack extends PurchasableVirtualItem {
         JSONObject parentJsonObject = super.toJSONObject();
         JSONObject jsonObject = new JSONObject();
         try {
-            jsonObject.put(JSONConsts.CURRENCYPACK_CURRENCYAMOUNT, mCurrencyAmount);
-            jsonObject.put(JSONConsts.CURRENCYPACK_CURRENCYITEMID, mCurrencyItemId);
+            jsonObject.put(StoreJSONConsts.CURRENCYPACK_CURRENCYAMOUNT, mCurrencyAmount);
+            jsonObject.put(StoreJSONConsts.CURRENCYPACK_CURRENCYITEMID, mCurrencyItemId);
 
             Iterator<?> keys = parentJsonObject.keys();
             while(keys.hasNext())
@@ -95,7 +95,7 @@ public class VirtualCurrencyPack extends PurchasableVirtualItem {
             }
 
         } catch (JSONException e) {
-            StoreUtils.LogError(TAG, "An error occurred while generating JSON object.");
+            SoomlaUtils.LogError(TAG, "An error occurred while generating JSON object.");
         }
 
         return jsonObject;
@@ -110,7 +110,7 @@ public class VirtualCurrencyPack extends PurchasableVirtualItem {
         try {
             currency = (VirtualCurrency)StoreInfo.getVirtualItem(mCurrencyItemId);
         } catch (VirtualItemNotFoundException e) {
-            StoreUtils.LogError(TAG, "VirtualCurrency with itemId: " + mCurrencyItemId
+            SoomlaUtils.LogError(TAG, "VirtualCurrency with itemId: " + mCurrencyItemId
                     + " doesn't exist! Can't give this pack.");
             return 0;
         }
@@ -127,7 +127,7 @@ public class VirtualCurrencyPack extends PurchasableVirtualItem {
         try {
             currency = (VirtualCurrency)StoreInfo.getVirtualItem(mCurrencyItemId);
         } catch (VirtualItemNotFoundException e) {
-            StoreUtils.LogError(TAG, "VirtualCurrency with itemId: " + mCurrencyItemId +
+            SoomlaUtils.LogError(TAG, "VirtualCurrency with itemId: " + mCurrencyItemId +
                     " doesn't exist! Can't take this pack.");
             return 0;
         }
@@ -141,7 +141,7 @@ public class VirtualCurrencyPack extends PurchasableVirtualItem {
     @Override
     public int resetBalance(int balance, boolean notify) {
         // Not supported for VirtualCurrencyPacks !
-        StoreUtils.LogError(TAG, "Someone tried to reset balance of CurrencyPack. "
+        SoomlaUtils.LogError(TAG, "Someone tried to reset balance of CurrencyPack. "
                 + "That's not right.");
         return 0;
     }

@@ -16,8 +16,9 @@
 
 package com.soomla.store.domain;
 
-import com.soomla.store.StoreUtils;
-import com.soomla.store.data.JSONConsts;
+import com.soomla.SoomlaUtils;
+import com.soomla.store.data.StoreJSONConsts;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -49,9 +50,9 @@ public class VirtualCategory {
      * @throws JSONException
      */
     public VirtualCategory(JSONObject jsonObject) throws JSONException{
-        mName = jsonObject.getString(JSONConsts.CATEGORY_NAME);
+        mName = jsonObject.getString(StoreJSONConsts.CATEGORY_NAME);
 
-        JSONArray goodsArr = jsonObject.getJSONArray(JSONConsts.CATEGORY_GOODSITEMIDS);
+        JSONArray goodsArr = jsonObject.getJSONArray(StoreJSONConsts.CATEGORY_GOODSITEMIDS);
         for(int i=0; i<goodsArr.length(); i++) {
             String goodItemId = goodsArr.getString(i);
             mGoodsItemIds.add(goodItemId);
@@ -66,16 +67,16 @@ public class VirtualCategory {
     public JSONObject toJSONObject(){
         JSONObject jsonObject = new JSONObject();
         try {
-            jsonObject.put(JSONConsts.CATEGORY_NAME, mName);
+            jsonObject.put(StoreJSONConsts.CATEGORY_NAME, mName);
 
             JSONArray goodsArr = new JSONArray();
             for(String goodItemId : mGoodsItemIds) {
                 goodsArr.put(goodItemId);
             }
 
-            jsonObject.put(JSONConsts.CATEGORY_GOODSITEMIDS, goodsArr);
+            jsonObject.put(StoreJSONConsts.CATEGORY_GOODSITEMIDS, goodsArr);
         } catch (JSONException e) {
-            StoreUtils.LogError(TAG, "An error occurred while generating JSON object.");
+            SoomlaUtils.LogError(TAG, "An error occurred while generating JSON object.");
         }
 
         return jsonObject;

@@ -33,6 +33,8 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.soomla.SoomlaConfig;
+import com.soomla.SoomlaUtils;
 import com.soomla.store.*;
 import com.soomla.store.billing.google.GooglePlayIabService;
 import com.soomla.store.data.ObscuredSharedPreferences;
@@ -101,7 +103,7 @@ public class StoreExampleActivity extends Activity {
 
         //FOR TESTING PURPOSES ONLY: Check if it's a first run, if so add 10000 currencies.
         SharedPreferences prefs = new ObscuredSharedPreferences(
-                SoomlaApp.getAppContext().getSharedPreferences(StoreConfig.PREFS_NAME,
+                SoomlaApp.getAppContext().getSharedPreferences(SoomlaConfig.PREFS_NAME,
                         Context.MODE_PRIVATE));
         boolean initialized = prefs.getBoolean(FIRST_RUN, false);
         if (!initialized) {
@@ -113,7 +115,7 @@ public class StoreExampleActivity extends Activity {
                 edit.putBoolean(FIRST_RUN, true);
                 edit.commit();
             } catch (VirtualItemNotFoundException e) {
-                StoreUtils.LogError("Example Activity", "Couldn't add first 10000 currencies.");
+                SoomlaUtils.LogError("Example Activity", "Couldn't add first 10000 currencies.");
             }
         }
 

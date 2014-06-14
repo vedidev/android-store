@@ -16,8 +16,9 @@
 
 package com.soomla.store.data;
 
-import com.soomla.store.BusProvider;
-import com.soomla.store.StoreUtils;
+import com.soomla.BusProvider;
+import com.soomla.SoomlaUtils;
+import com.soomla.data.KeyValueStorage;
 import com.soomla.store.domain.VirtualItem;
 import com.soomla.store.domain.virtualGoods.EquippableVG;
 import com.soomla.store.domain.virtualGoods.UpgradeVG;
@@ -56,13 +57,13 @@ public class VirtualGoodsStorage extends VirtualItemStorage{
      * @param notify if true post event to bus
      */
     public void removeUpgrades(VirtualGood good, boolean notify) {
-        StoreUtils.LogDebug(mTag, "Removing upgrade information from virtual good: " +
+        SoomlaUtils.LogDebug(mTag, "Removing upgrade information from virtual good: " +
                 good.getName());
 
         String itemId = good.getItemId();
-        String key = KeyValDatabase.keyGoodUpgrade(itemId);
+        String key = keyGoodUpgrade(itemId);
 
-        StorageManager.getKeyValueStorage().deleteKeyValue(key);
+        KeyValueStorage.deleteKeyValue(key);
 
         if (notify) {
             BusProvider.getInstance().post(new GoodUpgradeEvent(good, null));
@@ -92,14 +93,14 @@ public class VirtualGoodsStorage extends VirtualItemStorage{
             return;
         }
 
-        StoreUtils.LogDebug(mTag, "Assigning upgrade " + upgradeVG.getName() + " to virtual good: "
+        SoomlaUtils.LogDebug(mTag, "Assigning upgrade " + upgradeVG.getName() + " to virtual good: "
                 + good.getName());
 
         String itemId = good.getItemId();
-        String key = KeyValDatabase.keyGoodUpgrade(itemId);
+        String key = keyGoodUpgrade(itemId);
         String upItemId = upgradeVG.getItemId();
 
-        StorageManager.getKeyValueStorage().setValue(key, upItemId);
+        KeyValueStorage.setValue(key, upItemId);
 
         if (notify) {
             BusProvider.getInstance().post(new GoodUpgradeEvent(good, upgradeVG));
@@ -113,15 +114,15 @@ public class VirtualGoodsStorage extends VirtualItemStorage{
      * @return the current upgrade for the given virtual good
      */
     public UpgradeVG getCurrentUpgrade(VirtualGood good) {
-        StoreUtils.LogDebug(mTag, "Fetching upgrade to virtual good: " + good.getName());
+        SoomlaUtils.LogDebug(mTag, "Fetching upgrade to virtual good: " + good.getName());
 
         String itemId = good.getItemId();
-        String key = KeyValDatabase.keyGoodUpgrade(itemId);
+        String key = keyGoodUpgrade(itemId);
 
-        String upItemId = StorageManager.getKeyValueStorage().getValue(key);
+        String upItemId = KeyValueStorage.getValue(key);
 
         if (upItemId == null) {
-            StoreUtils.LogDebug(mTag, "You tried to fetch the current upgrade of " + good.getName()
+            SoomlaUtils.LogDebug(mTag, "You tried to fetch the current upgrade of " + good.getName()
                     + " but there's not upgrade to it.");
             return null;
         }
@@ -129,10 +130,10 @@ public class VirtualGoodsStorage extends VirtualItemStorage{
         try {
             return (UpgradeVG) StoreInfo.getVirtualItem(upItemId);
         } catch (VirtualItemNotFoundException e) {
-            StoreUtils.LogError(mTag,
+            SoomlaUtils.LogError(mTag,
                     "The current upgrade's itemId from the DB is not found in StoreInfo.");
         } catch (ClassCastException e) {
-            StoreUtils.LogError(mTag,
+            SoomlaUtils.LogError(mTag,
                     "The current upgrade's itemId from the DB is not an UpgradeVG.");
         }
 
@@ -146,12 +147,12 @@ public class VirtualGoodsStorage extends VirtualItemStorage{
      * @return true if the given good is equipped, false otherwise
      */
     public boolean isEquipped(EquippableVG good){
-        StoreUtils.LogDebug(mTag, "checking if virtual good with itemId: " + good.getItemId() +
+        SoomlaUtils.LogDebug(mTag, "checking if virtual good with itemId: " + good.getItemId() +
                 " is equipped.");
 
         String itemId = good.getItemId();
-        String key = KeyValDatabase.keyGoodEquipped(itemId);
-        String val = StorageManager.getKeyValueStorage().getValue(key);
+        String key = keyGoodEquipped(itemId);
+        String val = KeyValueStorage.getValue(key);
 
         return val != null;
     }
@@ -205,7 +206,7 @@ public class VirtualGoodsStorage extends VirtualItemStorage{
      */
     @Override
     protected String keyBalance(String itemId) {
-        return KeyValDatabase.keyGoodBalance(itemId);
+        return keyGoodBalance(itemId);
     }
 
     /**
@@ -221,22 +222,35 @@ public class VirtualGoodsStorage extends VirtualItemStorage{
      * Helper function for <code>equip</code> and <code>unequip</code> functions.
      */
     private void equipPriv(EquippableVG good, boolean equip, boolean notify){
-        StoreUtils.LogDebug(mTag, (!equip ? "unequipping " : "equipping ") + good.getName() + ".");
+        SoomlaUtils.LogDebug(mTag, (!equip ? "unequipping " : "equipping ") + good.getName() + ".");
 
         String itemId = good.getItemId();
-        String key = KeyValDatabase.keyGoodEquipped(itemId);
+        String key = keyGoodEquipped(itemId);
 
         if (equip) {
-            StorageManager.getKeyValueStorage().setValue(key, "");
+            KeyValueStorage.setValue(key, "");
             if (notify) {
                 BusProvider.getInstance().post(new GoodEquippedEvent(good));
             }
         } else {
-            StorageManager.getKeyValueStorage().deleteKeyValue(key);
+            KeyValueStorage.deleteKeyValue(key);
             if (notify) {
                 BusProvider.getInstance().post(new GoodUnEquippedEvent(good));
             }
         }
+    }
+
+
+    private static String keyGoodBalance(String itemId) {
+        return "good." + itemId + ".balance";
+    }
+
+    private static String keyGoodEquipped(String itemId) {
+        return "good." + itemId + ".equipped";
+    }
+
+    private static String keyGoodUpgrade(String itemId) {
+        return "good." + itemId + ".currentUpgrade";
     }
 
 }
