@@ -22,8 +22,9 @@ import android.text.TextUtils;
 
 import com.soomla.SoomlaConfig;
 import com.soomla.data.KeyValueStorage;
+import com.soomla.data.ObscuredSharedPreferences;
 import com.soomla.store.IStoreAssets;
-import com.soomla.store.SoomlaApp;
+import com.soomla.SoomlaApp;
 import com.soomla.store.StoreConfig;
 import com.soomla.SoomlaUtils;
 import com.soomla.store.domain.NonConsumableItem;

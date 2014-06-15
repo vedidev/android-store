@@ -20,7 +20,7 @@ package com.soomla.example;
 import android.content.res.AssetManager;
 
 import com.soomla.store.IStoreAssets;
-import com.soomla.store.SoomlaApp;
+import com.soomla.SoomlaApp;
 import com.soomla.store.domain.*;
 import com.soomla.store.domain.virtualCurrencies.*;
 import com.soomla.store.domain.virtualGoods.*;

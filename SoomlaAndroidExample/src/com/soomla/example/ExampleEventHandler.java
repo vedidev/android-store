@@ -21,7 +21,7 @@ import android.os.Handler;
 import android.widget.Toast;
 import com.soomla.BusProvider;
 import com.soomla.SoomlaConfig;
-import com.soomla.store.SoomlaApp;
+import com.soomla.SoomlaApp;
 import com.soomla.store.events.*;
 import com.squareup.otto.Subscribe;
 
