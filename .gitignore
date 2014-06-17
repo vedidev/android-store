@@ -29,6 +29,8 @@ proguard/
 **/.idea/dictionaries
 .idea/libraries
 
+**/out
+
 SoomlaAndroidExample/res/.DS_Store
 SoomlaAndroidExample/SoomlaAndroidExample.apk
 SoomlaAndroidStore/src/META-INF/
