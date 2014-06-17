@@ -33,17 +33,17 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.soomla.Soomla;
 import com.soomla.SoomlaApp;
 import com.soomla.SoomlaConfig;
 import com.soomla.SoomlaUtils;
 import com.soomla.store.*;
 import com.soomla.store.billing.google.GooglePlayIabService;
-import com.soomla.data.ObscuredSharedPreferences;
 import com.soomla.store.domain.virtualCurrencies.VirtualCurrency;
 import com.soomla.store.exceptions.VirtualItemNotFoundException;
 
 /**
- * In this class <code>StoreController</code> and <code>EventHandler</code> are initialized before
+ * In this class <code>SoomlaStore</code> and <code>EventHandler</code> are initialized before
  * the store is opened. This class is responsible for displaying the initial screen of the game,
  * which contains a drag and drop image which leads to the next display and activity:
  * <code>StoreGoodsActivity</code>.
@@ -81,7 +81,7 @@ public class StoreExampleActivity extends Activity {
         ((TextView) findViewById(R.id.main_text)).setTypeface(font);
 
         /*
-         Initialize StoreController and EventHandler before the store is opened.
+         Initialize SoomlaStore and EventHandler before the store is opened.
 
          Compute your public key (that you got from the Android Market publisher site).
 
@@ -97,15 +97,16 @@ public class StoreExampleActivity extends Activity {
         IStoreAssets storeAssets = new MuffinRushAssets();
         mEventHandler = new ExampleEventHandler(mHandler, this);
 
-        StoreController.getInstance().initialize(storeAssets, "[CUSTOM SECRET HERE]");
+        Soomla.initialize("[CUSTOM SECRET HERE]");
+        SoomlaStore.getInstance().initialize(storeAssets);
         GooglePlayIabService.getInstance().setPublicKey("[YOUR PUBLIC KEY FROM THE MARKET]");
         GooglePlayIabService.AllowAndroidTestPurchases = true;
 
 
         //FOR TESTING PURPOSES ONLY: Check if it's a first run, if so add 10000 currencies.
-        SharedPreferences prefs = new ObscuredSharedPreferences(
+        SharedPreferences prefs =
                 SoomlaApp.getAppContext().getSharedPreferences(SoomlaConfig.PREFS_NAME,
-                        Context.MODE_PRIVATE));
+                        Context.MODE_PRIVATE);
         boolean initialized = prefs.getBoolean(FIRST_RUN, false);
         if (!initialized) {
             try {
