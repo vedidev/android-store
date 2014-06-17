@@ -17,7 +17,7 @@
 package com.soomla.store.purchaseTypes;
 
 import com.soomla.BusProvider;
-import com.soomla.store.StoreController;
+import com.soomla.store.SoomlaStore;
 import com.soomla.SoomlaUtils;
 import com.soomla.store.domain.MarketItem;
 import com.soomla.store.events.ItemPurchaseStartedEvent;
@@ -64,7 +64,7 @@ public class PurchaseWithMarket extends PurchaseType {
         
         BusProvider.getInstance().post(new ItemPurchaseStartedEvent(getAssociatedItem()));
         try {
-            StoreController.getInstance().buyWithMarket(mMarketItem, "");
+            SoomlaStore.getInstance().buyWithMarket(mMarketItem, "");
         } catch (IllegalStateException e) {
             SoomlaUtils.LogError(TAG, "Error when purchasing item");
         }

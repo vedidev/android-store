@@ -82,7 +82,7 @@ public class StoreInfo {
 
     /**
      * Initializes <code>StoreInfo</code> from the database. This action should be performed only
-     * once during the lifetime of a session of the game. <code>StoreController</code> automatically
+     * once during the lifetime of a session of the game. <code>SoomlaStore</code> automatically
      * initializes <code>StoreInfo</code>. Don't do it if you don't know what you're doing.
      *
      * @return success
