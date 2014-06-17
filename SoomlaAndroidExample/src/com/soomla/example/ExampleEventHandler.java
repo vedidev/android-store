@@ -269,18 +269,18 @@ public class ExampleEventHandler {
     }
 
     /**
-     * Listens for the given <code>storeControllerInitializedEvent</code> that was fired. Upon
+     * Listens for the given <code>SoomlaStoreInitializedEvent</code> that was fired. Upon
      * receiving such an event, if the debugging setting is on, displays a message stating that
-     * <code>StoreController</code> has been initialized.
+     * <code>SoomlaStore</code> has been initialized.
      *
-     * @param storeControllerInitializedEvent the store controller initialized event that was fired
+     * @param SoomlaStoreInitializedEvent the store controller initialized event that was fired
      */
     @Subscribe
-    public void onStoreControllerInitialized(
-            StoreControllerInitializedEvent storeControllerInitializedEvent) {
+    public void onSoomlaStoreInitialized(
+            SoomlaStoreInitializedEvent SoomlaStoreInitializedEvent) {
         String [] s = {"no_ads"};
-        // StoreController.getInstance().getItemDetails(s);
-        showToastIfDebug("storeControllerInitialized");
+        // SoomlaStore.getInstance().getItemDetails(s);
+        showToastIfDebug("SoomlaStoreInitialized");
     }
 
     /**

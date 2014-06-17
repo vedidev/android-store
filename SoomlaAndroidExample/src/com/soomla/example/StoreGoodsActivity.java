@@ -31,7 +31,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.soomla.BusProvider;
-import com.soomla.store.StoreController;
+import com.soomla.store.SoomlaStore;
 import com.soomla.store.data.StorageManager;
 import com.soomla.store.data.StoreInfo;
 import com.soomla.store.domain.virtualGoods.VirtualGood;
@@ -70,7 +70,7 @@ public class StoreGoodsActivity extends Activity {
      * @throws IOException
      */
     public void restoreTransactions(View v) throws IOException{
-        StoreController.getInstance().restoreTransactions();
+        SoomlaStore.getInstance().restoreTransactions();
     }
 
     /**
@@ -121,7 +121,7 @@ public class StoreGoodsActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.listview);
-        StoreController.getInstance().startIabServiceInBg();
+        SoomlaStore.getInstance().startIabServiceInBg();
         TextView title = (TextView)findViewById(R.id.title);
         title.setText("Virtual Goods");
         mImages = generateImagesHash();
@@ -137,7 +137,7 @@ public class StoreGoodsActivity extends Activity {
 
                /*
                 The user decided to make an actual purchase of virtual goods. We try to buy() the
-                user's desired good and StoreController tells us if the user has enough funds to
+                user's desired good and SoomlaStore tells us if the user has enough funds to
                 make the purchase. If he/she doesn't have enough then an InsufficientFundsException
                 will be thrown.
                 */
@@ -192,7 +192,7 @@ public class StoreGoodsActivity extends Activity {
      */
     @Override
     protected void onDestroy() {
-        StoreController.getInstance().stopIabServiceInBg();
+        SoomlaStore.getInstance().stopIabServiceInBg();
         super.onDestroy();
     }
 
