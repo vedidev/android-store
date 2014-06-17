@@ -16,21 +16,17 @@
 
 package com.soomla.store;
 
-import android.content.Context;
-import android.content.SharedPreferences;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 
 import com.soomla.BusProvider;
 import com.soomla.SoomlaApp;
-import com.soomla.SoomlaConfig;
 import com.soomla.SoomlaUtils;
 import com.soomla.store.billing.IIabService;
 import com.soomla.store.billing.IabCallbacks;
 import com.soomla.store.billing.IabException;
 import com.soomla.store.billing.IabPurchase;
 import com.soomla.store.billing.IabSkuDetails;
-import com.soomla.data.ObscuredSharedPreferences;
 import com.soomla.store.data.StorageManager;
 import com.soomla.store.data.StoreInfo;
 import com.soomla.store.domain.MarketItem;
@@ -39,6 +35,7 @@ import com.soomla.store.domain.PurchasableVirtualItem;
 import com.soomla.store.events.BillingNotSupportedEvent;
 import com.soomla.store.events.BillingSupportedEvent;
 import com.soomla.store.events.IabServiceStartedEvent;
+import com.soomla.store.events.ItemPurchasedEvent;
 import com.soomla.store.events.MarketItemsRefreshFinishedEvent;
 import com.soomla.store.events.MarketItemsRefreshStartedEvent;
 import com.soomla.store.events.MarketPurchaseCancelledEvent;
@@ -46,7 +43,6 @@ import com.soomla.store.events.MarketPurchaseEvent;
 import com.soomla.store.events.MarketPurchaseStartedEvent;
 import com.soomla.store.events.MarketRefundEvent;
 import com.soomla.store.events.RestoreTransactionsFinishedEvent;
-import com.soomla.store.events.ItemPurchasedEvent;
 import com.soomla.store.events.RestoreTransactionsStartedEvent;
 import com.soomla.store.events.StoreControllerInitializedEvent;
 import com.soomla.store.events.UnexpectedStoreErrorEvent;
@@ -71,9 +67,8 @@ public class StoreController {
      * This initializer also initializes {@link com.soomla.store.data.StoreInfo}.
      *
      * @param storeAssets the definition of your application specific assets.
-     * @param customSecret your encryption secret (it's used to encrypt your data in the database)
      */
-    public boolean initialize(IStoreAssets storeAssets, String customSecret) {
+    public boolean initialize(IStoreAssets storeAssets) {
         if (mInitialized) {
             String err = "StoreController is already initialized. You can't initialize it twice!";
             handleErrorResult(err);
@@ -104,24 +99,7 @@ public class StoreController {
             }
         }
 
-        SharedPreferences prefs = new ObscuredSharedPreferences(SoomlaApp.getAppContext().
-                getSharedPreferences(SoomlaConfig.PREFS_NAME, Context.MODE_PRIVATE));
-        SharedPreferences.Editor edit = prefs.edit();
-
-        if (customSecret != null && customSecret.length() != 0) {
-            edit.putString(SoomlaConfig.CUSTOM_SEC, customSecret);
-        } else if (prefs.getString(SoomlaConfig.CUSTOM_SEC, "").length() == 0) {
-        	String err = "customSecret is null or empty. Can't initialize store!!";
-            SoomlaUtils.LogError(TAG, err);
-            BusProvider.getInstance().post(new UnexpectedStoreErrorEvent(err));
-            return false;
-        }
-        edit.putInt("SA_VER_NEW", storeAssets.getVersion());
-        edit.commit();
-
-        if (storeAssets != null) {
-            StoreInfo.setStoreAssets(storeAssets);
-        }
+        StoreInfo.setStoreAssets(storeAssets);
 
         // Update SOOMLA store from DB
         StoreInfo.initializeFromDB();

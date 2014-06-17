@@ -22,7 +22,6 @@ import android.text.TextUtils;
 
 import com.soomla.SoomlaConfig;
 import com.soomla.data.KeyValueStorage;
-import com.soomla.data.ObscuredSharedPreferences;
 import com.soomla.store.IStoreAssets;
 import com.soomla.SoomlaApp;
 import com.soomla.store.StoreConfig;
@@ -69,6 +68,8 @@ public class StoreInfo {
             SoomlaUtils.LogError(TAG, "The given store assets can't be null!");
             return;
         }
+
+        mCurrentAssetsVersion = storeAssets.getVersion();
 
         checkMetadataVersion();
 
@@ -666,16 +667,14 @@ public class StoreInfo {
     }
 
     private static void checkMetadataVersion() {
-        SharedPreferences prefs = new ObscuredSharedPreferences(
-                SoomlaApp.getAppContext().getSharedPreferences(SoomlaConfig.PREFS_NAME,
-                        Context.MODE_PRIVATE));
+        SharedPreferences prefs = SoomlaApp.getAppContext().getSharedPreferences(SoomlaConfig.PREFS_NAME,
+                        Context.MODE_PRIVATE);
         int mt_ver = prefs.getInt("MT_VER", 0);
         int sa_ver_old = prefs.getInt("SA_VER_OLD", -1);
-        int sa_ver_new = prefs.getInt("SA_VER_NEW", 0);
-        if (mt_ver < StoreConfig.METADATA_VERSION || sa_ver_old < sa_ver_new) {
+        if (mt_ver < StoreConfig.METADATA_VERSION || sa_ver_old < mCurrentAssetsVersion) {
             SharedPreferences.Editor edit = prefs.edit();
             edit.putInt("MT_VER", StoreConfig.METADATA_VERSION);
-            edit.putInt("SA_VER_OLD", sa_ver_new);
+            edit.putInt("SA_VER_OLD", mCurrentAssetsVersion);
             edit.commit();
 
             KeyValueStorage.deleteKeyValue(keyMetaStoreInfo());
@@ -717,4 +716,6 @@ public class StoreInfo {
 
     // list of non consumable items
     private static List<NonConsumableItem> mNonConsumables;
+
+    private static int mCurrentAssetsVersion = 0;
 }
