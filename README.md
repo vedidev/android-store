@@ -1,4 +1,4 @@
-*This project is a part of [The SOOMLA Project](http://project.soom.la) which is a series of open source initiatives with a joint goal to help mobile game developers get better stores and more in-app purchases.*
+*This project is a part of The [SOOMLA](http://project.soom.la) Framework which is a series of open source initiatives with a joint goal to help mobile game developers do more together. SOOMLA encourages better game designing, economy modeling and faster development.*
 
 Haven't you ever wanted an in-app purchase one liner that looks like this!?
 
@@ -8,28 +8,28 @@ Haven't you ever wanted an in-app purchase one liner that looks like this!?
 
 ## android-store
 
+*SOOMLA's Store Module for Android*
+
+**June 20th, 2014**: v3.4.1 presents support for "Soomla Core" (which separates some objects common to ALL SOOMLA's modules). It also removed the usage of SOOM_SEC. [Getting Started](https://github.com/soomla/android-store#getting-started) has changed! see [CHANGELOG](changelog.md).
+
 **May 25th, 2014**: Amazon billing service is now our second billing service implementation. See [Billing Services](#whats-next-selecting-a-billing-service) for details.
 
-**April 1st, 2014**: We've added the option to refresh market items details from the IAB Service (default is Google Play). You can call 'refreshInventory(true)' from StoreController when you want and all your PurchasableItems that has a PurchaseType of PurchaseWithMarket will update the values of: MarketPrice, MarketTitle, MarketDescription. android-store automatically running the operation when you initialize StoreController.
-
-**March 26th, 2014**: We've split out Google Play to a plugin so we'll be able to add more billing providers to android-store.  http://blog.soom.la/2014/03/google-play-will-not-be-the-only-option-for-long.html
+**April 1st, 2014**: We've added the option to refresh market items details from the IAB Service (default is Google Play). You can call 'refreshInventory(true)' from SoomlaStore when you want and all your PurchasableItems that has a PurchaseType of PurchaseWithMarket will update the values of: MarketPrice, MarketTitle, MarketDescription. android-store automatically running the operation when you initialize SoomlaStore.
 
 The current virtual economy model is called **modelV3**. Want to learn more about it? Try these:  
 * [Economy Model Objects](https://github.com/soomla/android-store/wiki/Economy-Model-Objects)  
 * [Handling Store Operations](https://github.com/soomla/android-store/wiki/Handling-Store-Operations)
 
-android-store is an open code initiative as part of The SOOMLA Project. It is a Java API that simplifies Google Play's in-app purchasing API and compliments it with storage, security and event handling. The project also includes a sample app for reference.
+android-store is the Android flavor of SOOMLA's Store Module.
 
 
 Check out our [Wiki] (https://github.com/soomla/android-store/wiki) for more information about the project and how to use it better.
 
-## Getting Started (With sources)
+## Getting Started
 
 * Before doing anything, SOOMLA recommends that you go through [Android In-app Billing](http://developer.android.com/guide/google/play/billing/index.html) and [Amazon In App Purchasing](https://developer.amazon.com/public/apis/earn/in-app-purchasing).
 
-1. Clone android-store. Copy all files from android-store/SoomlaAndroidStore subfolders to their equivalent folders in your Android project:
-
- `git clone git@github.com:soomla/android-store.git`
+1. Add the jars from the [build](https://github.com/soomla/android-store/tree/master/build) folder to your project.
 
 2. Make the following changes to your AndroidManifest.xml:
 
@@ -37,22 +37,23 @@ Check out our [Wiki] (https://github.com/soomla/android-store/wiki) for more inf
 
     ```xml
     <application ...
-                 android:name="com.soomla.store.SoomlaApp">
+                 android:name="com.soomla.SoomlaApp">
     ```
 
-3. Change the value of `StoreConfig.SOOM_SEC` to a secret of you choice. Do this now!
-   **You can't change this value after you publish your game!**
+3. Initialize **Soomla** with a secret that you chose to encrypt the user data. (For those who came from older versions, this should be the same as the old "customSec"):
 
-4. Create your own implementation of _IStoreAssets_ in order to describe your specific game's assets ([example](https://github.com/soomla/android-store/blob/master/SoomlaAndroidExample/src/com/soomla/example/MuffinRushAssets.java)). Initialize _StoreController_ with the class you just created:
+    ```Java
+     Soomla.initialize("[YOUR CUSTOM GAME SECRET HERE]");
+    ```
+    > The secret is your encryption secret for data saved in the DB.
 
-      ```Java
-       StoreController.getInstance().initialize(new YourStoreAssetsImplementation(),
-                                           "[YOUR CUSTOM GAME SECRET HERE]");
-      ```
+4. Create your own implementation of _IStoreAssets_ in order to describe your specific game's assets ([example](https://github.com/soomla/android-store/blob/master/SoomlaAndroidExample/src/com/soomla/example/MuffinRushAssets.java)). Initialize _SoomlaStore_ with the class you just created:
 
-    > The custom secret is your encryption secret for data saved in the DB. This secret is NOT the secret from step 3 (select a different value).
+    ```Java
+     SoomlaStore.getInstance().initialize(new YourStoreAssetsImplementation());
+    ```
 
-    > Initialize `StoreController` ONLY ONCE when your application loads.
+    > Initialize `SoomlaStore` ONLY ONCE when your application loads.
 
 5. Refer to the [next section](https://github.com/soomla/android-store#whats-next-selecting-a-billing-service) for information of selecting your Billing Service and setting it up.
 
@@ -65,7 +66,7 @@ android-store can be used on all Android based devices meaning that you might wa
 
 We've created two billing services for you: Google Play and Amazon (according to your demand).
 
-The billing service is automatically started and stopped for every operation you're running on `StoreContoroller` (`buyWithMarket`, `restoreTransactions` ...).
+The billing service is automatically started and stopped for every operation you're running on `SoomlaStore` (`buyWithMarket`, `restoreTransactions` ...).
 
 Be careful with that. Don't leave the service running in the background without closing it.
 
@@ -90,12 +91,11 @@ You must select a billing service for android-store to work properly. The integr
       <meta-data android:name="billing.service" android:value="google.GooglePlayIabService" />
   ```
 
-3. After you initialize `StoreController`, let the plugin know your public key from the dev console:
+3. After you initialize `SoomlaStore`, let the plugin know your public key from the dev console:
 
   ```Java
       GooglePlayIabService.getInstance().setPublicKey("[YOUR PUBLIC KEY FROM THE MARKET]");
   ```
-
 
 4. If you want to allow the test purchases, all you need to do is tell that to the plugin:
 
@@ -107,12 +107,12 @@ For Google Play, We recommend that you open the IAB Service and keep it open in 
 
 When you open the store, call:  
   ```Java
-      StoreController.getInstance().startIabServiceInBg();
+      SoomlaStore.getInstance().startIabServiceInBg();
   ```
 
 When the store is closed, call:  
   ```Java
-      StoreController.getInstance().stopIabServiceInBg();
+      SoomlaStore.getInstance().stopIabServiceInBg();
   ```
 
 #### [Amazon](https://github.com/soomla/android-store-amazon)
@@ -169,12 +169,12 @@ Don't forget to define your _IStoreEventHandler_ in order to get the events of s
 
 ## Debugging
 
-In order to debug android-store, set `StoreConfig.logDebug` to `true`. This will print all of _android-store's_ debugging messages to logcat.
+In order to debug android-store, set `SoomlaConfig.logDebug` to `true`. This will print all of _android-store's_ debugging messages to logcat.
 
 ## Storage & Meta-Data
 
 
-When you initialize _StoreController_, it automatically initializes two other classes: _StorageManager_ and _StoreInfo_. _StorageManager_ is the father of all storage related instances in your game. Use it to access the balances of virtual currencies and virtual goods (usually, using their itemIds). _StoreInfo_ is the mother of all meta data information about your specific game. It is initialized with your implementation of `IStoreAssets` and you can use it to retrieve information about your specific game.  
+When you initialize _SoomlaStore_, it automatically initializes two other classes: _StorageManager_ and _StoreInfo_. _StorageManager_ is the father of all storage related instances in your game. Use it to access the balances of virtual currencies and virtual goods (usually, using their itemIds). _StoreInfo_ is the mother of all meta data information about your specific game. It is initialized with your implementation of `IStoreAssets` and you can use it to retrieve information about your specific game.  
 We've also added _StoreInventory_ which is a utility class to help you do store related operations even easier.
 
 The on-device storage is encrypted and kept in a SQLite database. SOOMLA is preparing a cloud-based storage service that will allow this SQLite to be synced to a cloud-based repository that you'll define.
@@ -205,7 +205,7 @@ The on-device storage is encrypted and kept in a SQLite database. SOOMLA is prep
 
 If you want to protect your game from 'bad people' (and who doesn't?!), you might want to follow some guidelines:
 
-+ SOOMLA keeps the game's data in an encrypted database. In order to encrypt your data, SOOMLA generates a private key out of several parts of information. The Custom Secret is one of them. SOOMLA recommends that you provide this value when initializing `StoreController` and before you release your game. BE CAREFUL: You can change this value once! If you try to change it again, old data from the database will become unavailable.
++ SOOMLA keeps the game's data in an encrypted database. In order to encrypt your data, SOOMLA generates a private key out of several parts of information. The Soomla Secret (before v3.4.1 is was called customSec) is one of them. SOOMLA recommends that you provide this value when initializing `SoomlaStore` and before you release your game. BE CAREFUL: You can change this value once! If you try to change it again, old data from the database will become unavailable.
 + Following Google's recommendation, SOOMLA also recommends that you split your public key and construct it on runtime or even use bit manipulation on it in order to hide it. The key itself is not secret information but if someone replaces it, your application might get fake messages that might harm it.
 
 ## Event Handling
@@ -220,7 +220,8 @@ In order to register for events:
 1. In the class that should receive the event create a function with the annotation '@Subscribe'. Example:
 
     ```Java
-    @Subscribe public void onMarketPurchaseEvent(MarketPurchaseEvent marketPurchaseEvent) {
+    @Subscribe
+    public void onMarketPurchaseEvent(MarketPurchaseEvent marketPurchaseEvent) {
         ...
     }
     ```

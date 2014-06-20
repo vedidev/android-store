@@ -1,3 +1,12 @@
+### v3.4.1 [view commit logs](https://github.com/soomla/android-store/compare/v3.4.0...v3.4.1)
+
+* New Features
+  * Some core objects and features were extracted to a separate project [soomla-android-core](https://github.com/soomla/soomla-android-core).
+  * SOOM_SEC is no longer relevant. You only supply one secret called Soomla Secret when you initialize "Soomle" (soomla core).
+
+* Changes
+  * StoreController is now called SoomlaStore.
+
 ### v3.4.0 [view commit logs](https://github.com/soomla/android-store/compare/v3.3.3...v3.4.0)
 
 * Fixes
@@ -32,8 +41,8 @@
 * Fixes
   * Enforce providing a SOOM_SEC in obfuscator.
   * If the purchasable item is NonConsumableItem and it already exists then we don't fire any events.
-  
-  
+
+
 ### v3.3.1 [view commit logs](https://github.com/soomla/android-store/compare/v3.3.0...v3.3.1)
 
 * Billing Services
@@ -43,14 +52,13 @@
 
 * New Features
   * android-store will now refresh details of market items on initialization.
-  
+
 * Optimizations
   * Fixed Names of objects and events so they match in all SOOMLA plugins.
   * Added the changed market items to the MarketItemsRefreshed event.
-  
+
 ### v3.3.0 [view commit logs](https://github.com/soomla/android-store/compare/v3.2.1...v3.3.0)
 
 * Billing Services
   * We've split out Google Play so we can add more billing services.
   * Google Play is the default billing services and it's in a different project: https://github.com/soomla/android-store-google-play
-
