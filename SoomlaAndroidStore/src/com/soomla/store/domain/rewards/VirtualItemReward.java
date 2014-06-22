@@ -37,6 +37,10 @@ public class VirtualItemReward extends Reward {
 
     public static final String TYPE_NAME = "item";
 
+    static  {
+        Reward.addRewardType(TYPE_NAME, VirtualItemReward.class);
+    }
+
     /**
      * Constructor
      *
