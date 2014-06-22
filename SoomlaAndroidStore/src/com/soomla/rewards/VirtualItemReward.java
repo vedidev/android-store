@@ -14,11 +14,10 @@
  * limitations under the License.
  */
 
-package com.soomla.store.domain.rewards;
+package com.soomla.rewards;
 
 import com.soomla.SoomlaUtils;
 import com.soomla.data.JSONConsts;
-import com.soomla.rewards.Reward;
 import com.soomla.store.StoreInventory;
 import com.soomla.store.exceptions.VirtualItemNotFoundException;
 
@@ -34,12 +33,6 @@ import org.json.JSONObject;
  * Created by refaelos on 13/05/14.
  */
 public class VirtualItemReward extends Reward {
-
-    public static final String TYPE_NAME = "item";
-
-    static  {
-        Reward.addRewardType(TYPE_NAME, VirtualItemReward.class);
-    }
 
     /**
      * Constructor
@@ -78,7 +71,7 @@ public class VirtualItemReward extends Reward {
         try {
             jsonObject.put(JSONConsts.SOOM_ASSOCITEMID, mAssociatedItemId);
             jsonObject.put(JSONConsts.SOOM_REWARD_AMOUNT, mAmount);
-            jsonObject.put(JSONConsts.SOOM_TYPE, TYPE_NAME);
+            jsonObject.put(JSONConsts.SOOM_CLASSNAME, getClass().getSimpleName());
         } catch (JSONException e) {
             SoomlaUtils.LogError(TAG, "An error occurred while generating JSON object.");
         }
