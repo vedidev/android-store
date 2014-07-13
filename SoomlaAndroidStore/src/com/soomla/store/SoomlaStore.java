@@ -355,9 +355,30 @@ public class SoomlaStore {
 
                                     @Override
                                     public void alreadyOwned(IabPurchase purchase) {
-                                        SoomlaUtils.LogDebug(TAG, "Tried to buy an item that was not consumed. "
-                                                + "Trying to consume it if it's a consumable.");
-                                        consumeIfConsumable(purchase);
+                                        String sku = purchase.getSku();
+                                        SoomlaUtils.LogDebug(TAG, "Tried to buy an item that was not" +
+                                                " consumed (maybe it's an already owned " +
+                                                "NonConsumable). productId: " + sku);
+
+                                        try {
+                                            PurchasableVirtualItem pvi = StoreInfo.getPurchasableItem(sku);
+                                            consumeIfConsumable(purchase, pvi);
+
+                                            if (pvi instanceof NonConsumableItem) {
+                                                String message = "(alreadyOwned) the user tried to " +
+                                                        "buy a NonConsumableItem that was already " +
+                                                        "owned. itemId: " + pvi.getItemId() +
+                                                        "    productId: " + sku;
+                                                SoomlaUtils.LogDebug(TAG, message);
+                                                BusProvider.getInstance().post(new UnexpectedStoreErrorEvent(message));
+                                            }
+                                        } catch (VirtualItemNotFoundException e) {
+                                            String message = "(alreadyOwned) ERROR : Couldn't find the "
+                                                    + "VirtualCurrencyPack with productId: " + sku
+                                                    + ". It's unexpected so an unexpected error is being emitted.";
+                                            SoomlaUtils.LogError(TAG, message);
+                                            BusProvider.getInstance().post(new UnexpectedStoreErrorEvent(message));
+                                        }
                                     }
 
                                     @Override
@@ -465,7 +486,8 @@ public class SoomlaStore {
                 pvi.give(1);
                 BusProvider.getInstance().post(new ItemPurchasedEvent(pvi));
 
-                consumeIfConsumable(purchase);
+                consumeIfConsumable(purchase, pvi);
+
                 break;
 
             case 1:
@@ -505,21 +527,14 @@ public class SoomlaStore {
      *
      * @param purchase purchase to be consumed
      */
-    private void consumeIfConsumable(IabPurchase purchase) {
-        String sku = purchase.getSku();
+    private void consumeIfConsumable(IabPurchase purchase, PurchasableVirtualItem pvi) {
         try {
-            PurchasableVirtualItem pvi = StoreInfo.getPurchasableItem(sku);
-
             if (!(pvi instanceof NonConsumableItem)) {
                 mInAppBillingService.consume(purchase);
             }
-        } catch (VirtualItemNotFoundException e) {
-            SoomlaUtils.LogError(TAG, "(purchaseActionResultCancelled) ERROR : Couldn't find the "
-                    + "VirtualCurrencyPack OR MarketItem  with productId: " + sku
-                    + ". It's unexpected so an unexpected error is being emitted.");
-            BusProvider.getInstance().post(new UnexpectedStoreErrorEvent());
         } catch (IabException e) {
-            SoomlaUtils.LogDebug(TAG, "Error while consuming: " + sku);
+            SoomlaUtils.LogDebug(TAG, "Error while consuming: itemId: " + pvi.getItemId() +
+                    "   productId: " + purchase.getSku());
             BusProvider.getInstance().post(new UnexpectedStoreErrorEvent(e.getMessage()));
         }
     }
