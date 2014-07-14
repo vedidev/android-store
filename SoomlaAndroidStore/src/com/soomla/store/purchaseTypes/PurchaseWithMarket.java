@@ -58,13 +58,13 @@ public class PurchaseWithMarket extends PurchaseType {
      * @throws com.soomla.store.exceptions.InsufficientFundsException
      */
     @Override
-    public void buy() throws InsufficientFundsException {
+    public void buy(String payload) throws InsufficientFundsException {
         SoomlaUtils.LogDebug(TAG, "Starting in-app purchase for productId: "
                 + mMarketItem.getProductId());
         
         BusProvider.getInstance().post(new ItemPurchaseStartedEvent(getAssociatedItem()));
         try {
-            SoomlaStore.getInstance().buyWithMarket(mMarketItem, "");
+            SoomlaStore.getInstance().buyWithMarket(mMarketItem, payload);
         } catch (IllegalStateException e) {
             SoomlaUtils.LogError(TAG, "Error when purchasing item");
         }

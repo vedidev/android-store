@@ -44,13 +44,16 @@ public class StoreInventory {
      * Buys the item with the given <code>itemId</code>.
      *
      * @param itemId id of item to be purchased
+     * @param payload a string you want to be assigned to the purchase. This string
+     *   is saved in a static variable and will be given bacl to you when the
+     *   purchase is completed.
      * @throws InsufficientFundsException
      * @throws VirtualItemNotFoundException
      */
-    public static void buy(String itemId) throws InsufficientFundsException,
+    public static void buy(String itemId, String payload) throws InsufficientFundsException,
             VirtualItemNotFoundException {
         PurchasableVirtualItem pvi = (PurchasableVirtualItem) StoreInfo.getVirtualItem(itemId);
-        pvi.buy();
+        pvi.buy(payload);
     }
 
     /** VIRTUAL ITEMS **/
@@ -229,11 +232,11 @@ public class StoreInventory {
                 return;
             }
             UpgradeVG vgu = (UpgradeVG) StoreInfo.getVirtualItem(nextItemId);
-            vgu.buy();
+            vgu.buy("");
         } else {
             UpgradeVG first = StoreInfo.getGoodFirstUpgrade(goodItemId);
             if (first != null) {
-                first.buy();
+                first.buy("");
             }
         }
     }

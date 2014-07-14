@@ -28,8 +28,9 @@ public class ItemPurchasedEvent {
      *
      * @param purchasableVirtualItem
      */
-    public ItemPurchasedEvent(PurchasableVirtualItem purchasableVirtualItem) {
+    public ItemPurchasedEvent(PurchasableVirtualItem purchasableVirtualItem, String payload) {
         mPurchasableVirtualItem = purchasableVirtualItem;
+        mPayload = payload;
     }
 
 
@@ -39,8 +40,12 @@ public class ItemPurchasedEvent {
         return mPurchasableVirtualItem;
     }
 
+    public String getPayload() {
+        return mPayload;
+    }
 
     /** Private Members */
 
     private PurchasableVirtualItem mPurchasableVirtualItem;
+    private String mPayload;
 }

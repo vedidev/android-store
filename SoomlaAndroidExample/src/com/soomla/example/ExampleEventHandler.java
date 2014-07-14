@@ -83,7 +83,7 @@ public class ExampleEventHandler {
     @Subscribe
     public void onVirtualItemPurchased(ItemPurchasedEvent itemPurchasedEvent) {
         showToastIfDebug(itemPurchasedEvent.getPurchasableVirtualItem().getName()
-                + " was just purchased");
+                + " was just purchased. The payload was: " + itemPurchasedEvent.getPayload());
     }
 
     /**

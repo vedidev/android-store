@@ -54,7 +54,7 @@ public class PurchaseWithVirtualItem extends PurchaseType {
      * @throws com.soomla.store.exceptions.InsufficientFundsException
      */
     @Override
-    public void buy() throws InsufficientFundsException{
+    public void buy(String payload) throws InsufficientFundsException{
 
         SoomlaUtils.LogDebug(TAG, "Trying to buy a " + getAssociatedItem().getName() + " with "
                 + mAmount + " pieces of " + mTargetItemId);
@@ -80,7 +80,7 @@ public class PurchaseWithVirtualItem extends PurchaseType {
         storage.remove(item, mAmount);
 
         getAssociatedItem().give(1);
-        BusProvider.getInstance().post(new ItemPurchasedEvent(getAssociatedItem()));
+        BusProvider.getInstance().post(new ItemPurchasedEvent(getAssociatedItem(), payload));
     }
 
 

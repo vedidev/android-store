@@ -124,12 +124,15 @@ public abstract class PurchasableVirtualItem extends VirtualItem {
      * allows him/her to buy. This action uses the associated <code>PurchaseType</code> to perform
      * the purchase.
      *
+     * @param payload a string you want to be assigned to the purchase. This string
+     *   is saved in a static variable and will be given bacl to you when the
+     *   purchase is completed.
      * @throws InsufficientFundsException if the user does not have enough funds for buying.
      */
-    public void buy() throws InsufficientFundsException {
+    public void buy(String payload) throws InsufficientFundsException {
         if (!canBuy()) return;
 
-        mPurchaseType.buy();
+        mPurchaseType.buy(payload);
     }
 
     /**

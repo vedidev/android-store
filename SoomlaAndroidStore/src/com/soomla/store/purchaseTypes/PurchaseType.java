@@ -29,9 +29,12 @@ public abstract class PurchaseType {
      * Buys the purchasable virtual item.
      * Implementation in subclasses will be according to specific type of purchase.
      *
+     * @param payload a string you want to be assigned to the purchase. This string
+     *   is saved in a static variable and will be given bacl to you when the
+     *   purchase is completed.
      * @throws com.soomla.store.exceptions.InsufficientFundsException
      */
-    public abstract void buy() throws InsufficientFundsException;
+    public abstract void buy(String payload) throws InsufficientFundsException;
 
 
     /** Setters and Getters */
