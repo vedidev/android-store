@@ -1,3 +1,12 @@
+### v3.4.2 [view commit logs](https://github.com/soomla/android-store/compare/v3.4.1...v3.4.2)
+
+* New Features
+  * Added the option to provide a payload to the 'buy' function
+
+* Fixes
+  * Firing UnexpectedErrorInStoreEvent when the user tried to buy a NonConsumableItem when it was already owned
+  * Fixed issues with the way Rewards are generated
+
 ### v3.4.1 [view commit logs](https://github.com/soomla/android-store/compare/v3.4.0...v3.4.1)
 
 * New Features
