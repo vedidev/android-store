@@ -16,6 +16,7 @@
 
 package com.soomla.store.domain;
 
+import com.soomla.SoomlaEntity;
 import com.soomla.SoomlaUtils;
 import com.soomla.store.data.StoreJSONConsts;
 
@@ -28,7 +29,7 @@ import org.json.JSONObject;
  * of virtual items, each one will extend this class. Each one of the various types extends
  * <code>VirtualItem</code> and adds its own behavior on top of it.
  */
-public abstract class VirtualItem {
+public abstract class VirtualItem extends SoomlaEntity {
 
     /**
      * Constructor.
@@ -38,9 +39,7 @@ public abstract class VirtualItem {
      * @param mItemId the itemId of the virtual item
      */
     public VirtualItem(String mName, String mDescription, String mItemId) {
-        this.mName = mName;
-        this.mDescription = mDescription;
-        this.mItemId = mItemId.trim();
+        super(mName, mDescription, mItemId);
     }
 
     /**
@@ -51,12 +50,7 @@ public abstract class VirtualItem {
      * @throws JSONException
      */
     public VirtualItem(JSONObject jsonObject) throws JSONException{
-        mName = jsonObject.getString(StoreJSONConsts.ITEM_NAME);
-        try{
-            mDescription = jsonObject.getString(StoreJSONConsts.ITEM_DESCRIPTION);
-        } catch (JSONException ex) {
-        }
-        mItemId = jsonObject.getString(StoreJSONConsts.ITEM_ITEMID);
+        super(jsonObject);
     }
 
     /**
@@ -65,16 +59,7 @@ public abstract class VirtualItem {
      * @return A <code>JSONObject</code> representation of the current <code>VirtualItem</code>.
      */
     public JSONObject toJSONObject(){
-        JSONObject jsonObject = new JSONObject();
-        try {
-            jsonObject.put(StoreJSONConsts.ITEM_NAME, mName);
-            jsonObject.put(StoreJSONConsts.ITEM_DESCRIPTION, mDescription);
-            jsonObject.put(StoreJSONConsts.ITEM_ITEMID, mItemId);
-        } catch (JSONException e) {
-            SoomlaUtils.LogError(TAG, "An error occurred while generating JSON object.");
-        }
-
-        return jsonObject;
+        return super.toJSONObject();
     }
 
     /**
@@ -143,54 +128,12 @@ public abstract class VirtualItem {
      */
     public abstract int resetBalance(int balance, boolean notify);
 
-    /**
-     * Checks if the given object is equal to this object, by comparing the given object's
-     * item id with this <code>VirtualItem</code>'s itemId
-     *
-     * @param o the object to compare
-     * @return true if the objects are equal, otherwise false
-     */
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof VirtualItem)) return false;
-
-        VirtualItem that = (VirtualItem) o;
-
-        return mItemId.equals(that.mItemId);
-    }
-
-    /**
-     * @{inheritDoc}
-     */
-    @Override
-    public int hashCode() {
-        return mItemId != null ? mItemId.hashCode() : 0;
-    }
-
-
-    /** Setters and Getters **/
-
-    public String getName() {
-        return mName;
-    }
-
-    public String getDescription() {
-        return mDescription;
-    }
-
     public String getItemId(){
-        return mItemId;
+        return mID;
     }
 
 
     /** Private Members **/
 
     private static final String TAG = "SOOMLA VirtualItem"; //used for Log messages
-
-    private String mName;
-
-    private String mDescription;
-
-    private String mItemId;
 }
