@@ -61,6 +61,10 @@ public class MarketItem {
             this.mProductId = jsonObject.getString(StoreJSONConsts.MARKETITEM_PRODUCT_ID);
         }
         this.mPrice = jsonObject.getDouble(StoreJSONConsts.MARKETITEM_PRICE);
+
+        this.mMarketPrice = jsonObject.optString(StoreJSONConsts.MARKETITEM_MARKETPRICE);
+        this.mMarketTitle = jsonObject.optString(StoreJSONConsts.MARKETITEM_MARKETTITLE);
+        this.mMarketDescription = jsonObject.optString(StoreJSONConsts.MARKETITEM_MARKETDESC);
     }
 
     /**

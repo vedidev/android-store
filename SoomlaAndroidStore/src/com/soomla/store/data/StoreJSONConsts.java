@@ -44,6 +44,9 @@ public class StoreJSONConsts {
     public static final String MARKETITEM_ANDROID_ID    = "androidId";
     public static final String MARKETITEM_MANAGED       = "consumable";
     public static final String MARKETITEM_PRICE         = "price";
+    public static final String MARKETITEM_MARKETPRICE   = "marketPrice";
+    public static final String MARKETITEM_MARKETTITLE   = "marketTitle";
+    public static final String MARKETITEM_MARKETDESC    = "marketDesc";
 
     public static final String EQUIPPABLE_EQUIPPING     = "equipping";
 
