@@ -29,7 +29,7 @@ import org.json.JSONObject;
  * of virtual items, each one will extend this class. Each one of the various types extends
  * <code>VirtualItem</code> and adds its own behavior on top of it.
  */
-public abstract class VirtualItem extends SoomlaEntity {
+public abstract class VirtualItem extends SoomlaEntity<VirtualItem> {
 
     /**
      * Constructor.
