@@ -74,6 +74,8 @@ public class StoreJSONConsts {
     public static final String PURCHASE_VI_ITEMID       = "pvi_itemId";
     public static final String PURCHASE_VI_AMOUNT       = "pvi_amount";
 
-
+    // VIR = VirtualItemReward
+    public static final String VIR_ASSOCITEMID          = "associatedItemId";
+    public static final String VIR_AMOUNT               = "amount";
 }
 

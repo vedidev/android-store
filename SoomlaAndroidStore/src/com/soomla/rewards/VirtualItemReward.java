@@ -17,8 +17,8 @@
 package com.soomla.rewards;
 
 import com.soomla.SoomlaUtils;
-import com.soomla.data.JSONConsts;
 import com.soomla.store.StoreInventory;
+import com.soomla.store.data.StoreJSONConsts;
 import com.soomla.store.exceptions.VirtualItemNotFoundException;
 
 import org.json.JSONException;
@@ -57,8 +57,8 @@ public class VirtualItemReward extends Reward {
      */
     public VirtualItemReward(JSONObject jsonObject) throws JSONException {
         super(jsonObject);
-        mAssociatedItemId = jsonObject.getString(JSONConsts.SOOM_ASSOCITEMID);
-        mAmount = jsonObject.getInt(JSONConsts.SOOM_REWARD_AMOUNT);
+        mAssociatedItemId = jsonObject.getString(StoreJSONConsts.VIR_ASSOCITEMID);
+        mAmount = jsonObject.getInt(StoreJSONConsts.VIR_AMOUNT);
     }
 
     /**
@@ -69,8 +69,8 @@ public class VirtualItemReward extends Reward {
     public JSONObject toJSONObject(){
         JSONObject jsonObject = super.toJSONObject();
         try {
-            jsonObject.put(JSONConsts.SOOM_ASSOCITEMID, mAssociatedItemId);
-            jsonObject.put(JSONConsts.SOOM_REWARD_AMOUNT, mAmount);
+            jsonObject.put(StoreJSONConsts.VIR_ASSOCITEMID, mAssociatedItemId);
+            jsonObject.put(StoreJSONConsts.VIR_AMOUNT, mAmount);
         } catch (JSONException e) {
             SoomlaUtils.LogError(TAG, "An error occurred while generating JSON object.");
         }
