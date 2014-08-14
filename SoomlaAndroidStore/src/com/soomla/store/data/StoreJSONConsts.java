@@ -33,10 +33,6 @@ public class StoreJSONConsts {
     public static final String STORE_GOODS_LT           = "lifetime";
     public static final String STORE_GOODS_EQ           = "equippable";
 
-    public static final String ITEM_NAME                = "name";
-    public static final String ITEM_DESCRIPTION         = "description";
-    public static final String ITEM_ITEMID              = "itemId";
-
     public static final String CATEGORY_NAME            = "name";
     public static final String CATEGORY_GOODSITEMIDS    = "goods_itemIds";
 
