@@ -24,6 +24,7 @@ import com.soomla.SoomlaConfig;
 import com.soomla.data.KeyValueStorage;
 import com.soomla.store.IStoreAssets;
 import com.soomla.SoomlaApp;
+import com.soomla.store.SoomlaStore;
 import com.soomla.store.StoreConfig;
 import com.soomla.SoomlaUtils;
 import com.soomla.store.domain.NonConsumableItem;
@@ -667,6 +668,7 @@ public class StoreInfo {
     }
 
     private static void checkMetadataVersion() {
+        SoomlaUtils.LogDebug(TAG, "checking metadata version ...");
         SharedPreferences prefs = SoomlaApp.getAppContext().getSharedPreferences(SoomlaConfig.PREFS_NAME,
                         Context.MODE_PRIVATE);
         int mt_ver = prefs.getInt("MT_VER", 0);

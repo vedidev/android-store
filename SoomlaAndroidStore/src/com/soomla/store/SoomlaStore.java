@@ -91,6 +91,7 @@ public class SoomlaStore {
             }
 
             try {
+                SoomlaUtils.LogDebug(TAG, "IAB Service found. Initializing it.");
                 mInAppBillingService = (IIabService) aClass.newInstance();
             } catch (Exception e) {
                 String err = "Couldn't instantiate IIabService class. Something's totally wrong here.";
