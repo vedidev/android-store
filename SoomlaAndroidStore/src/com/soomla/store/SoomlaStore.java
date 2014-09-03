@@ -453,6 +453,7 @@ public class SoomlaStore {
         String sku = purchase.getSku();
         String developerPayload = purchase.getDeveloperPayload();
         String token = purchase.getToken();
+        String orderId = purchase.getOrderId();
 
         PurchasableVirtualItem pvi;
         try {
@@ -483,7 +484,7 @@ public class SoomlaStore {
                 }
 
                 BusProvider.getInstance().post(new MarketPurchaseEvent
-                        (pvi, developerPayload, token));
+                        (pvi, developerPayload, token, orderId));
                 pvi.give(1);
                 BusProvider.getInstance().post(new ItemPurchasedEvent(pvi, developerPayload));
 
