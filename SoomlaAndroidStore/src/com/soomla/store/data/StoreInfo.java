@@ -675,9 +675,7 @@ public class StoreInfo {
         try {
             int mt_ver = prefs.getInt("MT_VER", 0);
             int sa_ver_old = prefs.getInt("SA_VER_OLD", -1);
-            if (mt_ver < StoreConfig.METADATA_VERSION || sa_ver_old < mCurrentAssetsVersion) {
-                resetMeta = true;
-            }
+            resetMeta = mt_ver < StoreConfig.METADATA_VERSION || sa_ver_old < mCurrentAssetsVersion;
         } catch (Exception e) {
             SoomlaUtils.LogDebug(TAG, "This is probably an older (obfuscated) sharedPrefs");
             resetMeta = true;
