@@ -671,9 +671,19 @@ public class StoreInfo {
         SoomlaUtils.LogDebug(TAG, "checking metadata version ...");
         SharedPreferences prefs = SoomlaApp.getAppContext().getSharedPreferences(SoomlaConfig.PREFS_NAME,
                         Context.MODE_PRIVATE);
-        int mt_ver = prefs.getInt("MT_VER", 0);
-        int sa_ver_old = prefs.getInt("SA_VER_OLD", -1);
-        if (mt_ver < StoreConfig.METADATA_VERSION || sa_ver_old < mCurrentAssetsVersion) {
+        boolean resetMeta = false;
+        try {
+            int mt_ver = prefs.getInt("MT_VER", 0);
+            int sa_ver_old = prefs.getInt("SA_VER_OLD", -1);
+            if (mt_ver < StoreConfig.METADATA_VERSION || sa_ver_old < mCurrentAssetsVersion) {
+                resetMeta = true;
+            }
+        } catch (Exception e) {
+            SoomlaUtils.LogDebug(TAG, "This is probably an older (obfuscated) sharedPrefs");
+            resetMeta = true;
+        }
+
+        if (resetMeta) {
             SharedPreferences.Editor edit = prefs.edit();
             edit.putInt("MT_VER", StoreConfig.METADATA_VERSION);
             edit.putInt("SA_VER_OLD", mCurrentAssetsVersion);
