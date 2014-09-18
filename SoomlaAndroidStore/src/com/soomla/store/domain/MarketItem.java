@@ -78,6 +78,10 @@ public class MarketItem {
             jsonObject.put(StoreJSONConsts.MARKETITEM_MANAGED, mManaged.ordinal());
             jsonObject.put(StoreJSONConsts.MARKETITEM_ANDROID_ID, mProductId);
             jsonObject.put(StoreJSONConsts.MARKETITEM_PRICE, Double.valueOf(mPrice));
+
+            jsonObject.put(StoreJSONConsts.MARKETITEM_MARKETPRICE, mMarketPrice);
+            jsonObject.put(StoreJSONConsts.MARKETITEM_MARKETTITLE, mMarketTitle);
+            jsonObject.put(StoreJSONConsts.MARKETITEM_MARKETDESC, mMarketDescription);
         } catch (JSONException e) {
             SoomlaUtils.LogError(TAG, "An error occurred while generating JSON object.");
         }
