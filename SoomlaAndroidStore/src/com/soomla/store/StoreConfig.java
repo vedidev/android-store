@@ -31,6 +31,6 @@ public class StoreConfig {
      * ---NEVER!--- CHANGE THE VALUE FOR THIS VARIABLE !!!
      * This value defines the version of the metadata located in your database.
      */
-    public static final int METADATA_VERSION = 3;
+    public static final int METADATA_VERSION = 4;
 
 }

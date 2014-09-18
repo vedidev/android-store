@@ -38,6 +38,7 @@ import com.soomla.store.domain.virtualGoods.VirtualGood;
 import com.soomla.store.events.CurrencyBalanceChangedEvent;
 import com.soomla.store.events.GoodBalanceChangedEvent;
 import com.soomla.store.exceptions.InsufficientFundsException;
+import com.soomla.store.purchaseTypes.PurchaseWithMarket;
 import com.soomla.store.purchaseTypes.PurchaseWithVirtualItem;
 import com.squareup.otto.Subscribe;
 
@@ -207,6 +208,8 @@ public class StoreGoodsActivity extends Activity {
         images.put(MuffinRushAssets.CREAMCUP_ITEM_ID, R.drawable.cream_cup);
         images.put(MuffinRushAssets.MUFFINCAKE_ITEM_ID, R.drawable.fruit_cake);
         images.put(MuffinRushAssets.PAVLOVA_ITEM_ID, R.drawable.pavlova);
+        images.put(MuffinRushAssets.NO_ADS_PRODUCT_ID, R.drawable.no_ads);
+
         return images;
     }
 
@@ -245,9 +248,20 @@ public class StoreGoodsActivity extends Activity {
             title.setText(good.getName());
             content.setText(good.getDescription());
             thumb_image.setImageResource((Integer)mImages.get(good.getItemId()));
-            PurchaseWithVirtualItem pwvi = (PurchaseWithVirtualItem) good.getPurchaseType();
-            info.setText("price: " + pwvi.getAmount() +
-                    " balance: " + StorageManager.getVirtualGoodsStorage().getBalance(good));
+
+            int balance = StorageManager.getVirtualGoodsStorage().getBalance(good);
+
+            if (good.getPurchaseType() instanceof PurchaseWithVirtualItem)
+            {
+                info.setText("price: " + ((PurchaseWithVirtualItem)(good.getPurchaseType())).getAmount() +
+                        " balance: " + balance);
+            }
+
+            else if (good.getPurchaseType() instanceof PurchaseWithMarket)
+            {
+                info.setText("price: $" + ((PurchaseWithMarket)(good.getPurchaseType())).getMarketItem().getPrice() +
+                        " balance: " +balance);
+            }
 
             return vi;
         }
