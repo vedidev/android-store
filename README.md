@@ -20,6 +20,19 @@ The current virtual economy model is called **modelV3**. Want to learn more abou
 * [Economy Model Objects](https://github.com/soomla/android-store/wiki/Economy-Model-Objects)  
 * [Handling Store Operations](https://github.com/soomla/android-store/wiki/Handling-Store-Operations)
 
+**September 15th, 2014**: 
+**BREAKING:** NonConsumableItem remoded. 
+To prevent confusion between `NonConsumableItem` and `LifeTimeVG`, we have removed the `NonConsumableItem`. From now on you can use `LifeTimeVG` as a non-consumable item by declaring its purchase type `PurchaseWithMarket`. For example:
+```Java
+public static final LifetimeVG NO_ADS_LTVG  = new LifetimeVG(
+      "No Ads",                                                       // name
+      "Test purchase of MANAGED item.",                               // description
+      "no_ads",                                                       // item id
+       new PurchaseWithMarket(new MarketItem(
+          NO_ADS_LTVG_PRODUCT_ID, MarketItem.Managed.MANAGED , 2.99)) // purchase type
+);
+```
+
 android-store is the Android flavor of SOOMLA's Store Module.
 
 
