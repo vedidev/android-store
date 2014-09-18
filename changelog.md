@@ -1,3 +1,10 @@
+### v3.4.3 [view commit logs](https://github.com/soomla/android-store/compare/v3.4.2...v3.4.3)
+
+* Changes:
+  * NonConsumableItem class was removed with all its references.
+  * StoreInfo - added new function, isNonConsumableItem, which checks if a given PurchasableVirtualItem is a non-consumable item.
+  * SoomlaStore - using isNonConsumableItem intead of checking instance of NonConsumableItem.
+
 ### v3.4.2 [view commit logs](https://github.com/soomla/android-store/compare/v3.4.1...v3.4.2)
 
 * New Features
