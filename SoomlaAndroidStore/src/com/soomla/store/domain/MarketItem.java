@@ -62,7 +62,7 @@ public class MarketItem {
         }
         this.mPrice = jsonObject.getDouble(StoreJSONConsts.MARKETITEM_PRICE);
 
-        this.mMarketPrice = jsonObject.optString(StoreJSONConsts.MARKETITEM_MARKETPRICE);
+        this.mMarketPriceAndCurrency = jsonObject.optString(StoreJSONConsts.MARKETITEM_MARKETPRICE);
         this.mMarketTitle = jsonObject.optString(StoreJSONConsts.MARKETITEM_MARKETTITLE);
         this.mMarketDescription = jsonObject.optString(StoreJSONConsts.MARKETITEM_MARKETDESC);
     }
@@ -79,7 +79,7 @@ public class MarketItem {
             jsonObject.put(StoreJSONConsts.MARKETITEM_ANDROID_ID, mProductId);
             jsonObject.put(StoreJSONConsts.MARKETITEM_PRICE, Double.valueOf(mPrice));
 
-            jsonObject.put(StoreJSONConsts.MARKETITEM_MARKETPRICE, mMarketPrice);
+            jsonObject.put(StoreJSONConsts.MARKETITEM_MARKETPRICE, mMarketPriceAndCurrency);
             jsonObject.put(StoreJSONConsts.MARKETITEM_MARKETTITLE, mMarketTitle);
             jsonObject.put(StoreJSONConsts.MARKETITEM_MARKETDESC, mMarketDescription);
         } catch (JSONException e) {
@@ -104,16 +104,12 @@ public class MarketItem {
 
     /** Setters and Getters **/
 
-    public void setMarketPrice(String mMarketPrice) {
-        this.mMarketPrice = mMarketPrice;
-    }
-
-    public void setMarketTitle(String mMarketTitle) {
-        this.mMarketTitle = mMarketTitle;
-    }
-
-    public void setMarketDescription(String mMarketDescription) {
-        this.mMarketDescription = mMarketDescription;
+    public void setMarketInformation(String marketPriceAndCurrency, String marketTitle, String marketDescription, String marketCurrencySymbol, long marketPriceMicros) {
+        this.mMarketPriceAndCurrency = marketPriceAndCurrency;
+        this.mMarketTitle = marketTitle;
+        this.mMarketDescription = marketDescription;
+        this.mMarketCurrencySymbol = marketCurrencySymbol;
+        this.mMarketPriceMicros = marketPriceMicros;
     }
 
     public String getProductId() {
@@ -132,9 +128,15 @@ public class MarketItem {
         return mPrice;
     }
 
+
+    /** Realtime Infomation from the Google Play Store **/
+
+    @Deprecated
     public String getMarketPrice() {
-        return mMarketPrice;
+        return getMarketPriceAndCurrency();
     }
+
+    public String getMarketPriceAndCurrency() { return mMarketPriceAndCurrency; }
 
     public String getMarketTitle() {
         return mMarketTitle;
@@ -142,6 +144,14 @@ public class MarketItem {
 
     public String getMarketDescription() {
         return mMarketDescription;
+    }
+
+    public String getMarketCurrencySymbol() {
+        return mMarketCurrencySymbol;
+    }
+
+    public long getMarketPriceMicros() {
+        return mMarketPriceMicros;
     }
 
 
@@ -155,9 +165,13 @@ public class MarketItem {
 
     private double mPrice; //the actual $$ cost of the current item in the market.
 
-    private String mMarketPrice;
+    private String mMarketPriceAndCurrency;
 
     private String mMarketTitle;
 
     private String mMarketDescription;
+
+    private String mMarketCurrencySymbol;
+
+    private long mMarketPriceMicros;
 }
