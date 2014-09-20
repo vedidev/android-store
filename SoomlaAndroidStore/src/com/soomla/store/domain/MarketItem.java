@@ -104,11 +104,11 @@ public class MarketItem {
 
     /** Setters and Getters **/
 
-    public void setMarketInformation(String marketPriceAndCurrency, String marketTitle, String marketDescription, String marketCurrencySymbol, long marketPriceMicros) {
+    public void setMarketInformation(String marketPriceAndCurrency, String marketTitle, String marketDescription, String marketCurrencyCode, long marketPriceMicros) {
         this.mMarketPriceAndCurrency = marketPriceAndCurrency;
         this.mMarketTitle = marketTitle;
         this.mMarketDescription = marketDescription;
-        this.mMarketCurrencySymbol = marketCurrencySymbol;
+        this.mMarketCurrencyCode = marketCurrencyCode;
         this.mMarketPriceMicros = marketPriceMicros;
     }
 
@@ -146,8 +146,8 @@ public class MarketItem {
         return mMarketDescription;
     }
 
-    public String getMarketCurrencySymbol() {
-        return mMarketCurrencySymbol;
+    public String getMarketCurrencyCode() {
+        return mMarketCurrencyCode;
     }
 
     public long getMarketPriceMicros() {
@@ -171,7 +171,7 @@ public class MarketItem {
 
     private String mMarketDescription;
 
-    private String mMarketCurrencySymbol;
+    private String mMarketCurrencyCode;
 
     private long mMarketPriceMicros;
 }

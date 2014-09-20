@@ -257,7 +257,7 @@ public class SoomlaStore {
                                                 String price = iabSkuDetails.getPrice();
                                                 String title = iabSkuDetails.getTitle();
                                                 String desc = iabSkuDetails.getDescription();
-                                                String currencySymbol = iabSkuDetails.getCurrencyCode();
+                                                String currencyCode = iabSkuDetails.getCurrencyCode();
                                                 long priceMicros = iabSkuDetails.getPriceMicros();
 
                                                 SoomlaUtils.LogDebug(TAG, "Got item details: " +
@@ -271,7 +271,7 @@ public class SoomlaStore {
                                                             getPurchasableItem(productId);
                                                     MarketItem mi = ((PurchaseWithMarket)
                                                             pvi.getPurchaseType()).getMarketItem();
-                                                    mi.setMarketInformation(price, title, desc, currencySymbol, priceMicros);
+                                                    mi.setMarketInformation(price, title, desc, currencyCode, priceMicros);
 
                                                     marketItems.add(mi);
                                                 } catch (VirtualItemNotFoundException e) {
