@@ -65,6 +65,8 @@ public class MarketItem {
         this.mMarketPriceAndCurrency = jsonObject.optString(StoreJSONConsts.MARKETITEM_MARKETPRICE);
         this.mMarketTitle = jsonObject.optString(StoreJSONConsts.MARKETITEM_MARKETTITLE);
         this.mMarketDescription = jsonObject.optString(StoreJSONConsts.MARKETITEM_MARKETDESC);
+        this.mMarketCurrencyCode = jsonObject.optString(StoreJSONConsts.MARKETITEM_MARKETCURRENCYCODE);
+        this.mMarketPriceMicros = jsonObject.optLong(StoreJSONConsts.MARKETITEM_MARKETPRICEMICROS);
     }
 
     /**
@@ -82,6 +84,8 @@ public class MarketItem {
             jsonObject.put(StoreJSONConsts.MARKETITEM_MARKETPRICE, mMarketPriceAndCurrency);
             jsonObject.put(StoreJSONConsts.MARKETITEM_MARKETTITLE, mMarketTitle);
             jsonObject.put(StoreJSONConsts.MARKETITEM_MARKETDESC, mMarketDescription);
+            jsonObject.put(StoreJSONConsts.MARKETITEM_MARKETCURRENCYCODE, mMarketCurrencyCode);
+            jsonObject.put(StoreJSONConsts.MARKETITEM_MARKETPRICEMICROS, Long.valueOf(mMarketPriceMicros));
         } catch (JSONException e) {
             SoomlaUtils.LogError(TAG, "An error occurred while generating JSON object.");
         }
