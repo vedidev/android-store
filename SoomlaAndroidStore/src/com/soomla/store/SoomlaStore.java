@@ -476,7 +476,7 @@ public class SoomlaStore {
                 // fixes: https://github.com/soomla/unity3d-store/issues/192
                 // TODO: update on the issue in github
                 if (StoreInfo.isNonConsumableItem(pvi)) {
-                    if (StorageManager.getVirtualGoodsStorage().getBalance(pvi) == 1) {
+                    if (StorageManager.getVirtualItemStorage(pvi).getBalance(pvi) == 1) {
                         return;
                     }
                 }

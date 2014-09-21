@@ -190,7 +190,7 @@ public class MuffinRushAssets implements IStoreAssets {
     );
 
     /** LifeTime Virtual Goods **/
-    // Note that a LifeTimeVG defined with PurchaseWithMarket represents a non-consumable item managed by Google
+    // Note: LifeTimeVG defined with PurchaseWithMarket represents a non-consumable item managed by Google
     public static final VirtualGood NO_ADS_GOOD = new LifetimeVG(
             "No Ads",                                                     // name
             "No More Ads!",                                                // description
