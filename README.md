@@ -16,12 +16,8 @@ Haven't you ever wanted an in-app purchase one liner that looks like this!?
 
 **April 1st, 2014**: We've added the option to refresh market items details from the IAB Service (default is Google Play). You can call 'refreshInventory(true)' from SoomlaStore when you want and all your PurchasableItems that has a PurchaseType of PurchaseWithMarket will update the values of: MarketPrice, MarketTitle, MarketDescription. android-store automatically running the operation when you initialize SoomlaStore.
 
-The current virtual economy model is called **modelV3**. Want to learn more about it? Try these:  
-* [Economy Model Objects](https://github.com/soomla/android-store/wiki/Economy-Model-Objects)  
-* [Handling Store Operations](https://github.com/soomla/android-store/wiki/Handling-Store-Operations)
-
 **September 15th, 2014**: 
-**BREAKING:** NonConsumableItem remoded. 
+**BREAKING:** NonConsumableItem class removed. 
 To prevent confusion between `NonConsumableItem` and `LifeTimeVG`, we have removed the `NonConsumableItem`. From now on you can use `LifeTimeVG` as a non-consumable item by declaring its purchase type `PurchaseWithMarket`. For example:
 ```Java
 public static final LifetimeVG NO_ADS_LTVG  = new LifetimeVG(
@@ -32,6 +28,9 @@ public static final LifetimeVG NO_ADS_LTVG  = new LifetimeVG(
           NO_ADS_LTVG_PRODUCT_ID, MarketItem.Managed.MANAGED , 2.99)) // purchase type
 );
 ```
+The current virtual economy model is called **modelV3**. Want to learn more about it? Try these:
+* [Economy Model Objects](https://github.com/soomla/android-store/wiki/Economy-Model-Objects)
+* [Handling Store Operations](https://github.com/soomla/android-store/wiki/Handling-Store-Operations)
 
 android-store is the Android flavor of SOOMLA's Store Module.
 
