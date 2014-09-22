@@ -364,7 +364,7 @@ public class SoomlaStore {
                                             PurchasableVirtualItem pvi = StoreInfo.getPurchasableItem(sku);
                                             consumeIfConsumable(purchase, pvi);
 
-                                            if (StoreInfo.isNonConsumableItem(pvi)) {
+                                            if (StoreInfo.isItemNonConsumable(pvi.getItemId())) {
                                                 String message = "(alreadyOwned) the user tried to " +
                                                         "buy a non-consumable that was already " +
                                                         "owned. itemId: " + pvi.getItemId() +
@@ -475,7 +475,7 @@ public class SoomlaStore {
                 // don't fire any events.
                 // fixes: https://github.com/soomla/unity3d-store/issues/192
                 // TODO: update on the issue in github
-                if (StoreInfo.isNonConsumableItem(pvi)) {
+                if (StoreInfo.isItemNonConsumable(pvi.getItemId())) {
                     if (StorageManager.getVirtualItemStorage(pvi).getBalance(pvi) == 1) {
                         return;
                     }
@@ -529,7 +529,7 @@ public class SoomlaStore {
      */
     private void consumeIfConsumable(IabPurchase purchase, PurchasableVirtualItem pvi) {
         try {
-            if (!StoreInfo.isNonConsumableItem(pvi)) {
+            if (!StoreInfo.isItemNonConsumable(pvi.getItemId())) {
                 mInAppBillingService.consume(purchase);
             }
         } catch (IabException e) {

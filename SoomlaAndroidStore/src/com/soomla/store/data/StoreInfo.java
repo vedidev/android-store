@@ -261,12 +261,24 @@ public class StoreInfo {
     /**
      * Checks if a given PurchasableVirtualItem is a non-consumable item
      *
-     * @param pvi The PurchasableVirtualItem to check
-     * @return true if pvi is a LifeTimeVG and it's purchase type is PurchaseWithMarket.
+     * @param virtualItemID The PurchasableVirtualItem to check
+     * @return true if <code>VirtualItem</code> corresponding to virtualItemID
+     * is a non-consumable item
      */
-    public static boolean isNonConsumableItem(PurchasableVirtualItem pvi)
+    public static boolean isItemNonConsumable(String virtualItemID)
     {
-        return ((pvi instanceof LifetimeVG) && (pvi.getPurchaseType() instanceof PurchaseWithMarket));
+        try {
+            VirtualItem vi = getVirtualItem(virtualItemID);
+            PurchasableVirtualItem pvi = (PurchasableVirtualItem)vi;
+            return ((pvi instanceof LifetimeVG) && (pvi.getPurchaseType() instanceof PurchaseWithMarket));
+        }catch (VirtualItemNotFoundException e){
+            SoomlaUtils.LogError(TAG, "virtual item does not exist: " + virtualItemID);
+            return false;
+        }catch (Exception e){
+            SoomlaUtils.LogError(TAG, "An error occurred while checking if item is non-consumable: "
+                    + e.getMessage());
+            return false;
+        }
     }
 
 
