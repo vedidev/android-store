@@ -264,8 +264,7 @@ public class StoreInfo {
      * @param pvi The PurchasableVirtualItem to check
      * @return true pvi is a non-consumable item.
      */
-    public static boolean isItemNonConsumable(PurchasableVirtualItem pvi)
-    {
+    public static boolean isItemNonConsumable(PurchasableVirtualItem pvi){
         return ((pvi instanceof LifetimeVG) && (pvi.getPurchaseType() instanceof PurchaseWithMarket));
     }
 
