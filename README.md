@@ -24,8 +24,8 @@ public static final LifetimeVG NO_ADS_LTVG  = new LifetimeVG(
       "No Ads",                                                       // name
       "Test purchase of MANAGED item.",                               // description
       "no_ads",                                                       // item id
-       new PurchaseWithMarket(new MarketItem(
-          NO_ADS_LTVG_PRODUCT_ID, MarketItem.Managed.MANAGED , 2.99)) // purchase type
+       new PurchaseWithMarket(new MarketItem(			      // purchase type
+          NO_ADS_LTVG_PRODUCT_ID, MarketItem.Managed.MANAGED , 2.99))
 );
 ```
 The current virtual economy model is called **modelV3**. Want to learn more about it? Try these:
