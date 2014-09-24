@@ -30,14 +30,18 @@ public class IabSkuDetails {
     private String mTitle;
     private String mDescription;
     private String mJson;
+    private long mPriceMicros;
+    private String mCurrencyCode;
 
     public IabSkuDetails(String itemType, String sku, String price, String title,
-                         String description) {
+                         String description, long priceMicros, String currencyCode) {
         mItemType = itemType;
         mSku = sku;
         mPrice = price;
         mTitle = title;
         mDescription = description;
+        mPriceMicros = priceMicros;
+        mCurrencyCode = currencyCode;
     }
 
     public IabSkuDetails(String itemType, String jsonSkuDetails) throws JSONException {
@@ -49,6 +53,8 @@ public class IabSkuDetails {
         mPrice = o.optString("price");
         mTitle = o.optString("title");
         mDescription = o.optString("description");
+        mPriceMicros = o.optLong("price_amount_micros");
+        mCurrencyCode = o.optString("price_currency_code");
     }
 
     public String getItemType() {
@@ -77,6 +83,14 @@ public class IabSkuDetails {
 
     public String getJson() {
         return mJson;
+    }
+
+    public long getPriceMicros() {
+        return mPriceMicros;
+    }
+
+    public String getCurrencyCode() {
+        return mCurrencyCode;
     }
 
     @Override
