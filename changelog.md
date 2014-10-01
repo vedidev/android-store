@@ -1,4 +1,4 @@
-### v3.4.3 [view commit logs](https://github.com/soomla/android-store/compare/v3.4.2...v3.4.3)
+### v3.5.0 [view commit logs](https://github.com/soomla/android-store/compare/v3.4.2...v3.5.0)
 
 * Changes:
   * NonConsumableItem class was removed with all its references.
