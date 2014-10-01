@@ -19,7 +19,7 @@ Haven't you ever wanted an in-app purchase one liner that looks like this!?
 **September 15th, 2014**: 
 `NonConsumableItem` class was removed.
 
-To create a non-consumable item use `LifeTimeVG` with `PurchaseWithMarket`.
+To create a non-consumable item in your `IStoreAssetes` implementation, use `LifeTimeVG` with `PurchaseType` of `PurchaseWithMarket`.
 For example:
 ```Java
 public static final VirtualGoood NO_ADS_LTVG  = new LifetimeVG(
