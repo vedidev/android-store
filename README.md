@@ -3,7 +3,7 @@
 Haven't you ever wanted an in-app purchase one liner that looks like this!?
 
 ```Java
-    StoreInventory.buy("[itemId]");
+StoreInventory.buy("[itemId]");
 ```
 
 ## android-store
@@ -95,39 +95,39 @@ You must select a billing service for android-store to work properly. The integr
   Add the following permission (for Google Play):
 
   ```xml
-      <uses-permission android:name="com.android.vending.BILLING" />
+  <uses-permission android:name="com.android.vending.BILLING" />
   ```
 
   Add the `IabActivity` to your `application` element, the plugin will spawn a transparent activity to make purchases. Also, you need to tell us what plugin you're using so add a meta-data tag for that:
 
   ```xml
-      <activity android:name="com.soomla.store.billing.google.GooglePlayIabService$IabActivity"
-                android:theme="@android:style/Theme.Translucent.NoTitleBar.Fullscreen"/>
-      <meta-data android:name="billing.service" android:value="google.GooglePlayIabService" />
+  <activity android:name="com.soomla.store.billing.google.GooglePlayIabService$IabActivity"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar.Fullscreen"/>
+  <meta-data android:name="billing.service" android:value="google.GooglePlayIabService" />
   ```
 
 3. After you initialize `SoomlaStore`, let the plugin know your public key from the dev console:
 
   ```Java
-      GooglePlayIabService.getInstance().setPublicKey("[YOUR PUBLIC KEY FROM THE MARKET]");
+  GooglePlayIabService.getInstance().setPublicKey("[YOUR PUBLIC KEY FROM THE MARKET]");
   ```
 
 4. If you want to allow the test purchases, all you need to do is tell that to the plugin:
 
   ```Java
-      GooglePlayIabService.AllowAndroidTestPurchases = true;
+  GooglePlayIabService.AllowAndroidTestPurchases = true;
   ```
 
 For Google Play, We recommend that you open the IAB Service and keep it open in the background in cases where you have an in-game storefront. This is how you do that:
 
 When you open the store, call:  
   ```Java
-      SoomlaStore.getInstance().startIabServiceInBg();
+  SoomlaStore.getInstance().startIabServiceInBg();
   ```
 
 When the store is closed, call:  
   ```Java
-      SoomlaStore.getInstance().stopIabServiceInBg();
+  SoomlaStore.getInstance().stopIabServiceInBg();
   ```
 
 #### [Amazon](https://github.com/soomla/android-store-amazon)
@@ -139,13 +139,13 @@ When the store is closed, call:
   Add Amazon's `ResponseReceiver` to your `application` element. Also, you need to tell us what plugin you're using so add a meta-data tag for that:
 
   ```xml
-        <receiver android:name = "com.amazon.inapp.purchasing.ResponseReceiver" >
-            <intent-filter>
-                <action android:name = "com.amazon.inapp.purchasing.NOTIFY"
-                        android:permission = "com.amazon.inapp.purchasing.Permission.NOTIFY" />
-            </intent-filter>
-        </receiver>
-        <meta-data android:name="billing.service" android:value="amazon.AmazonIabService" />
+  <receiver android:name = "com.amazon.inapp.purchasing.ResponseReceiver" >
+    <intent-filter>
+        <action android:name = "com.amazon.inapp.purchasing.NOTIFY"
+                android:permission = "com.amazon.inapp.purchasing.Permission.NOTIFY" />
+    </intent-filter>
+  </receiver>
+  <meta-data android:name="billing.service" android:value="amazon.AmazonIabService" />
   ```
 
 ## Important read: In App Purchasing.
@@ -162,21 +162,21 @@ Here is an example:
 
 Lets say you have a _VirtualCurrencyPack_ you call `TEN_COINS_PACK` and a _VirtualCurrency_ you call `COIN_CURRENCY`:
 
-    ```Java
-      VirtualCurrencyPack TEN_COINS_PACK = new VirtualCurrencyPack(
-            "10 Coins",                                     // name
-            "A pack of 10 coins",                           // description
-            "10_coins",                                     // item id
-            10,                                             // number of currencies in the pack
-            COIN_CURRENCY_ITEM_ID,                          // the currency associated with this pack
-            new PurchaseWithMarket("com.soomla.ten_coin_pack", 1.99));
-    ```
+```Java
+VirtualCurrencyPack TEN_COINS_PACK = new VirtualCurrencyPack(
+        "10 Coins",                                     // name
+        "A pack of 10 coins",                           // description
+        "10_coins",                                     // item id
+        10,                                             // number of currencies in the pack
+        COIN_CURRENCY_ITEM_ID,                          // the currency associated with this pack
+        new PurchaseWithMarket("com.soomla.ten_coin_pack", 1.99));
+```
 
 Now you can use _StoreInventory_ to buy your new VirtualCurrencyPack:
 
-    ```Java
-        StoreInventory.buy(TEN_COINS_PACK.getItemId());
-    ```
+```Java
+StoreInventory.buy(TEN_COINS_PACK.getItemId());
+```
 
 And that's it! android-store knows how to contact Google Play for you and will redirect your users to their purchasing system to complete the transaction.
 Don't forget to define your _IStoreEventHandler_ in order to get the events of successful or failed purchases (see [Event Handling](https://github.com/soomla/android-store#event-handling)).
