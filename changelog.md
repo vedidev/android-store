@@ -1,9 +1,8 @@
 ### v3.5.0 [view commit logs](https://github.com/soomla/android-store/compare/v3.4.2...v3.5.0)
+ 
+* Changes: 
 
-* Changes:
-  * NonConsumableItem class was removed with all its references.
-  * StoreInfo - added new function, isNonConsumableItem, which checks if a given PurchasableVirtualItem is a non-consumable item.
-  * SoomlaStore - using isNonConsumableItem intead of checking instance of NonConsumableItem.
+    **BREAKING**: Removed `NonConsumableItem` class. Use `LifeTimeVG` instead.
 
 ### v3.4.2 [view commit logs](https://github.com/soomla/android-store/compare/v3.4.1...v3.4.2)
 
