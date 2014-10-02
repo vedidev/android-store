@@ -1,8 +1,14 @@
 ### v3.5.0 [view commit logs](https://github.com/soomla/android-store/compare/v3.4.2...v3.5.0)
- 
-* Changes: 
 
-    **BREAKING**: Removed `NonConsumableItem` class. Use `LifeTimeVG` instead.
+***Important***: this is a breaking release. Read the changes carefully.
+
+* Changes: 
+    * **BREAKING**: `NonConsumableItem` class was **removed**. To create non-consumable item, use `LifeTimeVG` instead.
+    * Fetching price and currency symbol separately when refreshing `MarketItem`s.
+    * Added orderId to MarketPurchaseEvent
+
+* Fixes:
+    * Fixed an issue with backward compatibility of obfuscated sharePrefs.
 
 ### v3.4.2 [view commit logs](https://github.com/soomla/android-store/compare/v3.4.1...v3.4.2)
 
