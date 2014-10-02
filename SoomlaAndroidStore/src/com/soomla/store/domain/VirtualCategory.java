@@ -17,6 +17,7 @@
 package com.soomla.store.domain;
 
 import com.soomla.SoomlaUtils;
+import com.soomla.data.JSONConsts;
 import com.soomla.store.data.StoreJSONConsts;
 
 import org.json.JSONArray;
@@ -67,6 +68,7 @@ public class VirtualCategory {
     public JSONObject toJSONObject(){
         JSONObject jsonObject = new JSONObject();
         try {
+            jsonObject.put(JSONConsts.SOOM_CLASSNAME, SoomlaUtils.getClassName(this));
             jsonObject.put(StoreJSONConsts.CATEGORY_NAME, mName);
 
             JSONArray goodsArr = new JSONArray();

@@ -17,6 +17,7 @@
 package com.soomla.store.domain;
 
 import com.soomla.SoomlaUtils;
+import com.soomla.data.JSONConsts;
 import com.soomla.store.data.StoreJSONConsts;
 
 import org.json.JSONException;
@@ -77,6 +78,8 @@ public class MarketItem {
     public JSONObject toJSONObject(){
         JSONObject jsonObject = new JSONObject();
         try {
+            jsonObject.put(JSONConsts.SOOM_CLASSNAME, SoomlaUtils.getClassName(this));
+
             jsonObject.put(StoreJSONConsts.MARKETITEM_MANAGED, mManaged.ordinal());
             jsonObject.put(StoreJSONConsts.MARKETITEM_ANDROID_ID, mProductId);
             jsonObject.put(StoreJSONConsts.MARKETITEM_PRICE, Double.valueOf(mPrice));
