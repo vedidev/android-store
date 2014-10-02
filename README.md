@@ -10,12 +10,6 @@ StoreInventory.buy("[itemId]");
 
 *SOOMLA's Store Module for Android*
 
-**June 20th, 2014**: v3.4.1 presents support for "Soomla Core" (which separates some objects common to ALL SOOMLA's modules). It also removed the usage of SOOM_SEC. [Getting Started](https://github.com/soomla/android-store#getting-started) has changed! see [CHANGELOG](changelog.md).
-
-**May 25th, 2014**: Amazon billing service is now our second billing service implementation. See [Billing Services](#whats-next-selecting-a-billing-service) for details.
-
-**April 1st, 2014**: We've added the option to refresh market items details from the IAB Service (default is Google Play). You can call 'refreshInventory(true)' from SoomlaStore when you want and all your PurchasableItems that has a PurchaseType of PurchaseWithMarket will update the values of: MarketPrice, MarketTitle, MarketDescription. android-store automatically running the operation when you initialize SoomlaStore.
-
 **September 15th, 2014**: 
 `NonConsumableItem` class was removed.
 
@@ -30,6 +24,13 @@ public static final VirtualGoood NO_ADS_LTVG  = new LifetimeVG(
           NO_ADS_LTVG_PRODUCT_ID, MarketItem.Managed.MANAGED , 0.99))
 );
 ```
+
+**June 20th, 2014**: v3.4.1 presents support for "Soomla Core" (which separates some objects common to ALL SOOMLA's modules). It also removed the usage of SOOM_SEC. [Getting Started](https://github.com/soomla/android-store#getting-started) has changed! see [CHANGELOG](changelog.md).
+
+**May 25th, 2014**: Amazon billing service is now our second billing service implementation. See [Billing Services](#whats-next-selecting-a-billing-service) for details.
+
+**April 1st, 2014**: We've added the option to refresh market items details from the IAB Service (default is Google Play). You can call 'refreshInventory(true)' from SoomlaStore when you want and all your PurchasableItems that has a PurchaseType of PurchaseWithMarket will update the values of: MarketPrice, MarketTitle, MarketDescription. android-store automatically running the operation when you initialize SoomlaStore.
+
 
 The current virtual economy model is called **modelV3**. Want to learn more about it? Try these:
 * [Economy Model Objects](https://github.com/soomla/android-store/wiki/Economy-Model-Objects)
