@@ -16,7 +16,6 @@
 
 package com.soomla.store;
 
-import com.soomla.store.domain.NonConsumableItem;
 import com.soomla.store.domain.VirtualCategory;
 import com.soomla.store.domain.virtualCurrencies.VirtualCurrency;
 import com.soomla.store.domain.virtualCurrencies.VirtualCurrencyPack;
@@ -80,15 +79,4 @@ public interface IStoreAssets {
      * @return all virtual categories in your game
      */
     VirtualCategory[] getCategories();
-
-    /**
-     * Retrieves the array of all non-consumable items served by your store.
-     * CONSUMABLE (or UNMANAGED) items are usually just currency packs.
-     * NON-CONSUMABLE (or MANAGED) items are usually used to let users purchase a "no-ads" token.
-     *
-     * NOTE: Make sure you set the type of the items you add here as Managed.MANAGED.
-     *
-     * @return all non-consumables served in your game.
-     */
-    NonConsumableItem[] getNonConsumableItems();
 }

@@ -21,7 +21,6 @@ import android.text.TextUtils;
 import com.soomla.SoomlaUtils;
 import com.soomla.store.data.StorageManager;
 import com.soomla.store.data.StoreInfo;
-import com.soomla.store.domain.NonConsumableItem;
 import com.soomla.store.domain.PurchasableVirtualItem;
 import com.soomla.store.domain.VirtualItem;
 import com.soomla.store.domain.virtualGoods.EquippableVG;
@@ -273,56 +272,5 @@ public class StoreInventory {
         }
         VirtualGood good = (VirtualGood) StoreInfo.getVirtualItem(goodItemId);
         StorageManager.getVirtualGoodsStorage().removeUpgrades(good);
-    }
-
-    /** NON CONSUMABLES **/
-
-    /**
-     * Checks if the non-consumable with the given <code>nonConsItemId</code> exists.
-     *
-     * @param nonConsItemId the non-consumable to check if exists in the database
-     * @return true if non-consumable item with nonConsItemId exists, false otherwise
-     * @throws VirtualItemNotFoundException
-     * @throws ClassCastException
-     */
-    public static boolean nonConsumableItemExists(String nonConsItemId)
-            throws VirtualItemNotFoundException, ClassCastException {
-        NonConsumableItem nonConsumableItem =
-                (NonConsumableItem) StoreInfo.getVirtualItem(nonConsItemId);
-
-        return StorageManager.getNonConsumableItemsStorage().nonConsumableItemExists(
-                nonConsumableItem);
-    }
-
-    /**
-     * Adds the non-consumable item with the given <code>nonConsItemId</code> to the non-consumable
-     * items storage.
-     *
-     * @param nonConsItemId the non-consumable to be added to the database
-     * @throws VirtualItemNotFoundException
-     * @throws ClassCastException
-     */
-    public static void addNonConsumableItem(String nonConsItemId)
-            throws VirtualItemNotFoundException, ClassCastException {
-        NonConsumableItem nonConsumableItem =
-                (NonConsumableItem) StoreInfo.getVirtualItem(nonConsItemId);
-
-        StorageManager.getNonConsumableItemsStorage().add(nonConsumableItem);
-    }
-
-    /**
-     * Removes the non-consumable item with the given <code>nonConsItemId</code> from the
-     * non-consumable items storage.
-     *
-     * @param nonConsItemId the non-consumable to be removed to the database
-     * @throws VirtualItemNotFoundException
-     * @throws ClassCastException
-     */
-    public static void removeNonConsumableItem(String nonConsItemId)
-            throws VirtualItemNotFoundException, ClassCastException {
-        NonConsumableItem nonConsumableItem =
-                (NonConsumableItem) StoreInfo.getVirtualItem(nonConsItemId);
-
-        StorageManager.getNonConsumableItemsStorage().remove(nonConsumableItem);
     }
 }

@@ -27,7 +27,6 @@ import com.soomla.SoomlaApp;
 import com.soomla.store.SoomlaStore;
 import com.soomla.store.StoreConfig;
 import com.soomla.SoomlaUtils;
-import com.soomla.store.domain.NonConsumableItem;
 import com.soomla.store.domain.PurchasableVirtualItem;
 import com.soomla.store.domain.VirtualCategory;
 import com.soomla.store.domain.VirtualItem;
@@ -250,16 +249,23 @@ public class StoreInfo {
         return mGoods;
     }
 
-    public static List<NonConsumableItem> getNonConsumableItems() {
-        return mNonConsumables;
-    }
-
     public static List<VirtualCategory> getCategories() {
         return mCategories;
     }
 
     public static List<String> getAllProductIds() {
         return new ArrayList<String>(mPurchasableItems.keySet());
+    }
+
+
+    /**
+     * Checks if a given PurchasableVirtualItem is a non-consumable item
+     *
+     * @param pvi The PurchasableVirtualItem to check
+     * @return true pvi is a non-consumable item.
+     */
+    public static boolean isItemNonConsumable(PurchasableVirtualItem pvi){
+        return ((pvi instanceof LifetimeVG) && (pvi.getPurchaseType() instanceof PurchaseWithMarket));
     }
 
 
@@ -280,7 +286,6 @@ public class StoreInfo {
         mGoods = new LinkedList<VirtualGood>();
         mCategories = new LinkedList<VirtualCategory>();
         mCurrencies = new LinkedList<VirtualCurrency>();
-        mNonConsumables = new LinkedList<NonConsumableItem>();
 
         if (jsonObject.has(StoreJSONConsts.STORE_CURRENCIES)) {
             JSONArray virtualCurrencies = jsonObject.getJSONArray(StoreJSONConsts.STORE_CURRENCIES);
@@ -384,23 +389,6 @@ public class StoreInfo {
                 }
             }
         }
-
-        if (jsonObject.has(StoreJSONConsts.STORE_NONCONSUMABLES)) {
-            JSONArray nonConsumables = jsonObject.getJSONArray(StoreJSONConsts.STORE_NONCONSUMABLES);
-            for (int i=0; i<nonConsumables.length(); i++){
-                JSONObject o = nonConsumables.getJSONObject(i);
-                NonConsumableItem non = new NonConsumableItem(o);
-                mNonConsumables.add(non);
-
-                mVirtualItems.put(non.getItemId(), non);
-
-                PurchaseType purchaseType = non.getPurchaseType();
-                if (purchaseType instanceof PurchaseWithMarket) {
-                    mPurchasableItems.put(((PurchaseWithMarket) purchaseType)
-                            .getMarketItem().getProductId(), non);
-                }
-            }
-        }
     }
 
     /**
@@ -465,11 +453,6 @@ public class StoreInfo {
             categories.put(cat.toJSONObject());
         }
 
-        JSONArray nonConsumableItems = new JSONArray();
-        for(NonConsumableItem non : mNonConsumables){
-            nonConsumableItems.put(non.toJSONObject());
-        }
-
         JSONObject jsonObject = new JSONObject();
         try {
             goods.put(StoreJSONConsts.STORE_GOODS_SU, suGoods);
@@ -482,7 +465,6 @@ public class StoreInfo {
             jsonObject.put(StoreJSONConsts.STORE_CURRENCIES, currencies);
             jsonObject.put(StoreJSONConsts.STORE_GOODS, goods);
             jsonObject.put(StoreJSONConsts.STORE_CURRENCYPACKS, currencyPacks);
-            jsonObject.put(StoreJSONConsts.STORE_NONCONSUMABLES, nonConsumableItems);
         } catch (JSONException e) {
             SoomlaUtils.LogError(TAG, "An error occurred while generating JSON object.");
         }
@@ -575,24 +557,6 @@ public class StoreInfo {
             }
             mGoods.add(vg);
         }
-
-        if (virtualItem instanceof NonConsumableItem) {
-            NonConsumableItem non = (NonConsumableItem) virtualItem;
-
-            PurchaseType purchaseType = non.getPurchaseType();
-            if (purchaseType instanceof PurchaseWithMarket) {
-                mPurchasableItems.put(((PurchaseWithMarket) purchaseType).getMarketItem()
-                        .getProductId(), non);
-            }
-
-            for(int i=0; i<mNonConsumables.size(); i++) {
-                if (mNonConsumables.get(i).getItemId().equals(non.getItemId())) {
-                    mNonConsumables.remove(i);
-                    break;
-                }
-            }
-            mNonConsumables.add(non);
-        }
     }
 
     /**
@@ -608,7 +572,6 @@ public class StoreInfo {
         mCurrencyPacks = Arrays.asList(storeAssets.getCurrencyPacks());
         mGoods = Arrays.asList(storeAssets.getGoods());
         mCategories = Arrays.asList(storeAssets.getCategories());
-        mNonConsumables = Arrays.asList(storeAssets.getNonConsumableItems());
 
         mVirtualItems = new HashMap<String, VirtualItem>();
         mPurchasableItems = new HashMap<String, PurchasableVirtualItem>();
@@ -640,16 +603,6 @@ public class StoreInfo {
                 }
                 upgrades.add((UpgradeVG) vi);
             }
-
-            PurchaseType purchaseType = vi.getPurchaseType();
-            if (purchaseType instanceof PurchaseWithMarket) {
-                mPurchasableItems.put(((PurchaseWithMarket) purchaseType).getMarketItem()
-                        .getProductId(), vi);
-            }
-        }
-
-        for(NonConsumableItem vi : mNonConsumables) {
-            mVirtualItems.put(vi.getItemId(), vi);
 
             PurchaseType purchaseType = vi.getPurchaseType();
             if (purchaseType instanceof PurchaseWithMarket) {
@@ -723,9 +676,6 @@ public class StoreInfo {
 
     // list of virtul categories
     private static List<VirtualCategory> mCategories;
-
-    // list of non consumable items
-    private static List<NonConsumableItem> mNonConsumables;
 
     private static int mCurrentAssetsVersion = 0;
 }

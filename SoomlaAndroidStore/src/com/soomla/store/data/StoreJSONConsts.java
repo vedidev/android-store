@@ -26,7 +26,6 @@ public class StoreJSONConsts {
     public static final String STORE_CURRENCYPACKS      = "currencyPacks";
     public static final String STORE_GOODS              = "goods";
     public static final String STORE_CATEGORIES         = "categories";
-    public static final String STORE_NONCONSUMABLES     = "nonConsumables";
     public static final String STORE_GOODS_SU           = "singleUse";
     public static final String STORE_GOODS_PA           = "goodPacks";
     public static final String STORE_GOODS_UP           = "goodUpgrades";

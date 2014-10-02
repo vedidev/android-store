@@ -30,7 +30,6 @@ import com.soomla.store.billing.IabSkuDetails;
 import com.soomla.store.data.StorageManager;
 import com.soomla.store.data.StoreInfo;
 import com.soomla.store.domain.MarketItem;
-import com.soomla.store.domain.NonConsumableItem;
 import com.soomla.store.domain.PurchasableVirtualItem;
 import com.soomla.store.events.BillingNotSupportedEvent;
 import com.soomla.store.events.BillingSupportedEvent;
@@ -359,15 +358,15 @@ public class SoomlaStore {
                                         String sku = purchase.getSku();
                                         SoomlaUtils.LogDebug(TAG, "Tried to buy an item that was not" +
                                                 " consumed (maybe it's an already owned " +
-                                                "NonConsumable). productId: " + sku);
+                                                "non-consumable). productId: " + sku);
 
                                         try {
                                             PurchasableVirtualItem pvi = StoreInfo.getPurchasableItem(sku);
                                             consumeIfConsumable(purchase, pvi);
 
-                                            if (pvi instanceof NonConsumableItem) {
+                                            if (StoreInfo.isItemNonConsumable(pvi)) {
                                                 String message = "(alreadyOwned) the user tried to " +
-                                                        "buy a NonConsumableItem that was already " +
+                                                        "buy a non-consumable that was already " +
                                                         "owned. itemId: " + pvi.getItemId() +
                                                         "    productId: " + sku;
                                                 SoomlaUtils.LogDebug(TAG, message);
@@ -472,13 +471,12 @@ public class SoomlaStore {
             case 0:
                 SoomlaUtils.LogDebug(TAG, "IabPurchase successful.");
 
-                // if the purchasable item is NonConsumableItem and it already exists then we
+                // if the purchasable item is non-consumable and it already exists then we
                 // don't fire any events.
                 // fixes: https://github.com/soomla/unity3d-store/issues/192
-                if (pvi instanceof NonConsumableItem) {
-                    boolean exists = StorageManager.getNonConsumableItemsStorage().
-                            nonConsumableItemExists((NonConsumableItem) pvi);
-                    if (exists) {
+                // TODO: update on the issue in github
+                if (StoreInfo.isItemNonConsumable(pvi)) {
+                    if (StorageManager.getVirtualItemStorage(pvi).getBalance(pvi) == 1) {
                         return;
                     }
                 }
@@ -531,7 +529,7 @@ public class SoomlaStore {
      */
     private void consumeIfConsumable(IabPurchase purchase, PurchasableVirtualItem pvi) {
         try {
-            if (!(pvi instanceof NonConsumableItem)) {
+            if (!StoreInfo.isItemNonConsumable(pvi)) {
                 mInAppBillingService.consume(purchase);
             }
         } catch (IabException e) {
