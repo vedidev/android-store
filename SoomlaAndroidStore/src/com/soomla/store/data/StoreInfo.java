@@ -98,6 +98,15 @@ public class StoreInfo {
             return false;
         }
 
+        // This is done in case old versions of the DB exist (especially from
+        // Cocos2dx) which used jsonType instead of className
+        if (val.contains("jsonType")) {
+            SoomlaUtils.LogDebug(TAG, "the StoreInfo JSON is from an older version. " +
+                    "we need to delete and let it be recreated.");
+            KeyValueStorage.deleteKeyValue(key);
+            return false;
+        }
+
         SoomlaUtils.LogDebug(TAG, "the metadata-economy json (from DB) is " + val);
 
         try {
