@@ -10,20 +10,9 @@ StoreInventory.buy("[itemId]");
 
 *SOOMLA's Store Module for Android*
 
-**September 15th, 2014**: 
+**September 15th, 2014**:
 `NonConsumableItem` class was removed.
-
 To create a non-consumable item in your `IStoreAssetes` implementation, use `LifeTimeVG` with `PurchaseType` of `PurchaseWithMarket`.
-For example:
-```Java
-public static final VirtualGoood NO_ADS_LTVG  = new LifetimeVG(
-      "No Ads",                                                       // name
-      "Test purchase of MANAGED item.",                               // description
-      "no_ads",                                                       // item id
-       new PurchaseWithMarket(new MarketItem(                         // purchase type
-          NO_ADS_LTVG_PRODUCT_ID, MarketItem.Managed.MANAGED , 0.99))
-);
-```
 
 **June 20th, 2014**: v3.4.1 presents support for "Soomla Core" (which separates some objects common to ALL SOOMLA's modules). It also removed the usage of SOOM_SEC. [Getting Started](https://github.com/soomla/android-store#getting-started) has changed! see [CHANGELOG](changelog.md).
 
