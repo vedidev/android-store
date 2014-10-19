@@ -1,4 +1,4 @@
-*This project is a part of The [SOOMLA](http://project.soom.la) Framework which is a series of open source initiatives with a joint goal to help mobile game developers do more together. SOOMLA encourages better game designing, economy modeling and faster development.*
+*This project is a part of The [SOOMLA](http://www.soom.la) Framework, which is a series of open source initiatives with a joint goal to help mobile game developers do more together. SOOMLA encourages better game design, economy modeling, social engagement, and faster development.*
 
 Haven't you ever wanted an in-app purchase one liner that looks like this!?
 
@@ -249,26 +249,21 @@ You can find a full event handler example [here](https://github.com/soomla/andro
 
 [Full documentation and explanation of otto](http://square.github.com/otto/)
 
-## Contribution
+Contribution
+---
+SOOMLA appreciates code contributions! You are more than welcome to extend the capabilities of SOOMLA.
 
+Fork -> Clone -> Implement -> Add documentation -> Test -> Pull-Request.
 
-We want you!
-
-Fork -> Clone -> Implement -> Insert Comments -> Test -> Pull-Request.
-
-We have great RESPECT for contributors.
-
-## Code Documentation
-
-
-android-store follows strict code documentation conventions. If you would like to contribute please read our [Documentation Guidelines](https://github.com/soomla/android-store/blob/master/documentation.md) and follow them. Clear, consistent  comments will make our code easy to understand.
+IMPORTANT: If you would like to contribute, please follow our [Documentation Guidelines](https://github.com/soomla/android-store/blob/master/documentation.md). Clear, consistent comments will make our code easy to understand.
 
 ## SOOMLA, Elsewhere ...
 
-
 + [Framework Website](http://www.soom.la/)
-+ [On Facebook](https://www.facebook.com/pages/The-SOOMLA-Project/389643294427376)
-+ [On AngelList](https://angel.co/the-soomla-project)
++ [Knowledge Base](http://www.know.soom.la/)
+
+
+<a href="https://www.facebook.com/pages/The-SOOMLA-Project/389643294427376"><img src="http://know.soom.la/img/tutorial_img/social/Facebook.png"></a><a href="https://twitter.com/Soomla"><img src="http://know.soom.la/img/tutorial_img/social/Twitter.png"></a><a href="https://plus.google.com/+SoomLa/posts"><img src="http://know.soom.la/img/tutorial_img/social/GoogleP.png"></a><a href ="https://www.youtube.com/channel/UCR1-D9GdSRRLD0fiEDkpeyg"><img src="http://know.soom.la/img/tutorial_img/social/Youtube.png"></a>
 
 ## License
 
