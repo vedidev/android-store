@@ -40,6 +40,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.security.Key;
 import java.util.*;
 
 /**
@@ -71,7 +72,7 @@ public class StoreInfo {
 
         mCurrentAssetsVersion = storeAssets.getVersion();
 
-        checkMetadataVersion();
+//        checkMetadataVersion();
 
         // we always initialize from the database, unless this is the first time the game is
         // loaded - in that case we initialize with setStoreAssets.
@@ -88,7 +89,9 @@ public class StoreInfo {
      * @return success
      */
     public static boolean initializeFromDB() {
-        checkMetadataVersion();
+        //if metadata was bumped, we do not initialize from DB
+        if (checkMetadataVersion())
+            return false;
 
         String key = keyMetaStoreInfo();
         String val = KeyValueStorage.getValue(key);
@@ -134,6 +137,16 @@ public class StoreInfo {
      */
     public static boolean hasUpgrades(String goodItemId) {
         return mGoodsUpgrades.containsKey(goodItemId);
+    }
+
+    /**
+     * Checks if a given PurchasableVirtualItem is a non-consumable item
+     *
+     * @param pvi The PurchasableVirtualItem to check
+     * @return true pvi is a non-consumable item.
+     */
+    public static boolean isItemNonConsumable(PurchasableVirtualItem pvi){
+        return ((pvi instanceof LifetimeVG) && (pvi.getPurchaseType() instanceof PurchaseWithMarket));
     }
 
 
@@ -264,17 +277,6 @@ public class StoreInfo {
 
     public static List<String> getAllProductIds() {
         return new ArrayList<String>(mPurchasableItems.keySet());
-    }
-
-
-    /**
-     * Checks if a given PurchasableVirtualItem is a non-consumable item
-     *
-     * @param pvi The PurchasableVirtualItem to check
-     * @return true pvi is a non-consumable item.
-     */
-    public static boolean isItemNonConsumable(PurchasableVirtualItem pvi){
-        return ((pvi instanceof LifetimeVG) && (pvi.getPurchaseType() instanceof PurchaseWithMarket));
     }
 
 
@@ -626,10 +628,51 @@ public class StoreInfo {
             }
         }
 
+        //Disable the function call when migration process is no longer needed.
+        migrateNonConsumableItems();
+
         save();
     }
 
-    private static void checkMetadataVersion() {
+    /**
+     * Temporary function to handle the migration process from NonConsumableItem to LifeTimeVG.
+     * Iterates the existing NonConsumableItems from DB, for each item checks if a corresponding LifeTimeVG exists in IStoreAssets.
+     * If such item exists and the NonConsumableItem is owned, gives the corresponding LifeTimeVG to the user.
+     */
+    private static void migrateNonConsumableItems() {
+        String storeInfoJSON = KeyValueStorage.getValue(keyMetaStoreInfo());
+        if (storeInfoJSON == null)
+            return;
+
+        try {
+            JSONObject jsonObject = new JSONObject(storeInfoJSON);
+            String storeNonConsumables = "nonConsumables";
+            if (jsonObject.has(storeNonConsumables)) {
+                JSONArray nonConsumables = jsonObject.getJSONArray(storeNonConsumables);
+                for (int i = 0; i < nonConsumables.length(); i++) {
+                    JSONObject o = nonConsumables.getJSONObject(i);
+                    LifetimeVG ltvgFromNonCons = new LifetimeVG(o);
+
+                    VirtualItem vi = mVirtualItems.get(ltvgFromNonCons.getItemId());
+                    if (vi != null && (vi instanceof LifetimeVG) && ((LifetimeVG) vi).getPurchaseType() instanceof PurchaseWithMarket) {
+                        String keyNonConsExist = "nonconsumable." + ltvgFromNonCons.getItemId() + ".exists";
+                        if (KeyValueStorage.getValue(keyNonConsExist) != null) {
+                            ltvgFromNonCons.give(1, false); //silent process, don't notify
+                            KeyValueStorage.deleteKeyValue(keyNonConsExist);
+                        }
+                    }
+                }
+            }
+        } catch (JSONException e) {
+            SoomlaUtils.LogDebug(TAG, "Can't parse metadata json. Unable to migrate nonConsumableItems from DB.");
+        }
+    }
+
+
+    /**
+     * @return true if metadata version was reset.
+     */
+    private static boolean checkMetadataVersion() {
         SoomlaUtils.LogDebug(TAG, "checking metadata version ...");
         SharedPreferences prefs = SoomlaApp.getAppContext().getSharedPreferences(SoomlaConfig.PREFS_NAME,
                         Context.MODE_PRIVATE);
@@ -648,9 +691,11 @@ public class StoreInfo {
             edit.putInt("MT_VER", StoreConfig.METADATA_VERSION);
             edit.putInt("SA_VER_OLD", mCurrentAssetsVersion);
             edit.commit();
-
-            KeyValueStorage.deleteKeyValue(keyMetaStoreInfo());
+            //TODO: determine if and when we need to delete existing storage (save function - just b4 saving new value we can delete the old one...)
+//            KeyValueStorage.deleteKeyValue(keyMetaStoreInfo());
         }
+
+        return resetMeta;
     }
 
 
