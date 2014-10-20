@@ -101,9 +101,6 @@ public class SoomlaStore {
 
         StoreInfo.setStoreAssets(storeAssets);
 
-        // Update SOOMLA store from DB
-        StoreInfo.initializeFromDB();
-
         refreshInventory();
 
         mInitialized = true;

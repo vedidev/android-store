@@ -24,7 +24,6 @@ import com.soomla.SoomlaConfig;
 import com.soomla.data.KeyValueStorage;
 import com.soomla.store.IStoreAssets;
 import com.soomla.SoomlaApp;
-import com.soomla.store.SoomlaStore;
 import com.soomla.store.StoreConfig;
 import com.soomla.SoomlaUtils;
 import com.soomla.store.domain.PurchasableVirtualItem;
@@ -40,7 +39,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.security.Key;
 import java.util.*;
 
 /**
@@ -72,7 +70,7 @@ public class StoreInfo {
 
         mCurrentAssetsVersion = storeAssets.getVersion();
 
-//        checkMetadataVersion();
+        checkMetadataVersion();
 
         // we always initialize from the database, unless this is the first time the game is
         // loaded - in that case we initialize with setStoreAssets.
@@ -88,9 +86,10 @@ public class StoreInfo {
      *
      * @return success
      */
-    public static boolean initializeFromDB() {
-        //if metadata was bumped, we do not initialize from DB
-        if (checkMetadataVersion())
+    private static boolean initializeFromDB() {
+        //if migration process is required we do not initialize from DB.
+        //remove this code when migration process becomes obsolete.
+        if(getMigrationIndicator())
             return false;
 
         String key = keyMetaStoreInfo();
@@ -628,51 +627,16 @@ public class StoreInfo {
             }
         }
 
-        //Disable the function call when migration process is no longer needed.
+        //delete this if migration process is no longer needed.
         migrateNonConsumableItems();
 
         save();
     }
 
     /**
-     * Temporary function to handle the migration process from NonConsumableItem to LifeTimeVG.
-     * Iterates the existing NonConsumableItems from DB, for each item checks if a corresponding LifeTimeVG exists in IStoreAssets.
-     * If such item exists and the NonConsumableItem is owned, gives the corresponding LifeTimeVG to the user.
-     */
-    private static void migrateNonConsumableItems() {
-        String storeInfoJSON = KeyValueStorage.getValue(keyMetaStoreInfo());
-        if (storeInfoJSON == null)
-            return;
-
-        try {
-            JSONObject jsonObject = new JSONObject(storeInfoJSON);
-            String storeNonConsumables = "nonConsumables";
-            if (jsonObject.has(storeNonConsumables)) {
-                JSONArray nonConsumables = jsonObject.getJSONArray(storeNonConsumables);
-                for (int i = 0; i < nonConsumables.length(); i++) {
-                    JSONObject o = nonConsumables.getJSONObject(i);
-                    LifetimeVG ltvgFromNonCons = new LifetimeVG(o);
-
-                    VirtualItem vi = mVirtualItems.get(ltvgFromNonCons.getItemId());
-                    if (vi != null && (vi instanceof LifetimeVG) && ((LifetimeVG) vi).getPurchaseType() instanceof PurchaseWithMarket) {
-                        String keyNonConsExist = "nonconsumable." + ltvgFromNonCons.getItemId() + ".exists";
-                        if (KeyValueStorage.getValue(keyNonConsExist) != null) {
-                            ltvgFromNonCons.give(1, false); //silent process, don't notify
-                            KeyValueStorage.deleteKeyValue(keyNonConsExist);
-                        }
-                    }
-                }
-            }
-        } catch (JSONException e) {
-            SoomlaUtils.LogDebug(TAG, "Can't parse metadata json. Unable to migrate nonConsumableItems from DB.");
-        }
-    }
-
-
-    /**
      * @return true if metadata version was reset.
      */
-    private static boolean checkMetadataVersion() {
+    private static void checkMetadataVersion() {
         SoomlaUtils.LogDebug(TAG, "checking metadata version ...");
         SharedPreferences prefs = SoomlaApp.getAppContext().getSharedPreferences(SoomlaConfig.PREFS_NAME,
                         Context.MODE_PRIVATE);
@@ -691,13 +655,63 @@ public class StoreInfo {
             edit.putInt("MT_VER", StoreConfig.METADATA_VERSION);
             edit.putInt("SA_VER_OLD", mCurrentAssetsVersion);
             edit.commit();
-            //TODO: determine if and when we need to delete existing storage (save function - just b4 saving new value we can delete the old one...)
-//            KeyValueStorage.deleteKeyValue(keyMetaStoreInfo());
-        }
 
-        return resetMeta;
+            //remove and uncomment this if migration is no longer needed.
+            setMigrationIndicator(true);
+//          KeyValueStorage.deleteKeyValue(keyMetaStoreInfo());
+        }
     }
 
+    /**
+     * Temporary function to handle the migration process from NonConsumableItem to LifeTimeVG.
+     * Iterates the existing NonConsumableItems from DB, for each item checks if a corresponding LifeTimeVG exists in IStoreAssets.
+     * If such item exists and the NonConsumableItem is owned, gives the corresponding LifeTimeVG to the user.
+     */
+    private static void migrateNonConsumableItems() {
+        String storeInfoJSON = KeyValueStorage.getValue(keyMetaStoreInfo());
+        if (storeInfoJSON == null)
+            return;
+
+        try {
+            JSONObject jsonObject = new JSONObject(storeInfoJSON);
+            String storeNonConsumables = "nonConsumables";
+            if (jsonObject.has(storeNonConsumables)) {
+                JSONArray nonConsumables = jsonObject.getJSONArray(storeNonConsumables);
+                for (int i = 0; i < nonConsumables.length(); i++) {
+                    JSONObject nonConsJSON = nonConsumables.getJSONObject(i);
+                    LifetimeVG migratedNonCons = new LifetimeVG(nonConsJSON);
+                    VirtualItem correspondingVirtualItem = mVirtualItems.get(migratedNonCons.getItemId());
+                    if (correspondingVirtualItem != null && (correspondingVirtualItem instanceof LifetimeVG) && ((LifetimeVG) correspondingVirtualItem).getPurchaseType() instanceof PurchaseWithMarket) {
+                        String keyNonConsExist = "nonconsumable." + migratedNonCons.getItemId() + ".exists";
+                        if (KeyValueStorage.getValue(keyNonConsExist) != null) {
+                            migratedNonCons.give(1);
+                            KeyValueStorage.deleteKeyValue(keyNonConsExist);
+                        }
+                    }
+                }
+            }
+        } catch (Exception e){
+            SoomlaUtils.LogDebug(TAG, "Migration process failed with error: " + e.getMessage());
+        } finally {
+            //mark migration process as finished and delete database
+            setMigrationIndicator(false);
+            KeyValueStorage.deleteKeyValue(keyMetaStoreInfo());
+        }
+    }
+
+    private static boolean getMigrationIndicator(){
+        SharedPreferences prefs = SoomlaApp.getAppContext().getSharedPreferences(SoomlaConfig.PREFS_NAME,
+                Context.MODE_PRIVATE);
+        return (prefs.getBoolean("MIGRATE_NONCONSUMABLES", false));
+    }
+
+    private static void setMigrationIndicator(boolean indicator){
+        SharedPreferences prefs = SoomlaApp.getAppContext().getSharedPreferences(SoomlaConfig.PREFS_NAME,
+                Context.MODE_PRIVATE);
+        SharedPreferences.Editor edit = prefs.edit();
+        edit.putBoolean("MIGRATE_NONCONSUMABLES", indicator);
+        edit.commit();
+    }
 
     /** Private Members **/
 
