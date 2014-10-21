@@ -86,7 +86,9 @@ public class StoreInfo {
      *
      * @return success
      */
-    private static boolean initializeFromDB() {
+    public static boolean initializeFromDB() {
+        checkMetadataVersion();
+
         //if migration process is required we do not initialize from DB.
         //remove this code when migration process becomes obsolete.
         if(getMigrationIndicator())
