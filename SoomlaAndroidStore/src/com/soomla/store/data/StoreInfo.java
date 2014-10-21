@@ -24,7 +24,6 @@ import com.soomla.SoomlaConfig;
 import com.soomla.data.KeyValueStorage;
 import com.soomla.store.IStoreAssets;
 import com.soomla.SoomlaApp;
-import com.soomla.store.SoomlaStore;
 import com.soomla.store.StoreConfig;
 import com.soomla.SoomlaUtils;
 import com.soomla.store.domain.PurchasableVirtualItem;
@@ -90,6 +89,11 @@ public class StoreInfo {
     public static boolean initializeFromDB() {
         checkMetadataVersion();
 
+        //if migration process is required we do not initialize from DB.
+        //remove this code when migration process becomes obsolete.
+        if(isMigrationRequired())
+            return false;
+
         String key = keyMetaStoreInfo();
         String val = KeyValueStorage.getValue(key);
 
@@ -134,6 +138,16 @@ public class StoreInfo {
      */
     public static boolean hasUpgrades(String goodItemId) {
         return mGoodsUpgrades.containsKey(goodItemId);
+    }
+
+    /**
+     * Checks if a given PurchasableVirtualItem is a non-consumable item
+     *
+     * @param pvi The PurchasableVirtualItem to check
+     * @return true pvi is a non-consumable item.
+     */
+    public static boolean isItemNonConsumable(PurchasableVirtualItem pvi){
+        return ((pvi instanceof LifetimeVG) && (pvi.getPurchaseType() instanceof PurchaseWithMarket));
     }
 
 
@@ -264,17 +278,6 @@ public class StoreInfo {
 
     public static List<String> getAllProductIds() {
         return new ArrayList<String>(mPurchasableItems.keySet());
-    }
-
-
-    /**
-     * Checks if a given PurchasableVirtualItem is a non-consumable item
-     *
-     * @param pvi The PurchasableVirtualItem to check
-     * @return true pvi is a non-consumable item.
-     */
-    public static boolean isItemNonConsumable(PurchasableVirtualItem pvi){
-        return ((pvi instanceof LifetimeVG) && (pvi.getPurchaseType() instanceof PurchaseWithMarket));
     }
 
 
@@ -626,9 +629,15 @@ public class StoreInfo {
             }
         }
 
+        //delete this if migration process is no longer needed.
+        migrateNonConsumableItems();
+
         save();
     }
 
+    /**
+     * @return true if metadata version was reset.
+     */
     private static void checkMetadataVersion() {
         SoomlaUtils.LogDebug(TAG, "checking metadata version ...");
         SharedPreferences prefs = SoomlaApp.getAppContext().getSharedPreferences(SoomlaConfig.PREFS_NAME,
@@ -649,10 +658,62 @@ public class StoreInfo {
             edit.putInt("SA_VER_OLD", mCurrentAssetsVersion);
             edit.commit();
 
+            //remove and uncomment this if migration is no longer needed.
+            setMigrationIndicator(true);
+//          KeyValueStorage.deleteKeyValue(keyMetaStoreInfo());
+        }
+    }
+
+    /**
+     * Temporary function to handle the migration process from NonConsumableItem to LifeTimeVG.
+     * Iterates the existing NonConsumableItems from DB, for each item checks if a corresponding LifeTimeVG exists in IStoreAssets.
+     * If such item exists and the NonConsumableItem is owned, gives the corresponding LifeTimeVG to the user.
+     */
+    private static void migrateNonConsumableItems() {
+        String storeInfoJSON = KeyValueStorage.getValue(keyMetaStoreInfo());
+        if (storeInfoJSON == null)
+            return;
+
+        try {
+            JSONObject jsonObject = new JSONObject(storeInfoJSON);
+            String storeNonConsumables = "nonConsumables";
+            if (jsonObject.has(storeNonConsumables)) {
+                JSONArray nonConsumables = jsonObject.getJSONArray(storeNonConsumables);
+                for (int i = 0; i < nonConsumables.length(); i++) {
+                    JSONObject nonConsJSON = nonConsumables.getJSONObject(i);
+                    LifetimeVG migratedNonCons = new LifetimeVG(nonConsJSON);
+                    VirtualItem correspondingVirtualItem = mVirtualItems.get(migratedNonCons.getItemId());
+                    if (correspondingVirtualItem != null && (correspondingVirtualItem instanceof LifetimeVG) && ((LifetimeVG) correspondingVirtualItem).getPurchaseType() instanceof PurchaseWithMarket) {
+                        String keyNonConsExist = "nonconsumable." + migratedNonCons.getItemId() + ".exists";
+                        if (KeyValueStorage.getValue(keyNonConsExist) != null) {
+                            migratedNonCons.give(1);
+                            KeyValueStorage.deleteKeyValue(keyNonConsExist);
+                        }
+                    }
+                }
+            }
+        } catch (Exception e){
+            SoomlaUtils.LogDebug(TAG, "Migration process failed with error: " + e.getMessage());
+        } finally {
+            //mark migration process as finished and delete database
+            setMigrationIndicator(false);
             KeyValueStorage.deleteKeyValue(keyMetaStoreInfo());
         }
     }
 
+    private static boolean isMigrationRequired(){
+        SharedPreferences prefs = SoomlaApp.getAppContext().getSharedPreferences(SoomlaConfig.PREFS_NAME,
+                Context.MODE_PRIVATE);
+        return (prefs.getBoolean("MIGRATE_NONCONSUMABLES", false));
+    }
+
+    private static void setMigrationIndicator(boolean indicator){
+        SharedPreferences prefs = SoomlaApp.getAppContext().getSharedPreferences(SoomlaConfig.PREFS_NAME,
+                Context.MODE_PRIVATE);
+        SharedPreferences.Editor edit = prefs.edit();
+        edit.putBoolean("MIGRATE_NONCONSUMABLES", indicator);
+        edit.commit();
+    }
 
     /** Private Members **/
 
