@@ -91,7 +91,7 @@ public class StoreInfo {
 
         //if migration process is required we do not initialize from DB.
         //remove this code when migration process becomes obsolete.
-        if(getMigrationIndicator())
+        if(isMigrationRequired())
             return false;
 
         String key = keyMetaStoreInfo();
@@ -701,7 +701,7 @@ public class StoreInfo {
         }
     }
 
-    private static boolean getMigrationIndicator(){
+    private static boolean isMigrationRequired(){
         SharedPreferences prefs = SoomlaApp.getAppContext().getSharedPreferences(SoomlaConfig.PREFS_NAME,
                 Context.MODE_PRIVATE);
         return (prefs.getBoolean("MIGRATE_NONCONSUMABLES", false));
