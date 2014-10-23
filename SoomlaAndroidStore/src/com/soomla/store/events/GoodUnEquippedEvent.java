@@ -32,21 +32,21 @@ public class GoodUnEquippedEvent {
     /**
      * Constructor
      *
-     * @param good
+     * @param itemId
      */
-    public GoodUnEquippedEvent(EquippableVG good) {
-        mGood = good;
+    public GoodUnEquippedEvent(String itemId) {
+        mItemId = itemId;
     }
 
 
     /** Setters and Getters */
 
-    public EquippableVG getGood() {
-        return mGood;
+    public String getGoodItemId() {
+        return mItemId;
     }
 
 
     /** Private Members */
 
-    private EquippableVG mGood;
+    private String mItemId;
 }

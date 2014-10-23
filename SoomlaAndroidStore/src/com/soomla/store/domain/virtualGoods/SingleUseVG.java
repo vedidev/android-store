@@ -76,7 +76,7 @@ public class SingleUseVG extends VirtualGood{
      */
     @Override
     public int give(int amount, boolean notify) {
-        return StorageManager.getVirtualGoodsStorage().add(this, amount, notify);
+        return StorageManager.getVirtualGoodsStorage().add(this.getItemId(), amount, notify);
     }
 
     /**
@@ -84,7 +84,7 @@ public class SingleUseVG extends VirtualGood{
      */
     @Override
     public int take(int amount, boolean notify) {
-        return StorageManager.getVirtualGoodsStorage().remove(this, amount, notify);
+        return StorageManager.getVirtualGoodsStorage().remove(this.getItemId(), amount, notify);
     }
 
     /**

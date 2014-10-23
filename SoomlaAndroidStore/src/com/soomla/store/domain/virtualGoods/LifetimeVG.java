@@ -91,10 +91,10 @@ import org.json.JSONObject;
             amount = 1;
         }
 
-        int balance = StorageManager.getVirtualGoodsStorage().getBalance(this);
+        int balance = StorageManager.getVirtualGoodsStorage().getBalance(this.getItemId());
 
         if (balance < 1) {
-            return StorageManager.getVirtualGoodsStorage().add(this, amount, notify);
+            return StorageManager.getVirtualGoodsStorage().add(this.getItemId(), amount, notify);
         }
         return 1;
     }
@@ -113,10 +113,10 @@ import org.json.JSONObject;
             amount = 1;
         }
 
-        int balance = StorageManager.getVirtualGoodsStorage().getBalance(this);
+        int balance = StorageManager.getVirtualGoodsStorage().getBalance(this.getItemId());
 
         if (balance > 0) {
-            return StorageManager.getVirtualGoodsStorage().remove(this, amount, notify);
+            return StorageManager.getVirtualGoodsStorage().remove(this.getItemId(), amount, notify);
         }
         return 0;
     }
@@ -132,7 +132,7 @@ import org.json.JSONObject;
      */
     @Override
     protected boolean canBuy() {
-        int balance = StorageManager.getVirtualGoodsStorage().getBalance(this);
+        int balance = StorageManager.getVirtualGoodsStorage().getBalance(this.getItemId());
 
         return balance < 1;
     }

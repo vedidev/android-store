@@ -153,7 +153,7 @@ public class EquippableVG extends LifetimeVG{
      */
     public void equip(boolean notify) throws NotEnoughGoodsException {
         // only if the user has bought this EquippableVG, the EquippableVG is equipped.
-        if (StorageManager.getVirtualGoodsStorage().getBalance(this) > 0){
+        if (StorageManager.getVirtualGoodsStorage().getBalance(this.getItemId()) > 0){
 
             if (mEquippingModel == EquippingModel.CATEGORY) {
                 VirtualCategory category = null;

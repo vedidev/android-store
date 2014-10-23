@@ -115,7 +115,7 @@ public class VirtualCurrencyPack extends PurchasableVirtualItem {
             return 0;
         }
         return StorageManager.getVirtualCurrencyStorage().add(
-                currency, mCurrencyAmount * amount, notify);
+                currency.getItemId(), mCurrencyAmount * amount, notify);
     }
 
     /**
@@ -131,7 +131,7 @@ public class VirtualCurrencyPack extends PurchasableVirtualItem {
                     " doesn't exist! Can't take this pack.");
             return 0;
         }
-        return StorageManager.getVirtualCurrencyStorage().remove(currency,
+        return StorageManager.getVirtualCurrencyStorage().remove(currency.getItemId(),
                 mCurrencyAmount * amount, notify);
     }
 

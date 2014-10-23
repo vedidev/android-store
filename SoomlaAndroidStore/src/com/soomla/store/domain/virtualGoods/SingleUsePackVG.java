@@ -116,7 +116,7 @@ public class SingleUsePackVG extends VirtualGood {
             SoomlaUtils.LogError(TAG, "SingleUseVG with itemId: " + mGoodItemId + " doesn't exist! Can't give this pack.");
             return 0;
         }
-        return StorageManager.getVirtualGoodsStorage().add(good, mGoodAmount*amount, notify);
+        return StorageManager.getVirtualGoodsStorage().add(good.getItemId(), mGoodAmount*amount, notify);
     }
 
     /**
@@ -131,7 +131,7 @@ public class SingleUsePackVG extends VirtualGood {
             SoomlaUtils.LogError(TAG, "SingleUseVG with itemId: " + mGoodItemId + " doesn't exist! Can't take this pack.");
             return 0;
         }
-        return StorageManager.getVirtualGoodsStorage().remove(good, mGoodAmount*amount, notify);
+        return StorageManager.getVirtualGoodsStorage().remove(good.getItemId(), mGoodAmount*amount, notify);
     }
 
     /**

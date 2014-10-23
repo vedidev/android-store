@@ -16,8 +16,6 @@
 
 package com.soomla.store.events;
 
-import com.soomla.store.domain.virtualGoods.VirtualGood;
-
 /**
  * This event is fired when the balance of a specific <code>VirtualGood</code> has changed.
  *
@@ -32,12 +30,12 @@ public class GoodBalanceChangedEvent {
     /**
      * Constructor
      *
-     * @param good
+     * @param itemId
      * @param balance
      * @param amountAdded
      */
-    public GoodBalanceChangedEvent(VirtualGood good, int balance, int amountAdded) {
-        mGood = good;
+    public GoodBalanceChangedEvent(String itemId, int balance, int amountAdded) {
+        mItemId = itemId;
         mBalance = balance;
         mAmountAdded = amountAdded;
     }
@@ -45,8 +43,8 @@ public class GoodBalanceChangedEvent {
 
     /** Setters and Getters */
 
-    public VirtualGood getGood() {
-        return mGood;
+    public String getGoodItemId() {
+        return mItemId;
     }
 
     public int getBalance() {
@@ -60,7 +58,7 @@ public class GoodBalanceChangedEvent {
 
     /** Private Members */
 
-    private VirtualGood mGood;
+    private String mItemId;
 
     private int mBalance;
 

@@ -72,12 +72,12 @@ public class PurchaseWithVirtualItem extends PurchaseType {
         VirtualItemStorage storage = StorageManager.getVirtualItemStorage(item);
 
         assert storage != null;
-        int balance = storage.getBalance(item);
+        int balance = storage.getBalance(item.getItemId());
         if (balance < mAmount){
             throw new InsufficientFundsException(mTargetItemId);
         }
 
-        storage.remove(item, mAmount);
+        storage.remove(item.getItemId(), mAmount);
 
         getAssociatedItem().give(1);
         BusProvider.getInstance().post(new ItemPurchasedEvent(getAssociatedItem(), payload));

@@ -46,8 +46,8 @@ public class VirtualCurrencyStorage extends VirtualItemStorage{
      * @{inheritDoc}
      */
     @Override
-    protected void postBalanceChangeEvent(VirtualItem item, int balance, int amountAdded) {
-        BusProvider.getInstance().post(new CurrencyBalanceChangedEvent((VirtualCurrency) item,
+    protected void postBalanceChangeEvent(String itemId, int balance, int amountAdded) {
+        BusProvider.getInstance().post(new CurrencyBalanceChangedEvent(itemId,
                 balance, amountAdded));
     }
 

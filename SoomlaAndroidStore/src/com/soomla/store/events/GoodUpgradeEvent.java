@@ -33,19 +33,19 @@ public class GoodUpgradeEvent {
     /**
      * Constructor
      *
-     * @param good good that has been upgraded/downgraded
+     * @param itemId good that has been upgraded/downgraded
      * @param upgradeVG upgrade details
      */
-    public GoodUpgradeEvent(VirtualGood good, UpgradeVG upgradeVG) {
-        mGood = good;
+    public GoodUpgradeEvent(String itemId, UpgradeVG upgradeVG) {
+        mItemId = itemId;
         mCurrentUpgrade = upgradeVG;
     }
 
 
     /** Setters and Getters */
 
-    public VirtualGood getGood() {
-        return mGood;
+    public String getGoodItemId() {
+        return mItemId;
     }
 
     public UpgradeVG getCurrentUpgrade() {
@@ -55,7 +55,7 @@ public class GoodUpgradeEvent {
 
     /** Private Members */
 
-    private VirtualGood mGood; //good that has been upgraded/downgraded
+    private String mItemId; //good that has been upgraded/downgraded
 
     private UpgradeVG   mCurrentUpgrade; //upgrade details
 

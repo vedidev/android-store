@@ -34,14 +34,13 @@ public abstract class VirtualItemStorage {
     /**
      * Retrieves the balance of the given virtual item.
      *
-     * @param item the required virtual item
+     * @param itemId the required virtual item's itemId
      * @return the balance of the required virtual item
      */
-    public int getBalance(VirtualItem item){
+    public int getBalance(String itemId){
         SoomlaUtils.LogDebug(mTag, "fetching balance for virtual item with itemId: "
-                + item.getItemId());
+                + itemId);
 
-        String itemId = item.getItemId();
         String key = keyBalance(itemId);
         String val = KeyValueStorage.getValue(key);
 
@@ -50,7 +49,7 @@ public abstract class VirtualItemStorage {
             balance = Integer.parseInt(val);
         }
 
-        SoomlaUtils.LogDebug(mTag, "the balance for " + item.getItemId() + " is " + balance);
+        SoomlaUtils.LogDebug(mTag, "the balance for " + itemId + " is " + balance);
 
         return balance;
     }
@@ -58,32 +57,30 @@ public abstract class VirtualItemStorage {
     /**
      * Sets the balance of the given virtual item to be the given balance.
      *
-     * @param item the required virtual item
+     * @param itemId the required virtual item's itemId
      * @param balance the new balance to be set
      * @return the balance of the required virtual item
      */
-    public int setBalance(VirtualItem item, int balance) {
-        return setBalance(item, balance, true);
+    public int setBalance(String itemId, int balance) {
+        return setBalance(itemId, balance, true);
     }
 
     /**
      * Sets the balance of the given virtual item to be the given balance, and if notify is true
      * posts the change in the balance to the event bus.
      *
-     * @param item the required virtual item
+     * @param itemId the required virtual item's itemId
      * @param balance the new balance to be set
      * @param notify if notify is true post balance change event
      * @return the balance of the required virtual item
      */
-    public int setBalance(VirtualItem item, int balance, boolean notify) {
-        SoomlaUtils.LogDebug(mTag, "setting balance " + balance + " to " + item.getName() + ".");
+    public int setBalance(String itemId, int balance, boolean notify) {
+        SoomlaUtils.LogDebug(mTag, "setting balance " + balance + " to " + itemId + ".");
 
-        int oldBalance = getBalance(item);
+        int oldBalance = getBalance(itemId);
         if (oldBalance == balance) {
             return balance;
         }
-
-        String itemId = item.getItemId();
 
         String balanceStr = "" + balance;
         String key = keyBalance(itemId);
@@ -91,7 +88,7 @@ public abstract class VirtualItemStorage {
         KeyValueStorage.setValue(key, balanceStr);
 
         if (notify) {
-            postBalanceChangeEvent(item, balance, 0);
+            postBalanceChangeEvent(itemId, balance, 0);
         }
 
         return balance;
@@ -100,28 +97,27 @@ public abstract class VirtualItemStorage {
     /**
      * Adds the given amount of items to the storage.
      *
-     * @param item the required virtual item
+     * @param itemId the required virtual item's itemId
      * @param amount the amount of items to add
      * @return new balance
      */
-    public int add(VirtualItem item, int amount){
-        return add(item, amount, true);
+    public int add(String itemId, int amount){
+        return add(itemId, amount, true);
     }
 
     /**
      * Adds the given amount of items to the storage, and if notify is true
      * posts the change in the balance to the event bus.
      *
-     * @param item the required virtual item
+     * @param itemId the required virtual item's itemId
      * @param amount the amount of items to add
      * @param notify if true posts balance change event
      * @return new balance
      */
-    public int add(VirtualItem item, int amount, boolean notify){
-        SoomlaUtils.LogDebug(mTag, "adding " + amount + " " + item.getName());
+    public int add(String itemId, int amount, boolean notify){
+        SoomlaUtils.LogDebug(mTag, "adding " + amount + " " + itemId);
 
-        String itemId = item.getItemId();
-        int balance = getBalance(item);
+        int balance = getBalance(itemId);
         if (balance < 0) { /* in case the user "adds" a negative value */
             balance = 0;
             amount = 0;
@@ -131,7 +127,7 @@ public abstract class VirtualItemStorage {
         KeyValueStorage.setValue(key, balanceStr);
 
         if (notify) {
-            postBalanceChangeEvent(item, balance+amount, amount);
+            postBalanceChangeEvent(itemId, balance+amount, amount);
         }
 
         return balance + amount;
@@ -140,28 +136,27 @@ public abstract class VirtualItemStorage {
     /**
      * Removes the given amount from the given virtual item's balance.
      *
-     * @param item is the virtual item to remove the given amount from
+     * @param itemId is the virtual item to remove the given amount from
      * @param amount is the amount to remove
      * @return new balance
      */
-    public int remove(VirtualItem item, int amount){
-        return remove(item, amount, true);
+    public int remove(String itemId, int amount){
+        return remove(itemId, amount, true);
     }
 
     /**
      * Removes the given amount from the given virtual item's balance, and if notify is true
      * posts the change in the balance to the event bus.
      *
-     * @param item is the virtual item to remove the given amount from
+     * @param itemId is the virtual item to remove the given amount from
      * @param amount is the amount to remove
      * @param notify if notify is true post balance change event
      * @return new balance
      */
-    public int remove(VirtualItem item, int amount, boolean notify){
-        SoomlaUtils.LogDebug(mTag, "Removing " + amount + " " + item.getName() + ".");
+    public int remove(String itemId, int amount, boolean notify){
+        SoomlaUtils.LogDebug(mTag, "Removing " + amount + " " + itemId + ".");
 
-        String itemId = item.getItemId();
-        int balance = getBalance(item) - amount;
+        int balance = getBalance(itemId) - amount;
         if (balance < 0) {
             balance = 0;
             amount = 0;
@@ -171,7 +166,7 @@ public abstract class VirtualItemStorage {
         KeyValueStorage.setValue(key, balanceStr);
 
         if (notify) {
-            postBalanceChangeEvent(item, balance, -1*amount);
+            postBalanceChangeEvent(itemId, balance, -1*amount);
         }
 
         return balance;
@@ -189,11 +184,11 @@ public abstract class VirtualItemStorage {
     /**
      * Posts the given amount changed in the given balance of the given virtual item.
      *
-     * @param item virtual item whose balance has changed
+     * @param itemId virtual item whose balance has changed
      * @param balance the balance that has changed
      * @param amountAdded the amount added to the item's balance
      */
-    protected abstract void postBalanceChangeEvent(VirtualItem item, int balance, int amountAdded);
+    protected abstract void postBalanceChangeEvent(String itemId, int balance, int amountAdded);
 
 
     /** Private Members */

@@ -73,7 +73,7 @@ public class VirtualCurrency extends VirtualItem {
      */
     @Override
     public int give(int amount, boolean notify) {
-        return StorageManager.getVirtualCurrencyStorage().add(this, amount, notify);
+        return StorageManager.getVirtualCurrencyStorage().add(this.getItemId(), amount, notify);
     }
 
     /**
@@ -81,7 +81,7 @@ public class VirtualCurrency extends VirtualItem {
      */
     @Override
     public int take(int amount, boolean notify) {
-        return StorageManager.getVirtualCurrencyStorage().remove(this, amount, notify);
+        return StorageManager.getVirtualCurrencyStorage().remove(this.getItemId(), amount, notify);
     }
 
     /**
@@ -89,6 +89,6 @@ public class VirtualCurrency extends VirtualItem {
      */
     @Override
     public int resetBalance(int balance, boolean notify) {
-        return StorageManager.getVirtualCurrencyStorage().setBalance(this, balance, notify);
+        return StorageManager.getVirtualCurrencyStorage().setBalance(this.getItemId(), balance, notify);
     }
 }

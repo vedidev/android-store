@@ -66,7 +66,7 @@ public class StoreInventory {
      */
     public static int getVirtualItemBalance(String itemId) throws VirtualItemNotFoundException {
         VirtualItem item = StoreInfo.getVirtualItem(itemId);
-        return StorageManager.getVirtualItemStorage(item).getBalance(item);
+        return StorageManager.getVirtualItemStorage(item).getBalance(item.getItemId());
     }
 
     /**
@@ -268,7 +268,7 @@ public class StoreInventory {
     public static void removeUpgrades(String goodItemId) throws VirtualItemNotFoundException {
         List<UpgradeVG> upgrades = StoreInfo.getGoodUpgrades(goodItemId);
         for (UpgradeVG upgrade : upgrades) {
-            StorageManager.getVirtualGoodsStorage().remove(upgrade, 1, true);
+            StorageManager.getVirtualGoodsStorage().remove(upgrade.getItemId(), 1, true);
         }
         VirtualGood good = (VirtualGood) StoreInfo.getVirtualItem(goodItemId);
         StorageManager.getVirtualGoodsStorage().removeUpgrades(good);

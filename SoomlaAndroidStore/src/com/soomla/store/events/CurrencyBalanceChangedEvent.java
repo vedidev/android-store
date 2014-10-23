@@ -32,12 +32,12 @@ public class CurrencyBalanceChangedEvent {
     /**
      * Constructor
      *
-     * @param currency
+     * @param itemId
      * @param balance
      * @param amountAdded
      */
-    public CurrencyBalanceChangedEvent(VirtualCurrency currency, int balance, int amountAdded) {
-        mCurrency = currency;
+    public CurrencyBalanceChangedEvent(String itemId, int balance, int amountAdded) {
+        mItemId = itemId;
         mBalance = balance;
         mAmountAdded = amountAdded;
     }
@@ -45,8 +45,8 @@ public class CurrencyBalanceChangedEvent {
 
     /** Setters and Getters */
 
-    public VirtualCurrency getCurrency() {
-        return mCurrency;
+    public String getCurrencyItemId() {
+        return mItemId;
     }
 
     public int getBalance() {
@@ -60,7 +60,7 @@ public class CurrencyBalanceChangedEvent {
 
     /** Private Members */
 
-    private VirtualCurrency mCurrency;
+    private String mItemId;
 
     private int mBalance;
 

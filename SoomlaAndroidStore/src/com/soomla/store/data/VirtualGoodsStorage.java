@@ -66,7 +66,7 @@ public class VirtualGoodsStorage extends VirtualItemStorage{
         KeyValueStorage.deleteKeyValue(key);
 
         if (notify) {
-            BusProvider.getInstance().post(new GoodUpgradeEvent(good, null));
+            BusProvider.getInstance().post(new GoodUpgradeEvent(good.getItemId(), null));
         }
     }
 
@@ -103,7 +103,7 @@ public class VirtualGoodsStorage extends VirtualItemStorage{
         KeyValueStorage.setValue(key, upItemId);
 
         if (notify) {
-            BusProvider.getInstance().post(new GoodUpgradeEvent(good, upgradeVG));
+            BusProvider.getInstance().post(new GoodUpgradeEvent(good.getItemId(), upgradeVG));
         }
     }
 
@@ -213,8 +213,8 @@ public class VirtualGoodsStorage extends VirtualItemStorage{
      * @{inheritDoc}
      */
     @Override
-    protected void postBalanceChangeEvent(VirtualItem item, int balance, int amountAdded) {
-        BusProvider.getInstance().post(new GoodBalanceChangedEvent((VirtualGood) item,
+    protected void postBalanceChangeEvent(String itemId, int balance, int amountAdded) {
+        BusProvider.getInstance().post(new GoodBalanceChangedEvent(itemId,
                 balance, amountAdded));
     }
 
@@ -230,12 +230,12 @@ public class VirtualGoodsStorage extends VirtualItemStorage{
         if (equip) {
             KeyValueStorage.setValue(key, "");
             if (notify) {
-                BusProvider.getInstance().post(new GoodEquippedEvent(good));
+                BusProvider.getInstance().post(new GoodEquippedEvent(good.getItemId()));
             }
         } else {
             KeyValueStorage.deleteKeyValue(key);
             if (notify) {
-                BusProvider.getInstance().post(new GoodUnEquippedEvent(good));
+                BusProvider.getInstance().post(new GoodUnEquippedEvent(good.getItemId()));
             }
         }
     }
