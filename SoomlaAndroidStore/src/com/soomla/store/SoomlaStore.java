@@ -76,28 +76,7 @@ public class SoomlaStore {
 
         SoomlaUtils.LogDebug(TAG, "SoomlaStore Initializing ...");
 
-        if (mInAppBillingService == null) {
-            SoomlaUtils.LogDebug(TAG, "Searching for the attached IAB Service.");
-
-            Class<?> aClass = null;
-            aClass = tryFetchIabService();
-            if (aClass == null) {
-                String err = "You don't have a billing service attached. " +
-                        "Decide which billing service you want, add it to AndroidManifest.xml " +
-                        "and add its jar to the path.";
-                handleErrorResult(err);
-                return false;
-            }
-
-            try {
-                SoomlaUtils.LogDebug(TAG, "IAB Service found. Initializing it.");
-                mInAppBillingService = (IIabService) aClass.newInstance();
-            } catch (Exception e) {
-                String err = "Couldn't instantiate IIabService class. Something's totally wrong here.";
-                handleErrorResult(err);
-                return false;
-            }
-        }
+        if (!loadBillingService()) return false;
 
         StoreInfo.setStoreAssets(storeAssets);
 
@@ -112,6 +91,11 @@ public class SoomlaStore {
      * Starts in-app billing service in background.
      */
     public void startIabServiceInBg() {
+        if (mInAppBillingService == null) {
+            SoomlaUtils.LogError(TAG, "Billing service is not loaded. Can't invoke startIabServiceInBg.");
+            return;
+        }
+
         mInAppBillingService.startIabServiceInBg(new IabCallbacks.IabInitListener() {
 
             @Override
@@ -139,6 +123,11 @@ public class SoomlaStore {
      * IMPORTANT: This function is not supported in all billing providers (Amazon for example).
      */
     public void stopIabServiceInBg() {
+        if (mInAppBillingService == null) {
+            SoomlaUtils.LogError(TAG, "Billing service is not loaded. Can't invoke stopIabServiceInBg.");
+            return;
+        }
+
         mInAppBillingService.stopIabServiceInBg(new IabCallbacks.IabInitListener() {
 
             @Override
@@ -169,6 +158,11 @@ public class SoomlaStore {
      *                                      items operation right after a restore purchase success.
      */
     private void restoreTransactions(final boolean followedByRefreshItemsDetails) {
+        if (mInAppBillingService == null) {
+            SoomlaUtils.LogError(TAG, "Billing service is not loaded. Can't invoke restoreTransactions.");
+            return;
+        }
+
         mInAppBillingService.initializeBillingService(
                 new IabCallbacks.IabInitListener() {
 
@@ -228,6 +222,11 @@ public class SoomlaStore {
      * the developer console including: localized price (as string), title and description.
      */
     public void refreshMarketItemsDetails() {
+        if (mInAppBillingService == null) {
+            SoomlaUtils.LogError(TAG, "Billing service is not loaded. Can't invoke refreshMarketItemsDetails.");
+            return;
+        }
+
         mInAppBillingService.initializeBillingService(
                 new IabCallbacks.IabInitListener() {
 
@@ -318,6 +317,11 @@ public class SoomlaStore {
      * @throws IllegalStateException
      */
     public void buyWithMarket(final MarketItem marketItem, final String payload) throws IllegalStateException {
+        if (mInAppBillingService == null) {
+            SoomlaUtils.LogError(TAG, "Billing service is not loaded. Can't invoke buyWithMarket.");
+            return;
+        }
+
         final PurchasableVirtualItem pvi;
         try {
             pvi = StoreInfo.getPurchasableItem(marketItem.getProductId());
@@ -394,15 +398,6 @@ public class SoomlaStore {
                     }
 
                 });
-    }
-
-    /**
-     * Determines if Store Controller is initialized
-     *
-     * @return true if initialized, false otherwise
-     */
-    public boolean isInitialized() {
-        return mInitialized;
     }
 
 
@@ -534,6 +529,39 @@ public class SoomlaStore {
                     "   productId: " + purchase.getSku());
             BusProvider.getInstance().post(new UnexpectedStoreErrorEvent(e.getMessage()));
         }
+    }
+
+    /**
+     * This function loads the billing service that was set in the AndroidManifest.xml
+     * This is automatically ran when you initialize SoomlaStore and you're usually not supposed to
+     * run it manually.
+     *
+     * @return true if succeeds
+     */
+    private boolean loadBillingService() {
+        if (mInAppBillingService == null) {
+            SoomlaUtils.LogDebug(TAG, "Searching for the attached IAB Service.");
+
+            Class<?> aClass = null;
+            aClass = tryFetchIabService();
+            if (aClass == null) {
+                String err = "You don't have a billing service attached. " +
+                        "Decide which billing service you want, add it to AndroidManifest.xml " +
+                        "and add its jar to the path.";
+                handleErrorResult(err);
+                return false;
+            }
+
+            try {
+                SoomlaUtils.LogDebug(TAG, "IAB Service found. Initializing it.");
+                mInAppBillingService = (IIabService) aClass.newInstance();
+            } catch (Exception e) {
+                String err = "Couldn't instantiate IIabService class. Something's totally wrong here.";
+                handleErrorResult(err);
+                return false;
+            }
+        }
+        return true;
     }
 
     /**

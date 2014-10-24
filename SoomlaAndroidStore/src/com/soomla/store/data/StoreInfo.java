@@ -70,7 +70,7 @@ public class StoreInfo {
 
         mCurrentAssetsVersion = storeAssets.getVersion();
 
-        checkMetadataVersion();
+        checkAndResetMetadata();
 
         // we always initialize from the database, unless this is the first time the game is
         // loaded - in that case we initialize with setStoreAssets.
@@ -87,7 +87,7 @@ public class StoreInfo {
      * @return success
      */
     public static boolean initializeFromDB() {
-        checkMetadataVersion();
+        checkAndResetMetadata();
 
         //if migration process is required we do not initialize from DB.
         //remove this code when migration process becomes obsolete.
@@ -638,7 +638,7 @@ public class StoreInfo {
     /**
      * @return true if metadata version was reset.
      */
-    private static void checkMetadataVersion() {
+    private static void checkAndResetMetadata() {
         SoomlaUtils.LogDebug(TAG, "checking metadata version ...");
         SharedPreferences prefs = SoomlaApp.getAppContext().getSharedPreferences(SoomlaConfig.PREFS_NAME,
                         Context.MODE_PRIVATE);
