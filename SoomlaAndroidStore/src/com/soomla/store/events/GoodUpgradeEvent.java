@@ -16,8 +16,6 @@
 
 package com.soomla.store.events;
 
-import com.soomla.store.domain.virtualGoods.UpgradeVG;
-import com.soomla.store.domain.virtualGoods.VirtualGood;
 
 /**
  * This event is fired when a specific <code>UpgradeVG</code> has been upgraded/downgraded.
@@ -34,11 +32,11 @@ public class GoodUpgradeEvent {
      * Constructor
      *
      * @param itemId good that has been upgraded/downgraded
-     * @param upgradeVG upgrade details
+     * @param upgradeVGItemId upgrade details
      */
-    public GoodUpgradeEvent(String itemId, UpgradeVG upgradeVG) {
+    public GoodUpgradeEvent(String itemId, String upgradeVGItemId) {
         mItemId = itemId;
-        mCurrentUpgrade = upgradeVG;
+        mCurrentUpgradeItemId = upgradeVGItemId;
     }
 
 
@@ -48,8 +46,8 @@ public class GoodUpgradeEvent {
         return mItemId;
     }
 
-    public UpgradeVG getCurrentUpgrade() {
-        return mCurrentUpgrade;
+    public String getCurrentUpgrade() {
+        return mCurrentUpgradeItemId;
     }
 
 
@@ -57,6 +55,6 @@ public class GoodUpgradeEvent {
 
     private String mItemId; //good that has been upgraded/downgraded
 
-    private UpgradeVG   mCurrentUpgrade; //upgrade details
+    private String mCurrentUpgradeItemId; //upgrade details
 
 }

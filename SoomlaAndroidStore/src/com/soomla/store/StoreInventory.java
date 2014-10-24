@@ -153,7 +153,7 @@ public class StoreInventory {
             VirtualItemNotFoundException, ClassCastException{
         EquippableVG good = (EquippableVG) StoreInfo.getVirtualItem(goodItemId);
 
-        return StorageManager.getVirtualGoodsStorage().isEquipped(good);
+        return StorageManager.getVirtualGoodsStorage().isEquipped(good.getItemId());
     }
 
     /**
@@ -175,7 +175,14 @@ public class StoreInventory {
      */
     public static int getGoodUpgradeLevel(String goodItemId) throws VirtualItemNotFoundException {
         VirtualGood good = (VirtualGood) StoreInfo.getVirtualItem(goodItemId);
-        UpgradeVG upgradeVG = StorageManager.getVirtualGoodsStorage().getCurrentUpgrade(good);
+        String upgradeVGItemId = StorageManager.getVirtualGoodsStorage().getCurrentUpgrade(good.getItemId());
+        UpgradeVG upgradeVG = null;
+        try {
+            upgradeVG = (UpgradeVG) StoreInfo.getVirtualItem(upgradeVGItemId);
+        } catch (VirtualItemNotFoundException e) {
+            SoomlaUtils.LogError("SOOMLA StoreInventory", "This is BAD! Can't find the current upgrade (" + upgradeVGItemId + ") of: " + good.getItemId());
+            return 0;
+        }
         if (upgradeVG == null) {
             return 0; //no upgrade
         }
@@ -201,7 +208,15 @@ public class StoreInventory {
     public static String getGoodCurrentUpgrade(String goodItemId)
             throws VirtualItemNotFoundException {
         VirtualGood good = (VirtualGood) StoreInfo.getVirtualItem(goodItemId);
-        UpgradeVG upgradeVG = StorageManager.getVirtualGoodsStorage().getCurrentUpgrade(good);
+
+        String upgradeVGItemId = StorageManager.getVirtualGoodsStorage().getCurrentUpgrade(good.getItemId());
+        UpgradeVG upgradeVG = null;
+        try {
+            upgradeVG = (UpgradeVG) StoreInfo.getVirtualItem(upgradeVGItemId);
+        } catch (VirtualItemNotFoundException e) {
+            SoomlaUtils.LogDebug("SOOMLA StoreInventory", "This is BAD! Can't find the current upgrade (" + upgradeVGItemId + ") of: " + good.getItemId());
+        }
+
         if (upgradeVG == null) {
             return "";
         }
@@ -224,7 +239,15 @@ public class StoreInventory {
     public static void upgradeVirtualGood(String goodItemId)
             throws VirtualItemNotFoundException, InsufficientFundsException {
         VirtualGood good = (VirtualGood) StoreInfo.getVirtualItem(goodItemId);
-        UpgradeVG upgradeVG = StorageManager.getVirtualGoodsStorage().getCurrentUpgrade(good);
+
+        String upgradeVGItemId = StorageManager.getVirtualGoodsStorage().getCurrentUpgrade(good.getItemId());
+        UpgradeVG upgradeVG = null;
+        try {
+            upgradeVG = (UpgradeVG) StoreInfo.getVirtualItem(upgradeVGItemId);
+        } catch (VirtualItemNotFoundException e) {
+            SoomlaUtils.LogDebug("SOOMLA StoreInventory", "This is BAD! Can't find the current upgrade (" + upgradeVGItemId + ") of: " + good.getItemId());
+        }
+
         if (upgradeVG != null) {
             String nextItemId = upgradeVG.getNextItemId();
             if (TextUtils.isEmpty(nextItemId)) {
@@ -271,6 +294,6 @@ public class StoreInventory {
             StorageManager.getVirtualGoodsStorage().remove(upgrade.getItemId(), 1, true);
         }
         VirtualGood good = (VirtualGood) StoreInfo.getVirtualItem(goodItemId);
-        StorageManager.getVirtualGoodsStorage().removeUpgrades(good);
+        StorageManager.getVirtualGoodsStorage().removeUpgrades(good.getItemId());
     }
 }

@@ -144,7 +144,7 @@ public class UpgradeVG extends LifetimeVG {
             return 0;
         }
 
-        StorageManager.getVirtualGoodsStorage().assignCurrentUpgrade(good, this, notify);
+        StorageManager.getVirtualGoodsStorage().assignCurrentUpgrade(good.getItemId(), this.getItemId(), notify);
 
         return super.give(amount, notify);
     }
@@ -173,7 +173,13 @@ public class UpgradeVG extends LifetimeVG {
             return 0;
         }
 
-        UpgradeVG upgradeVG = StorageManager.getVirtualGoodsStorage().getCurrentUpgrade(good);
+        String upgradeVGItemId = StorageManager.getVirtualGoodsStorage().getCurrentUpgrade(good.getItemId());
+        UpgradeVG upgradeVG = null;
+        try {
+            upgradeVG = (UpgradeVG) StoreInfo.getVirtualItem(upgradeVGItemId);
+        } catch (VirtualItemNotFoundException e) {
+            SoomlaUtils.LogDebug(TAG, "This is BAD! Can't find the current upgrade (" + upgradeVGItemId + ") of: " + good.getItemId());
+        }
 
         // Case: Upgrade is not assigned to this Virtual Good
         if (upgradeVG != this) {
@@ -196,14 +202,14 @@ public class UpgradeVG extends LifetimeVG {
             // Case: downgrade is successful!
             SoomlaUtils.LogDebug(TAG, "Downgrading " + good.getName() + " to: "
                     + prevUpgradeVG.getName());
-            StorageManager.getVirtualGoodsStorage().assignCurrentUpgrade(good,
-                    prevUpgradeVG, notify);
+            StorageManager.getVirtualGoodsStorage().assignCurrentUpgrade(good.getItemId(),
+                    prevUpgradeVG.getItemId(), notify);
         }
 
         // Case: first Upgrade in the series - so we downgrade to NO upgrade.
         else {
             SoomlaUtils.LogDebug(TAG, "Downgrading " + good.getName() + " to NO-UPGRADE");
-            StorageManager.getVirtualGoodsStorage().removeUpgrades(good, notify);
+            StorageManager.getVirtualGoodsStorage().removeUpgrades(good.getItemId(), notify);
         }
 
         return super.take(amount, notify);
@@ -228,7 +234,15 @@ public class UpgradeVG extends LifetimeVG {
             return false;
         }
 
-        UpgradeVG upgradeVG = StorageManager.getVirtualGoodsStorage().getCurrentUpgrade(good);
+        String upgradeVGItemId = StorageManager.getVirtualGoodsStorage().getCurrentUpgrade(good.getItemId());
+        UpgradeVG upgradeVG = null;
+        try {
+            upgradeVG = (UpgradeVG) StoreInfo.getVirtualItem(upgradeVGItemId);
+        } catch (VirtualItemNotFoundException e) {
+            SoomlaUtils.LogDebug(TAG, "This is BAD! Can't find the current upgrade (" + upgradeVGItemId + ") of: " + good.getItemId());
+        }
+
+
         return ((upgradeVG == null && TextUtils.isEmpty(mPrevItemId)) ||
                (upgradeVG != null && ((upgradeVG.getNextItemId().equals(getItemId())) ||
                        (upgradeVG.getPrevItemId().equals(getItemId())))))

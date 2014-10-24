@@ -193,7 +193,7 @@ public class EquippableVG extends LifetimeVG{
                 }
             }
 
-            StorageManager.getVirtualGoodsStorage().equip(this, notify);
+            StorageManager.getVirtualGoodsStorage().equip(this.getItemId(), notify);
         }
         else {
             throw new NotEnoughGoodsException(getItemId());
@@ -213,7 +213,7 @@ public class EquippableVG extends LifetimeVG{
      * @param notify
      */
     public void unequip(boolean notify) {
-        StorageManager.getVirtualGoodsStorage().unequip(this, notify);
+        StorageManager.getVirtualGoodsStorage().unequip(this.getItemId(), notify);
     }
 
     /**
