@@ -410,6 +410,40 @@ public class SoomlaStore {
         return mInAppBillingService;
     }
 
+    /**
+     * This function loads the billing service that was set in the AndroidManifest.xml
+     * This is automatically ran when you initialize SoomlaStore and you're usually not supposed to
+     * run it manually.
+     *
+     * @return true if succeeds
+     */
+    public boolean loadBillingService() {
+        if (mInAppBillingService == null) {
+            SoomlaUtils.LogDebug(TAG, "Searching for the attached IAB Service.");
+
+            Class<?> aClass = null;
+            aClass = tryFetchIabService();
+            if (aClass == null) {
+                String err = "You don't have a billing service attached. " +
+                        "Decide which billing service you want, add it to AndroidManifest.xml " +
+                        "and add its jar to the path.";
+                handleErrorResult(err);
+                return false;
+            }
+
+            try {
+                SoomlaUtils.LogDebug(TAG, "IAB Service found. Initializing it.");
+                mInAppBillingService = (IIabService) aClass.newInstance();
+            } catch (Exception e) {
+                String err = "Couldn't instantiate IIabService class. Something's totally wrong here.";
+                handleErrorResult(err);
+                return false;
+            }
+        }
+        return true;
+    }
+
+
     /*==================== Common callbacks for success \ failure \ finish ====================*/
 
     /**
@@ -529,39 +563,6 @@ public class SoomlaStore {
                     "   productId: " + purchase.getSku());
             BusProvider.getInstance().post(new UnexpectedStoreErrorEvent(e.getMessage()));
         }
-    }
-
-    /**
-     * This function loads the billing service that was set in the AndroidManifest.xml
-     * This is automatically ran when you initialize SoomlaStore and you're usually not supposed to
-     * run it manually.
-     *
-     * @return true if succeeds
-     */
-    private boolean loadBillingService() {
-        if (mInAppBillingService == null) {
-            SoomlaUtils.LogDebug(TAG, "Searching for the attached IAB Service.");
-
-            Class<?> aClass = null;
-            aClass = tryFetchIabService();
-            if (aClass == null) {
-                String err = "You don't have a billing service attached. " +
-                        "Decide which billing service you want, add it to AndroidManifest.xml " +
-                        "and add its jar to the path.";
-                handleErrorResult(err);
-                return false;
-            }
-
-            try {
-                SoomlaUtils.LogDebug(TAG, "IAB Service found. Initializing it.");
-                mInAppBillingService = (IIabService) aClass.newInstance();
-            } catch (Exception e) {
-                String err = "Couldn't instantiate IIabService class. Something's totally wrong here.";
-                handleErrorResult(err);
-                return false;
-            }
-        }
-        return true;
     }
 
     /**
