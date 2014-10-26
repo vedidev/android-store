@@ -20,6 +20,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.text.TextUtils;
 
+import com.soomla.BusProvider;
 import com.soomla.SoomlaConfig;
 import com.soomla.data.KeyValueStorage;
 import com.soomla.store.IStoreAssets;
@@ -32,6 +33,7 @@ import com.soomla.store.domain.VirtualItem;
 import com.soomla.store.domain.virtualCurrencies.VirtualCurrency;
 import com.soomla.store.domain.virtualCurrencies.VirtualCurrencyPack;
 import com.soomla.store.domain.virtualGoods.*;
+import com.soomla.store.events.UnexpectedStoreErrorEvent;
 import com.soomla.store.exceptions.VirtualItemNotFoundException;
 import com.soomla.store.purchaseTypes.PurchaseType;
 import com.soomla.store.purchaseTypes.PurchaseWithMarket;
@@ -74,8 +76,37 @@ public class StoreInfo {
 
         // we always initialize from the database, unless this is the first time the game is
         // loaded - in that case we initialize with setStoreAssets.
-        if (!initializeFromDB()){
+        if (!loadFromDB()){
             initializeWithStoreAssets(storeAssets);
+        }
+    }
+
+    /**
+     * Another option to set the data of StoreInfo. This will usually be used from game engine
+     * wrappers like Unity or Cocos2dx.
+     * @param version the version of IStoreAssets.
+     * @param storeMetaJSON the store metadata as JSON.
+     */
+    public static void setStoreAssets(int version, String storeMetaJSON){
+        if (TextUtils.isEmpty(storeMetaJSON)){
+            SoomlaUtils.LogError(TAG, "The given store assets JSON can't be empty or null!");
+            return;
+        }
+
+        mCurrentAssetsVersion = version;
+
+        checkAndResetMetadata();
+
+        // we always initialize from the database, unless this is the first time the game is
+        // loaded - in that case we initialize with setStoreAssets.
+        if (!loadFromDB()){
+            try {
+                fromJSONObject(new JSONObject(storeMetaJSON));
+            } catch (JSONException e) {
+                String err = "Can't parse store metadata json. That's a major issue." + storeMetaJSON;
+                SoomlaUtils.LogError(TAG, err);
+                BusProvider.getInstance().post(new UnexpectedStoreErrorEvent(err));
+            }
         }
     }
 
@@ -86,7 +117,7 @@ public class StoreInfo {
      *
      * @return success
      */
-    public static boolean initializeFromDB() {
+    public static boolean loadFromDB() {
         checkAndResetMetadata();
 
         //if migration process is required we do not initialize from DB.
