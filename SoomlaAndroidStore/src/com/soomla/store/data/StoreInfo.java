@@ -615,10 +615,10 @@ public class StoreInfo {
     private static void initializeWithStoreAssets(IStoreAssets storeAssets) {
         // fall-back here if the json doesn't exist,
         // we load the store from the given {@link IStoreAssets}.
-        mCurrencies = Arrays.asList(storeAssets.getCurrencies());
-        mCurrencyPacks = Arrays.asList(storeAssets.getCurrencyPacks());
-        mGoods = Arrays.asList(storeAssets.getGoods());
-        mCategories = Arrays.asList(storeAssets.getCategories());
+        mCurrencies = new LinkedList<VirtualCurrency>(Arrays.asList(storeAssets.getCurrencies()));
+        mCurrencyPacks = new LinkedList<VirtualCurrencyPack>(Arrays.asList(storeAssets.getCurrencyPacks()));
+        mGoods = new LinkedList<VirtualGood>(Arrays.asList(storeAssets.getGoods()));
+        mCategories = new LinkedList<VirtualCategory>(Arrays.asList(storeAssets.getCategories()));
 
         mVirtualItems = new HashMap<String, VirtualItem>();
         mPurchasableItems = new HashMap<String, PurchasableVirtualItem>();

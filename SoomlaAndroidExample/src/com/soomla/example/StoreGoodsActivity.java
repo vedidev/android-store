@@ -31,6 +31,8 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.soomla.BusProvider;
+import com.soomla.Soomla;
+import com.soomla.SoomlaUtils;
 import com.soomla.store.SoomlaStore;
 import com.soomla.store.data.StorageManager;
 import com.soomla.store.data.StoreInfo;
@@ -38,6 +40,7 @@ import com.soomla.store.domain.virtualGoods.VirtualGood;
 import com.soomla.store.events.CurrencyBalanceChangedEvent;
 import com.soomla.store.events.GoodBalanceChangedEvent;
 import com.soomla.store.exceptions.InsufficientFundsException;
+import com.soomla.store.exceptions.VirtualItemNotFoundException;
 import com.soomla.store.purchaseTypes.PurchaseWithMarket;
 import com.soomla.store.purchaseTypes.PurchaseWithVirtualItem;
 import com.squareup.otto.Subscribe;
@@ -95,19 +98,24 @@ public class StoreGoodsActivity extends Activity {
      */
     @Subscribe
     public void onGoodBalanceChanged(GoodBalanceChangedEvent goodBalanceChangedEvent) {
-        VirtualGood good = goodBalanceChangedEvent.getGood();
-        int id = 0;
-        for(int i=0; i<StoreInfo.getGoods().size(); i++) {
-            if (StoreInfo.getGoods().get(i).getItemId().equals(good.getItemId())) {
-                id = i;
-                break;
+        VirtualGood good = null;
+        try {
+            good = (VirtualGood) StoreInfo.getVirtualItem(goodBalanceChangedEvent.getGoodItemId());
+            int id = 0;
+            for(int i=0; i<StoreInfo.getGoods().size(); i++) {
+                if (StoreInfo.getGoods().get(i).getItemId().equals(good.getItemId())) {
+                    id = i;
+                    break;
+                }
             }
+            ListView list = (ListView) findViewById(R.id.list);
+            TextView info = (TextView)list.getChildAt(id).findViewById(R.id.item_info);
+            PurchaseWithVirtualItem pwvi = (PurchaseWithVirtualItem) good.getPurchaseType();
+            info.setText("price: " + pwvi.getAmount() +
+                    " balance: " + goodBalanceChangedEvent.getBalance());
+        } catch (VirtualItemNotFoundException e) {
+            SoomlaUtils.LogDebug("StoreGoodsActivity", e.getMessage());
         }
-        ListView list = (ListView) findViewById(R.id.list);
-        TextView info = (TextView)list.getChildAt(id).findViewById(R.id.item_info);
-        PurchaseWithVirtualItem pwvi = (PurchaseWithVirtualItem) good.getPurchaseType();
-        info.setText("price: " + pwvi.getAmount() +
-                " balance: " + goodBalanceChangedEvent.getBalance());
     }
 
     /**
@@ -174,7 +182,7 @@ public class StoreGoodsActivity extends Activity {
         BusProvider.getInstance().register(this);
         TextView muffinsBalance = (TextView)findViewById(R.id.balance);
         muffinsBalance.setText("" + StorageManager.getVirtualCurrencyStorage().
-                getBalance(StoreInfo.getCurrencies().get(0)));
+                getBalance(StoreInfo.getCurrencies().get(0).getItemId()));
     }
 
     /**
@@ -249,7 +257,7 @@ public class StoreGoodsActivity extends Activity {
             content.setText(good.getDescription());
             thumb_image.setImageResource((Integer)mImages.get(good.getItemId()));
 
-            int balance = StorageManager.getVirtualGoodsStorage().getBalance(good);
+            int balance = StorageManager.getVirtualGoodsStorage().getBalance(good.getItemId());
 
             if (good.getPurchaseType() instanceof PurchaseWithVirtualItem)
             {
