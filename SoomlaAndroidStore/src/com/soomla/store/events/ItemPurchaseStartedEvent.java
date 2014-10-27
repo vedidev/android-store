@@ -16,32 +16,35 @@
 
 package com.soomla.store.events;
 
-import com.soomla.store.domain.PurchasableVirtualItem;
-
 /**
  * This event is fired when a specific <code>PurchasableVirtualItem</code> purchase process has
  * started.
  */
-public class ItemPurchaseStartedEvent {
+public class ItemPurchaseStartedEvent extends SoomlaEvent {
 
     /**
      * Constructor
      *
-     * @param purchasableVirtualItem
+     * @param itemId
      */
-    public ItemPurchaseStartedEvent(PurchasableVirtualItem purchasableVirtualItem) {
-        mPurchasableVirtualItem = purchasableVirtualItem;
+    public ItemPurchaseStartedEvent(String itemId) {
+        this(itemId, null);
+    }
+
+    public ItemPurchaseStartedEvent(String itemId, Object sender) {
+        super(sender);
+        mItemId = itemId;
     }
 
 
     /** Setters and Getters */
 
-    public PurchasableVirtualItem getPurchasableVirtualItem() {
-        return mPurchasableVirtualItem;
+    public String getItemId() {
+        return mItemId;
     }
 
 
     /** Private Members */
 
-    private PurchasableVirtualItem mPurchasableVirtualItem;
+    private String mItemId;
 }

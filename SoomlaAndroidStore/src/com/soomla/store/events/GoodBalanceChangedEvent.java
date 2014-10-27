@@ -25,7 +25,7 @@ package com.soomla.store.events;
  *  His/her new balance of "blue_hat" will now be 1.
  *  A <code>GoodBalanceChangedEvent</code> is fired.
  */
-public class GoodBalanceChangedEvent {
+public class GoodBalanceChangedEvent extends SoomlaEvent {
 
     /**
      * Constructor
@@ -35,6 +35,14 @@ public class GoodBalanceChangedEvent {
      * @param amountAdded
      */
     public GoodBalanceChangedEvent(String itemId, int balance, int amountAdded) {
+        super(null);
+        mItemId = itemId;
+        mBalance = balance;
+        mAmountAdded = amountAdded;
+    }
+
+    public GoodBalanceChangedEvent(String itemId, int balance, int amountAdded, Object sender) {
+        super(sender);
         mItemId = itemId;
         mBalance = balance;
         mAmountAdded = amountAdded;

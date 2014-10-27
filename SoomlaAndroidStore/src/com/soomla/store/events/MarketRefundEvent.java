@@ -21,7 +21,7 @@ import com.soomla.store.domain.PurchasableVirtualItem;
 /**
  * This event is fired when a Market refund has been issued.
  */
-public class MarketRefundEvent {
+public class MarketRefundEvent extends SoomlaEvent {
 
     /**
      * Constructor
@@ -30,6 +30,11 @@ public class MarketRefundEvent {
      * @param payload the amount you are refunding your user
      */
     public MarketRefundEvent(PurchasableVirtualItem purchasableVirtualItem, String payload) {
+        this(purchasableVirtualItem, payload, null);
+    }
+
+    public MarketRefundEvent(PurchasableVirtualItem purchasableVirtualItem, String payload, Object sender) {
+        super(sender);
         mPurchasableVirtualItem = purchasableVirtualItem;
         mPayload = payload;
     }

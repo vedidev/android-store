@@ -19,5 +19,12 @@ package com.soomla.store.events;
 /**
  * This event is fired when SOOMLA knows that billing is NOT supported on the device.
  */
-public class BillingNotSupportedEvent {
+public class BillingNotSupportedEvent extends SoomlaEvent {
+    public BillingNotSupportedEvent() {
+        super(null);
+    }
+
+    public BillingNotSupportedEvent(Object sender) {
+        super(sender);
+    }
 }

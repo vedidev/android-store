@@ -72,7 +72,7 @@ public class StoreInfo {
 
         mCurrentAssetsVersion = storeAssets.getVersion();
 
-        checkAndResetMetadata();
+//        checkAndResetMetadata();
 
         // we always initialize from the database, unless this is the first time the game is
         // loaded - in that case we initialize with setStoreAssets.
@@ -88,6 +88,8 @@ public class StoreInfo {
      * @param storeMetaJSON the store metadata as JSON.
      */
     public static void setStoreAssets(int version, String storeMetaJSON){
+        SoomlaUtils.LogDebug(TAG, "trying to set json: " + storeMetaJSON);
+
         if (TextUtils.isEmpty(storeMetaJSON)){
             SoomlaUtils.LogError(TAG, "The given store assets JSON can't be empty or null!");
             return;
@@ -95,13 +97,15 @@ public class StoreInfo {
 
         mCurrentAssetsVersion = version;
 
-        checkAndResetMetadata();
+//        checkAndResetMetadata();
 
         // we always initialize from the database, unless this is the first time the game is
         // loaded - in that case we initialize with setStoreAssets.
         if (!loadFromDB()){
+            SoomlaUtils.LogDebug(TAG, "didn't find anything in DB to load. continuing with store assets json.");
             try {
                 fromJSONObject(new JSONObject(storeMetaJSON));
+                save();
             } catch (JSONException e) {
                 String err = "Can't parse store metadata json. That's a major issue." + storeMetaJSON;
                 SoomlaUtils.LogError(TAG, err);

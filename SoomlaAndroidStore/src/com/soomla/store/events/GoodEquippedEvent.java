@@ -16,8 +16,6 @@
 
 package com.soomla.store.events;
 
-import com.soomla.store.domain.virtualGoods.EquippableVG;
-
 /**
  * This event is fired when a specific <code>EquippableVG</code> has been equipped.
  *
@@ -27,13 +25,19 @@ import com.soomla.store.domain.virtualGoods.EquippableVG;
  *  His/her new balance of Characters will be { Characters: Robot_Y }.
  *  A <code>GoodEquippedEvent</code> is fired.
  */
-public class GoodEquippedEvent {
+public class GoodEquippedEvent extends SoomlaEvent {
     /**
      * Constructor
      *
      * @param itemId
      */
     public GoodEquippedEvent(String itemId) {
+        super(null);
+        mItemId = itemId;
+    }
+
+    public GoodEquippedEvent(String itemId, Object sender) {
+        super(sender);
         mItemId = itemId;
     }
 
