@@ -16,8 +16,6 @@
 
 package com.soomla.store.events;
 
-import com.soomla.store.domain.virtualCurrencies.VirtualCurrency;
-
 /**
  * This event is fired when the balance of a specific <code>VirtualCurrency</code> has changed.
  *
@@ -27,7 +25,7 @@ import com.soomla.store.domain.virtualCurrencies.VirtualCurrency;
  *  His/her new balance of currency_coin will now be 90.
  *  A <code>CurrencyBalanceChangedEvent</code> is fired.
  */
-public class CurrencyBalanceChangedEvent {
+public class CurrencyBalanceChangedEvent extends SoomlaEvent {
 
     /**
      * Constructor
@@ -37,6 +35,14 @@ public class CurrencyBalanceChangedEvent {
      * @param amountAdded
      */
     public CurrencyBalanceChangedEvent(String itemId, int balance, int amountAdded) {
+        super(null);
+        mItemId = itemId;
+        mBalance = balance;
+        mAmountAdded = amountAdded;
+    }
+
+    public CurrencyBalanceChangedEvent(String itemId, int balance, int amountAdded, Object sender) {
+        super(sender);
         mItemId = itemId;
         mBalance = balance;
         mAmountAdded = amountAdded;

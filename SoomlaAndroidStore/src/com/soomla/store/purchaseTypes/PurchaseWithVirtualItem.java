@@ -67,7 +67,7 @@ public class PurchaseWithVirtualItem extends PurchaseType {
             return;
         }
 
-        BusProvider.getInstance().post(new ItemPurchaseStartedEvent(getAssociatedItem()));
+        BusProvider.getInstance().post(new ItemPurchaseStartedEvent(getAssociatedItem().getItemId()));
 
         VirtualItemStorage storage = StorageManager.getVirtualItemStorage(item);
 
@@ -80,7 +80,7 @@ public class PurchaseWithVirtualItem extends PurchaseType {
         storage.remove(item.getItemId(), mAmount);
 
         getAssociatedItem().give(1);
-        BusProvider.getInstance().post(new ItemPurchasedEvent(getAssociatedItem(), payload));
+        BusProvider.getInstance().post(new ItemPurchasedEvent(getAssociatedItem().getItemId(), payload));
     }
 
 

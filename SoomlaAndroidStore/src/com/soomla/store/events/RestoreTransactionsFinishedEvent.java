@@ -19,7 +19,7 @@ package com.soomla.store.events;
 /**
  * This event is fired when the restore transactions process has finished.
  */
-public class RestoreTransactionsFinishedEvent {
+public class RestoreTransactionsFinishedEvent extends SoomlaEvent {
 
     /**
      * Constructor
@@ -27,6 +27,11 @@ public class RestoreTransactionsFinishedEvent {
      * @param success
      */
     public RestoreTransactionsFinishedEvent(boolean success) {
+        this(success, null);
+    }
+
+    public RestoreTransactionsFinishedEvent(boolean success, Object sender) {
+        super(sender);
         mSuccess = success;
     }
 

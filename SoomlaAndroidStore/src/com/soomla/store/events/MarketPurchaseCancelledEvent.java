@@ -21,7 +21,7 @@ import com.soomla.store.domain.PurchasableVirtualItem;
 /**
  * This event is fired when a Market purchase was cancelled by the user.
  */
-public class MarketPurchaseCancelledEvent {
+public class MarketPurchaseCancelledEvent extends SoomlaEvent {
 
     /**
      * Constructor
@@ -29,6 +29,11 @@ public class MarketPurchaseCancelledEvent {
      * @param purchasableVirtualItem
      */
     public MarketPurchaseCancelledEvent(PurchasableVirtualItem purchasableVirtualItem) {
+        this(purchasableVirtualItem, null);
+    }
+
+    public MarketPurchaseCancelledEvent(PurchasableVirtualItem purchasableVirtualItem, Object sender) {
+        super(sender);
         mPurchasableVirtualItem = purchasableVirtualItem;
     }
 

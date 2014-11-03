@@ -510,7 +510,7 @@ public class SoomlaStore {
                 BusProvider.getInstance().post(new MarketPurchaseEvent
                         (pvi, developerPayload, token, orderId));
                 pvi.give(1);
-                BusProvider.getInstance().post(new ItemPurchasedEvent(pvi, developerPayload));
+                BusProvider.getInstance().post(new ItemPurchasedEvent(pvi.getItemId(), developerPayload));
 
                 consumeIfConsumable(purchase, pvi);
 

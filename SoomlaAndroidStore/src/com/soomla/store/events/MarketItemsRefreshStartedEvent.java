@@ -19,5 +19,12 @@ package com.soomla.store.events;
 /**
  * This event is fired when the market items refresh process has started.
  */
-public class MarketItemsRefreshStartedEvent {
+public class MarketItemsRefreshStartedEvent extends SoomlaEvent {
+    public MarketItemsRefreshStartedEvent() {
+        super(null);
+    }
+
+    public MarketItemsRefreshStartedEvent(Object sender) {
+        super(sender);
+    }
 }

@@ -19,8 +19,13 @@ package com.soomla.store.events;
 /**
  * This event is fired when a billing service is stopped.
  */
-public class IabServiceStoppedEvent {
+public class IabServiceStoppedEvent extends SoomlaEvent {
 
     public IabServiceStoppedEvent() {
+        this(null);
+    }
+
+    public IabServiceStoppedEvent(Object sender) {
+        super(sender);
     }
 }

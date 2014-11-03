@@ -24,7 +24,7 @@ import java.util.List;
 /**
  * This event is fired when items associated with market are refreshed (prices, titles ...).
  */
-public class MarketItemsRefreshFinishedEvent {
+public class MarketItemsRefreshFinishedEvent extends SoomlaEvent {
 
     /**
      * Constructor.
@@ -32,6 +32,11 @@ public class MarketItemsRefreshFinishedEvent {
      * @param marketItems
      */
     public MarketItemsRefreshFinishedEvent(List<MarketItem> marketItems) {
+        this(marketItems, null);
+    }
+
+    public MarketItemsRefreshFinishedEvent(List<MarketItem> marketItems, Object sender) {
+        super(sender);
         this.mMarketItems = marketItems;
     }
 

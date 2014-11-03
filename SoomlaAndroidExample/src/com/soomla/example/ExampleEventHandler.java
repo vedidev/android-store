@@ -95,7 +95,7 @@ public class ExampleEventHandler {
      */
     @Subscribe
     public void onVirtualGoodEquipped(GoodEquippedEvent virtualGoodEquippedEvent) {
-        showToastIfDebug(virtualGoodEquippedEvent.getGood().getName() + " was just equipped");
+        showToastIfDebug(virtualGoodEquippedEvent.getGoodItemId() + " was just equipped");
     }
 
     /**
@@ -107,7 +107,7 @@ public class ExampleEventHandler {
      */
     @Subscribe
     public void onVirtualGoodUnequipped(GoodUnEquippedEvent virtualGoodUnEquippedEvent) {
-        showToastIfDebug(virtualGoodUnEquippedEvent.getGood().getName() + " was just unequipped");
+        showToastIfDebug(virtualGoodUnEquippedEvent.getGoodItemId() + " was just unequipped");
     }
 
     /**
@@ -223,7 +223,7 @@ public class ExampleEventHandler {
      */
     @Subscribe
     public void onCurrencyBalanceChanged(CurrencyBalanceChangedEvent currencyBalanceChangedEvent) {
-        showToastIfDebug("(currency) " + currencyBalanceChangedEvent.getCurrency().getName()
+        showToastIfDebug("(currency) " + currencyBalanceChangedEvent.getCurrencyItemId()
                 + " balance was changed to " + currencyBalanceChangedEvent.getBalance() + ".");
     }
 
@@ -236,7 +236,7 @@ public class ExampleEventHandler {
      */
     @Subscribe
     public void onGoodBalanceChanged(GoodBalanceChangedEvent goodBalanceChangedEvent) {
-        showToastIfDebug("(good) " + goodBalanceChangedEvent.getGood().getName()
+        showToastIfDebug("(good) " + goodBalanceChangedEvent.getGoodItemId()
                 + " balance was changed to " + goodBalanceChangedEvent.getBalance() + ".");
     }
 

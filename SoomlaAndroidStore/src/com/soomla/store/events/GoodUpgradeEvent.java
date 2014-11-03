@@ -26,7 +26,7 @@ package com.soomla.store.events;
  *  After the upgrade, his/her new balance of Characters will be { Characters: Robot_X_2 }.
  *  A <code>GoodUpgradeEvent</code> is fired.
  */
-public class GoodUpgradeEvent {
+public class GoodUpgradeEvent extends SoomlaEvent {
 
     /**
      * Constructor
@@ -35,6 +35,11 @@ public class GoodUpgradeEvent {
      * @param upgradeVGItemId upgrade details
      */
     public GoodUpgradeEvent(String itemId, String upgradeVGItemId) {
+        this(itemId, upgradeVGItemId, null);
+    }
+
+    public GoodUpgradeEvent(String itemId, String upgradeVGItemId, Object sender) {
+        super(sender);
         mItemId = itemId;
         mCurrentUpgradeItemId = upgradeVGItemId;
     }

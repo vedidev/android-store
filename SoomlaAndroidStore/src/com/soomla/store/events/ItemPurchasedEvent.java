@@ -16,28 +16,31 @@
 
 package com.soomla.store.events;
 
-import com.soomla.store.domain.PurchasableVirtualItem;
-
 /**
  * This event is fired when a specific <code>PurchasableVirtualItem</code> has been purchased.
  */
-public class ItemPurchasedEvent {
+public class ItemPurchasedEvent extends SoomlaEvent {
 
     /**
      * Constructor
      *
-     * @param purchasableVirtualItem
+     * @param itemId
      */
-    public ItemPurchasedEvent(PurchasableVirtualItem purchasableVirtualItem, String payload) {
-        mPurchasableVirtualItem = purchasableVirtualItem;
+    public ItemPurchasedEvent(String itemId, String payload) {
+        this(itemId, payload, null);
+    }
+
+    public ItemPurchasedEvent(String itemId, String payload, Object sender) {
+        super(sender);
+        mItemId = itemId;
         mPayload = payload;
     }
 
 
     /** Setters and Getters */
 
-    public PurchasableVirtualItem getPurchasableVirtualItem() {
-        return mPurchasableVirtualItem;
+    public String getItemId() {
+        return mItemId;
     }
 
     public String getPayload() {
@@ -46,6 +49,6 @@ public class ItemPurchasedEvent {
 
     /** Private Members */
 
-    private PurchasableVirtualItem mPurchasableVirtualItem;
+    private String mItemId;
     private String mPayload;
 }

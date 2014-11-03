@@ -62,7 +62,7 @@ public class PurchaseWithMarket extends PurchaseType {
         SoomlaUtils.LogDebug(TAG, "Starting in-app purchase for productId: "
                 + mMarketItem.getProductId());
         
-        BusProvider.getInstance().post(new ItemPurchaseStartedEvent(getAssociatedItem()));
+        BusProvider.getInstance().post(new ItemPurchaseStartedEvent(getAssociatedItem().getItemId()));
         try {
             SoomlaStore.getInstance().buyWithMarket(mMarketItem, payload);
         } catch (IllegalStateException e) {

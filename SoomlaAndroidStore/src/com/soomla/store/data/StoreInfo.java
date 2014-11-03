@@ -103,8 +103,10 @@ public class StoreInfo {
         // we always initialize from the database, unless this is the first time the game is
         // loaded - in that case we initialize with setStoreAssets.
         if (!loadFromDB()){
+            SoomlaUtils.LogDebug(TAG, "didn't find anything in DB to load. continuing with store assets json.");
             try {
                 fromJSONObject(new JSONObject(storeMetaJSON));
+                save();
             } catch (JSONException e) {
                 String err = "Can't parse store metadata json. That's a major issue." + storeMetaJSON;
                 SoomlaUtils.LogError(TAG, err);
@@ -614,10 +616,10 @@ public class StoreInfo {
     private static void initializeWithStoreAssets(IStoreAssets storeAssets) {
         // fall-back here if the json doesn't exist,
         // we load the store from the given {@link IStoreAssets}.
-        mCurrencies = Arrays.asList(storeAssets.getCurrencies());
-        mCurrencyPacks = Arrays.asList(storeAssets.getCurrencyPacks());
-        mGoods = Arrays.asList(storeAssets.getGoods());
-        mCategories = Arrays.asList(storeAssets.getCategories());
+        mCurrencies = new LinkedList<VirtualCurrency>(Arrays.asList(storeAssets.getCurrencies()));
+        mCurrencyPacks = new LinkedList<VirtualCurrencyPack>(Arrays.asList(storeAssets.getCurrencyPacks()));
+        mGoods = new LinkedList<VirtualGood>(Arrays.asList(storeAssets.getGoods()));
+        mCategories = new LinkedList<VirtualCategory>(Arrays.asList(storeAssets.getCategories()));
 
         mVirtualItems = new HashMap<String, VirtualItem>();
         mPurchasableItems = new HashMap<String, PurchasableVirtualItem>();

@@ -21,7 +21,7 @@ import com.soomla.store.domain.PurchasableVirtualItem;
 /**
  * This event is fired when a Market purchase has started.
  */
-public class MarketPurchaseStartedEvent {
+public class MarketPurchaseStartedEvent extends SoomlaEvent {
 
     /**
      * Constructor
@@ -29,9 +29,13 @@ public class MarketPurchaseStartedEvent {
      * @param purchasableVirtualItem
      */
     public MarketPurchaseStartedEvent(PurchasableVirtualItem purchasableVirtualItem) {
-        mPurchasableVirtualItem = purchasableVirtualItem;
+        this(purchasableVirtualItem, null);
     }
 
+    public MarketPurchaseStartedEvent(PurchasableVirtualItem purchasableVirtualItem, Object sender) {
+        super(sender);
+        mPurchasableVirtualItem = purchasableVirtualItem;
+    }
 
     /** Setters and Getters */
 

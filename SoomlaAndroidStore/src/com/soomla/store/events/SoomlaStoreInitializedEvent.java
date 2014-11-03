@@ -19,5 +19,12 @@ package com.soomla.store.events;
 /**
  * This event is fired when SOOMLA <code>SoomlaStore</code> is initialized.
  */
-public class SoomlaStoreInitializedEvent {
+public class SoomlaStoreInitializedEvent extends SoomlaEvent {
+    public SoomlaStoreInitializedEvent() {
+        this(null);
+    }
+
+    public SoomlaStoreInitializedEvent(Object sender) {
+        super(sender);
+    }
 }

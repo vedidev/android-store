@@ -19,8 +19,13 @@ package com.soomla.store.events;
 /**
  * This event is fired when a billing service is started.
  */
-public class IabServiceStartedEvent {
+public class IabServiceStartedEvent extends SoomlaEvent {
 
     public IabServiceStartedEvent() {
+        this(null);
+    }
+
+    public IabServiceStartedEvent(Object sender) {
+        super(sender);
     }
 }

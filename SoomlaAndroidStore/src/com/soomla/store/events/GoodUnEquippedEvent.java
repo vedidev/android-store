@@ -16,8 +16,6 @@
 
 package com.soomla.store.events;
 
-import com.soomla.store.domain.virtualGoods.EquippableVG;
-
 /**
  * This event is fired when a specific <code>EquippableVG</code> has been unequipped.
  *
@@ -27,7 +25,7 @@ import com.soomla.store.domain.virtualGoods.EquippableVG;
  *  His/her new balance of Characters will be { Characters: Robot_X, Robot_Y }.
  *  A <code>GoodUnEquippedEvent</code> is fired.
  */
-public class GoodUnEquippedEvent {
+public class GoodUnEquippedEvent extends SoomlaEvent {
 
     /**
      * Constructor
@@ -35,6 +33,11 @@ public class GoodUnEquippedEvent {
      * @param itemId
      */
     public GoodUnEquippedEvent(String itemId) {
+        this(itemId, null);
+    }
+
+    public GoodUnEquippedEvent(String itemId, Object sender) {
+        super(sender);
         mItemId = itemId;
     }
 
