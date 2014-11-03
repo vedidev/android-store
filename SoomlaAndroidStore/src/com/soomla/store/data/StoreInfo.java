@@ -21,6 +21,7 @@ import android.content.SharedPreferences;
 import android.text.TextUtils;
 
 import com.soomla.BusProvider;
+import com.soomla.Soomla;
 import com.soomla.SoomlaConfig;
 import com.soomla.data.KeyValueStorage;
 import com.soomla.store.IStoreAssets;
@@ -72,7 +73,7 @@ public class StoreInfo {
 
         mCurrentAssetsVersion = storeAssets.getVersion();
 
-        checkAndResetMetadata();
+//        checkAndResetMetadata();
 
         // we always initialize from the database, unless this is the first time the game is
         // loaded - in that case we initialize with setStoreAssets.
@@ -88,6 +89,8 @@ public class StoreInfo {
      * @param storeMetaJSON the store metadata as JSON.
      */
     public static void setStoreAssets(int version, String storeMetaJSON){
+        SoomlaUtils.LogDebug(TAG, "trying to set json: " + storeMetaJSON);
+
         if (TextUtils.isEmpty(storeMetaJSON)){
             SoomlaUtils.LogError(TAG, "The given store assets JSON can't be empty or null!");
             return;
@@ -95,7 +98,7 @@ public class StoreInfo {
 
         mCurrentAssetsVersion = version;
 
-        checkAndResetMetadata();
+//        checkAndResetMetadata();
 
         // we always initialize from the database, unless this is the first time the game is
         // loaded - in that case we initialize with setStoreAssets.
@@ -128,7 +131,7 @@ public class StoreInfo {
         String key = keyMetaStoreInfo();
         String val = KeyValueStorage.getValue(key);
 
-        if (val == null && TextUtils.isEmpty(val)){
+        if (val == null || TextUtils.isEmpty(val)){
             SoomlaUtils.LogDebug(TAG, "store json is not in DB yet.");
             return false;
         }
