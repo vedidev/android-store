@@ -16,6 +16,8 @@
 
 package com.soomla.store.events;
 
+import com.soomla.events.SoomlaEvent;
+
 /**
  * This event is fired when SOOMLA <code>SoomlaStore</code> is initialized.
  */

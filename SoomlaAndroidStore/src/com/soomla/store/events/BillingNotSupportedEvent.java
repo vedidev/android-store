@@ -16,6 +16,8 @@
 
 package com.soomla.store.events;
 
+import com.soomla.events.SoomlaEvent;
+
 /**
  * This event is fired when SOOMLA knows that billing is NOT supported on the device.
  */

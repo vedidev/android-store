@@ -16,6 +16,7 @@
 
 package com.soomla.store.events;
 
+import com.soomla.events.SoomlaEvent;
 import com.soomla.store.domain.PurchasableVirtualItem;
 
 /**

@@ -16,6 +16,8 @@
 
 package com.soomla.store.events;
 
+import com.soomla.events.SoomlaEvent;
+
 /**
  * This event is fired when a specific <code>PurchasableVirtualItem</code> has been purchased.
  */
