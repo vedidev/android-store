@@ -599,7 +599,7 @@ public class SoomlaStore {
      */
     private void handleErrorResult(String message) {
         BusProvider.getInstance().post(new UnexpectedStoreErrorEvent(message));
-        SoomlaUtils.LogError(TAG, "ERROR: IabPurchase failed: " + message);
+        SoomlaUtils.LogError(TAG, "ERROR: SoomlaStore failure: " + message);
     }
 
     /* Singleton */
