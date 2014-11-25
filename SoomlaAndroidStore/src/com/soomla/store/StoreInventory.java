@@ -23,6 +23,7 @@ import com.soomla.store.data.StorageManager;
 import com.soomla.store.data.StoreInfo;
 import com.soomla.store.domain.PurchasableVirtualItem;
 import com.soomla.store.domain.VirtualItem;
+import com.soomla.store.domain.virtualCurrencies.VirtualCurrency;
 import com.soomla.store.domain.virtualGoods.EquippableVG;
 import com.soomla.store.domain.virtualGoods.UpgradeVG;
 import com.soomla.store.domain.virtualGoods.VirtualGood;
@@ -30,6 +31,7 @@ import com.soomla.store.exceptions.InsufficientFundsException;
 import com.soomla.store.exceptions.NotEnoughGoodsException;
 import com.soomla.store.exceptions.VirtualItemNotFoundException;
 
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -295,5 +297,37 @@ public class StoreInventory {
         }
         VirtualGood good = (VirtualGood) StoreInfo.getVirtualItem(goodItemId);
         StorageManager.getVirtualGoodsStorage().removeUpgrades(good.getItemId());
+    }
+
+    public static HashMap<String, HashMap<String, Object>> allItemsBalances() {
+        HashMap<String, HashMap<String, Object>> itemsDict = new HashMap<String, HashMap<String, Object>>();
+
+        for(VirtualCurrency currency : StoreInfo.getCurrencies()) {
+            HashMap<String, Object> updatedValues = new HashMap<String, Object>();
+            updatedValues.put("balance", StorageManager.getVirtualCurrencyStorage().getBalance(currency.getItemId()));
+
+            itemsDict.put(currency.getItemId(), updatedValues);
+        }
+
+        for(VirtualGood good : StoreInfo.getGoods()) {
+            if (good instanceof UpgradeVG) continue;
+
+            HashMap<String, Object> updatedValues = new HashMap<String, Object>();
+
+            updatedValues.put("balance", StorageManager.getVirtualGoodsStorage().getBalance(good.getItemId()));
+
+            if (good instanceof EquippableVG) {
+                updatedValues.put("equipped", StorageManager.getVirtualGoodsStorage().isEquipped(good.getItemId()));
+            }
+
+            if (StoreInfo.hasUpgrades(good.getItemId())) {
+                String vguId = StorageManager.getVirtualGoodsStorage().getCurrentUpgrade(good.getItemId());
+                updatedValues.put("currentUpgrade", (TextUtils.isEmpty(vguId) ? "none" : vguId ));
+            }
+
+            itemsDict.put(good.getItemId(), updatedValues);
+        }
+
+        return itemsDict;
     }
 }
