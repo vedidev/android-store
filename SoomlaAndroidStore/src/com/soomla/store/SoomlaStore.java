@@ -203,9 +203,8 @@ public class SoomlaStore {
                             }
                         };
 
-                        mInAppBillingService.restorePurchasesAsync(restorePurchasesListener);
-
                         BusProvider.getInstance().post(new RestoreTransactionsStartedEvent());
+                        mInAppBillingService.restorePurchasesAsync(restorePurchasesListener);
                     }
 
                     @Override
