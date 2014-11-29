@@ -33,15 +33,13 @@ Check out our [Wiki] (https://github.com/soomla/android-store/wiki) for more inf
 
 ####Pre baked jars:
 
-[square-otto-1.3.2](http://library.soom.la/fetch/square-otto/1.3.2?cf=github-store)  
-[soomla-android-core 1.0.0](http://library.soom.la/fetch/android-core/1.0.0?cf=github-store)
-[android-store 3.6.1](http://library.soom.la/fetch/android-store/3.6.1?cf=github-store)
+[android-store 3.6.1](http://library.soom.la/fetch/android-store/3.6.1?cf=github)
 
 ## Getting Started
 
 * Before doing anything, SOOMLA recommends that you go through [Android In-app Billing](http://developer.android.com/guide/google/play/billing/index.html) and [Amazon In App Purchasing](https://developer.amazon.com/public/apis/earn/in-app-purchasing).
 
-1. Download the jars and add them to your project.
+1. Add the jars from the downloaded zip to your project.
 
 2. Make the following changes to your AndroidManifest.xml:
 
