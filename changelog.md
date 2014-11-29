@@ -1,14 +1,32 @@
+### v3.6.1 [view commit logs](https://github.com/soomla/android-store/compare/v3.6.0...v3.6.1)
+* Fixes
+  * Fixed the point-in-time RestoreTransactionsStartedEvent is fired.
+
+* Changes
+  * Pulled changes and fixes from Core module v1.0.0
+
+### v3.6.0 [view commit logs](https://github.com/soomla/android-store/compare/v3.5.0...v3.6.0)
+* Changes
+  * Events and Storages work with itemIds instead of actual model objects (Simplification)
+
+* Fixes
+  * Fixed a crash on multiple purchases at once.
+
+* New Features
+  * Soomla events can now send the event sender.
+  * Another function in StoreInventory fetches all balances for all itemIds at once.
+
 ### v3.5.0 [view commit logs](https://github.com/soomla/android-store/compare/v3.4.2...v3.5.0)
 
 ***Important***: this is a breaking release. Read the changes carefully.
 
-* Changes: 
-    * **BREAKING**: `NonConsumableItem` class was **removed**. To create non-consumable item, use `LifeTimeVG` instead.
-    * Fetching price and currency symbol separately when refreshing `MarketItem`s.
-    * Added orderId to MarketPurchaseEvent
+* Changes:
+  * **BREAKING**: `NonConsumableItem` class was **removed**. To create non-consumable item, use `LifeTimeVG` instead.
+  * Fetching price and currency symbol separately when refreshing `MarketItem`s.
+  * Added orderId to MarketPurchaseEvent
 
 * Fixes:
-    * Fixed an issue with backward compatibility of obfuscated sharePrefs.
+  * Fixed an issue with backward compatibility of obfuscated sharePrefs.
 
 ### v3.4.2 [view commit logs](https://github.com/soomla/android-store/compare/v3.4.1...v3.4.2)
 
