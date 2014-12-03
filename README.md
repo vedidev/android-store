@@ -10,6 +10,9 @@ StoreInventory.buy("[itemId]");
 
 *SOOMLA's Store Module for Android*
 
+**December 3rd, 2014**:
+Migrating Amazon IAP from v1.0 to v2.0.
+
 **September 15th, 2014**:
 `NonConsumableItem` class was removed.
 To create a non-consumable item in your `IStoreAssetes` implementation, use `LifeTimeVG` with `PurchaseType` of `PurchaseWithMarket`.
@@ -127,14 +130,14 @@ When the store is closed, call:
 
 #### [Amazon](https://github.com/soomla/android-store-amazon)
 
-1. Add `in-app-purchasing-1.0.3.jar` and `AndroidStoreAmazon.jar` from the folder `billing-services/amazon` to your project.
+1. Add `in-app-purchasing-2.0.1.jar` and `AndroidStoreAmazon.jar` from the folder `billing-services/amazon` to your project.
 
 2. Make the following changes in `AndroidManifest.xml`:
 
   Add Amazon's `ResponseReceiver` to your `application` element. Also, you need to tell us what plugin you're using so add a meta-data tag for that:
 
   ```xml
-  <receiver android:name = "com.amazon.inapp.purchasing.ResponseReceiver" >
+  <receiver android:name = "com.amazon.device.iap.ResponseReceiver" >
     <intent-filter>
         <action android:name = "com.amazon.inapp.purchasing.NOTIFY"
                 android:permission = "com.amazon.inapp.purchasing.Permission.NOTIFY" />
