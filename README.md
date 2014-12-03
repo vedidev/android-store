@@ -11,7 +11,7 @@ StoreInventory.buy("[itemId]");
 *SOOMLA's Store Module for Android*
 
 **December 3rd, 2014**:
-Migrating Amazon IAP from v1.0 to v2.0.
+Migrating Amazon IAP from v1.0 to v2.0. [Read more about IAP v2.0](https://developer.amazon.com/public/apis/earn/in-app-purchasing/docs-v2/migrate-iapv1-apps-to-iapv2)
 
 **September 15th, 2014**:
 `NonConsumableItem` class was removed.
