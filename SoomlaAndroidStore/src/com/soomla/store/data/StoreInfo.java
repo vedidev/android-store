@@ -21,28 +21,37 @@ import android.content.SharedPreferences;
 import android.text.TextUtils;
 
 import com.soomla.BusProvider;
-import com.soomla.Soomla;
+import com.soomla.SoomlaApp;
 import com.soomla.SoomlaConfig;
+import com.soomla.SoomlaUtils;
 import com.soomla.data.KeyValueStorage;
 import com.soomla.store.IStoreAssets;
-import com.soomla.SoomlaApp;
 import com.soomla.store.StoreConfig;
-import com.soomla.SoomlaUtils;
 import com.soomla.store.domain.PurchasableVirtualItem;
 import com.soomla.store.domain.VirtualCategory;
 import com.soomla.store.domain.VirtualItem;
 import com.soomla.store.domain.virtualCurrencies.VirtualCurrency;
 import com.soomla.store.domain.virtualCurrencies.VirtualCurrencyPack;
-import com.soomla.store.domain.virtualGoods.*;
+import com.soomla.store.domain.virtualGoods.EquippableVG;
+import com.soomla.store.domain.virtualGoods.LifetimeVG;
+import com.soomla.store.domain.virtualGoods.SingleUsePackVG;
+import com.soomla.store.domain.virtualGoods.SingleUseVG;
+import com.soomla.store.domain.virtualGoods.UpgradeVG;
+import com.soomla.store.domain.virtualGoods.VirtualGood;
 import com.soomla.store.events.UnexpectedStoreErrorEvent;
 import com.soomla.store.exceptions.VirtualItemNotFoundException;
 import com.soomla.store.purchaseTypes.PurchaseType;
 import com.soomla.store.purchaseTypes.PurchaseWithMarket;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * This class holds the store's metadata including:
@@ -59,14 +68,14 @@ public class StoreInfo {
      * On first initialization, when the database doesn't have any previous version of the store
      * metadata, <code>StoreInfo</code> gets loaded from the given <code>IStoreAssets</code>.
      * After the first initialization, <code>StoreInfo</code> will be initialized from the database.
-     *
+     * <p/>
      * IMPORTANT: If you want to override the current <code>StoreInfo</code>, you'll have to bump
      * the version of your implementation of <code>IStoreAssets</code> in order to remove the
      * metadata when the application loads. Bumping the version is done by returning a higher number
      * in {@link com.soomla.store.IStoreAssets#getVersion()}.
      */
-    public static void setStoreAssets(IStoreAssets storeAssets){
-        if (storeAssets == null){
+    public static void setStoreAssets(IStoreAssets storeAssets) {
+        if (storeAssets == null) {
             SoomlaUtils.LogError(TAG, "The given store assets can't be null!");
             return;
         }
@@ -77,7 +86,8 @@ public class StoreInfo {
 
         // we always initialize from the database, unless this is the first time the game is
         // loaded - in that case we initialize with setStoreAssets.
-        if (!loadFromDB()){
+        // BUT we don't need to load from DB if metadata was reset.
+        if (!loadFromDB()) {
             initializeWithStoreAssets(storeAssets);
         }
     }
@@ -85,13 +95,14 @@ public class StoreInfo {
     /**
      * Another option to set the data of StoreInfo. This will usually be used from game engine
      * wrappers like Unity or Cocos2dx.
-     * @param version the version of IStoreAssets.
+     *
+     * @param version       the version of IStoreAssets.
      * @param storeMetaJSON the store metadata as JSON.
      */
-    public static void setStoreAssets(int version, String storeMetaJSON){
+    public static void setStoreAssets(int version, String storeMetaJSON) {
         SoomlaUtils.LogDebug(TAG, "trying to set json: " + storeMetaJSON);
 
-        if (TextUtils.isEmpty(storeMetaJSON)){
+        if (TextUtils.isEmpty(storeMetaJSON)) {
             SoomlaUtils.LogError(TAG, "The given store assets JSON can't be empty or null!");
             return;
         }
@@ -102,7 +113,7 @@ public class StoreInfo {
 
         // we always initialize from the database, unless this is the first time the game is
         // loaded - in that case we initialize with setStoreAssets.
-        if (!loadFromDB()){
+        if (!loadFromDB()) {
             SoomlaUtils.LogDebug(TAG, "didn't find anything in DB to load. continuing with store assets json.");
             try {
                 fromJSONObject(new JSONObject(storeMetaJSON));
@@ -125,15 +136,10 @@ public class StoreInfo {
     public static boolean loadFromDB() {
         checkAndResetMetadata();
 
-        //if migration process is required we do not initialize from DB.
-        //remove this code when migration process becomes obsolete.
-        if(isMigrationRequired())
-            return false;
-
         String key = keyMetaStoreInfo();
         String val = KeyValueStorage.getValue(key);
 
-        if (val == null || TextUtils.isEmpty(val)){
+        if (val == null || TextUtils.isEmpty(val)) {
             SoomlaUtils.LogDebug(TAG, "store json is not in DB yet.");
             return false;
         }
@@ -182,7 +188,7 @@ public class StoreInfo {
      * @param pvi The PurchasableVirtualItem to check
      * @return true pvi is a non-consumable item.
      */
-    public static boolean isItemNonConsumable(PurchasableVirtualItem pvi){
+    public static boolean isItemNonConsumable(PurchasableVirtualItem pvi) {
         return ((pvi instanceof LifetimeVG) && (pvi.getPurchaseType() instanceof PurchaseWithMarket));
     }
 
@@ -195,9 +201,9 @@ public class StoreInfo {
      * @param itemId the itemId of the required <code>VirtualItem</code>
      * @return virtual item for the given <code>itemId</code>
      * @throws VirtualItemNotFoundException if no <code>VirtualItem</code> with the given
-     * <code>itemId</code> was found.
+     *                                      <code>itemId</code> was found.
      */
-    public static VirtualItem getVirtualItem(String itemId) throws VirtualItemNotFoundException{
+    public static VirtualItem getVirtualItem(String itemId) throws VirtualItemNotFoundException {
         VirtualItem item = mVirtualItems.get(itemId);
         if (item == null) {
             throw new VirtualItemNotFoundException("itemId", itemId);
@@ -214,10 +220,10 @@ public class StoreInfo {
      * @param productId the product id of the purchasable item to be fetched
      * @return <code>PurchasableVirtualItem</code>
      * @throws VirtualItemNotFoundException if no PurchasableVirtualItem with the given
-     *         productId was found.
+     *                                      productId was found.
      */
     public static PurchasableVirtualItem getPurchasableItem(String productId)
-            throws VirtualItemNotFoundException{
+            throws VirtualItemNotFoundException {
         PurchasableVirtualItem item = mPurchasableItems.get(productId);
         if (item == null) {
             throw new VirtualItemNotFoundException("productId", productId);
@@ -255,7 +261,7 @@ public class StoreInfo {
     public static UpgradeVG getGoodFirstUpgrade(String goodItemId) {
         List<UpgradeVG> upgrades = mGoodsUpgrades.get(goodItemId);
         if (upgrades != null) {
-            for(UpgradeVG upgradeVG : upgrades) {
+            for (UpgradeVG upgradeVG : upgrades) {
                 if (TextUtils.isEmpty(upgradeVG.getPrevItemId())) {
                     return upgradeVG;
                 }
@@ -270,12 +276,12 @@ public class StoreInfo {
      * @param goodItemId The item id of the <code>VirtualGood</code> whose upgrade we are looking
      *                   for.
      * @return The last upgrade for the virtual good with the given <code>goodItemId</code> or null
-     *     if there are no upgrades.
+     * if there are no upgrades.
      */
     public static UpgradeVG getGoodLastUpgrade(String goodItemId) {
         List<UpgradeVG> upgrades = mGoodsUpgrades.get(goodItemId);
         if (upgrades != null) {
-            for(UpgradeVG upgradeVG : upgrades) {
+            for (UpgradeVG upgradeVG : upgrades) {
                 if (TextUtils.isEmpty(upgradeVG.getNextItemId())) {
                     return upgradeVG;
                 }
@@ -296,7 +302,7 @@ public class StoreInfo {
         return mGoodsUpgrades.get(goodItemId);
     }
 
-    public static List<VirtualCurrency> getCurrencies(){
+    public static List<VirtualCurrency> getCurrencies() {
         return mCurrencies;
     }
 
@@ -337,7 +343,7 @@ public class StoreInfo {
 
         if (jsonObject.has(StoreJSONConsts.STORE_CURRENCIES)) {
             JSONArray virtualCurrencies = jsonObject.getJSONArray(StoreJSONConsts.STORE_CURRENCIES);
-            for (int i=0; i<virtualCurrencies.length(); i++){
+            for (int i = 0; i < virtualCurrencies.length(); i++) {
                 JSONObject o = virtualCurrencies.getJSONObject(i);
                 VirtualCurrency c = new VirtualCurrency(o);
                 mCurrencies.add(c);
@@ -348,7 +354,7 @@ public class StoreInfo {
 
         if (jsonObject.has(StoreJSONConsts.STORE_CURRENCYPACKS)) {
             JSONArray currencyPacks = jsonObject.getJSONArray(StoreJSONConsts.STORE_CURRENCYPACKS);
-            for (int i=0; i<currencyPacks.length(); i++){
+            for (int i = 0; i < currencyPacks.length(); i++) {
                 JSONObject o = currencyPacks.getJSONObject(i);
                 VirtualCurrencyPack pack = new VirtualCurrencyPack(o);
                 mCurrencyPacks.add(pack);
@@ -370,7 +376,7 @@ public class StoreInfo {
 
             if (virtualGoods.has(StoreJSONConsts.STORE_GOODS_SU)) {
                 JSONArray suGoods = virtualGoods.getJSONArray(StoreJSONConsts.STORE_GOODS_SU);
-                for (int i=0; i<suGoods.length(); i++){
+                for (int i = 0; i < suGoods.length(); i++) {
                     JSONObject o = suGoods.getJSONObject(i);
                     SingleUseVG g = new SingleUseVG(o);
                     addVG(g);
@@ -380,7 +386,7 @@ public class StoreInfo {
 
             if (virtualGoods.has(StoreJSONConsts.STORE_GOODS_LT)) {
                 JSONArray ltGoods = virtualGoods.getJSONArray(StoreJSONConsts.STORE_GOODS_LT);
-                for (int i=0; i<ltGoods.length(); i++){
+                for (int i = 0; i < ltGoods.length(); i++) {
                     JSONObject o = ltGoods.getJSONObject(i);
                     LifetimeVG g = new LifetimeVG(o);
                     addVG(g);
@@ -390,7 +396,7 @@ public class StoreInfo {
 
             if (virtualGoods.has(StoreJSONConsts.STORE_GOODS_EQ)) {
                 JSONArray eqGoods = virtualGoods.getJSONArray(StoreJSONConsts.STORE_GOODS_EQ);
-                for (int i=0; i<eqGoods.length(); i++){
+                for (int i = 0; i < eqGoods.length(); i++) {
                     JSONObject o = eqGoods.getJSONObject(i);
                     EquippableVG g = new EquippableVG(o);
                     addVG(g);
@@ -399,7 +405,7 @@ public class StoreInfo {
 
             if (virtualGoods.has(StoreJSONConsts.STORE_GOODS_PA)) {
                 JSONArray paGoods = virtualGoods.getJSONArray(StoreJSONConsts.STORE_GOODS_PA);
-                for (int i=0; i<paGoods.length(); i++){
+                for (int i = 0; i < paGoods.length(); i++) {
                     JSONObject o = paGoods.getJSONObject(i);
                     SingleUsePackVG g = new SingleUsePackVG(o);
                     addVG(g);
@@ -409,7 +415,7 @@ public class StoreInfo {
 
             if (virtualGoods.has(StoreJSONConsts.STORE_GOODS_UP)) {
                 JSONArray upGoods = virtualGoods.getJSONArray(StoreJSONConsts.STORE_GOODS_UP);
-                for (int i=0; i<upGoods.length(); i++){
+                for (int i = 0; i < upGoods.length(); i++) {
                     JSONObject o = upGoods.getJSONObject(i);
                     UpgradeVG g = new UpgradeVG(o);
                     addVG(g);
@@ -428,14 +434,21 @@ public class StoreInfo {
         // Categories depend on virtual goods. That's why the have to be initialized after!
         if (jsonObject.has(StoreJSONConsts.STORE_CATEGORIES)) {
             JSONArray virtualCategories = jsonObject.getJSONArray(StoreJSONConsts.STORE_CATEGORIES);
-            for(int i=0; i<virtualCategories.length(); i++){
+            for (int i = 0; i < virtualCategories.length(); i++) {
                 JSONObject o = virtualCategories.getJSONObject(i);
                 VirtualCategory category = new VirtualCategory(o);
                 mCategories.add(category);
-                for(String goodItemId : category.getGoodsItemIds()) {
+                for (String goodItemId : category.getGoodsItemIds()) {
                     mGoodsCategories.put(goodItemId, category);
                 }
             }
+        }
+
+        // This is only for NonConsumable balance migration to LifetimeVGs.
+        // Remove this code when no longer needed.
+        if (mNonConsumableMigrationNeeded) {
+            SoomlaUtils.LogDebug(TAG, "NonConsumables balance migration is required. Doing it now.");
+            nonConsBalancesToLTVGs();
         }
     }
 
@@ -463,15 +476,15 @@ public class StoreInfo {
      *
      * @return a <code>JSONObject</code> representation of <code>StoreInfo</code>.
      */
-    public static JSONObject toJSONObject(){
+    public static JSONObject toJSONObject() {
 
         JSONArray currencies = new JSONArray();
-        for(VirtualCurrency c : mCurrencies){
+        for (VirtualCurrency c : mCurrencies) {
             currencies.put(c.toJSONObject());
         }
 
         JSONArray currencyPacks = new JSONArray();
-        for(VirtualCurrencyPack pack : mCurrencyPacks){
+        for (VirtualCurrencyPack pack : mCurrencyPacks) {
             currencyPacks.put(pack.toJSONObject());
         }
 
@@ -481,7 +494,7 @@ public class StoreInfo {
         JSONArray eqGoods = new JSONArray();
         JSONArray paGoods = new JSONArray();
         JSONArray upGoods = new JSONArray();
-        for(VirtualGood good : mGoods){
+        for (VirtualGood good : mGoods) {
             if (good instanceof SingleUseVG) {
                 suGoods.put(good.toJSONObject());
             } else if (good instanceof UpgradeVG) {
@@ -497,7 +510,7 @@ public class StoreInfo {
 
 
         JSONArray categories = new JSONArray();
-        for (VirtualCategory cat : mCategories){
+        for (VirtualCategory cat : mCategories) {
             categories.put(cat.toJSONObject());
         }
 
@@ -553,24 +566,24 @@ public class StoreInfo {
         mVirtualItems.put(virtualItem.getItemId(), virtualItem);
 
         if (virtualItem instanceof VirtualCurrency) {
-            for(int i=0; i<mCurrencies.size(); i++) {
+            for (int i = 0; i < mCurrencies.size(); i++) {
                 if (mCurrencies.get(i).getItemId().equals(virtualItem.getItemId())) {
                     mCurrencies.remove(i);
                     break;
                 }
             }
-            mCurrencies.add((VirtualCurrency)virtualItem);
+            mCurrencies.add((VirtualCurrency) virtualItem);
         }
 
         if (virtualItem instanceof VirtualCurrencyPack) {
-            VirtualCurrencyPack vcp = (VirtualCurrencyPack)virtualItem;
+            VirtualCurrencyPack vcp = (VirtualCurrencyPack) virtualItem;
             PurchaseType purchaseType = vcp.getPurchaseType();
             if (purchaseType instanceof PurchaseWithMarket) {
                 mPurchasableItems.put(((PurchaseWithMarket) purchaseType).getMarketItem()
                         .getProductId(), vcp);
             }
 
-            for(int i=0; i<mCurrencyPacks.size(); i++) {
+            for (int i = 0; i < mCurrencyPacks.size(); i++) {
                 if (mCurrencyPacks.get(i).getItemId().equals(vcp.getItemId())) {
                     mCurrencyPacks.remove(i);
                     break;
@@ -580,7 +593,7 @@ public class StoreInfo {
         }
 
         if (virtualItem instanceof VirtualGood) {
-            VirtualGood vg = (VirtualGood)virtualItem;
+            VirtualGood vg = (VirtualGood) virtualItem;
 
             if (vg instanceof UpgradeVG) {
                 List<UpgradeVG> upgrades = mGoodsUpgrades.get(((UpgradeVG) vg).getGoodItemId());
@@ -597,7 +610,7 @@ public class StoreInfo {
                         .getProductId(), vg);
             }
 
-            for(int i=0; i<mGoods.size(); i++) {
+            for (int i = 0; i < mGoods.size(); i++) {
                 if (mGoods.get(i).getItemId().equals(vg.getItemId())) {
                     mGoods.remove(i);
                     break;
@@ -626,11 +639,11 @@ public class StoreInfo {
         mGoodsCategories = new HashMap<String, VirtualCategory>();
         mGoodsUpgrades = new HashMap<String, List<UpgradeVG>>();
 
-        for(VirtualCurrency vi : mCurrencies) {
+        for (VirtualCurrency vi : mCurrencies) {
             mVirtualItems.put(vi.getItemId(), vi);
         }
 
-        for(VirtualCurrencyPack vi : mCurrencyPacks) {
+        for (VirtualCurrencyPack vi : mCurrencyPacks) {
             mVirtualItems.put(vi.getItemId(), vi);
 
             PurchaseType purchaseType = vi.getPurchaseType();
@@ -640,7 +653,7 @@ public class StoreInfo {
             }
         }
 
-        for(VirtualGood vi : mGoods) {
+        for (VirtualGood vi : mGoods) {
             mVirtualItems.put(vi.getItemId(), vi);
 
             if (vi instanceof UpgradeVG) {
@@ -659,29 +672,35 @@ public class StoreInfo {
             }
         }
 
-        for(VirtualCategory category : mCategories) {
-            for(String goodItemId : category.getGoodsItemIds()) {
+        for (VirtualCategory category : mCategories) {
+            for (String goodItemId : category.getGoodsItemIds()) {
                 mGoodsCategories.put(goodItemId, category);
             }
         }
 
-        //delete this if migration process is no longer needed.
-        migrateNonConsumableItems();
+        // This is only for NonConsumable balance migration to LifetimeVGs.
+        // Remove this code when no longer needed.
+        if (mNonConsumableMigrationNeeded) {
+            SoomlaUtils.LogDebug(TAG, "NonConsumables balance migration is required. Doing it now.");
+            nonConsBalancesToLTVGs();
+        }
 
         save();
     }
 
-    /**
-     * @return true if metadata version was reset.
-     */
     private static void checkAndResetMetadata() {
         SoomlaUtils.LogDebug(TAG, "checking metadata version ...");
         SharedPreferences prefs = SoomlaApp.getAppContext().getSharedPreferences(SoomlaConfig.PREFS_NAME,
-                        Context.MODE_PRIVATE);
+                Context.MODE_PRIVATE);
         boolean resetMeta = false;
         try {
             int mt_ver = prefs.getInt("MT_VER", 0);
             int sa_ver_old = prefs.getInt("SA_VER_OLD", -1);
+
+            if (mt_ver < StoreConfig.METADATA_VERSION) {
+                mNonConsumableMigrationNeeded = true;
+            }
+
             resetMeta = mt_ver < StoreConfig.METADATA_VERSION || sa_ver_old < mCurrentAssetsVersion;
         } catch (Exception e) {
             SoomlaUtils.LogDebug(TAG, "This is probably an older (obfuscated) sharedPrefs");
@@ -694,70 +713,39 @@ public class StoreInfo {
             edit.putInt("SA_VER_OLD", mCurrentAssetsVersion);
             edit.commit();
 
-            //remove and uncomment this if migration is no longer needed.
-            setMigrationIndicator(true);
-//          KeyValueStorage.deleteKeyValue(keyMetaStoreInfo());
-        }
-    }
-
-    /**
-     * Temporary function to handle the migration process from NonConsumableItem to LifeTimeVG.
-     * Iterates the existing NonConsumableItems from DB, for each item checks if a corresponding LifeTimeVG exists in IStoreAssets.
-     * If such item exists and the NonConsumableItem is owned, gives the corresponding LifeTimeVG to the user.
-     */
-    private static void migrateNonConsumableItems() {
-        String storeInfoJSON = KeyValueStorage.getValue(keyMetaStoreInfo());
-        if (storeInfoJSON == null)
-            return;
-
-        try {
-            JSONObject jsonObject = new JSONObject(storeInfoJSON);
-            String storeNonConsumables = "nonConsumables";
-            if (jsonObject.has(storeNonConsumables)) {
-                JSONArray nonConsumables = jsonObject.getJSONArray(storeNonConsumables);
-                for (int i = 0; i < nonConsumables.length(); i++) {
-                    JSONObject nonConsJSON = nonConsumables.getJSONObject(i);
-                    LifetimeVG migratedNonCons = new LifetimeVG(nonConsJSON);
-                    VirtualItem correspondingVirtualItem = mVirtualItems.get(migratedNonCons.getItemId());
-                    if (correspondingVirtualItem != null && (correspondingVirtualItem instanceof LifetimeVG) && ((LifetimeVG) correspondingVirtualItem).getPurchaseType() instanceof PurchaseWithMarket) {
-                        String keyNonConsExist = "nonconsumable." + migratedNonCons.getItemId() + ".exists";
-                        if (KeyValueStorage.getValue(keyNonConsExist) != null) {
-                            migratedNonCons.give(1);
-                            KeyValueStorage.deleteKeyValue(keyNonConsExist);
-                        }
-                    }
-                }
-            }
-        } catch (Exception e){
-            SoomlaUtils.LogDebug(TAG, "Migration process failed with error: " + e.getMessage());
-        } finally {
-            //mark migration process as finished and delete database
-            setMigrationIndicator(false);
             KeyValueStorage.deleteKeyValue(keyMetaStoreInfo());
         }
     }
 
-    private static boolean isMigrationRequired(){
-        SharedPreferences prefs = SoomlaApp.getAppContext().getSharedPreferences(SoomlaConfig.PREFS_NAME,
-                Context.MODE_PRIVATE);
-        return (prefs.getBoolean("MIGRATE_NONCONSUMABLES", false));
+    /**
+     * IStoreAssets was changed and version number was bumped but we need to check if we need to do balance migration for non-consumables.
+     * The metadata in DB was deleted and we're overwriting it.
+     * We just need to set the balances of the lifetime items instead of the non-consumables.
+     */
+    private static void nonConsBalancesToLTVGs() {
+        for(VirtualGood good : mGoods) {
+            if ((good instanceof LifetimeVG) && good.getPurchaseType() instanceof PurchaseWithMarket) {
+                String keyNonConsExist = "nonconsumable." + good.getItemId() + ".exists";
+                if (KeyValueStorage.getValue(keyNonConsExist) != null) {
+                    good.give(1);
+                    KeyValueStorage.deleteKeyValue(keyNonConsExist);
+                }
+            }
+        }
+        mNonConsumableMigrationNeeded = false;
     }
 
-    private static void setMigrationIndicator(boolean indicator){
-        SharedPreferences prefs = SoomlaApp.getAppContext().getSharedPreferences(SoomlaConfig.PREFS_NAME,
-                Context.MODE_PRIVATE);
-        SharedPreferences.Editor edit = prefs.edit();
-        edit.putBoolean("MIGRATE_NONCONSUMABLES", indicator);
-        edit.commit();
-    }
-
-    /** Private Members **/
+    /**
+     * Private Members *
+     */
 
     private static String keyMetaStoreInfo() {
         return "meta.storeinfo";
     }
 
     private static final String TAG = "SOOMLA StoreInfo"; //used for Log messages
+
+    private static boolean mNonConsumableMigrationNeeded = false;
 
     // convenient hash of virtual items
     private static HashMap<String, VirtualItem> mVirtualItems;
