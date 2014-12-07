@@ -1,3 +1,12 @@
+### v3.6.2 [view commit logs](https://github.com/soomla/android-store/compare/v3.6.1...v3.6.2)
+
+* Fixes
+  * Fixed issues with non-consumable migration inside StoreInfo
+  * Fixed issues with Amazon billing service
+
+* New Features
+  * Now supporting Amazon v2
+
 ### v3.6.1 [view commit logs](https://github.com/soomla/android-store/compare/v3.6.0...v3.6.1)
 * Fixes
   * Fixed the point-in-time RestoreTransactionsStartedEvent is fired.
