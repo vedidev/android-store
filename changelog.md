@@ -1,3 +1,8 @@
+### v3.6.3 [view commit logs](https://github.com/soomla/android-store/compare/v3.6.2...v3.6.3)
+
+* Fixes
+  * New Amazon jar with fixes for issues: empty skus and getting price micros exception
+
 ### v3.6.2 [view commit logs](https://github.com/soomla/android-store/compare/v3.6.1...v3.6.2)
 
 * Fixes
