@@ -21,6 +21,7 @@ import android.text.TextUtils;
 import com.soomla.SoomlaUtils;
 import com.soomla.store.data.StorageManager;
 import com.soomla.store.data.StoreInfo;
+import com.soomla.store.data.VirtualItemStorage;
 import com.soomla.store.domain.PurchasableVirtualItem;
 import com.soomla.store.domain.VirtualItem;
 import com.soomla.store.domain.virtualCurrencies.VirtualCurrency;
@@ -330,4 +331,79 @@ public class StoreInventory {
 
         return itemsDict;
     }
+
+    public static boolean resetAllItemsBalances(HashMap<String, HashMap<String, Object>> replaceBalances) {
+        if (replaceBalances == null) {
+            return false;
+        }
+
+        try {
+            for (String itemId : replaceBalances.keySet()) {
+                HashMap<String, Object> updatedValues = replaceBalances.get(itemId);
+
+                VirtualItem item = null;
+                try {
+                    item = StoreInfo.getVirtualItem(itemId);
+                } catch (VirtualItemNotFoundException e) {
+                    SoomlaUtils.LogError(TAG, "The given itemId " + itemId + " was not found. Can't force it.");
+                    continue;
+                }
+
+                Object rawBalance = updatedValues.get("balance");
+                if (rawBalance != null) {
+                    Integer updatedBalance = (Integer) rawBalance;
+                    if (item != null) {
+                        item.resetBalance(updatedBalance, false);
+                        SoomlaUtils.LogDebug(TAG, "finished balance sync for itemId: " + itemId);
+                    }
+                }
+
+                Object rawEquippedState = updatedValues.get("equipped");
+                if (rawEquippedState != null) {
+                    try {
+                        EquippableVG equippableItem = (EquippableVG) item;
+                        if (equippableItem != null) {
+                            Boolean equipState = (Boolean) rawEquippedState;
+                            if (equipState) {
+                                equippableItem.equip(false);
+                            } else {
+                                equippableItem.unequip(false);
+                            }
+                        }
+                        SoomlaUtils.LogDebug(TAG, "finished equip balance sync for itemId: " + itemId);
+                    } catch (NotEnoughGoodsException e) {
+                        SoomlaUtils.LogError(TAG, "the item " + itemId + " was not purchased, so cannot be equipped");
+                    } catch (ClassCastException exx) {
+                        SoomlaUtils.LogError(TAG, "tried to equip a non-equippable item: " + itemId);
+                    }
+                }
+
+                Object rawCurrentUpgrade = updatedValues.get("currentUpgrade");
+                if (rawCurrentUpgrade != null) {
+                    String currentUpgradeId = (String) rawCurrentUpgrade;
+                    if (!TextUtils.isEmpty(currentUpgradeId)) {
+                        try {
+                            UpgradeVG upgradeVG = (UpgradeVG) StoreInfo.getVirtualItem(currentUpgradeId);
+                            upgradeVG.give(1, false);
+
+                            SoomlaUtils.LogDebug(TAG, "finished upgrade balance sync for itemId: " + itemId);
+                        } catch (VirtualItemNotFoundException ex) {
+                            SoomlaUtils.LogError(TAG, "The given upgradeId " + currentUpgradeId + " was not found. Can't force it.");
+                        } catch (ClassCastException ex) {
+                            SoomlaUtils.LogError(TAG, "The given upgradeId was of a non UpgradeVG VirtualItem. Can't force it.");
+                        }
+                    }
+                }
+            }
+
+            return true;
+        }
+        catch (Exception e) {
+            SoomlaUtils.LogError(TAG, "Unknown error has occurred while resetting item balances " + e.getMessage());
+        }
+
+        return false;
+    }
+
+    private static final String TAG = "SOOMLA StoreInventory"; //used for Log messages
 }
