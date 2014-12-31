@@ -620,6 +620,7 @@ public class SoomlaStore {
      * Constructor
      */
     private SoomlaStore() {
+        StoreForeground.get();
     }
 
 
