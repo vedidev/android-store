@@ -52,6 +52,8 @@ public class VirtualCurrencyStorage extends VirtualItemStorage{
     }
 
     private static String keyCurrencyBalance(String itemId) {
-        return "currency." + itemId + ".balance";
+        return DB_CURRENCY_KEY_PREFIX + itemId + ".balance";
     }
+
+    public final static String DB_CURRENCY_KEY_PREFIX = "currency.";
 }

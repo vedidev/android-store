@@ -19,8 +19,11 @@ package com.soomla.store;
 import android.text.TextUtils;
 
 import com.soomla.SoomlaUtils;
+import com.soomla.data.KeyValueStorage;
 import com.soomla.store.data.StorageManager;
 import com.soomla.store.data.StoreInfo;
+import com.soomla.store.data.VirtualCurrencyStorage;
+import com.soomla.store.data.VirtualGoodsStorage;
 import com.soomla.store.data.VirtualItemStorage;
 import com.soomla.store.domain.PurchasableVirtualItem;
 import com.soomla.store.domain.VirtualItem;
@@ -337,6 +340,12 @@ public class StoreInventory {
             return false;
         }
 
+        SoomlaUtils.LogDebug(TAG, "Resetting balances");
+
+        clearCurrentState();
+
+        SoomlaUtils.LogDebug(TAG, "Current state was cleared");
+
         try {
             for (String itemId : replaceBalances.keySet()) {
                 HashMap<String, Object> updatedValues = replaceBalances.get(itemId);
@@ -403,6 +412,18 @@ public class StoreInventory {
         }
 
         return false;
+    }
+
+    private static void clearCurrentState() {
+        List<String> allKeys = KeyValueStorage.getEncryptedKeys();
+
+        for (String key : allKeys) {
+            if (key.startsWith(StoreInfo.DB_NONCONSUMABLE_KEY_PREFIX) ||
+                    key.startsWith(VirtualCurrencyStorage.DB_CURRENCY_KEY_PREFIX) ||
+                    key.startsWith(VirtualGoodsStorage.DB_KEY_GOOD_PREFIX)) {
+                KeyValueStorage.deleteKeyValue(key);
+            }
+        }
     }
 
     private static final String TAG = "SOOMLA StoreInventory"; //used for Log messages

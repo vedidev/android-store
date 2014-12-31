@@ -245,15 +245,16 @@ public class VirtualGoodsStorage extends VirtualItemStorage{
 
 
     private static String keyGoodBalance(String itemId) {
-        return "good." + itemId + ".balance";
+        return DB_KEY_GOOD_PREFIX + itemId + ".balance";
     }
 
     private static String keyGoodEquipped(String itemId) {
-        return "good." + itemId + ".equipped";
+        return DB_KEY_GOOD_PREFIX + itemId + ".equipped";
     }
 
     private static String keyGoodUpgrade(String itemId) {
-        return "good." + itemId + ".currentUpgrade";
+        return DB_KEY_GOOD_PREFIX + itemId + ".currentUpgrade";
     }
 
+    public final static String DB_KEY_GOOD_PREFIX = "good.";
 }
