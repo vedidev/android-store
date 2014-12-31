@@ -725,7 +725,7 @@ public class StoreInfo {
     private static void nonConsBalancesToLTVGs() {
         for(VirtualGood good : mGoods) {
             if ((good instanceof LifetimeVG) && good.getPurchaseType() instanceof PurchaseWithMarket) {
-                String keyNonConsExist = "nonconsumable." + good.getItemId() + ".exists";
+                String keyNonConsExist = DB_NONCONSUMABLE_KEY_PREFIX + good.getItemId() + ".exists";
                 if (KeyValueStorage.getValue(keyNonConsExist) != null) {
                     good.give(1);
                     KeyValueStorage.deleteKeyValue(keyNonConsExist);
@@ -744,6 +744,7 @@ public class StoreInfo {
     }
 
     private static final String TAG = "SOOMLA StoreInfo"; //used for Log messages
+    public static final String DB_NONCONSUMABLE_KEY_PREFIX = "nonconsumable.";
 
     private static boolean mNonConsumableMigrationNeeded = false;
 
