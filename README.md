@@ -36,7 +36,7 @@ Check out our [Wiki] (https://github.com/soomla/android-store/wiki) for more inf
 
 ####Pre baked jars:
 
-[android-store 3.6.2](http://library.soom.la/fetch/android-store/3.6.2?cf=github)
+[android-store v3.6.4](http://library.soom.la/fetch/android-store/3.6.4?cf=github)
 
 ## Getting Started
 

@@ -1,3 +1,9 @@
+### v3.6.4 [view commit logs](https://github.com/soomla/android-store/compare/v3.6.3...v3.6.4)
+
+* New Features
+  * Added new function in StoreInventory to reset local state
+  * Added some support for Core's Foreground service
+
 ### v3.6.3 [view commit logs](https://github.com/soomla/android-store/compare/v3.6.2...v3.6.3)
 
 * Fixes
