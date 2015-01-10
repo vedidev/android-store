@@ -1,5 +1,7 @@
 package com.soomla.store;
 
+import android.os.Build;
+
 import com.soomla.BusProvider;
 import com.soomla.SoomlaApp;
 import com.soomla.store.events.MarketPurchaseCancelledEvent;
@@ -11,7 +13,9 @@ import com.squareup.otto.Subscribe;
 public class StoreForeground {
 
     private StoreForeground() {
-        BusProvider.getInstance().register(this);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
+            BusProvider.getInstance().register(this);
+        }
     }
 
     public static synchronized StoreForeground get() {
