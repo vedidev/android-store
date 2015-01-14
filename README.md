@@ -17,13 +17,6 @@ Migrating Amazon IAP from v1.0 to v2.0. [Read more about IAP v2.0](https://devel
 `NonConsumableItem` class was removed.
 To create a non-consumable item in your `IStoreAssetes` implementation, use `LifeTimeVG` with `PurchaseType` of `PurchaseWithMarket`.
 
-**June 20th, 2014**: v3.4.1 presents support for "Soomla Core" (which separates some objects common to ALL SOOMLA's modules). It also removed the usage of SOOM_SEC. [Getting Started](https://github.com/soomla/android-store#getting-started) has changed! see [CHANGELOG](changelog.md).
-
-**May 25th, 2014**: Amazon billing service is now our second billing service implementation. See [Billing Services](#whats-next-selecting-a-billing-service) for details.
-
-**April 1st, 2014**: We've added the option to refresh market items details from the IAB Service (default is Google Play). You can call 'refreshInventory(true)' from SoomlaStore when you want and all your PurchasableItems that has a PurchaseType of PurchaseWithMarket will update the values of: MarketPrice, MarketTitle, MarketDescription. android-store automatically running the operation when you initialize SoomlaStore.
-
-
 The current virtual economy model is called **modelV3**. Want to learn more about it? Try these:
 * [Economy Model Objects](https://github.com/soomla/android-store/wiki/Economy-Model-Objects)
 * [Handling Store Operations](https://github.com/soomla/android-store/wiki/Handling-Store-Operations)
@@ -36,7 +29,7 @@ Check out our [Wiki] (https://github.com/soomla/android-store/wiki) for more inf
 
 ####Pre baked jars:
 
-[android-store v3.6.4](http://library.soom.la/fetch/android-store/3.6.4?cf=github)
+[android-store v3.6.5](http://library.soom.la/fetch/android-store/3.6.5?cf=github)
 
 ## Getting Started
 
