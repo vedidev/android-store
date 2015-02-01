@@ -29,7 +29,7 @@ Check out our [Wiki] (https://github.com/soomla/android-store/wiki) for more inf
 
 ####Pre baked jars:
 
-[android-store v3.6.5](http://library.soom.la/fetch/android-store/3.6.5?cf=github)
+[android-store v3.6.6](http://library.soom.la/fetch/android-store/3.6.6?cf=github)
 
 ## Getting Started
 

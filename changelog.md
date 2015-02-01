@@ -1,3 +1,8 @@
+### v3.6.6 [view commit logs](https://github.com/soomla/android-store/compare/v3.6.5...v3.6.6)
+
+* Fixes
+  * Fixed issues with purchases on edge cases on Google Play
+
 ### v3.6.5 [view commit logs](https://github.com/soomla/android-store/compare/v3.6.4...v3.6.5)
 
 * Fixes
