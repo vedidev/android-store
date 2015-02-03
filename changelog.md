@@ -1,3 +1,8 @@
+### v3.6.7 [view commit logs](https://github.com/soomla/android-store/compare/v3.6.6...v3.6.7)
+
+* New Features
+  * Store will now save your market item details to local storage
+
 ### v3.6.6 [view commit logs](https://github.com/soomla/android-store/compare/v3.6.5...v3.6.6)
 
 * Fixes
