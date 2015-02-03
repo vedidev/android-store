@@ -16,10 +16,12 @@
 
 package com.soomla.store.events;
 
+import com.soomla.events.SoomlaEvent;
+
 /**
  * This event is fired when the market items refresh process fails.
  */
-public class MarketItemsRefreshFailedEvent {
+public class MarketItemsRefreshFailedEvent extends SoomlaEvent{
     /**
      * The error message received from the billing provider
      */
@@ -31,6 +33,11 @@ public class MarketItemsRefreshFailedEvent {
      * @param errorMessage The error message received from the billing provider
      */
     public MarketItemsRefreshFailedEvent(String errorMessage) {
+        this(errorMessage, null);
+    }
+
+    public MarketItemsRefreshFailedEvent(String errorMessage, Object sender) {
+        super(sender);
         ErrorMessage = errorMessage;
     }
 }
