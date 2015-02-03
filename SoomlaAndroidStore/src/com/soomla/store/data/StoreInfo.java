@@ -546,11 +546,53 @@ public class StoreInfo {
     /**
      * Replaces the given virtual item, and then saves the store's metadata.
      *
-     * @param virtualItem the virtual item to replace
+     * @param virtualItem the virtual item to replace.
      */
-    public static void save(VirtualItem virtualItem) {
+    public static void save(VirtualItem virtualItem) { save(virtualItem, true); }
+
+    /**
+     * Replaces the given virtual item, and then saves the store's metadata
+     * (if requested).
+     *
+     * @param virtualItem the virtual item to replace.
+     * @param saveToDB should the store's metadata be saved.
+     */
+    public static void save(VirtualItem virtualItem, boolean saveToDB) {
         replaceVirtualItem(virtualItem);
-        save();
+
+        if (saveToDB) {
+            save();
+        }
+    }
+
+    /**
+     * Replaces the given virtual items, and then saves the store's metadata.
+     *
+     * @param virtualItems the virtual items to replace.
+     */
+    public static void save(List<VirtualItem> virtualItems) {
+        save(virtualItems, true);
+    }
+
+    /**
+     * Replaces the given virtual items, and then saves the store's metadata
+     * (if requested).
+     *
+     * @param virtualItems the virtual items to replace.
+     * @param saveToDB should the store's metadata be saved.
+     */
+    public static void save(List<VirtualItem> virtualItems, boolean saveToDB) {
+        if ((virtualItems == null) || virtualItems.isEmpty()) {
+            return;
+        }
+
+        for (VirtualItem virtualItem : virtualItems) {
+            replaceVirtualItem(virtualItem);
+        }
+
+        if (saveToDB) {
+            save();
+        }
     }
 
     /**

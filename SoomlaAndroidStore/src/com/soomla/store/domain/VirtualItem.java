@@ -18,6 +18,7 @@ package com.soomla.store.domain;
 
 import com.soomla.SoomlaEntity;
 import com.soomla.SoomlaUtils;
+import com.soomla.store.data.StoreInfo;
 import com.soomla.store.data.StoreJSONConsts;
 
 import org.json.JSONException;
@@ -127,6 +128,21 @@ public abstract class VirtualItem extends SoomlaEntity<VirtualItem> {
      * @return balance after the reset process
      */
     public abstract int resetBalance(int balance, boolean notify);
+
+    /**
+     * Saves the item updates to <code>StoreInfo</code> and to internal DB.
+     */
+    public void save() { save(true); }
+
+    /**
+     * Saves the item updates to <code>StoreInfo</code> and to internal DB
+     * (if requested).
+     *
+     * @param saveToDB Should the item be saved to the internal DB
+     */
+    public void save(boolean saveToDB) {
+        StoreInfo.save(this, saveToDB);
+    }
 
     public String getItemId(){
         return mID;

@@ -31,10 +31,12 @@ import com.soomla.store.data.StorageManager;
 import com.soomla.store.data.StoreInfo;
 import com.soomla.store.domain.MarketItem;
 import com.soomla.store.domain.PurchasableVirtualItem;
+import com.soomla.store.domain.VirtualItem;
 import com.soomla.store.events.BillingNotSupportedEvent;
 import com.soomla.store.events.BillingSupportedEvent;
 import com.soomla.store.events.IabServiceStartedEvent;
 import com.soomla.store.events.ItemPurchasedEvent;
+import com.soomla.store.events.MarketItemsRefreshFailedEvent;
 import com.soomla.store.events.MarketItemsRefreshFinishedEvent;
 import com.soomla.store.events.MarketItemsRefreshStartedEvent;
 import com.soomla.store.events.MarketPurchaseCancelledEvent;
@@ -246,6 +248,8 @@ public class SoomlaStore {
 
                                         List<MarketItem> marketItems = new ArrayList<MarketItem>();
                                         if (skuDetails.size() > 0) {
+                                            List<VirtualItem> virtualItems = new ArrayList<VirtualItem>();
+
                                             for (IabSkuDetails iabSkuDetails : skuDetails) {
                                                 String productId = iabSkuDetails.getSku();
                                                 String price = iabSkuDetails.getPrice();
@@ -268,19 +272,24 @@ public class SoomlaStore {
                                                     mi.setMarketInformation(price, title, desc, currencyCode, priceMicros);
 
                                                     marketItems.add(mi);
+                                                    virtualItems.add(pvi);
                                                 } catch (VirtualItemNotFoundException e) {
                                                     String msg = "(refreshInventory) Couldn't find a "
                                                             + "purchasable item associated with: " + productId;
                                                     SoomlaUtils.LogError(TAG, msg);
                                                 }
                                             }
+
+                                            StoreInfo.save(virtualItems);
                                         }
                                         BusProvider.getInstance().post(new MarketItemsRefreshFinishedEvent(marketItems));
                                     }
 
                                     @Override
                                     public void fail(String message) {
+                                        SoomlaUtils.LogError(TAG, "Market items details failed to refresh " + message);
 
+                                        BusProvider.getInstance().post(new MarketItemsRefreshFailedEvent(message));
                                     }
                                 };
 
