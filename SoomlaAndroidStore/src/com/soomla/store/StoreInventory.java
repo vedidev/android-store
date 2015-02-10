@@ -314,8 +314,6 @@ public class StoreInventory {
         }
 
         for(VirtualGood good : StoreInfo.getGoods()) {
-            if (good instanceof UpgradeVG) continue;
-
             HashMap<String, Object> updatedValues = new HashMap<String, Object>();
 
             updatedValues.put("balance", StorageManager.getVirtualGoodsStorage().getBalance(good.getItemId()));
