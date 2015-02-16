@@ -206,7 +206,13 @@ public class SoomlaStore {
                         };
 
                         BusProvider.getInstance().post(new RestoreTransactionsStartedEvent());
-                        mInAppBillingService.restorePurchasesAsync(restorePurchasesListener);
+
+                        try {
+                            mInAppBillingService.restorePurchasesAsync(restorePurchasesListener);
+                        } catch (IllegalStateException ex) {
+                            SoomlaUtils.LogError(TAG, "Can't proceed with restorePurchases. error: " + ex.getMessage());
+                            restorePurchasesListener.fail("Can't proceed with restorePurchases. error: " + ex.getMessage());
+                        }
                     }
 
                     @Override
@@ -294,9 +300,15 @@ public class SoomlaStore {
                                 };
 
                         final List<String> purchasableProductIds = StoreInfo.getAllProductIds();
-                        mInAppBillingService.fetchSkusDetailsAsync(purchasableProductIds, fetchSkusDetailsListener);
 
                         BusProvider.getInstance().post(new MarketItemsRefreshStartedEvent());
+
+                        try {
+                            mInAppBillingService.fetchSkusDetailsAsync(purchasableProductIds, fetchSkusDetailsListener);
+                        } catch (IllegalStateException ex) {
+                            SoomlaUtils.LogError(TAG, "Can't proceed with fetchSkusDetails. error: " + ex.getMessage());
+                            fetchSkusDetailsListener.fail("Can't proceed with fetchSkusDetails. error: " + ex.getMessage());
+                        }
                     }
 
                     @Override
@@ -395,9 +407,17 @@ public class SoomlaStore {
                                         handleErrorResult(message);
                                     }
                                 };
-                        mInAppBillingService.launchPurchaseFlow(marketItem.getProductId(),
-                                purchaseListener, payload);
+
                         BusProvider.getInstance().post(new MarketPurchaseStartedEvent(pvi));
+
+                        try {
+                            mInAppBillingService.launchPurchaseFlow(marketItem.getProductId(),
+                                    purchaseListener, payload);
+                        } catch (IllegalStateException ex) {
+                            SoomlaUtils.LogError(TAG, "Can't proceed with launchPurchaseFlow. error: " + ex.getMessage());
+                            purchaseListener.fail("Can't proceed with launchPurchaseFlow. error: " + ex.getMessage());
+                        }
+
                     }
 
                     @Override
