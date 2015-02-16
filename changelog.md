@@ -1,3 +1,9 @@
+### v3.6.8 [view commit logs](https://github.com/soomla/android-store/compare/v3.6.7...v3.6.8)
+
+* Changes
+  * Making sure we send failure events on all store operations
+  * Updating submodule
+
 ### v3.6.7 [view commit logs](https://github.com/soomla/android-store/compare/v3.6.6...v3.6.7)
 
 * New Features
