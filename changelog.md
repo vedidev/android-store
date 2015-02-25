@@ -1,3 +1,8 @@
+### v3.6.9 [view commit logs](https://github.com/soomla/android-store/compare/v3.6.8...v3.6.9)
+
+* Fixes
+  * Importing Amazon plugin v2.0.1 with fixes [see here](https://github.com/soomla/android-store-amazon/blob/master/changelog.md)
+
 ### v3.6.8 [view commit logs](https://github.com/soomla/android-store/compare/v3.6.7...v3.6.8)
 
 * Changes
