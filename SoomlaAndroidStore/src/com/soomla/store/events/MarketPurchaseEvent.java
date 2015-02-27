@@ -32,17 +32,19 @@ public class MarketPurchaseEvent extends SoomlaEvent {
      * @param token token associated with in-app billing purchase
      */
     public MarketPurchaseEvent(PurchasableVirtualItem purchasableVirtualItem, String payload,
-                               String token, String orderId) {
-        this(purchasableVirtualItem, payload, token, orderId, null);
+                               String token, String orderId, String originalJson, String signature) {
+        this(purchasableVirtualItem, payload, token, orderId, originalJson, signature, null);
     }
 
     public MarketPurchaseEvent(PurchasableVirtualItem purchasableVirtualItem, String payload,
-                               String token, String orderId, Object sender) {
+                               String token, String orderId, String originalJson, String signature, Object sender) {
         super(sender);
         mPurchasableVirtualItem = purchasableVirtualItem;
         mPayload = payload;
         mToken = token;
         mOrderId = orderId;
+        mOriginalJson = originalJson;
+        mSignature = signature;
     }
 
 
@@ -64,6 +66,14 @@ public class MarketPurchaseEvent extends SoomlaEvent {
         return mOrderId;
     }
 
+    public String getOriginalJson() {
+        return mOriginalJson;
+    }
+
+    public String getSignature() {
+        return mSignature;
+    }
+
     /** Private Members */
 
     private PurchasableVirtualItem mPurchasableVirtualItem;
@@ -73,4 +83,8 @@ public class MarketPurchaseEvent extends SoomlaEvent {
     private String mToken;
 
     private String mOrderId;
+
+    private String mOriginalJson;
+
+    private String mSignature;
 }
