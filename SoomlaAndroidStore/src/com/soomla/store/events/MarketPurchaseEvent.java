@@ -37,6 +37,11 @@ public class MarketPurchaseEvent extends SoomlaEvent {
     }
 
     public MarketPurchaseEvent(PurchasableVirtualItem purchasableVirtualItem, String payload,
+                               String token, String orderId, Object sender) {
+        this(purchasableVirtualItem, payload, token, orderId, null, null, null, sender);
+    }
+
+    public MarketPurchaseEvent(PurchasableVirtualItem purchasableVirtualItem, String payload,
                                String token, String orderId, String originalJson, String signature, String userId, Object sender) {
         super(sender);
         mPurchasableVirtualItem = purchasableVirtualItem;
