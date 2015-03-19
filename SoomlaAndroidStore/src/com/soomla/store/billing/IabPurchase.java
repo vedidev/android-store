@@ -33,7 +33,7 @@ public class IabPurchase {
     private String mToken;
     private String mOriginalJson;
     private String mSignature;
-    private String mUserId;
+    private String mUserId; // NOTE: UserId is only used on Amazon Store.
 
     public IabPurchase(String itemType, String sku, String purchaseToken, String orderId, int purchaseState) {
         this(itemType, sku, purchaseToken, orderId, purchaseState, null);

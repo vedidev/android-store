@@ -97,9 +97,9 @@ public class StoreExampleActivity extends Activity {
         IStoreAssets storeAssets = new MuffinRushAssets();
         mEventHandler = new ExampleEventHandler(mHandler, this);
 
-        Soomla.initialize("[CUSTOM SECRET HERE]");
+        Soomla.initialize("ABABAABABA");
         SoomlaStore.getInstance().initialize(storeAssets);
-        GooglePlayIabService.getInstance().setPublicKey("[YOUR PUBLIC KEY FROM THE MARKET]");
+        GooglePlayIabService.getInstance().setPublicKey("ADcJAIOO");
         GooglePlayIabService.AllowAndroidTestPurchases = true;
 
 
