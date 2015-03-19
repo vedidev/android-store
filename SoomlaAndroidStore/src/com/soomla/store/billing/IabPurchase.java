@@ -33,13 +33,19 @@ public class IabPurchase {
     private String mToken;
     private String mOriginalJson;
     private String mSignature;
+    private String mUserId;
 
     public IabPurchase(String itemType, String sku, String purchaseToken, String orderId, int purchaseState) {
+        this(itemType, sku, purchaseToken, orderId, purchaseState, null);
+    }
+
+    public IabPurchase(String itemType, String sku, String purchaseToken, String orderId, int purchaseState, String userId) {
         mItemType = itemType;
         mSku = sku;
         mToken = purchaseToken;
         mOrderId = orderId;
         mPurchaseState = purchaseState;
+        mUserId = userId;
     }
 
     public IabPurchase(String itemType, String jsonPurchaseInfo, String signature) throws JSONException {
@@ -94,6 +100,10 @@ public class IabPurchase {
 
     public String getSignature() {
         return mSignature;
+    }
+
+    public String getUserId() {
+        return mUserId;
     }
 
     public void setDeveloperPayload(String developerPayload) {
