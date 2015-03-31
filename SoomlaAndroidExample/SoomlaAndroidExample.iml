@@ -17,9 +17,6 @@
     <content url="file://$MODULE_DIR$/../SoomlaAndroidStore/src">
       <sourceFolder url="file://$MODULE_DIR$/../SoomlaAndroidStore/src" isTestSource="false" />
     </content>
-    <content url="file://$MODULE_DIR$/../../../plugins/android-store-google-play/src">
-      <sourceFolder url="file://$MODULE_DIR$/../../../plugins/android-store-google-play/src" isTestSource="false" />
-    </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module-library">
@@ -35,6 +32,15 @@
       <library>
         <CLASSES>
           <root url="jar://$MODULE_DIR$/../build/SoomlaAndroidCore.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/../billing-services/google-play/AndroidStoreGooglePlay.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
