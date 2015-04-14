@@ -299,23 +299,26 @@ public class StoreInfo {
      * @return list of all UpgradeVGs for the virtual good with the given <code>goodItemId</code>
      */
     public static List<UpgradeVG> getGoodUpgrades(String goodItemId) {
+        if (mGoodsUpgrades == null) {
+            return new LinkedList<UpgradeVG>();
+        }
         return mGoodsUpgrades.get(goodItemId);
     }
 
     public static List<VirtualCurrency> getCurrencies() {
-        return mCurrencies;
+        return mCurrencies == null ? new ArrayList<VirtualCurrency>() : mCurrencies;
     }
 
     public static List<VirtualCurrencyPack> getCurrencyPacks() {
-        return mCurrencyPacks;
+        return mCurrencyPacks == null ? new ArrayList<VirtualCurrencyPack>() : mCurrencyPacks;
     }
 
     public static List<VirtualGood> getGoods() {
-        return mGoods;
+        return mGoods == null ? new ArrayList<VirtualGood>() : mGoods;
     }
 
     public static List<VirtualCategory> getCategories() {
-        return mCategories;
+        return mCategories == null ? new ArrayList<VirtualCategory>() : mCategories;
     }
 
     public static List<String> getAllProductIds() {
