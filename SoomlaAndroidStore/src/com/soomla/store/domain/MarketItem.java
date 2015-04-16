@@ -33,12 +33,10 @@ public class MarketItem {
      * Constructor.
      *
      * @param mProductId the id of the current item in the market
-     * @param mManaged the Managed type of the current item in the market
      * @param mPrice the actual $$ cost of the current item in the market
      */
-    public MarketItem(String mProductId, Managed mManaged, double mPrice) {
+    public MarketItem(String mProductId, double mPrice) {
         this.mProductId = mProductId;
-        this.mManaged = mManaged;
         this.mPrice = mPrice;
     }
 
@@ -51,11 +49,6 @@ public class MarketItem {
      * @throws JSONException
      */
     public MarketItem(JSONObject jsonObject) throws JSONException {
-        if (jsonObject.has(StoreJSONConsts.MARKETITEM_MANAGED)) {
-            this.mManaged = Managed.values()[jsonObject.getInt(StoreJSONConsts.MARKETITEM_MANAGED)];
-        } else {
-            this.mManaged = Managed.UNMANAGED;
-        }
         if (jsonObject.has(StoreJSONConsts.MARKETITEM_ANDROID_ID)) {
             this.mProductId = jsonObject.getString(StoreJSONConsts.MARKETITEM_ANDROID_ID);
         } else {
@@ -80,7 +73,6 @@ public class MarketItem {
         try {
             jsonObject.put(JSONConsts.SOOM_CLASSNAME, SoomlaUtils.getClassName(this));
 
-            jsonObject.put(StoreJSONConsts.MARKETITEM_MANAGED, mManaged.ordinal());
             jsonObject.put(StoreJSONConsts.MARKETITEM_ANDROID_ID, mProductId);
             jsonObject.put(StoreJSONConsts.MARKETITEM_PRICE, Double.valueOf(mPrice));
 
@@ -96,19 +88,6 @@ public class MarketItem {
         return jsonObject;
     }
 
-    /**
-     * Each product in the catalog can be MANAGED, UNMANAGED, or SUBSCRIPTION.
-     * MANAGED means that the product can be purchased only once per user (such as a new level in
-     * a game). This purchase is remembered by the Market and can be restored if this
-     * application is uninstalled and then re-installed.
-     * UNMANAGED is used for products that can be used up and purchased multiple times (such as
-     * "gold coins"). It is up to the application to keep track of UNMANAGED products for the user.
-     * SUBSCRIPTION is just like MANAGED except that the user gets charged periodically (monthly
-     * or yearly).
-     */
-    public static enum Managed { MANAGED, UNMANAGED, SUBSCRIPTION }
-
-
     /** Setters and Getters **/
 
     public void setMarketInformation(String marketPriceAndCurrency, String marketTitle, String marketDescription, String marketCurrencyCode, long marketPriceMicros) {
@@ -121,14 +100,6 @@ public class MarketItem {
 
     public String getProductId() {
         return mProductId;
-    }
-
-    public Managed getManaged() {
-        return mManaged;
-    }
-
-    public void setManaged(Managed managed) {
-        this.mManaged = managed;
     }
 
     public double getPrice() {
@@ -165,8 +136,6 @@ public class MarketItem {
     /** Private Members **/
 
     private static final String TAG = "SOOMLA MarketItem"; //used for Log messages
-
-    private Managed mManaged; //the Managed type of the current item in the market.
 
     private String mProductId; //id of this VirtualGood in the market
 

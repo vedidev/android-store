@@ -40,7 +40,7 @@ public class PurchaseWithMarket extends PurchaseType {
      * @param price the price in the Market.
      */
     public PurchaseWithMarket(String productId, double price) {
-        mMarketItem = new MarketItem(productId, MarketItem.Managed.UNMANAGED, price);
+        mMarketItem = new MarketItem(productId, price);
     }
 
     /**
