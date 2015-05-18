@@ -306,19 +306,19 @@ public class StoreInfo {
     }
 
     public static List<VirtualCurrency> getCurrencies() {
-        return mCurrencies == null ? new ArrayList<VirtualCurrency>() : mCurrencies;
+        return mCurrencies;
     }
 
     public static List<VirtualCurrencyPack> getCurrencyPacks() {
-        return mCurrencyPacks == null ? new ArrayList<VirtualCurrencyPack>() : mCurrencyPacks;
+        return mCurrencyPacks;
     }
 
     public static List<VirtualGood> getGoods() {
-        return mGoods == null ? new ArrayList<VirtualGood>() : mGoods;
+        return mGoods;
     }
 
     public static List<VirtualCategory> getCategories() {
-        return mCategories == null ? new ArrayList<VirtualCategory>() : mCategories;
+        return mCategories;
     }
 
     public static List<String> getAllProductIds() {

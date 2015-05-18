@@ -35,6 +35,7 @@ import com.soomla.store.exceptions.InsufficientFundsException;
 import com.soomla.store.exceptions.NotEnoughGoodsException;
 import com.soomla.store.exceptions.VirtualItemNotFoundException;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -304,16 +305,24 @@ public class StoreInventory {
     }
 
     public static HashMap<String, HashMap<String, Object>> allItemsBalances() {
+        SoomlaUtils.LogDebug(TAG, "Fetching all items balances");
+
         HashMap<String, HashMap<String, Object>> itemsDict = new HashMap<String, HashMap<String, Object>>();
 
-        for(VirtualCurrency currency : StoreInfo.getCurrencies()) {
+        SoomlaUtils.LogDebug(TAG, "Fetching balances for Currencies");
+        // we're cloning the list to avoid situations where someone else tries to manipulate list while we iterate
+        List<VirtualCurrency> currencies = new ArrayList<VirtualCurrency>(StoreInfo.getCurrencies());
+        for(VirtualCurrency currency : currencies) {
             HashMap<String, Object> updatedValues = new HashMap<String, Object>();
             updatedValues.put("balance", StorageManager.getVirtualCurrencyStorage().getBalance(currency.getItemId()));
 
             itemsDict.put(currency.getItemId(), updatedValues);
         }
 
-        for(VirtualGood good : StoreInfo.getGoods()) {
+        SoomlaUtils.LogDebug(TAG, "Fetching balances for Goods");
+        // we're cloning the list to avoid situations where someone else tries to manipulate list while we iterate
+        List<VirtualGood> goods = new ArrayList<VirtualGood>(StoreInfo.getGoods());
+        for(VirtualGood good : goods) {
             HashMap<String, Object> updatedValues = new HashMap<String, Object>();
 
             updatedValues.put("balance", StorageManager.getVirtualGoodsStorage().getBalance(good.getItemId()));
