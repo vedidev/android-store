@@ -1,3 +1,12 @@
+### v3.6.11 [view commit logs](https://github.com/soomla/android-store/compare/v3.6.10...v3.6.11)
+
+* Fixes
+  * Copying lists in allItemsBalances to prevent crash if this happens in parallel to market refresh
+
+* Changes
+  * Supporting changes to Foreground from Core
+  * Removed the MANAGED enum from MarketItem
+
 ### v3.6.10 [view commit logs](https://github.com/soomla/android-store/compare/v3.6.9...v3.6.10)
 
 * Features
