@@ -51,6 +51,7 @@ import com.soomla.store.exceptions.VirtualItemNotFoundException;
 import com.soomla.store.purchaseTypes.PurchaseWithMarket;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -505,11 +506,11 @@ public class SoomlaStore {
     private void handleSuccessfulPurchase(IabPurchase purchase) {
         String sku = purchase.getSku();
         String developerPayload = purchase.getDeveloperPayload();
-        String token = purchase.getToken();
-        String orderId = purchase.getOrderId();
-        String originalJson = purchase.getOriginalJson();
-        String signature = purchase.getSignature();
-        String userId = purchase.getUserId();
+        final String token = purchase.getToken();
+        final String orderId = purchase.getOrderId();
+        final String originalJson = purchase.getOriginalJson();
+        final String signature = purchase.getSignature();
+        final String userId = purchase.getUserId();
 
         PurchasableVirtualItem pvi;
         try {
@@ -539,7 +540,13 @@ public class SoomlaStore {
                 }
 
                 BusProvider.getInstance().post(new MarketPurchaseEvent
-                        (pvi, developerPayload, token, orderId, originalJson, signature, userId, null));
+                        (pvi, developerPayload, new HashMap<String, String>() {{
+                            put("token", token);
+                            put("orderId", orderId);
+                            put("originalJson", originalJson);
+                            put("signature", signature);
+                            put("userId", userId);
+                        }}, null));
                 pvi.give(1);
                 BusProvider.getInstance().post(new ItemPurchasedEvent(pvi.getItemId(), developerPayload));
 

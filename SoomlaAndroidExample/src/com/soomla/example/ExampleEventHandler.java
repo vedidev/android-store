@@ -56,7 +56,7 @@ public class ExampleEventHandler {
      */
     @Subscribe
     public void onMarketPurchase(MarketPurchaseEvent marketPurchaseEvent) {
-        showToastIfDebug(marketPurchaseEvent.getPurchasableVirtualItem().getName()
+        showToastIfDebug(marketPurchaseEvent.PurchasableVirtualItem.getName()
                 + " was just purchased");
     }
 
