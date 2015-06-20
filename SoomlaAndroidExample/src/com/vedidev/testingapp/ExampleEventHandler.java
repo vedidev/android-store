@@ -15,15 +15,15 @@
  */
 
 
-package com.soomla.example;
+package com.vedidev.testingapp;
 
 import android.os.Handler;
 import android.widget.Toast;
 import com.soomla.BusProvider;
 import com.soomla.SoomlaConfig;
 import com.soomla.SoomlaApp;
-import com.soomla.store.events.*;
 import com.squareup.otto.Subscribe;
+import com.soomla.store.events.*;
 
 /**
  * This class contains functions that receive events that they are subscribed to. Annotating with
@@ -295,7 +295,7 @@ public class ExampleEventHandler {
             mHandler.post(new Runnable() {
                 @Override
                 public void run() {
-                    Toast toast = Toast.makeText(SoomlaApp.getAppContext(), msg, 2000);
+                    Toast toast = Toast.makeText(SoomlaApp.getAppContext(), msg, Toast.LENGTH_LONG);
                     toast.show();
                 }
             });

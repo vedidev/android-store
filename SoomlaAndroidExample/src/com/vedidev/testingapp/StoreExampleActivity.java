@@ -15,7 +15,7 @@
  */
 
 
-package com.soomla.example;
+package com.vedidev.testingapp;
 
 import android.app.Activity;
 import android.content.ClipData;
@@ -37,10 +37,12 @@ import com.soomla.Soomla;
 import com.soomla.SoomlaApp;
 import com.soomla.SoomlaConfig;
 import com.soomla.SoomlaUtils;
-import com.soomla.store.*;
-import com.soomla.store.billing.google.GooglePlayIabService;
-import com.soomla.store.domain.virtualCurrencies.VirtualCurrency;
-import com.soomla.store.exceptions.VirtualItemNotFoundException;
+import com.vedidev.store.billing.google.GooglePlayIabService;
+import com.vedidev.store.domain.virtualCurrencies.VirtualCurrency;
+import com.vedidev.store.exceptions.VirtualItemNotFoundException;
+import com.vedidev.store.IStoreAssets;
+import com.vedidev.store.SoomlaStore;
+import com.vedidev.store.StoreInventory;
 
 /**
  * In this class <code>SoomlaStore</code> and <code>EventHandler</code> are initialized before
@@ -99,7 +101,7 @@ public class StoreExampleActivity extends Activity {
 
         Soomla.initialize("[CUSTOM SECRET HERE]");
         SoomlaStore.getInstance().initialize(storeAssets);
-        GooglePlayIabService.getInstance().setPublicKey("[YOUR PUBLIC KEY FROM THE MARKET]");
+        GooglePlayIabService.getInstance().setPublicKey("MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAgwyIs+GudcF/19zBscSeuaGaFNQ9ro3RfuwWOWAkbV54NMRtdZuTgvtUkDVO2221yZCSpTT4Kj55DX9/A7PguXyc1uGuy42Enzbp3d6mXESTnUucNi4jmxpikORxuVZHqW3/fZiaOcBWKb2frgRztkoGraKG9RIGve3E205oClbZQHkvc3Z8zi30WLkXeMbrA0HP3/2q2ZwF+z5kA4y2Lfv8LMsXRYM9hHTScsEIvRhPX8H3omRgECn4R+ZHh2WHjRw3KHnknbTLKsgFGsmsECQzPhjQTeC7eVfmDqhjT2yTJJSsYigRV2EAB6rG8qC+rivv18dtX95E0+6klUHU2QIDAQAB");
         GooglePlayIabService.AllowAndroidTestPurchases = true;
 
 

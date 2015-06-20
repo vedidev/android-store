@@ -15,7 +15,7 @@
  */
 
 
-package com.soomla.example;
+package com.vedidev.testingapp;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -31,18 +31,17 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.soomla.BusProvider;
-import com.soomla.Soomla;
 import com.soomla.SoomlaUtils;
-import com.soomla.store.SoomlaStore;
-import com.soomla.store.data.StorageManager;
-import com.soomla.store.data.StoreInfo;
-import com.soomla.store.domain.virtualGoods.VirtualGood;
-import com.soomla.store.events.CurrencyBalanceChangedEvent;
-import com.soomla.store.events.GoodBalanceChangedEvent;
-import com.soomla.store.exceptions.InsufficientFundsException;
-import com.soomla.store.exceptions.VirtualItemNotFoundException;
-import com.soomla.store.purchaseTypes.PurchaseWithMarket;
-import com.soomla.store.purchaseTypes.PurchaseWithVirtualItem;
+import com.vedidev.store.SoomlaStore;
+import com.vedidev.store.data.StorageManager;
+import com.vedidev.store.data.StoreInfo;
+import com.vedidev.store.domain.virtualGoods.VirtualGood;
+import com.vedidev.store.events.CurrencyBalanceChangedEvent;
+import com.vedidev.store.events.GoodBalanceChangedEvent;
+import com.vedidev.store.exceptions.InsufficientFundsException;
+import com.vedidev.store.exceptions.VirtualItemNotFoundException;
+import com.vedidev.store.purchaseTypes.PurchaseWithMarket;
+import com.vedidev.store.purchaseTypes.PurchaseWithVirtualItem;
 import com.squareup.otto.Subscribe;
 
 import java.io.IOException;

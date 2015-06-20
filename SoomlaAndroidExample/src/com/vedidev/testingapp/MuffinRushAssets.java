@@ -15,23 +15,21 @@
  */
 
 
-package com.soomla.example;
+package com.vedidev.testingapp;
 
-import android.content.res.AssetManager;
+import com.vedidev.store.IStoreAssets;
+import com.vedidev.store.domain.MarketItem;
+import com.vedidev.store.domain.VirtualCategory;
+import com.vedidev.store.domain.virtualCurrencies.VirtualCurrency;
+import com.vedidev.store.domain.virtualCurrencies.VirtualCurrencyPack;
+import com.vedidev.store.domain.virtualGoods.LifetimeVG;
+import com.vedidev.store.domain.virtualGoods.SingleUseVG;
+import com.vedidev.store.domain.virtualGoods.VirtualGood;
+import com.vedidev.store.purchaseTypes.PurchaseWithMarket;
+import com.vedidev.store.purchaseTypes.PurchaseWithVirtualItem;
 
-import com.soomla.store.IStoreAssets;
-import com.soomla.SoomlaApp;
-import com.soomla.store.domain.*;
-import com.soomla.store.domain.virtualCurrencies.*;
-import com.soomla.store.domain.virtualGoods.*;
-import com.soomla.store.purchaseTypes.*;
-
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 
 /**
  * This class defines our game's economy, which includes virtual goods, virtual currencies
@@ -101,13 +99,13 @@ public class MuffinRushAssets implements IStoreAssets {
 
     public static final String CREAMCUP_ITEM_ID             = "cream_cup";
 
-    public static final String TENMUFF_PACK_PRODUCT_ID      = "android.test.refunded";
+    public static final String TENMUFF_PACK_PRODUCT_ID      = "vedidev.test.0010";
 
-    public static final String FIFTYMUFF_PACK_PRODUCT_ID    = "android.test.canceled";
+    public static final String FIFTYMUFF_PACK_PRODUCT_ID    = "vedidev.test.0040";
 
-    public static final String FOURHUNDMUFF_PACK_PRODUCT_ID = "android.test.purchased";
+    public static final String FOURHUNDMUFF_PACK_PRODUCT_ID = "vedidev.test.0400";
 
-    public static final String THOUSANDMUFF_PACK_PRODUCT_ID = "android.test.item_unavailable";
+    public static final String THOUSANDMUFF_PACK_PRODUCT_ID = "vedidev.test.1000";
 
     public static final String NO_ADS_PRODUCT_ID            = "no_ads";
 
@@ -196,7 +194,7 @@ public class MuffinRushAssets implements IStoreAssets {
             "No More Ads!",                                                // description
             "no_ads",                                                      // item id
             new PurchaseWithMarket(new MarketItem(                         // purchase type
-                    NO_ADS_PRODUCT_ID, MarketItem.Managed.MANAGED, 1.99))
+                    FIFTYMUFF_PACK_PRODUCT_ID, 1.99))
 
     );
 
