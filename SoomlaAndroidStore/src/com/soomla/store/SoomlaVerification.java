@@ -42,12 +42,14 @@ public class SoomlaVerification {
     }
 
     public void verifyData() {
-        String data = this.purchase.getSignature();
+        String purchaseToken = this.purchase.getToken();
 
-        if (data != null) {
+        if (purchaseToken != null) {
             JSONObject jsonObject = new JSONObject();
             try {
-                jsonObject.put("receipt_base64", data); //  TODO: Check if it's base64 encoded
+                jsonObject.put("purchaseToken", purchaseToken);
+                jsonObject.put("packageName", this.purchase.getPackageName());
+                jsonObject.put("sku", this.purchase.getSku());
                 SoomlaUtils.LogDebug(TAG, String.format("verifying purchase on server: %s", VERIFY_URL));
 
                 HttpResponse resp = doPost(jsonObject);
@@ -84,7 +86,7 @@ public class SoomlaVerification {
                 fireError(e.getMessage());
             }
         } else {
-            fireError("An error occurred while trying to get receipt data. Stopping the purchasing process for: " + purchase.getSku());
+            fireError("An error occurred while trying to get receipt purchaseToken. Stopping the purchasing process for: " + purchase.getSku());
         }
     }
 
