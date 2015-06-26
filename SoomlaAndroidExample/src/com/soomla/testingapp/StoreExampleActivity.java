@@ -15,7 +15,7 @@
  */
 
 
-package com.vedidev.testingapp;
+package com.soomla.testingapp;
 
 import android.app.Activity;
 import android.content.ClipData;
@@ -32,17 +32,16 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-
 import com.soomla.Soomla;
 import com.soomla.SoomlaApp;
 import com.soomla.SoomlaConfig;
 import com.soomla.SoomlaUtils;
-import com.vedidev.store.billing.google.GooglePlayIabService;
-import com.vedidev.store.domain.virtualCurrencies.VirtualCurrency;
-import com.vedidev.store.exceptions.VirtualItemNotFoundException;
-import com.vedidev.store.IStoreAssets;
-import com.vedidev.store.SoomlaStore;
-import com.vedidev.store.StoreInventory;
+import com.soomla.store.IStoreAssets;
+import com.soomla.store.SoomlaStore;
+import com.soomla.store.StoreInventory;
+import com.soomla.store.billing.google.GooglePlayIabService;
+import com.soomla.store.domain.virtualCurrencies.VirtualCurrency;
+import com.soomla.store.exceptions.VirtualItemNotFoundException;
 
 /**
  * In this class <code>SoomlaStore</code> and <code>EventHandler</code> are initialized before
@@ -101,8 +100,13 @@ public class StoreExampleActivity extends Activity {
 
         Soomla.initialize("[CUSTOM SECRET HERE]");
         SoomlaStore.getInstance().initialize(storeAssets);
-        GooglePlayIabService.getInstance().setPublicKey("MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAgwyIs+GudcF/19zBscSeuaGaFNQ9ro3RfuwWOWAkbV54NMRtdZuTgvtUkDVO2221yZCSpTT4Kj55DX9/A7PguXyc1uGuy42Enzbp3d6mXESTnUucNi4jmxpikORxuVZHqW3/fZiaOcBWKb2frgRztkoGraKG9RIGve3E205oClbZQHkvc3Z8zi30WLkXeMbrA0HP3/2q2ZwF+z5kA4y2Lfv8LMsXRYM9hHTScsEIvRhPX8H3omRgECn4R+ZHh2WHjRw3KHnknbTLKsgFGsmsECQzPhjQTeC7eVfmDqhjT2yTJJSsYigRV2EAB6rG8qC+rivv18dtX95E0+6klUHU2QIDAQAB");
         GooglePlayIabService.AllowAndroidTestPurchases = true;
+        GooglePlayIabService iabService = GooglePlayIabService.getInstance();
+        iabService.setPublicKey("MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAgwyIs+GudcF/19zBscSeuaGaFNQ9ro3RfuwWOWAkbV54NMRtdZuTgvtUkDVO2221yZCSpTT4Kj55DX9/A7PguXyc1uGuy42Enzbp3d6mXESTnUucNi4jmxpikORxuVZHqW3/fZiaOcBWKb2frgRztkoGraKG9RIGve3E205oClbZQHkvc3Z8zi30WLkXeMbrA0HP3/2q2ZwF+z5kA4y2Lfv8LMsXRYM9hHTScsEIvRhPX8H3omRgECn4R+ZHh2WHjRw3KHnknbTLKsgFGsmsECQzPhjQTeC7eVfmDqhjT2yTJJSsYigRV2EAB6rG8qC+rivv18dtX95E0+6klUHU2QIDAQAB");
+        iabService.setVerifyPurchases(true);
+        iabService.setClientId("xxx.apps.googleusercontent.com");
+        iabService.setClientSecret("xxx");
+        iabService.setRefreshToken("1/xxx");
 
 
         //FOR TESTING PURPOSES ONLY: Check if it's a first run, if so add 10000 currencies.

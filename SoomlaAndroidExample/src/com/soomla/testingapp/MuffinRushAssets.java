@@ -15,18 +15,18 @@
  */
 
 
-package com.vedidev.testingapp;
+package com.soomla.testingapp;
 
-import com.vedidev.store.IStoreAssets;
-import com.vedidev.store.domain.MarketItem;
-import com.vedidev.store.domain.VirtualCategory;
-import com.vedidev.store.domain.virtualCurrencies.VirtualCurrency;
-import com.vedidev.store.domain.virtualCurrencies.VirtualCurrencyPack;
-import com.vedidev.store.domain.virtualGoods.LifetimeVG;
-import com.vedidev.store.domain.virtualGoods.SingleUseVG;
-import com.vedidev.store.domain.virtualGoods.VirtualGood;
-import com.vedidev.store.purchaseTypes.PurchaseWithMarket;
-import com.vedidev.store.purchaseTypes.PurchaseWithVirtualItem;
+import com.soomla.store.IStoreAssets;
+import com.soomla.store.domain.MarketItem;
+import com.soomla.store.domain.VirtualCategory;
+import com.soomla.store.domain.virtualCurrencies.VirtualCurrency;
+import com.soomla.store.domain.virtualCurrencies.VirtualCurrencyPack;
+import com.soomla.store.domain.virtualGoods.LifetimeVG;
+import com.soomla.store.domain.virtualGoods.SingleUseVG;
+import com.soomla.store.domain.virtualGoods.VirtualGood;
+import com.soomla.store.purchaseTypes.PurchaseWithMarket;
+import com.soomla.store.purchaseTypes.PurchaseWithVirtualItem;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -99,13 +99,13 @@ public class MuffinRushAssets implements IStoreAssets {
 
     public static final String CREAMCUP_ITEM_ID             = "cream_cup";
 
-    public static final String TENMUFF_PACK_PRODUCT_ID      = "vedidev.test.0010";
+    public static final String TENMUFF_PACK_PRODUCT_ID      = "android.test.refunded";
 
-    public static final String FIFTYMUFF_PACK_PRODUCT_ID    = "vedidev.test.0040";
+    public static final String FIFTYMUFF_PACK_PRODUCT_ID    = "android.test.canceled";
 
-    public static final String FOURHUNDMUFF_PACK_PRODUCT_ID = "vedidev.test.0400";
+    public static final String FOURHUNDMUFF_PACK_PRODUCT_ID = "android.test.purchased";
 
-    public static final String THOUSANDMUFF_PACK_PRODUCT_ID = "vedidev.test.1000";
+    public static final String THOUSANDMUFF_PACK_PRODUCT_ID = "android.test.item_unavailable";
 
     public static final String NO_ADS_PRODUCT_ID            = "no_ads";
 
@@ -192,7 +192,7 @@ public class MuffinRushAssets implements IStoreAssets {
     public static final VirtualGood NO_ADS_GOOD = new LifetimeVG(
             "No Ads",                                                     // name
             "No More Ads!",                                                // description
-            "no_ads",                                                      // item id
+            NO_ADS_PRODUCT_ID,                                                      // item id
             new PurchaseWithMarket(new MarketItem(                         // purchase type
                     FIFTYMUFF_PACK_PRODUCT_ID, 1.99))
 

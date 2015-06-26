@@ -1,13 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-          package="com.vedidev.testingapp"
-          android:versionCode="2"
+          package="com.soomla.testingapp"
+          android:versionCode="4"
           android:versionName="1.1">
     <uses-sdk android:minSdkVersion="11" android:targetSdkVersion="19"/>
 
 
 
     <!-- uncomment when you want google play IAB -->
+    <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="com.android.vending.BILLING" />
 
 
@@ -30,7 +31,7 @@
 
 
         <!-- uncomment when you want google play IAB -->
-        <activity android:name="com.vedidev.store.billing.google.GooglePlayIabService$IabActivity"
+        <activity android:name="com.soomla.store.billing.google.GooglePlayIabService$IabActivity"
                   android:theme="@android:style/Theme.Translucent.NoTitleBar.Fullscreen"/>
         <meta-data android:name="billing.service" android:value="google.GooglePlayIabService" />
 
