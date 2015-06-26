@@ -42,6 +42,7 @@ import com.soomla.store.events.MarketItemsRefreshStartedEvent;
 import com.soomla.store.events.MarketPurchaseCancelledEvent;
 import com.soomla.store.events.MarketPurchaseEvent;
 import com.soomla.store.events.MarketPurchaseStartedEvent;
+import com.soomla.store.events.MarketPurchaseVerificationEvent;
 import com.soomla.store.events.MarketRefundEvent;
 import com.soomla.store.events.RestoreTransactionsFinishedEvent;
 import com.soomla.store.events.RestoreTransactionsStartedEvent;
@@ -526,17 +527,12 @@ public class SoomlaStore {
         }
 
         switch (purchase.getPurchaseState()) {
-            case 0:
-                SoomlaUtils.LogDebug(TAG, "IabPurchase successful.");
-
-                // if the purchasable item is non-consumable and it already exists then we
-                // don't fire any events.
-                // fixes: https://github.com/soomla/unity3d-store/issues/192
-                // TODO: update on the issue in github
-                if (StoreInfo.isItemNonConsumable(pvi)) {
-                    if (StorageManager.getVirtualItemStorage(pvi).getBalance(pvi.getItemId()) == 1) {
-                        return;
-                    }
+            case 0: {
+                if (StoreConfig.VERIFY_PURCHASES) {
+                    SoomlaVerification sv = new SoomlaVerification(purchase, pvi);
+                    sv.verifyData();
+                } else {
+                    this.finalizeTransaction(purchase, pvi);
                 }
 
                 BusProvider.getInstance().post(new MarketPurchaseEvent
@@ -553,10 +549,11 @@ public class SoomlaStore {
                 consumeIfConsumable(purchase, pvi);
 
                 break;
-
+            }
             case 1:
 
             case 2:
+                String developerPayload = purchase.getDeveloperPayload();
                 SoomlaUtils.LogDebug(TAG, "IabPurchase refunded.");
                 if (!StoreConfig.friendlyRefunds) {
                     pvi.take(1);
@@ -640,6 +637,44 @@ public class SoomlaStore {
         SoomlaUtils.LogError(TAG, "ERROR: SoomlaStore failure: " + message);
     }
 
+    private void finalizeTransaction(IabPurchase purchase, PurchasableVirtualItem pvi) {
+        SoomlaUtils.LogDebug(TAG, "IabPurchase successful.");
+
+        // if the purchasable item is non-consumable and it already exists then we
+        // don't fire any events.
+        // fixes: https://github.com/soomla/unity3d-store/issues/192
+        // TODO: update on the issue in github
+        if (StoreInfo.isItemNonConsumable(pvi)) {
+            if (StorageManager.getVirtualItemStorage(pvi).getBalance(pvi.getItemId()) == 1) {
+                return;
+            }
+        }
+
+
+        String developerPayload = purchase.getDeveloperPayload();
+        String token = purchase.getToken();
+        String orderId = purchase.getOrderId();
+        String originalJson = purchase.getOriginalJson();
+        String signature = purchase.getSignature();
+        String userId = purchase.getUserId();
+
+        BusProvider.getInstance().post(new MarketPurchaseEvent
+                (pvi, developerPayload, token, orderId, originalJson, signature, userId, null));
+        pvi.give(1);
+        BusProvider.getInstance().post(new ItemPurchasedEvent(pvi.getItemId(), developerPayload));
+
+        consumeIfConsumable(purchase, pvi);
+    }
+
+    public void on(MarketPurchaseVerificationEvent event) {
+        if (event.isVerified()) {
+            this.finalizeTransaction(event.getPurchase(), event.getPvi());
+        } else {
+            SoomlaUtils.LogError(TAG, "Failed to verify transaction receipt. The user will not get what he just bought.");
+            BusProvider.getInstance().post(new UnexpectedStoreErrorEvent());
+        }
+    }
+
     /* Singleton */
     private static SoomlaStore sInstance = null;
 
@@ -660,7 +695,6 @@ public class SoomlaStore {
      */
     private SoomlaStore() {
     }
-
 
     /* Private Members */
 

@@ -33,4 +33,6 @@ public class StoreConfig {
      */
     public static final int METADATA_VERSION = 4;
 
+    public static final boolean VERIFY_PURCHASES = true;
+
 }
