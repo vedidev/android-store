@@ -15,7 +15,7 @@
  */
 
 
-package com.soomla.testingapp;
+package com.soomla.example;
 
 import com.soomla.store.IStoreAssets;
 import com.soomla.store.domain.MarketItem;

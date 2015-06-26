@@ -15,7 +15,7 @@
  */
 
 
-package com.soomla.testingapp;
+package com.soomla.example;
 
 import android.os.Handler;
 import android.widget.Toast;
