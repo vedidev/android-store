@@ -22,6 +22,7 @@ import com.soomla.BusProvider;
 import com.soomla.SoomlaApp;
 import com.soomla.SoomlaUtils;
 import com.soomla.store.billing.IIabService;
+import com.soomla.store.billing.IIabVerifiable;
 import com.soomla.store.billing.IabCallbacks;
 import com.soomla.store.billing.IabException;
 import com.soomla.store.billing.IabPurchase;
@@ -49,6 +50,7 @@ import com.soomla.store.events.SoomlaStoreInitializedEvent;
 import com.soomla.store.events.UnexpectedStoreErrorEvent;
 import com.soomla.store.exceptions.VirtualItemNotFoundException;
 import com.soomla.store.purchaseTypes.PurchaseWithMarket;
+import com.squareup.otto.Subscribe;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -66,7 +68,7 @@ public class SoomlaStore {
 
     /**
      * Initializes the SOOMLA SDK.
-     * This initializer also initializes {@link com.soomla.store.data.StoreInfo}.
+     * This initializer also initializes {@link StoreInfo}.
      *
      * @param storeAssets the definition of your application specific assets.
      */
@@ -521,9 +523,11 @@ public class SoomlaStore {
 
         switch (purchase.getPurchaseState()) {
             case 0: {
-                if (StoreConfig.VERIFY_PURCHASES) {
-                    SoomlaVerification sv = new SoomlaVerification(purchase, pvi);
-                    sv.verifyData();
+                if (mInAppBillingService instanceof IIabVerifiable) {
+                    IIabVerifiable iabVerifiable = (IIabVerifiable) mInAppBillingService;
+                    if (iabVerifiable.getVerifyPurchases()) {
+                        iabVerifiable.verifyPurchase(purchase, pvi);
+                    }
                 } else {
                     this.finalizeTransaction(purchase, pvi);
                 }
@@ -652,6 +656,7 @@ public class SoomlaStore {
         consumeIfConsumable(purchase, pvi);
     }
 
+    @Subscribe
     public void on(MarketPurchaseVerificationEvent event) {
         if (event.isVerified()) {
             this.finalizeTransaction(event.getPurchase(), event.getPvi());
@@ -680,6 +685,7 @@ public class SoomlaStore {
      * Constructor
      */
     private SoomlaStore() {
+        BusProvider.getInstance().register(this);
     }
 
     /* Private Members */

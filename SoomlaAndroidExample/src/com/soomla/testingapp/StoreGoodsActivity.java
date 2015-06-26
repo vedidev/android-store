@@ -15,7 +15,7 @@
  */
 
 
-package com.soomla.example;
+package com.soomla.testingapp;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -29,9 +29,7 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
-
 import com.soomla.BusProvider;
-import com.soomla.Soomla;
 import com.soomla.SoomlaUtils;
 import com.soomla.store.SoomlaStore;
 import com.soomla.store.data.StorageManager;

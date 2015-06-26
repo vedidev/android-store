@@ -15,23 +15,21 @@
  */
 
 
-package com.soomla.example;
-
-import android.content.res.AssetManager;
+package com.soomla.testingapp;
 
 import com.soomla.store.IStoreAssets;
-import com.soomla.SoomlaApp;
-import com.soomla.store.domain.*;
-import com.soomla.store.domain.virtualCurrencies.*;
-import com.soomla.store.domain.virtualGoods.*;
-import com.soomla.store.purchaseTypes.*;
+import com.soomla.store.domain.MarketItem;
+import com.soomla.store.domain.VirtualCategory;
+import com.soomla.store.domain.virtualCurrencies.VirtualCurrency;
+import com.soomla.store.domain.virtualCurrencies.VirtualCurrencyPack;
+import com.soomla.store.domain.virtualGoods.LifetimeVG;
+import com.soomla.store.domain.virtualGoods.SingleUseVG;
+import com.soomla.store.domain.virtualGoods.VirtualGood;
+import com.soomla.store.purchaseTypes.PurchaseWithMarket;
+import com.soomla.store.purchaseTypes.PurchaseWithVirtualItem;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 
 /**
  * This class defines our game's economy, which includes virtual goods, virtual currencies
@@ -194,7 +192,7 @@ public class MuffinRushAssets implements IStoreAssets {
     public static final VirtualGood NO_ADS_GOOD = new LifetimeVG(
             "No Ads",                                                     // name
             "No More Ads!",                                                // description
-            "no_ads",                                                      // item id
+            NO_ADS_PRODUCT_ID,                                                      // item id
             new PurchaseWithMarket(new MarketItem(                         // purchase type
                     NO_ADS_PRODUCT_ID, 1.99))
 

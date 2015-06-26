@@ -19,7 +19,6 @@ package com.soomla.store.data;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.text.TextUtils;
-
 import com.soomla.BusProvider;
 import com.soomla.SoomlaApp;
 import com.soomla.SoomlaConfig;
@@ -42,7 +41,6 @@ import com.soomla.store.events.UnexpectedStoreErrorEvent;
 import com.soomla.store.exceptions.VirtualItemNotFoundException;
 import com.soomla.store.purchaseTypes.PurchaseType;
 import com.soomla.store.purchaseTypes.PurchaseWithMarket;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -72,7 +70,7 @@ public class StoreInfo {
      * IMPORTANT: If you want to override the current <code>StoreInfo</code>, you'll have to bump
      * the version of your implementation of <code>IStoreAssets</code> in order to remove the
      * metadata when the application loads. Bumping the version is done by returning a higher number
-     * in {@link com.soomla.store.IStoreAssets#getVersion()}.
+     * in {@link IStoreAssets#getVersion()}.
      */
     public static void setStoreAssets(IStoreAssets storeAssets) {
         if (storeAssets == null) {

@@ -15,12 +15,11 @@
  */
 
 
-package com.soomla.example;
+package com.soomla.testingapp;
 
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
@@ -30,7 +29,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
-
 import com.soomla.BusProvider;
 import com.soomla.store.data.StorageManager;
 import com.soomla.store.data.StoreInfo;
@@ -41,7 +39,6 @@ import com.soomla.store.purchaseTypes.PurchaseWithMarket;
 import com.squareup.otto.Subscribe;
 
 import java.util.HashMap;
-import java.util.List;
 
 /**
  * This class represents Muffin Rush's store of available currency-packs.
