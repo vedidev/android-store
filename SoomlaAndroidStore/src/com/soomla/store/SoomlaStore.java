@@ -148,19 +148,8 @@ public class SoomlaStore {
 
     /**
      * Restoring old purchases for the current user (device).
-     * Here we just call the private function without refreshing market items details.
      */
     public void restoreTransactions() {
-        restoreTransactions(false);
-    }
-
-    /**
-     * Restoring old purchases for the current user (device).
-     *
-     * @param followedByRefreshItemsDetails determines weather we should perform a refresh market
-     *                                      items operation right after a restore purchase success.
-     */
-    private void restoreTransactions(final boolean followedByRefreshItemsDetails) {
         if (mInAppBillingService == null) {
             SoomlaUtils.LogError(TAG, "Billing service is not loaded. Can't invoke restoreTransactions.");
             return;
@@ -193,10 +182,6 @@ public class SoomlaStore {
 
                                 BusProvider.getInstance().post(
                                         new RestoreTransactionsFinishedEvent(true));
-
-                                if (followedByRefreshItemsDetails) {
-                                    refreshMarketItemsDetails();
-                                }
                             }
 
                             @Override
@@ -226,10 +211,21 @@ public class SoomlaStore {
 
     /**
      * Queries the store for the details for all of the game's market items by product ids.
-     * This operation will "fill" up the MarketItem objects with the information you provided in
-     * the developer console including: localized price (as string), title and description.
+     * Here we just call the private function without refreshing market items details.
      */
     public void refreshMarketItemsDetails() {
+        refreshMarketItemsDetails(false);
+    }
+
+    /**
+     * Queries the store for the details for all of the game's market items by product ids.
+     * This operation will "fill" up the MarketItem objects with the information you provided in
+     * the developer console including: localized price (as string), title and description.
+     *
+     * @param followedByRestoreTransactions determines weather we should perform a restore
+     *                                      transactions operation right after a refresh ends.
+     */
+    private void refreshMarketItemsDetails(final boolean followedByRestoreTransactions) {
         if (mInAppBillingService == null) {
             SoomlaUtils.LogError(TAG, "Billing service is not loaded. Can't invoke refreshMarketItemsDetails.");
             return;
@@ -290,6 +286,10 @@ public class SoomlaStore {
                                             StoreInfo.save(virtualItems);
                                         }
                                         BusProvider.getInstance().post(new MarketItemsRefreshFinishedEvent(marketItems));
+
+                                        if (followedByRestoreTransactions) {
+                                            restoreTransactions();
+                                        }
                                     }
 
                                     @Override
@@ -297,6 +297,10 @@ public class SoomlaStore {
                                         SoomlaUtils.LogError(TAG, "Market items details failed to refresh " + message);
 
                                         BusProvider.getInstance().post(new MarketItemsRefreshFailedEvent(message));
+
+                                        if (followedByRestoreTransactions) {
+                                            restoreTransactions();
+                                        }
                                     }
                                 };
 
@@ -309,6 +313,10 @@ public class SoomlaStore {
                         } catch (IllegalStateException ex) {
                             SoomlaUtils.LogError(TAG, "Can't proceed with fetchSkusDetails. error: " + ex.getMessage());
                             fetchSkusDetailsListener.fail("Can't proceed with fetchSkusDetails. error: " + ex.getMessage());
+
+                            if (followedByRestoreTransactions) {
+                                restoreTransactions();
+                            }
                         }
                     }
 
@@ -326,7 +334,7 @@ public class SoomlaStore {
      * functions in this file.
      */
     public void refreshInventory() {
-        restoreTransactions(true);
+        refreshMarketItemsDetails(true);
     }
 
     /**

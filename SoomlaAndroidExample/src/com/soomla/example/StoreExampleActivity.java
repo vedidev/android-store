@@ -98,6 +98,7 @@ public class StoreExampleActivity extends Activity {
         mEventHandler = new ExampleEventHandler(mHandler, this);
 
         Soomla.initialize("[CUSTOM SECRET HERE]");
+        SoomlaConfig.logDebug = true;
         SoomlaStore.getInstance().initialize(storeAssets);
         GooglePlayIabService.getInstance().setPublicKey("[YOUR PUBLIC KEY FROM THE MARKET]");
         GooglePlayIabService.AllowAndroidTestPurchases = true;
