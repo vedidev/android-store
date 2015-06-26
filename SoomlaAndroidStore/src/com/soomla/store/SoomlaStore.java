@@ -21,6 +21,7 @@ import android.content.pm.PackageManager;
 
 import com.soomla.BusProvider;
 import com.soomla.SoomlaApp;
+import com.soomla.SoomlaConfig;
 import com.soomla.SoomlaUtils;
 import com.soomla.store.billing.IIabService;
 import com.soomla.store.billing.IabCallbacks;
@@ -173,15 +174,30 @@ public class SoomlaStore {
                                 SoomlaUtils.LogDebug(TAG, "Transactions restored");
 
                                 if (purchases.size() > 0) {
-                                    for (IabPurchase iabPurchase : purchases) {
-                                        SoomlaUtils.LogDebug(TAG, "Got owned item: " + iabPurchase.getSku());
 
-                                        handleSuccessfulPurchase(iabPurchase);
+                                    if (SoomlaConfig.logDebug) {
+                                        String ownedSkus = "";
+                                        for (IabPurchase purchase : purchases) {
+                                            ownedSkus += purchase.getSku() + " / ";
+                                        }
+                                        SoomlaUtils.LogDebug(TAG, "Got owned items: " + ownedSkus);
                                     }
-                                }
 
-                                BusProvider.getInstance().post(
-                                        new RestoreTransactionsFinishedEvent(true));
+                                    handleSuccessfulPurchases(purchases, new HandleSuccessfulPurchasesFinishedHandler() {
+                                        @Override
+                                        public void onFinished() {
+
+                                            // Restore transactions always finished successfully even if
+                                            // something wrong happened when handling a specific item.
+
+                                            BusProvider.getInstance().post(
+                                                    new RestoreTransactionsFinishedEvent(true));
+                                        }
+                                    });
+                                } else {
+                                    BusProvider.getInstance().post(
+                                            new RestoreTransactionsFinishedEvent(true));
+                                }
                             }
 
                             @Override
@@ -504,6 +520,17 @@ public class SoomlaStore {
     }
 
 
+    private interface HandleSuccessfulPurchasesFinishedHandler {
+        void onFinished();
+    }
+
+    private void handleSuccessfulPurchases(List<IabPurchase> purchases, HandleSuccessfulPurchasesFinishedHandler handler) {
+        for (IabPurchase purchase : purchases) {
+            handleSuccessfulPurchase(purchase);
+        }
+
+        handler.onFinished();
+    }
 
     /**
      * Checks the state of the purchase and responds accordingly, giving the user an item,
