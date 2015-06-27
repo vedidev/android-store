@@ -194,7 +194,7 @@ public class MuffinRushAssets implements IStoreAssets {
             "No More Ads!",                                                // description
             NO_ADS_PRODUCT_ID,                                                      // item id
             new PurchaseWithMarket(new MarketItem(                         // purchase type
-                    NO_ADS_PRODUCT_ID, 1.99))
+                    "no_ads", 1.99))
 
     );
 

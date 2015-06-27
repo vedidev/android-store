@@ -204,7 +204,7 @@ public class ExampleEventHandler {
      */
     @Subscribe
     public void onUnexpectedErrorInStore(UnexpectedStoreErrorEvent unexpectedStoreErrorEvent) {
-        showToastIfDebug("Unexpected error occurred !");
+        showToastIfDebug("Unexpected error occurred: " + unexpectedStoreErrorEvent.getMessage() + "!");
     }
 
     /**

@@ -43,6 +43,8 @@ import com.soomla.store.billing.google.GooglePlayIabService;
 import com.soomla.store.domain.virtualCurrencies.VirtualCurrency;
 import com.soomla.store.exceptions.VirtualItemNotFoundException;
 
+import java.util.HashMap;
+
 /**
  * In this class <code>SoomlaStore</code> and <code>EventHandler</code> are initialized before
  * the store is opened. This class is responsible for displaying the initial screen of the game,
@@ -103,12 +105,12 @@ public class StoreExampleActivity extends Activity {
         SoomlaStore.getInstance().initialize(storeAssets);
         GooglePlayIabService.AllowAndroidTestPurchases = true;
         GooglePlayIabService iabService = GooglePlayIabService.getInstance();
-        iabService.setPublicKey("MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAgwyIs+GudcF/19zBscSeuaGaFNQ9ro3RfuwWOWAkbV54NMRtdZuTgvtUkDVO2221yZCSpTT4Kj55DX9/A7PguXyc1uGuy42Enzbp3d6mXESTnUucNi4jmxpikORxuVZHqW3/fZiaOcBWKb2frgRztkoGraKG9RIGve3E205oClbZQHkvc3Z8zi30WLkXeMbrA0HP3/2q2ZwF+z5kA4y2Lfv8LMsXRYM9hHTScsEIvRhPX8H3omRgECn4R+ZHh2WHjRw3KHnknbTLKsgFGsmsECQzPhjQTeC7eVfmDqhjT2yTJJSsYigRV2EAB6rG8qC+rivv18dtX95E0+6klUHU2QIDAQAB");
-        iabService.setVerifyPurchases(true);
-        iabService.setClientId("xxx.apps.googleusercontent.com");
-        iabService.setClientSecret("xxx");
-        iabService.setRefreshToken("1/xxx");
-
+        iabService.setPublicKey("xxx");
+        iabService.configVerifyPurchases(new HashMap<String, Object>() {{
+            put("clientId", "xxx.apps.googleusercontent.com");
+            put("clientSecret", "xxx");
+            put("refreshToken", "1/xxx");
+        }});
 
         //FOR TESTING PURPOSES ONLY: Check if it's a first run, if so add 10000 currencies.
         SharedPreferences prefs =
