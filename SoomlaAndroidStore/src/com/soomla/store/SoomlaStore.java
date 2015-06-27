@@ -533,12 +533,11 @@ public class SoomlaStore {
             case 1:
 
             case 2:
-                String developerPayload = purchase.getDeveloperPayload();
                 SoomlaUtils.LogDebug(TAG, "IabPurchase refunded.");
                 if (!StoreConfig.friendlyRefunds) {
                     pvi.take(1);
                 }
-                BusProvider.getInstance().post(new MarketRefundEvent(pvi, developerPayload));
+                BusProvider.getInstance().post(new MarketRefundEvent(pvi, purchase.getDeveloperPayload()));
                 break;
         }
     }
@@ -618,7 +617,7 @@ public class SoomlaStore {
     }
 
     private void finalizeTransaction(IabPurchase purchase, PurchasableVirtualItem pvi) {
-        SoomlaUtils.LogDebug(TAG, "IabPurchase successful.");
+        SoomlaUtils.LogDebug(TAG, "IabPurchase successful. Finalizing transaction");
 
         // if the purchasable item is non-consumable and it already exists then we
         // don't fire any events.
@@ -653,7 +652,7 @@ public class SoomlaStore {
     }
 
     @Subscribe
-    public void on(MarketPurchaseVerificationEvent event) {
+    public void onMarketPurchaseVerificationEvent(MarketPurchaseVerificationEvent event) {
         if (event.isVerified()) {
             this.finalizeTransaction(event.getPurchase(), event.getPvi());
         } else {
