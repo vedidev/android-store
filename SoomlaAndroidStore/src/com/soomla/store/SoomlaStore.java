@@ -22,7 +22,6 @@ import com.soomla.BusProvider;
 import com.soomla.SoomlaApp;
 import com.soomla.SoomlaUtils;
 import com.soomla.store.billing.IIabService;
-import com.soomla.store.billing.IIabVerifiable;
 import com.soomla.store.billing.IabCallbacks;
 import com.soomla.store.billing.IabException;
 import com.soomla.store.billing.IabPurchase;
@@ -523,11 +522,8 @@ public class SoomlaStore {
 
         switch (purchase.getPurchaseState()) {
             case 0: {
-                if (mInAppBillingService instanceof IIabVerifiable) {
-                    IIabVerifiable iabVerifiable = (IIabVerifiable) mInAppBillingService;
-                    if (iabVerifiable.getVerifyPurchases()) {
-                        iabVerifiable.verifyPurchase(purchase, pvi);
-                    }
+                if (mInAppBillingService.getVerifyPurchases()) {
+                    mInAppBillingService.verifyPurchase(purchase, pvi);
                 } else {
                     this.finalizeTransaction(purchase, pvi);
                 }
