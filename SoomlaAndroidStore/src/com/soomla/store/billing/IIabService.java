@@ -114,7 +114,26 @@ public interface IIabService {
     public void stopIabServiceInBg(IabCallbacks.IabInitListener initListener);
 
 
+    /**
+     * Determines if purchase verification is enabled.
+     *
+     * @return a boolean saying if purchase verification is enabled.
+     */
     boolean getVerifyPurchases();
-    void configVerifyPurchases(Map<String, Object> verifyPurchases);
+
+    /**
+     * Parameters that configures receipt validation for purchases.
+     * Setting these params will enable purchase verification.
+     *
+     * @param verifyPurchases the parameters for receipt validation.
+     */
+    void configVerifyPurchases(Map<String, String> verifyPurchases);
+
+    /**
+     * Will verify a purchase with the server.
+     *
+     * @param purchase the purchae to verify.
+     * @param pvi the item that neds to be verified.
+     */
     void verifyPurchase(IabPurchase purchase, PurchasableVirtualItem pvi);
 }
