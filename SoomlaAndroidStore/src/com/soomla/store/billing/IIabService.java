@@ -16,7 +16,10 @@
 
 package com.soomla.store.billing;
 
+import com.soomla.store.domain.PurchasableVirtualItem;
+
 import java.util.List;
+import java.util.Map;
 
 /**
  * This interface defines the functionality that needs to be implemented in order to create an
@@ -110,4 +113,8 @@ public interface IIabService {
      */
     public void stopIabServiceInBg(IabCallbacks.IabInitListener initListener);
 
+
+    boolean getVerifyPurchases();
+    void configVerifyPurchases(Map<String, Object> verifyPurchases);
+    void verifyPurchase(IabPurchase purchase, PurchasableVirtualItem pvi);
 }

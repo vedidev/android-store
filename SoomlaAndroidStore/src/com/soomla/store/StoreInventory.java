@@ -17,14 +17,12 @@
 package com.soomla.store;
 
 import android.text.TextUtils;
-
 import com.soomla.SoomlaUtils;
 import com.soomla.data.KeyValueStorage;
 import com.soomla.store.data.StorageManager;
 import com.soomla.store.data.StoreInfo;
 import com.soomla.store.data.VirtualCurrencyStorage;
 import com.soomla.store.data.VirtualGoodsStorage;
-import com.soomla.store.data.VirtualItemStorage;
 import com.soomla.store.domain.PurchasableVirtualItem;
 import com.soomla.store.domain.VirtualItem;
 import com.soomla.store.domain.virtualCurrencies.VirtualCurrency;
@@ -113,7 +111,7 @@ public class StoreInventory {
     /**
      * Equips the virtual good with the given <code>goodItemId</code>.
      * Equipping means that the user decides to currently use a specific virtual good.
-     * For more details and examples see {@link com.soomla.store.domain.virtualGoods.EquippableVG}.
+     * For more details and examples see {@link EquippableVG}.
      *
      * @param goodItemId id of the virtual good to be equipped
      * @throws VirtualItemNotFoundException
@@ -135,7 +133,7 @@ public class StoreInventory {
     /**
      * Unequips the virtual good with the given <code>goodItemId</code>. Unequipping means that the
      * user decides to stop using the virtual good he/she is currently using.
-     * For more details and examples see {@link com.soomla.store.domain.virtualGoods.EquippableVG}.
+     * For more details and examples see {@link EquippableVG}.
      *
      * @param goodItemId id of the virtual good to be unequipped
      * @throws VirtualItemNotFoundException

@@ -18,7 +18,6 @@ package com.soomla.store;
 
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
-
 import com.soomla.BusProvider;
 import com.soomla.SoomlaApp;
 import com.soomla.SoomlaConfig;
@@ -43,6 +42,7 @@ import com.soomla.store.events.MarketItemsRefreshStartedEvent;
 import com.soomla.store.events.MarketPurchaseCancelledEvent;
 import com.soomla.store.events.MarketPurchaseEvent;
 import com.soomla.store.events.MarketPurchaseStartedEvent;
+import com.soomla.store.events.MarketPurchaseVerificationEvent;
 import com.soomla.store.events.MarketRefundEvent;
 import com.soomla.store.events.RestoreTransactionsFinishedEvent;
 import com.soomla.store.events.RestoreTransactionsStartedEvent;
@@ -50,6 +50,7 @@ import com.soomla.store.events.SoomlaStoreInitializedEvent;
 import com.soomla.store.events.UnexpectedStoreErrorEvent;
 import com.soomla.store.exceptions.VirtualItemNotFoundException;
 import com.soomla.store.purchaseTypes.PurchaseWithMarket;
+import com.squareup.otto.Subscribe;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -67,7 +68,7 @@ public class SoomlaStore {
 
     /**
      * Initializes the SOOMLA SDK.
-     * This initializer also initializes {@link com.soomla.store.data.StoreInfo}.
+     * This initializer also initializes {@link StoreInfo}.
      *
      * @param storeAssets the definition of your application specific assets.
      */
@@ -540,12 +541,6 @@ public class SoomlaStore {
      */
     private void handleSuccessfulPurchase(IabPurchase purchase) {
         String sku = purchase.getSku();
-        String developerPayload = purchase.getDeveloperPayload();
-        final String token = purchase.getToken();
-        final String orderId = purchase.getOrderId();
-        final String originalJson = purchase.getOriginalJson();
-        final String signature = purchase.getSignature();
-        final String userId = purchase.getUserId();
 
         PurchasableVirtualItem pvi;
         try {
@@ -561,34 +556,15 @@ public class SoomlaStore {
         }
 
         switch (purchase.getPurchaseState()) {
-            case 0:
-                SoomlaUtils.LogDebug(TAG, "IabPurchase successful.");
-
-                // if the purchasable item is non-consumable and it already exists then we
-                // don't fire any events.
-                // fixes: https://github.com/soomla/unity3d-store/issues/192
-                // TODO: update on the issue in github
-                if (StoreInfo.isItemNonConsumable(pvi)) {
-                    if (StorageManager.getVirtualItemStorage(pvi).getBalance(pvi.getItemId()) == 1) {
-                        return;
-                    }
+            case 0: {
+                if (mInAppBillingService.getVerifyPurchases()) {
+                    mInAppBillingService.verifyPurchase(purchase, pvi);
+                } else {
+                    this.finalizeTransaction(purchase, pvi);
                 }
 
-                BusProvider.getInstance().post(new MarketPurchaseEvent
-                        (pvi, developerPayload, new HashMap<String, String>() {{
-                            put("token", token);
-                            put("orderId", orderId);
-                            put("originalJson", originalJson);
-                            put("signature", signature);
-                            put("userId", userId);
-                        }}, null));
-                pvi.give(1);
-                BusProvider.getInstance().post(new ItemPurchasedEvent(pvi.getItemId(), developerPayload));
-
-                consumeIfConsumable(purchase, pvi);
-
                 break;
-
+            }
             case 1:
 
             case 2:
@@ -596,7 +572,7 @@ public class SoomlaStore {
                 if (!StoreConfig.friendlyRefunds) {
                     pvi.take(1);
                 }
-                BusProvider.getInstance().post(new MarketRefundEvent(pvi, developerPayload));
+                BusProvider.getInstance().post(new MarketRefundEvent(pvi, purchase.getDeveloperPayload()));
                 break;
         }
     }
@@ -675,6 +651,51 @@ public class SoomlaStore {
         SoomlaUtils.LogError(TAG, "ERROR: SoomlaStore failure: " + message);
     }
 
+    private void finalizeTransaction(IabPurchase purchase, PurchasableVirtualItem pvi) {
+        SoomlaUtils.LogDebug(TAG, "IabPurchase successful. Finalizing transaction");
+
+        // if the purchasable item is non-consumable and it already exists then we
+        // don't fire any events.
+        // fixes: https://github.com/soomla/unity3d-store/issues/192
+        // TODO: update on the issue in github
+        if (StoreInfo.isItemNonConsumable(pvi)) {
+            if (StorageManager.getVirtualItemStorage(pvi).getBalance(pvi.getItemId()) == 1) {
+                return;
+            }
+        }
+
+
+        String developerPayload = purchase.getDeveloperPayload();
+        final String token = purchase.getToken();
+        final String orderId = purchase.getOrderId();
+        final String originalJson = purchase.getOriginalJson();
+        final String signature = purchase.getSignature();
+        final String userId = purchase.getUserId();
+
+        BusProvider.getInstance().post(new MarketPurchaseEvent(pvi, developerPayload, new HashMap<String, String>() {{
+                    put("token", token);
+                    put("orderId", orderId);
+                    put("originalJson", originalJson);
+                    put("signature", signature);
+                    put("userId", userId);
+                }}, null));
+
+        pvi.give(1);
+        BusProvider.getInstance().post(new ItemPurchasedEvent(pvi.getItemId(), developerPayload));
+
+        consumeIfConsumable(purchase, pvi);
+    }
+
+    @Subscribe
+    public void onMarketPurchaseVerificationEvent(MarketPurchaseVerificationEvent event) {
+        if (event.isVerified()) {
+            this.finalizeTransaction(event.getPurchase(), event.getPvi());
+        } else {
+            SoomlaUtils.LogError(TAG, "Failed to verify transaction receipt. The user will not get what he just bought.");
+            BusProvider.getInstance().post(new UnexpectedStoreErrorEvent());
+        }
+    }
+
     /* Singleton */
     private static SoomlaStore sInstance = null;
 
@@ -694,8 +715,8 @@ public class SoomlaStore {
      * Constructor
      */
     private SoomlaStore() {
+        BusProvider.getInstance().register(this);
     }
-
 
     /* Private Members */
 
