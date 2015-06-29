@@ -119,7 +119,8 @@ public class StoreInfo {
             } catch (JSONException e) {
                 String err = "Can't parse store metadata json. That's a major issue." + storeMetaJSON;
                 SoomlaUtils.LogError(TAG, err);
-                BusProvider.getInstance().post(new UnexpectedStoreErrorEvent(err));
+                BusProvider.getInstance().post(
+                        new UnexpectedStoreErrorEvent(UnexpectedStoreErrorEvent.ErrorCode.GENERAL, err));
             }
         }
     }
