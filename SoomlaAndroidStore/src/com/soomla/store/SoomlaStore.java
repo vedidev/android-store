@@ -75,7 +75,7 @@ public class SoomlaStore {
     public boolean initialize(IStoreAssets storeAssets) {
         if (mInitialized) {
             String err = "SoomlaStore is already initialized. You can't initialize it twice!";
-            handleErrorResult(err);
+            handleErrorResult(UnexpectedStoreErrorEvent.ErrorCode.GENERAL, err);
             return false;
         }
 
@@ -204,7 +204,7 @@ public class SoomlaStore {
                             @Override
                             public void fail(String message) {
                                 BusProvider.getInstance().post(new RestoreTransactionsFinishedEvent(false));
-                                handleErrorResult(message);
+                                handleErrorResult(UnexpectedStoreErrorEvent.ErrorCode.GENERAL, message);
                             }
                         };
 
@@ -374,7 +374,7 @@ public class SoomlaStore {
         } catch (VirtualItemNotFoundException e) {
             String msg = "Couldn't find a purchasable item associated with: " + marketItem.getProductId();
             SoomlaUtils.LogError(TAG, msg);
-            BusProvider.getInstance().post(new UnexpectedStoreErrorEvent(msg));
+            BusProvider.getInstance().post(new UnexpectedStoreErrorEvent(UnexpectedStoreErrorEvent.ErrorCode.PURCHASE_FAIL, msg));
             return;
         }
 
@@ -417,20 +417,20 @@ public class SoomlaStore {
                                                         "owned. itemId: " + pvi.getItemId() +
                                                         "    productId: " + sku;
                                                 SoomlaUtils.LogDebug(TAG, message);
-                                                BusProvider.getInstance().post(new UnexpectedStoreErrorEvent(message));
+                                                BusProvider.getInstance().post(new UnexpectedStoreErrorEvent(UnexpectedStoreErrorEvent.ErrorCode.PURCHASE_FAIL, message));
                                             }
                                         } catch (VirtualItemNotFoundException e) {
                                             String message = "(alreadyOwned) ERROR : Couldn't find the "
                                                     + "VirtualCurrencyPack with productId: " + sku
                                                     + ". It's unexpected so an unexpected error is being emitted.";
                                             SoomlaUtils.LogError(TAG, message);
-                                            BusProvider.getInstance().post(new UnexpectedStoreErrorEvent(message));
+                                            BusProvider.getInstance().post(new UnexpectedStoreErrorEvent(UnexpectedStoreErrorEvent.ErrorCode.PURCHASE_FAIL, message));
                                         }
                                     }
 
                                     @Override
                                     public void fail(String message) {
-                                        handleErrorResult(message);
+                                        handleErrorResult(UnexpectedStoreErrorEvent.ErrorCode.PURCHASE_FAIL, message);
                                     }
                                 };
 
@@ -481,7 +481,7 @@ public class SoomlaStore {
                 String err = "You don't have a billing service attached. " +
                         "Decide which billing service you want, add it to AndroidManifest.xml " +
                         "and add its jar to the path.";
-                handleErrorResult(err);
+                handleErrorResult(UnexpectedStoreErrorEvent.ErrorCode.GENERAL, err);
                 return false;
             }
 
@@ -490,7 +490,7 @@ public class SoomlaStore {
                 mInAppBillingService = (IIabService) aClass.newInstance();
             } catch (Exception e) {
                 String err = "Couldn't instantiate IIabService class. Something's totally wrong here.";
-                handleErrorResult(err);
+                handleErrorResult(UnexpectedStoreErrorEvent.ErrorCode.GENERAL, err);
                 return false;
             }
         }
@@ -550,8 +550,9 @@ public class SoomlaStore {
                     + "ERROR : Couldn't find the " +
                     " VirtualCurrencyPack OR MarketItem  with productId: " + sku +
                     ". It's unexpected so an unexpected error is being emitted.");
-            BusProvider.getInstance().post(new UnexpectedStoreErrorEvent("Couldn't find the sku "
-                    + "of a product after purchase or query-inventory."));
+            BusProvider.getInstance().post(new UnexpectedStoreErrorEvent(
+                    UnexpectedStoreErrorEvent.ErrorCode.PURCHASE_FAIL, "Couldn't find the sku of a product " +
+                            "after purchase or query-inventory."));
             return;
         }
 
@@ -610,7 +611,7 @@ public class SoomlaStore {
         } catch (IabException e) {
             SoomlaUtils.LogDebug(TAG, "Error while consuming: itemId: " + pvi.getItemId() +
                     "   productId: " + purchase.getSku());
-            BusProvider.getInstance().post(new UnexpectedStoreErrorEvent(e.getMessage()));
+            BusProvider.getInstance().post(new UnexpectedStoreErrorEvent(UnexpectedStoreErrorEvent.ErrorCode.PURCHASE_FAIL, e.getMessage()));
         }
     }
 
@@ -644,10 +645,11 @@ public class SoomlaStore {
     /**
      * Posts an unexpected error event saying the purchase failed.
      *
+     * @param errorCode
      * @param message error message.
      */
-    private void handleErrorResult(String message) {
-        BusProvider.getInstance().post(new UnexpectedStoreErrorEvent(message));
+    private void handleErrorResult(UnexpectedStoreErrorEvent.ErrorCode errorCode, String message) {
+        BusProvider.getInstance().post(new UnexpectedStoreErrorEvent(errorCode, message));
         SoomlaUtils.LogError(TAG, "ERROR: SoomlaStore failure: " + message);
     }
 
