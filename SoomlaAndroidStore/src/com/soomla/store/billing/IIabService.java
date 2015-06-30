@@ -127,7 +127,7 @@ public interface IIabService {
      *
      * @param verifyPurchases the parameters for receipt validation.
      */
-    void configVerifyPurchases(Map<String, String> verifyPurchases);
+    void configVerifyPurchases(Map<String, Object> verifyPurchases);
 
     /**
      * Will verify a purchase with the server.
