@@ -392,7 +392,7 @@ public class SoomlaStore {
 
                                     @Override
                                     public void success(IabPurchase purchase) {
-                                        handleSuccessfulPurchase(purchase);
+                                        handleSuccessfulPurchase(purchase, null);
                                     }
 
                                     @Override
@@ -526,11 +526,10 @@ public class SoomlaStore {
     }
 
     private void handleSuccessfulPurchases(List<IabPurchase> purchases, HandleSuccessfulPurchasesFinishedHandler handler) {
-        for (IabPurchase purchase : purchases) {
-            handleSuccessfulPurchase(purchase);
+        for (int i = 0; i < purchases.size(); i++) {
+            // we pass handler for the last item only here
+            handleSuccessfulPurchase(purchases.get(i), (i == purchases.size() - 1) ? handler : null);
         }
-
-        handler.onFinished();
     }
 
     /**
@@ -538,8 +537,9 @@ public class SoomlaStore {
      * throwing an error, or taking the item away and paying the user back.
      *
      * @param purchase purchase whose state is to be checked.
+     * @param handler
      */
-    private void handleSuccessfulPurchase(IabPurchase purchase) {
+    private void handleSuccessfulPurchase(IabPurchase purchase, final HandleSuccessfulPurchasesFinishedHandler handler) {
         String sku = purchase.getSku();
 
         PurchasableVirtualItem pvi;
@@ -553,15 +553,28 @@ public class SoomlaStore {
             BusProvider.getInstance().post(new UnexpectedStoreErrorEvent(
                     UnexpectedStoreErrorEvent.ErrorCode.PURCHASE_FAIL, "Couldn't find the sku of a product " +
                             "after purchase or query-inventory."));
+            if (handler != null) {
+                handler.onFinished();
+            }
             return;
         }
 
         switch (purchase.getPurchaseState()) {
             case 0: {
                 if (mInAppBillingService.getVerifyPurchases()) {
-                    mInAppBillingService.verifyPurchase(purchase, pvi);
+                    mInAppBillingService.verifyPurchase(purchase, pvi, new Runnable() {
+                        @Override
+                        public void run() {
+                            if (handler != null) {
+                                handler.onFinished();
+                            }
+                        }
+                    });
                 } else {
                     this.finalizeTransaction(purchase, pvi);
+                    if (handler != null) {
+                        handler.onFinished();
+                    }
                 }
 
                 break;
@@ -574,6 +587,9 @@ public class SoomlaStore {
                     pvi.take(1);
                 }
                 BusProvider.getInstance().post(new MarketRefundEvent(pvi, purchase.getDeveloperPayload()));
+                if (handler != null) {
+                    handler.onFinished();
+                }
                 break;
         }
     }
@@ -694,7 +710,9 @@ public class SoomlaStore {
             this.finalizeTransaction(event.getPurchase(), event.getPvi());
         } else {
             SoomlaUtils.LogError(TAG, "Failed to verify transaction receipt. The user will not get what he just bought.");
-            BusProvider.getInstance().post(new UnexpectedStoreErrorEvent());
+            BusProvider.getInstance().post(new UnexpectedStoreErrorEvent(
+                    UnexpectedStoreErrorEvent.ErrorCode.VERIFICATION_FAIL,
+                    "Failed to verify transaction receipt. The user will not get what he just bought."));
         }
     }
 

@@ -131,9 +131,9 @@ public interface IIabService {
 
     /**
      * Will verify a purchase with the server.
-     *
-     * @param purchase the purchae to verify.
-     * @param pvi the item that neds to be verified.
+     *  @param purchase the purchase to verify.
+     * @param pvi the item that needs to be verified.
+     * @param callback callback to call after completion
      */
-    void verifyPurchase(IabPurchase purchase, PurchasableVirtualItem pvi);
+    void verifyPurchase(IabPurchase purchase, PurchasableVirtualItem pvi, Runnable callback);
 }
