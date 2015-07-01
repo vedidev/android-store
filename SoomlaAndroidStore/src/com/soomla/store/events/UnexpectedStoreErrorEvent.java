@@ -27,17 +27,16 @@ public class UnexpectedStoreErrorEvent extends SoomlaEvent {
         VERIFICATION_TIMEOUT,
         VERIFICATION_FAIL,
         PURCHASE_FAIL
-    };
+    }
 
     /**
      * Constructor
      *
      * @param errorCode
-     * @param message
      */
-	public UnexpectedStoreErrorEvent(ErrorCode errorCode, String message)
+	public UnexpectedStoreErrorEvent(ErrorCode errorCode)
 	{
-        this(errorCode, message, null);
+        this(errorCode, null);
     }
 
     /**
@@ -48,20 +47,14 @@ public class UnexpectedStoreErrorEvent extends SoomlaEvent {
 		this(ErrorCode.GENERAL, "Unknown error");
 	}
 
-    public UnexpectedStoreErrorEvent(ErrorCode errorCode, String message, Object sender)
+    public UnexpectedStoreErrorEvent(ErrorCode errorCode, Object sender)
     {
         super(sender);
         this.errorCode = errorCode;
-        mMessage = message;
     }
 
 
     /** Setters and Getters */
-
-	public String getMessage()
-	{
-		return mMessage;
-	}
 
     public ErrorCode getErrorCode() {
         return errorCode;
@@ -69,6 +62,5 @@ public class UnexpectedStoreErrorEvent extends SoomlaEvent {
 
     /** Private Members */
 
-    private String mMessage;
     private final ErrorCode errorCode;
 }

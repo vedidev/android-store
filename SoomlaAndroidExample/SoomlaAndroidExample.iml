@@ -10,6 +10,9 @@
   </component>
   <component name="NewModuleRootManager" inherit-compiler-output="true">
     <exclude-output />
+    <content url="file://$MODULE_DIR$/../../android-store-google-play/src">
+      <sourceFolder url="file://$MODULE_DIR$/../../android-store-google-play/src" isTestSource="false" />
+    </content>
     <content url="file://$MODULE_DIR$">
       <sourceFolder url="file://$MODULE_DIR$/gen" isTestSource="false" generated="true" />
       <sourceFolder url="file://$MODULE_DIR$/src" isTestSource="false" />
@@ -32,15 +35,6 @@
       <library>
         <CLASSES>
           <root url="jar://$MODULE_DIR$/../build/SoomlaAndroidCore.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-      </library>
-    </orderEntry>
-    <orderEntry type="module-library">
-      <library>
-        <CLASSES>
-          <root url="jar://$MODULE_DIR$/../billing-services/google-play/AndroidStoreGooglePlay.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />

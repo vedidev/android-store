@@ -372,9 +372,8 @@ public class SoomlaStore {
         try {
             pvi = StoreInfo.getPurchasableItem(marketItem.getProductId());
         } catch (VirtualItemNotFoundException e) {
-            String msg = "Couldn't find a purchasable item associated with: " + marketItem.getProductId();
-            SoomlaUtils.LogError(TAG, msg);
-            BusProvider.getInstance().post(new UnexpectedStoreErrorEvent(UnexpectedStoreErrorEvent.ErrorCode.PURCHASE_FAIL, msg));
+            SoomlaUtils.LogError(TAG, "Couldn't find a purchasable item associated with: " + marketItem.getProductId());
+            BusProvider.getInstance().post(new UnexpectedStoreErrorEvent(UnexpectedStoreErrorEvent.ErrorCode.PURCHASE_FAIL));
             return;
         }
 
@@ -412,19 +411,19 @@ public class SoomlaStore {
                                             consumeIfConsumable(purchase, pvi);
 
                                             if (StoreInfo.isItemNonConsumable(pvi)) {
-                                                String message = "(alreadyOwned) the user tried to " +
+                                                SoomlaUtils.LogDebug(TAG,
+                                                        "(alreadyOwned) the user tried to " +
                                                         "buy a non-consumable that was already " +
                                                         "owned. itemId: " + pvi.getItemId() +
-                                                        "    productId: " + sku;
-                                                SoomlaUtils.LogDebug(TAG, message);
-                                                BusProvider.getInstance().post(new UnexpectedStoreErrorEvent(UnexpectedStoreErrorEvent.ErrorCode.PURCHASE_FAIL, message));
+                                                        "    productId: " + sku);
+                                                BusProvider.getInstance().post(new UnexpectedStoreErrorEvent(UnexpectedStoreErrorEvent.ErrorCode.PURCHASE_FAIL));
                                             }
                                         } catch (VirtualItemNotFoundException e) {
-                                            String message = "(alreadyOwned) ERROR : Couldn't find the "
-                                                    + "VirtualCurrencyPack with productId: " + sku
-                                                    + ". It's unexpected so an unexpected error is being emitted.";
-                                            SoomlaUtils.LogError(TAG, message);
-                                            BusProvider.getInstance().post(new UnexpectedStoreErrorEvent(UnexpectedStoreErrorEvent.ErrorCode.PURCHASE_FAIL, message));
+                                            SoomlaUtils.LogError(TAG,
+                                                    "(alreadyOwned) ERROR : Couldn't find the " +
+                                                    "VirtualCurrencyPack with productId: " + sku +
+                                                    ". It's unexpected so an unexpected error is being emitted.");
+                                            BusProvider.getInstance().post(new UnexpectedStoreErrorEvent(UnexpectedStoreErrorEvent.ErrorCode.PURCHASE_FAIL));
                                         }
                                     }
 
@@ -551,8 +550,7 @@ public class SoomlaStore {
                     " VirtualCurrencyPack OR MarketItem  with productId: " + sku +
                     ". It's unexpected so an unexpected error is being emitted.");
             BusProvider.getInstance().post(new UnexpectedStoreErrorEvent(
-                    UnexpectedStoreErrorEvent.ErrorCode.PURCHASE_FAIL, "Couldn't find the sku of a product " +
-                            "after purchase or query-inventory."));
+                    UnexpectedStoreErrorEvent.ErrorCode.PURCHASE_FAIL));
             return;
         }
 
@@ -611,7 +609,8 @@ public class SoomlaStore {
         } catch (IabException e) {
             SoomlaUtils.LogDebug(TAG, "Error while consuming: itemId: " + pvi.getItemId() +
                     "   productId: " + purchase.getSku());
-            BusProvider.getInstance().post(new UnexpectedStoreErrorEvent(UnexpectedStoreErrorEvent.ErrorCode.PURCHASE_FAIL, e.getMessage()));
+            SoomlaUtils.LogError(TAG, e.getMessage());
+            BusProvider.getInstance().post(new UnexpectedStoreErrorEvent(UnexpectedStoreErrorEvent.ErrorCode.PURCHASE_FAIL));
         }
     }
 
@@ -649,7 +648,7 @@ public class SoomlaStore {
      * @param message error message.
      */
     private void handleErrorResult(UnexpectedStoreErrorEvent.ErrorCode errorCode, String message) {
-        BusProvider.getInstance().post(new UnexpectedStoreErrorEvent(errorCode, message));
+        BusProvider.getInstance().post(new UnexpectedStoreErrorEvent(errorCode));
         SoomlaUtils.LogError(TAG, "ERROR: SoomlaStore failure: " + message);
     }
 
