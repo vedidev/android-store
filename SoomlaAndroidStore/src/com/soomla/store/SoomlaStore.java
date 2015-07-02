@@ -42,7 +42,6 @@ import com.soomla.store.events.MarketItemsRefreshStartedEvent;
 import com.soomla.store.events.MarketPurchaseCancelledEvent;
 import com.soomla.store.events.MarketPurchaseEvent;
 import com.soomla.store.events.MarketPurchaseStartedEvent;
-import com.soomla.store.events.MarketPurchaseVerificationEvent;
 import com.soomla.store.events.MarketRefundEvent;
 import com.soomla.store.events.RestoreTransactionsFinishedEvent;
 import com.soomla.store.events.RestoreTransactionsStartedEvent;
@@ -50,7 +49,6 @@ import com.soomla.store.events.SoomlaStoreInitializedEvent;
 import com.soomla.store.events.UnexpectedStoreErrorEvent;
 import com.soomla.store.exceptions.VirtualItemNotFoundException;
 import com.soomla.store.purchaseTypes.PurchaseWithMarket;
-import com.squareup.otto.Subscribe;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -391,7 +389,7 @@ public class SoomlaStore {
 
                                     @Override
                                     public void success(IabPurchase purchase) {
-                                        handleSuccessfulPurchase(purchase, null);
+                                        handleSuccessfulPurchase(purchase);
                                     }
 
                                     @Override
@@ -525,10 +523,14 @@ public class SoomlaStore {
     }
 
     private void handleSuccessfulPurchases(List<IabPurchase> purchases, HandleSuccessfulPurchasesFinishedHandler handler) {
-        for (int i = 0; i < purchases.size(); i++) {
-            // we pass handler for the last item only here
-            handleSuccessfulPurchase(purchases.get(i), (i == purchases.size() - 1) ? handler : null);
+        for (IabPurchase purchase : purchases) {
+            handleSuccessfulPurchase(purchase);
         }
+
+        if (handler != null) {
+            handler.onFinished();
+        }
+
     }
 
     /**
@@ -536,9 +538,8 @@ public class SoomlaStore {
      * throwing an error, or taking the item away and paying the user back.
      *
      * @param purchase purchase whose state is to be checked.
-     * @param handler
      */
-    private void handleSuccessfulPurchase(IabPurchase purchase, final HandleSuccessfulPurchasesFinishedHandler handler) {
+    private void handleSuccessfulPurchase(IabPurchase purchase) {
         String sku = purchase.getSku();
 
         PurchasableVirtualItem pvi;
@@ -551,43 +552,27 @@ public class SoomlaStore {
                     ". It's unexpected so an unexpected error is being emitted.");
             BusProvider.getInstance().post(new UnexpectedStoreErrorEvent(
                     UnexpectedStoreErrorEvent.ErrorCode.PURCHASE_FAIL));
-            if (handler != null) {
-                handler.onFinished();
-            }
             return;
         }
 
         switch (purchase.getPurchaseState()) {
             case 0: {
-                if (mInAppBillingService.getVerifyPurchases()) {
-                    mInAppBillingService.verifyPurchase(purchase, pvi, new Runnable() {
-                        @Override
-                        public void run() {
-                            if (handler != null) {
-                                handler.onFinished();
-                            }
-                        }
-                    });
-                } else {
+                if (purchase.isServerVerified()) {
                     this.finalizeTransaction(purchase, pvi);
-                    if (handler != null) {
-                        handler.onFinished();
-                    }
+                } else if (purchase.getVerificationErrorCode() != null){
+                    BusProvider.getInstance().post(new UnexpectedStoreErrorEvent(purchase.getVerificationErrorCode()));
                 }
+
 
                 break;
             }
             case 1:
-
             case 2:
                 SoomlaUtils.LogDebug(TAG, "IabPurchase refunded.");
                 if (!StoreConfig.friendlyRefunds) {
                     pvi.take(1);
                 }
                 BusProvider.getInstance().post(new MarketRefundEvent(pvi, purchase.getDeveloperPayload()));
-                if (handler != null) {
-                    handler.onFinished();
-                }
                 break;
         }
     }
@@ -701,18 +686,6 @@ public class SoomlaStore {
         BusProvider.getInstance().post(new ItemPurchasedEvent(pvi.getItemId(), developerPayload));
 
         consumeIfConsumable(purchase, pvi);
-    }
-
-    @Subscribe
-    public void onMarketPurchaseVerificationEvent(MarketPurchaseVerificationEvent event) {
-        if (event.isVerified()) {
-            this.finalizeTransaction(event.getPurchase(), event.getPvi());
-        } else {
-            SoomlaUtils.LogError(TAG, "Failed to verify transaction receipt. The user will not get what he just bought.");
-            BusProvider.getInstance().post(new UnexpectedStoreErrorEvent(
-                    UnexpectedStoreErrorEvent.ErrorCode.VERIFICATION_FAIL,
-                    "Failed to verify transaction receipt. The user will not get what he just bought."));
-        }
     }
 
     /* Singleton */
