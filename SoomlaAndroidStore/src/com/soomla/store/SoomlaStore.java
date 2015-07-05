@@ -559,7 +559,8 @@ public class SoomlaStore {
             case 0: {
                 if (purchase.isServerVerified()) {
                     this.finalizeTransaction(purchase, pvi);
-                } else if (purchase.getVerificationErrorCode() != null){
+                }
+                if (purchase.getVerificationErrorCode() != null){
                     BusProvider.getInstance().post(new UnexpectedStoreErrorEvent(purchase.getVerificationErrorCode()));
                 }
 
