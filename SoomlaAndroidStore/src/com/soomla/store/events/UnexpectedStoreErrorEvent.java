@@ -44,7 +44,7 @@ public class UnexpectedStoreErrorEvent extends SoomlaEvent {
      */
 	public UnexpectedStoreErrorEvent()
 	{
-		this(ErrorCode.GENERAL, "Unknown error");
+		this(ErrorCode.GENERAL, null);
 	}
 
     public UnexpectedStoreErrorEvent(ErrorCode errorCode, Object sender)
