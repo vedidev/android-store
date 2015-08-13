@@ -19,7 +19,6 @@ package com.soomla.store.billing;
 import android.app.Activity;
 import android.os.Handler;
 import android.os.Looper;
-
 import com.soomla.SoomlaUtils;
 
 import java.util.ArrayList;
@@ -348,13 +347,12 @@ public abstract class IabHelper {
         flagEndAsync();
 
         final Handler handler = new Handler(Looper.getMainLooper());
-        if (mPurchaseListener != null) {
+        final OnIabPurchaseFinishedListener purchaseListener = IabHelper.this.mPurchaseListener;
+        if (purchaseListener != null) {
             handler.post(new Runnable() {
-
-
                 @Override
                 public void run() {
-                    mPurchaseListener.onIabPurchaseFinished(result, purchase);
+                    purchaseListener.onIabPurchaseFinished(result, purchase);
                 }
             });
         }
@@ -372,14 +370,13 @@ public abstract class IabHelper {
         // make sure to end the async operation...
         flagEndAsync();
 
-        if (mPurchaseListener != null) {
+        final OnIabPurchaseFinishedListener purchaseListener = IabHelper.this.mPurchaseListener;
+        if (purchaseListener != null) {
             final Handler handler = new Handler(Looper.getMainLooper());
             handler.post(new Runnable() {
-
-
                 @Override
                 public void run() {
-                    mPurchaseListener.onIabPurchaseFinished(
+                    purchaseListener.onIabPurchaseFinished(
                             new IabResult(IabResult.BILLING_RESPONSE_RESULT_OK, "Success"),
                             purchase);
                 }
