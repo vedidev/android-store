@@ -1,3 +1,9 @@
+### v3.6.13 [view commit logs](https://github.com/soomla/android-store/compare/v3.6.12...v3.6.13)
+
+* Changes
+  * Small change in saving version and build
+  * Making a call to purchaseListener safer
+
 ### v3.6.12 [view commit logs](https://github.com/soomla/android-store/compare/v3.6.11...v3.6.12)
 
 * New Features
