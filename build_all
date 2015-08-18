@@ -1,5 +1,3 @@
 #!/bin/sh
 cd SoomlaAndroidStore
 ./build_all
-cd -
-cp -r billing-services/ build/
