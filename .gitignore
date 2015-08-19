@@ -34,3 +34,5 @@ proguard/
 SoomlaAndroidExample/res/.DS_Store
 SoomlaAndroidExample/SoomlaAndroidExample.apk
 SoomlaAndroidStore/src/META-INF/
+
+build.log

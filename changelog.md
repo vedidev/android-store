@@ -1,3 +1,9 @@
+### v3.6.13 [view commit logs](https://github.com/soomla/android-store/compare/v3.6.12...v3.6.13)
+
+* Changes
+  * Small change in saving version and build
+  * Making a call to purchaseListener safer
+
 ### v3.6.12 [view commit logs](https://github.com/soomla/android-store/compare/v3.6.11...v3.6.12)
 
 * New Features
@@ -6,6 +12,7 @@
 * Changes
   * Market purchase events are fired with params hash for different parameters
   * Changed the order: restore transactions now follows refresh market items (it used to be the other way)
+  * UnexpectedErrorInStoreEvent now accepts errorCode and changed to UnexpectedStoreErrorEvent. **BREAKING CHANGE**
 
 ### v3.6.11 [view commit logs](https://github.com/soomla/android-store/compare/v3.6.10...v3.6.11)
 
