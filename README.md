@@ -76,7 +76,7 @@ Check out our [Wiki] (https://github.com/soomla/android-store/wiki) for more inf
     SoomlaStore.getInstance().initialize(new YourStoreAssetsImplementation());
     ```
 
-    <div class="warning-box">Initialize `SoomlaStore` ONLY ONCE when your application loads.</div>
+    > Initialize `SoomlaStore` ONLY ONCE when your application loads.
 
 And that's it! You have storage and in-app purchasing capabilities... ALL-IN-ONE.
 
