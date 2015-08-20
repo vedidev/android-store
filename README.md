@@ -33,95 +33,152 @@ Check out our [Wiki] (https://github.com/soomla/android-store/wiki) for more inf
 
 ## Getting Started
 
-* Before doing anything, SOOMLA recommends that you go through [Android In-app Billing](http://developer.android.com/guide/google/play/billing/index.html) and [Amazon In App Purchasing](https://developer.amazon.com/public/apis/earn/in-app-purchasing).
+* Before doing anything, SOOMLA recommends that you go through [Android In-app Billing](http://developer.android.com/guide/google/play/billing/index.html) or [Amazon In App Purchasing](https://developer.amazon.com/public/apis/earn/in-app-purchasing) according to the billing service provider you choose.
 
-1. Add the jars from the downloaded zip to your project.
+1. First, you'll need to either add the jars from the build folder to your project (RECOMMENDED), or clone android-store.
+
+  - RECOMMENDED: Add the jars from the [build](https://github.com/soomla/android-store/tree/master/build) folder to your project.
+
+    OR, if you'd like to work with sources:
+
+  - Recursively clone android-store.
+
+    ```
+    $ git clone --recursive git@github.com:soomla/android-store.git
+    ```
+
+    > There are some necessary files in submodules linked with symbolic links. If you're cloning the project make sure to include the `--recursive` flag.
 
 2. Make the following changes to your AndroidManifest.xml:
 
-  Set `SoomlaApp` as the main Application by placing it in the `application` tag:
+    Set `SoomlaApp` as the main Application by placing it in the `application` tag:
 
-    ```xml
+    ``` xml
     <application ...
-                 android:name="com.soomla.SoomlaApp">
+        android:name="com.soomla.SoomlaApp">
     ```
 
-3. Initialize **Soomla** with a secret that you chose to encrypt the user data. (For those who came from older versions, this should be the same as the old "customSec"):
+3. Initialize Soomla with a secret that you chose to encrypt the user data. (For those who came from older versions, this should be the same as the old "customSec"):
 
-    ```Java
-     Soomla.initialize("[YOUR CUSTOM GAME SECRET HERE]");
+    ``` java
+    Soomla.initialize("[YOUR CUSTOM GAME SECRET HERE]");
     ```
-    > The secret is your encryption secret for data saved in the DB.
 
-4. Create your own implementation of _IStoreAssets_ in order to describe your specific game's assets ([example](https://github.com/soomla/android-store/blob/master/SoomlaAndroidExample/src/com/soomla/example/MuffinRushAssets.java)). Initialize _SoomlaStore_ with the class you just created:
+    > This secret is your encryption secret for data saved in the DB.
 
-    ```Java
-     SoomlaStore.getInstance().initialize(new YourStoreAssetsImplementation());
+4. Create your own implementation of `IStoreAssets` in order to describe your game's specific assets.
+  - See the brief [example](#example) at the bottom.
+  - See a more detailed example, our MuffinRush [example](https://github.com/soomla/android-store/blob/master/SoomlaAndroidExample/src/com/soomla/example/MuffinRushAssets.java).
+
+5. Initialize `SoomlaStore` with the class you just created:
+
+    ``` java
+    SoomlaStore.getInstance().initialize(new YourStoreAssetsImplementation());
     ```
 
     > Initialize `SoomlaStore` ONLY ONCE when your application loads.
 
-5. Refer to the [next section](https://github.com/soomla/android-store#whats-next-selecting-a-billing-service) for information of selecting your Billing Service and setting it up.
+And that's it! You have storage and in-app purchasing capabilities... ALL-IN-ONE.
 
-And that's it ! You have storage and in-app purchasing capabilities... ALL-IN-ONE.
+Refer to the next section for information on selecting your Billing Service provider and setting it up.
 
+## Selecting a Billing Service
 
-## What's next? Selecting a Billing Service
-
-android-store can be used on all Android based devices meaning that you might want to use IAP with different billing services.
+SOOMLA's android-store can be used on all Android based devices meaning that you might want to use IAP with different billing services.
 
 We've created two billing services for you: Google Play and Amazon (according to your demand).
 
-The billing service is automatically started and stopped for every operation you're running on `SoomlaStore` (`buyWithMarket`, `restoreTransactions` ...).
+The billing service is automatically started and stopped for every operation you're running on `SoomlaStore` (`buyWithMarket`, `restoreTransactions`, etc...).
 
 Be careful with that. Don't leave the service running in the background without closing it.
 
 You must select a billing service for android-store to work properly. The integration of a billing service is very easy:
 
-#### [Google Play](https://github.com/soomla/android-store-google-play)
+### [Google Play](https://github.com/soomla/android-store-google-play)
+
+Once you complete the following steps, see the [Google Play IAB](http://know.soom.la/android/store/store_googleplayiab/)
+tutorial in our _Knowledge Base_ for information about in-app-purchase setup, integration with SOOMLA, and how to define your in-app
+purchase items.
 
 1. Add `AndroidStoreGooglePlay.jar` from the folder `billing-services/google-play` to your project.
+
 2. Make the following changes in `AndroidManifest.xml`:
 
   Add the following permission (for Google Play):
 
-  ```xml
+  ``` xml
   <uses-permission android:name="com.android.vending.BILLING" />
   ```
 
   Add the `IabActivity` to your `application` element, the plugin will spawn a transparent activity to make purchases. Also, you need to tell us what plugin you're using so add a meta-data tag for that:
 
-  ```xml
+  ``` xml
   <activity android:name="com.soomla.store.billing.google.GooglePlayIabService$IabActivity"
             android:theme="@android:style/Theme.Translucent.NoTitleBar.Fullscreen"/>
   <meta-data android:name="billing.service" android:value="google.GooglePlayIabService" />
   ```
 
-3. After you initialize `SoomlaStore`, let the plugin know your public key from the dev console:
+3. After you initialize `SoomlaStore`, let the plugin know your public key from [Google play Developer Console](https://play.google.com/apps/publish/):
 
-  ```Java
-  GooglePlayIabService.getInstance().setPublicKey("[YOUR PUBLIC KEY FROM THE MARKET]");
+  ``` java
+  public class StoreExampleActivity extends Activity {
+      ...
+      protected void onCreate(Bundle savedInstanceState) {
+          ...
+          GooglePlayIabService.getInstance().setPublicKey("[YOUR PUBLIC KEY FROM GOOGLE PLAY]");
+      }
+  }
   ```
 
-4. If you want to allow the test purchases, all you need to do is tell that to the plugin:
+4. If you want to allow Android's test purchases, all you need to do is tell that to the plugin:
 
-  ```Java
-  GooglePlayIabService.AllowAndroidTestPurchases = true;
+  ``` java
+  public class StoreExampleActivity extends Activity {
+      ...
+      protected void onCreate(Bundle savedInstanceState) {
+          ...
+          GooglePlayIabService.AllowAndroidTestPurchases = true;
+      }
+  }
   ```
 
-For Google Play, We recommend that you open the IAB Service and keep it open in the background in cases where you have an in-game storefront. This is how you do that:
+5. In case you want to turn on _Fraud Protection_ you need to get clientId, clientSecret and refreshToken as
+explained in [Google Play Purchase Verification](http://know.soom.la/android/store/Store_GooglePlayVerification) in
+our _Knowledge Base_ and use them like this:
+
+  ``` java
+      GooglePlayIabService.getInstance().configVerifyPurchases(new HashMap<String, Object>() {{
+          put("clientId", <YOU_CLIENT_ID>);
+          put("clientSecret", <YOUR_CLIENT_SECRET>);
+          put("refreshToken", <YOUR_REFRESH_TOKEN>);
+      }});
+  ```
+
+  >  Optionally you can turn on `verifyOnServerFailure` if you want to get purchases automatically verified in case of network failures during the verification process:
+  >
+  > ``` java
+  > GooglePlayIabService.getInstance().verifyOnServerFailure = true;
+  > ```
+
+####**If you have an in-game storefront**
+
+We recommend that you open the IAB Service and keep it open in the background. This how to do that:
 
 When you open the store, call:  
-  ```Java
-  SoomlaStore.getInstance().startIabServiceInBg();
-  ```
+``` java
+SoomlaStore.getInstance().startIabServiceInBg();
+```
 
 When the store is closed, call:  
-  ```Java
-  SoomlaStore.getInstance().stopIabServiceInBg();
-  ```
+``` java
+SoomlaStore.getInstance().stopIabServiceInBg();
+```
 
 #### [Amazon](https://github.com/soomla/android-store-amazon)
+
+Once you complete the following steps, see the [Amazon IAB](http://know.soom.la/android/store/Store_AmazonIAB) tutorial
+in our _Knowledge Base_ for information about in-app-purchase setup, integration with SOOMLA, and how to define your
+in-app purchase items.
 
 1. Add `in-app-purchasing-2.0.1.jar` and `AndroidStoreAmazon.jar` from the folder `billing-services/amazon` to your project.
 
@@ -129,11 +186,11 @@ When the store is closed, call:
 
   Add Amazon's `ResponseReceiver` to your `application` element. Also, you need to tell us what plugin you're using so add a meta-data tag for that:
 
-  ```xml
-  <receiver android:name = "com.amazon.device.iap.ResponseReceiver" >
+  ``` xml
+  <receiver android:name = "com.amazon.inapp.purchasing.ResponseReceiver" >
     <intent-filter>
         <action android:name = "com.amazon.inapp.purchasing.NOTIFY"
-                android:permission = "com.amazon.inapp.purchasing.Permission.NOTIFY" />
+            android:permission = "com.amazon.inapp.purchasing.Permission.NOTIFY" />
     </intent-filter>
   </receiver>
   <meta-data android:name="billing.service" android:value="amazon.AmazonIabService" />
@@ -249,6 +306,39 @@ You can find a full event handler example [here](https://github.com/soomla/andro
 [List of events](https://github.com/soomla/android-store/tree/master/SoomlaAndroidStore/src/com/soomla/store/events)
 
 [Full documentation and explanation of otto](http://square.github.com/otto/)
+
+##Example
+
+Create your own implementation of `IStoreAssets`; See the article about [IStoreAssets](http://know.soom.la/android/store/Store_IStoreAssets) in our _Knowledge Base_, which includes a code example and explanations.
+
+Then initialize `SoomlaStore` with your implementation of `IStoreAssets`:
+
+``` java
+public class StoreExampleActivity extends Activity {
+    ...
+
+    protected void onCreate(Bundle savedInstanceState) {
+        ...
+
+        IStoreAssets storeAssets = new YourImplementationAssets();
+
+        // This value is a secret of your choice.
+        // You can't change it after you publish your game.
+        Soomla.initialize("[CUSTOM SECRET HERE]");
+        SoomlaStore.getInstance().initialize(storeAssets);
+
+        /** The following are relevant only if your Billing Provider is Google Play **/
+
+        // When you create your app in Google play Developer Console,
+        // you'll find this key under the "Services & APIs" tab.
+        GooglePlayIabService.getInstance().setPublicKey("[YOUR PUBLIC KEY FROM THE MARKET]");
+        GooglePlayIabService.AllowAndroidTestPurchases = true;
+        ...
+    }
+
+    ...
+}
+```
 
 Contribution
 ---
