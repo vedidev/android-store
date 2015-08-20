@@ -47,7 +47,7 @@ Check out our [Wiki] (https://github.com/soomla/android-store/wiki) for more inf
     $ git clone --recursive git@github.com:soomla/android-store.git
     ```
 
-    <div class="info-box">There are some necessary files in submodules linked with symbolic links. If you're cloning the project make sure to include the `--recursive` flag.</div>
+    > There are some necessary files in submodules linked with symbolic links. If you're cloning the project make sure to include the `--recursive` flag.
 
 2. Make the following changes to your AndroidManifest.xml:
 
@@ -64,7 +64,7 @@ Check out our [Wiki] (https://github.com/soomla/android-store/wiki) for more inf
     Soomla.initialize("[YOUR CUSTOM GAME SECRET HERE]");
     ```
 
-    <div class="info-box">This secret is your encryption secret for data saved in the DB.</div>
+    > This secret is your encryption secret for data saved in the DB.
 
 4. Create your own implementation of `IStoreAssets` in order to describe your game's specific assets.
   - See the brief [example](#example) at the bottom.
