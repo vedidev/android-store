@@ -41,13 +41,17 @@ import com.soomla.store.events.UnexpectedStoreErrorEvent;
 import com.soomla.store.exceptions.VirtualItemNotFoundException;
 import com.soomla.store.purchaseTypes.PurchaseType;
 import com.soomla.store.purchaseTypes.PurchaseWithMarket;
+import com.soomla.store.purchaseTypes.PurchaseWithVirtualItem;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.lang.IllegalArgumentException;
+import java.util.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -72,21 +76,48 @@ public class StoreInfo {
      * metadata when the application loads. Bumping the version is done by returning a higher number
      * in {@link IStoreAssets#getVersion()}.
      */
-    public static void setStoreAssets(IStoreAssets storeAssets) {
+
+    private static void validateStoreAssets(IStoreAssets storeAssets) throws IllegalArgumentException {
         if (storeAssets == null) {
-            SoomlaUtils.LogError(TAG, "The given store assets can't be null!");
-            return;
+            throw new IllegalArgumentException("The given store assets can't be null!");
         }
+        HashSet marketItemIds = new HashSet(),
+                virtualItemIds = new HashSet();
+        for (VirtualGood virtualGood : storeAssets.getGoods()) {
+            if (virtualGood.getPurchaseType() instanceof PurchaseWithMarket) {
+                String currentMarketId = ((PurchaseWithMarket)virtualGood.getPurchaseType()).getMarketItem().getProductId();
+                if (marketItemIds.contains(currentMarketId)) {
+                    throw new IllegalArgumentException("The given store assets has duplicates at marketItem productId!");
+                } else {
+                    marketItemIds.add(currentMarketId);
+                }
+            }
+            if (virtualGood.getPurchaseType() instanceof PurchaseWithVirtualItem) {
+                String currentVirtualId = ((PurchaseWithVirtualItem)virtualGood.getPurchaseType()).getTargetItemId();
+                if (virtualItemIds.contains(currentVirtualId)) {
+                    throw new IllegalArgumentException("The given store assets has duplicates at targetItemId!");
+                } else {
+                    virtualItemIds.add(currentVirtualId);
+                }
+            }
+        }
+    }
 
-        mCurrentAssetsVersion = storeAssets.getVersion();
+    public static void setStoreAssets(IStoreAssets storeAssets) {
+        try {
+            validateStoreAssets(storeAssets);
+            mCurrentAssetsVersion = storeAssets.getVersion();
 
-//        checkAndResetMetadata();
+            //checkAndResetMetadata();
 
-        // we always initialize from the database, unless this is the first time the game is
-        // loaded - in that case we initialize with setStoreAssets.
-        // BUT we don't need to load from DB if metadata was reset.
-        if (!loadFromDB()) {
-            initializeWithStoreAssets(storeAssets);
+            // we always initialize from the database, unless this is the first time the game is
+            // loaded - in that case we initialize with setStoreAssets.
+            // BUT we don't need to load from DB if metadata was reset.
+            if (!loadFromDB()) {
+                initializeWithStoreAssets(storeAssets);
+            }
+        } catch (IllegalArgumentException invalidStoreAssetsException) {
+            SoomlaUtils.LogError(TAG, invalidStoreAssetsException.getMessage());
         }
     }
 
