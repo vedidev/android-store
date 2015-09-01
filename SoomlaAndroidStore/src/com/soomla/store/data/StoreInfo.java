@@ -77,29 +77,29 @@ public class StoreInfo {
      * in {@link IStoreAssets#getVersion()}.
      */
 
-    private static void validateStoreAssets(IStoreAssets storeAssets) throws IllegalArgumentException {
-        if (storeAssets == null) {
-            throw new IllegalArgumentException("The given store assets can't be null!");
-        }
-        HashSet marketItemIds = new HashSet(),
-                virtualItemIds = new HashSet();
-        for (VirtualGood virtualGood : storeAssets.getGoods()) {
-            if (virtualGood.getPurchaseType() instanceof PurchaseWithMarket) {
-                String currentMarketId = ((PurchaseWithMarket)virtualGood.getPurchaseType()).getMarketItem().getProductId();
+    private static boolean assetsArrayHasMarketIdDuplicates(PurchasableVirtualItem[] assetsArray) {
+        HashSet<String> marketItemIds = new HashSet<>();
+        for (PurchasableVirtualItem pvi : assetsArray) {
+            if (pvi.getPurchaseType() instanceof PurchaseWithMarket) {
+                String currentMarketId = ((PurchaseWithMarket)pvi.getPurchaseType()).getMarketItem().getProductId();
                 if (marketItemIds.contains(currentMarketId)) {
-                    throw new IllegalArgumentException("The given store assets has duplicates at marketItem productId!");
+                    return false;
                 } else {
                     marketItemIds.add(currentMarketId);
                 }
             }
-            if (virtualGood.getPurchaseType() instanceof PurchaseWithVirtualItem) {
-                String currentVirtualId = ((PurchaseWithVirtualItem)virtualGood.getPurchaseType()).getTargetItemId();
-                if (virtualItemIds.contains(currentVirtualId)) {
-                    throw new IllegalArgumentException("The given store assets has duplicates at targetItemId!");
-                } else {
-                    virtualItemIds.add(currentVirtualId);
-                }
-            }
+        }
+        return true;
+    }
+
+    private static void validateStoreAssets(IStoreAssets storeAssets) throws IllegalArgumentException {
+        if (storeAssets == null) {
+            throw new IllegalArgumentException("The given store assets can't be null!");
+        }
+
+        if (!assetsArrayHasMarketIdDuplicates(storeAssets.getGoods())
+                || !assetsArrayHasMarketIdDuplicates(storeAssets.getCurrencyPacks())) {
+            throw new IllegalArgumentException("The given store assets has duplicates at marketItem productId!");
         }
     }
 
