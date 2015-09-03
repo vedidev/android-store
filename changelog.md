@@ -1,3 +1,9 @@
+### v3.6.14 [view commit logs](https://github.com/soomla/android-store/compare/v3.6.13...v3.6.14)
+
+* Changes
+  * Added Fraud Protection flag to OnMarketPurchaseStarted event
+  * Improved documentation
+
 ### v3.6.13 [view commit logs](https://github.com/soomla/android-store/compare/v3.6.12...v3.6.13)
 
 * Changes
