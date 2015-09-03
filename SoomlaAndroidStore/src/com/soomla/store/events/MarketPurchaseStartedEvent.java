@@ -30,12 +30,21 @@ public class MarketPurchaseStartedEvent extends SoomlaEvent {
      * @param purchasableVirtualItem
      */
     public MarketPurchaseStartedEvent(PurchasableVirtualItem purchasableVirtualItem) {
-        this(purchasableVirtualItem, null);
+        this(purchasableVirtualItem, false, null);
+    }
+
+    public MarketPurchaseStartedEvent(PurchasableVirtualItem purchasableVirtualItem, boolean fraudProtection) {
+        this(purchasableVirtualItem, fraudProtection, null);
     }
 
     public MarketPurchaseStartedEvent(PurchasableVirtualItem purchasableVirtualItem, Object sender) {
+        this(purchasableVirtualItem, false, sender);
+    }
+
+    public MarketPurchaseStartedEvent(PurchasableVirtualItem purchasableVirtualItem, boolean fraudProtection, Object sender) {
         super(sender);
         mPurchasableVirtualItem = purchasableVirtualItem;
+        mFraudProtection = fraudProtection;
     }
 
     /** Setters and Getters */
@@ -44,8 +53,13 @@ public class MarketPurchaseStartedEvent extends SoomlaEvent {
         return mPurchasableVirtualItem;
     }
 
+    public boolean isFraudProtection() {
+        return mFraudProtection;
+    }
+
 
     /** Private Members */
 
     private PurchasableVirtualItem mPurchasableVirtualItem;
+    private boolean mFraudProtection;
 }

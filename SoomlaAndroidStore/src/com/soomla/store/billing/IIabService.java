@@ -32,7 +32,7 @@ public interface IIabService {
      *
      * @return true if Iab is initialized, false otherwise
      */
-    public boolean isIabServiceInitialized();
+    boolean isIabServiceInitialized();
 
     /**
      * Consumes the given purchase. In order to consume a product, the product must be owned, and
@@ -42,7 +42,7 @@ public interface IIabService {
      * @param purchase the PurchaseInfo that represents the item to consume.
      * @throws IabException if there is a problem during consumption.
      */
-    public void consume(IabPurchase purchase) throws IabException;
+    void consume(IabPurchase purchase) throws IabException;
 
     /**
      * Works like {@link #consume}, but is asynchronous. Performs the consumption in the background
@@ -52,8 +52,8 @@ public interface IIabService {
      * @param purchase the purchase to be consumed
      * @param consumeListener the listener to notify when the consumption is finished.
      */
-    public void consumeAsync(IabPurchase purchase,
-                             final IabCallbacks.OnConsumeListener consumeListener);
+    void consumeAsync(IabPurchase purchase,
+                      final IabCallbacks.OnConsumeListener consumeListener);
 
     /**
      * Initiates the UI flow for an in-app purchase.
@@ -66,9 +66,9 @@ public interface IIabService {
      * @param extraData extra data (developer payload), which will be returned with the purchase
      *                  data when the purchase completes.
      */
-    public void launchPurchaseFlow(String sku,
-                                   final IabCallbacks.OnPurchaseListener purchaseListener,
-                                   String extraData);
+    void launchPurchaseFlow(String sku,
+                            final IabCallbacks.OnPurchaseListener purchaseListener,
+                            String extraData);
 
     /**
      * Restores transactions asynchronously. This operation will get all previously purchased
@@ -76,7 +76,7 @@ public interface IIabService {
      *
      * @param restorePurchasesListener the listener to notify when the query operation completes.
      */
-    public void restorePurchasesAsync(IabCallbacks.OnRestorePurchasesListener restorePurchasesListener);
+    void restorePurchasesAsync(IabCallbacks.OnRestorePurchasesListener restorePurchasesListener);
 
     /**
      * Fetches all details for the given skus. The details is what the developer provided on
@@ -84,7 +84,7 @@ public interface IIabService {
      *
      * @param fetchSkusDetailsListener the listener to notify when the query operation completes.
      */
-    public void fetchSkusDetailsAsync(List<String> skus, IabCallbacks.OnFetchSkusDetailsListener fetchSkusDetailsListener);
+    void fetchSkusDetailsAsync(List<String> skus, IabCallbacks.OnFetchSkusDetailsListener fetchSkusDetailsListener);
 
     /**
      * Initializes in-app billing service and notifies the given <code>initListener</code> upon
@@ -93,7 +93,7 @@ public interface IIabService {
      * @param initListener the listener to notify when the <code>initializeBillingService</code>
      *                     process completes.
      */
-    public void initializeBillingService(IabCallbacks.IabInitListener initListener);
+    void initializeBillingService(IabCallbacks.IabInitListener initListener);
 
     /**
      * Starts in-app billing service in background and notifies the given <code>initListener</code>
@@ -102,7 +102,7 @@ public interface IIabService {
      * @param initListener the listener to notify when the <code>startIabServiceInBg</code> process
      *                     completes.
      */
-    public void startIabServiceInBg(IabCallbacks.IabInitListener initListener);
+    void startIabServiceInBg(IabCallbacks.IabInitListener initListener);
 
     /**
      * Stops in-app billing service in background and notifies the given <code>initListener</code>
@@ -111,7 +111,7 @@ public interface IIabService {
      * @param initListener the listener to notify when the <code>stopIabServiceInBg</code> process
      *                     completes.
      */
-    public void stopIabServiceInBg(IabCallbacks.IabInitListener initListener);
+    void stopIabServiceInBg(IabCallbacks.IabInitListener initListener);
 
     /**
      * Parameters that configures receipt validation for purchases.
@@ -120,5 +120,12 @@ public interface IIabService {
      * @param verifyPurchases the parameters for receipt validation.
      */
     void configVerifyPurchases(Map<String, Object> verifyPurchases);
+
+    /**
+     * Checks if in-app billing service should verify purchases
+     *
+     * @return true if service should verify purchases, false otherwise
+     */
+    boolean shouldVerifyPurchases();
 
 }

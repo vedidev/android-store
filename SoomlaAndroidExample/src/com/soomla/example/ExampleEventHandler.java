@@ -163,7 +163,8 @@ public class ExampleEventHandler {
     @Subscribe
     public void onMarketPurchaseStarted(MarketPurchaseStartedEvent marketPurchaseStartedEvent) {
         showToastIfDebug("Market purchase started for: "
-                + marketPurchaseStartedEvent.getPurchasableVirtualItem().getName());
+                + marketPurchaseStartedEvent.getPurchasableVirtualItem().getName()
+                + (marketPurchaseStartedEvent.isFraudProtection()? " with " : " without ") + "Fraud Protection");
     }
 
     /**
