@@ -64,7 +64,7 @@ import java.util.List;
  */
 public class SoomlaStore {
 
-    public static final String VERSION = "3.6.13";
+    public static final String VERSION = "3.6.14";
 
     /**
      * Initializes the SOOMLA SDK.
@@ -433,7 +433,7 @@ public class SoomlaStore {
                                     }
                                 };
 
-                        BusProvider.getInstance().post(new MarketPurchaseStartedEvent(pvi));
+                        BusProvider.getInstance().post(new MarketPurchaseStartedEvent(pvi, getInAppBillingService().shouldVerifyPurchases()));
 
                         try {
                             mInAppBillingService.launchPurchaseFlow(marketItem.getProductId(),
