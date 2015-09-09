@@ -47,7 +47,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.lang.IllegalArgumentException;
-import java.util.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -77,16 +76,15 @@ public class StoreInfo {
      * in {@link IStoreAssets#getVersion()}.
      */
 
-    private static boolean assetsArrayHasMarketIdDuplicates(PurchasableVirtualItem[] assetsArray) {
-        HashSet<String> marketItemIds = new HashSet<>();
+    private static boolean hasMarketIdDuplicates(PurchasableVirtualItem[] assetsArray) {
+        HashSet<String> marketItemIds = new HashSet<String>();
         for (PurchasableVirtualItem pvi : assetsArray) {
             if (pvi.getPurchaseType() instanceof PurchaseWithMarket) {
                 String currentMarketId = ((PurchaseWithMarket)pvi.getPurchaseType()).getMarketItem().getProductId();
                 if (marketItemIds.contains(currentMarketId)) {
                     return false;
-                } else {
-                    marketItemIds.add(currentMarketId);
                 }
+                marketItemIds.add(currentMarketId);
             }
         }
         return true;
@@ -97,8 +95,8 @@ public class StoreInfo {
             throw new IllegalArgumentException("The given store assets can't be null!");
         }
 
-        if (!assetsArrayHasMarketIdDuplicates(storeAssets.getGoods())
-                || !assetsArrayHasMarketIdDuplicates(storeAssets.getCurrencyPacks())) {
+        if (!hasMarketIdDuplicates(storeAssets.getGoods())
+                || !hasMarketIdDuplicates(storeAssets.getCurrencyPacks())) {
             throw new IllegalArgumentException("The given store assets has duplicates at marketItem productId!");
         }
     }
