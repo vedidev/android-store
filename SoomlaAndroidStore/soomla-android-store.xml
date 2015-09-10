@@ -95,7 +95,6 @@
       <zipfileset dir="${soomlaandroidstore.output.dir}"/>
     </jar>
     <copy file="${temp.jar.path.SoomlaAndroidStore.jar}" tofile="${basedir}/${soomlaandroidstore.target.dir}/${soomla.filename}.jar"/>
-    <copy file="${basedir}/../submodules/soomla-android-core/build/SoomlaAndroidCore.jar" tofile="${basedir}/${soomlaandroidstore.target.dir}/SoomlaAndroidCore.jar"/>
   </target>
 
   <target name="build.all.artifacts" depends="artifact.soomlaandroidstore:jar" description="Build all artifacts">
