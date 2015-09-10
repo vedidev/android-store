@@ -41,13 +41,16 @@ import com.soomla.store.events.UnexpectedStoreErrorEvent;
 import com.soomla.store.exceptions.VirtualItemNotFoundException;
 import com.soomla.store.purchaseTypes.PurchaseType;
 import com.soomla.store.purchaseTypes.PurchaseWithMarket;
+import com.soomla.store.purchaseTypes.PurchaseWithVirtualItem;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.lang.IllegalArgumentException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -72,21 +75,47 @@ public class StoreInfo {
      * metadata when the application loads. Bumping the version is done by returning a higher number
      * in {@link IStoreAssets#getVersion()}.
      */
-    public static void setStoreAssets(IStoreAssets storeAssets) {
+
+    private static boolean hasMarketIdDuplicates(PurchasableVirtualItem[] assetsArray) {
+        HashSet<String> marketItemIds = new HashSet<String>();
+        for (PurchasableVirtualItem pvi : assetsArray) {
+            if (pvi.getPurchaseType() instanceof PurchaseWithMarket) {
+                String currentMarketId = ((PurchaseWithMarket)pvi.getPurchaseType()).getMarketItem().getProductId();
+                if (marketItemIds.contains(currentMarketId)) {
+                    return false;
+                }
+                marketItemIds.add(currentMarketId);
+            }
+        }
+        return true;
+    }
+
+    private static void validateStoreAssets(IStoreAssets storeAssets) throws IllegalArgumentException {
         if (storeAssets == null) {
-            SoomlaUtils.LogError(TAG, "The given store assets can't be null!");
-            return;
+            throw new IllegalArgumentException("The given store assets can't be null!");
         }
 
-        mCurrentAssetsVersion = storeAssets.getVersion();
+        if (!hasMarketIdDuplicates(storeAssets.getGoods())
+                || !hasMarketIdDuplicates(storeAssets.getCurrencyPacks())) {
+            throw new IllegalArgumentException("The given store assets has duplicates at marketItem productId!");
+        }
+    }
 
-//        checkAndResetMetadata();
+    public static void setStoreAssets(IStoreAssets storeAssets) {
+        try {
+            validateStoreAssets(storeAssets);
+            mCurrentAssetsVersion = storeAssets.getVersion();
 
-        // we always initialize from the database, unless this is the first time the game is
-        // loaded - in that case we initialize with setStoreAssets.
-        // BUT we don't need to load from DB if metadata was reset.
-        if (!loadFromDB()) {
-            initializeWithStoreAssets(storeAssets);
+            //checkAndResetMetadata();
+
+            // we always initialize from the database, unless this is the first time the game is
+            // loaded - in that case we initialize with setStoreAssets.
+            // BUT we don't need to load from DB if metadata was reset.
+            if (!loadFromDB()) {
+                initializeWithStoreAssets(storeAssets);
+            }
+        } catch (IllegalArgumentException invalidStoreAssetsException) {
+            SoomlaUtils.LogError(TAG, invalidStoreAssetsException.getMessage());
         }
     }
 
