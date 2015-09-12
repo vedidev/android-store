@@ -75,32 +75,6 @@ public class StoreInfo {
      * metadata when the application loads. Bumping the version is done by returning a higher number
      * in {@link IStoreAssets#getVersion()}.
      */
-
-    private static boolean hasMarketIdDuplicates(PurchasableVirtualItem[] assetsArray) {
-        HashSet<String> marketItemIds = new HashSet<String>();
-        for (PurchasableVirtualItem pvi : assetsArray) {
-            if (pvi.getPurchaseType() instanceof PurchaseWithMarket) {
-                String currentMarketId = ((PurchaseWithMarket)pvi.getPurchaseType()).getMarketItem().getProductId();
-                if (marketItemIds.contains(currentMarketId)) {
-                    return false;
-                }
-                marketItemIds.add(currentMarketId);
-            }
-        }
-        return true;
-    }
-
-    private static void validateStoreAssets(IStoreAssets storeAssets) throws IllegalArgumentException {
-        if (storeAssets == null) {
-            throw new IllegalArgumentException("The given store assets can't be null!");
-        }
-
-        if (!hasMarketIdDuplicates(storeAssets.getGoods())
-                || !hasMarketIdDuplicates(storeAssets.getCurrencyPacks())) {
-            throw new IllegalArgumentException("The given store assets has duplicates at marketItem productId!");
-        }
-    }
-
     public static void setStoreAssets(IStoreAssets storeAssets) {
         try {
             validateStoreAssets(storeAssets);
@@ -354,6 +328,43 @@ public class StoreInfo {
 
 
     /** Private functions **/
+    /**
+     * Checks if given storeAssets is correct IStoreAssets instance
+     *
+     * @param assetsArray array of successors of PurchasableVirtualItem class.
+     * @return true if <code>marketId</code> duplicates exists and false otherwise.
+     */
+    private static boolean hasMarketIdDuplicates(PurchasableVirtualItem[] assetsArray) {
+        HashSet<String> marketItemIds = new HashSet<String>();
+        for (PurchasableVirtualItem pvi : assetsArray) {
+            if (pvi.getPurchaseType() instanceof PurchaseWithMarket) {
+                String currentMarketId = ((PurchaseWithMarket)pvi.getPurchaseType()).getMarketItem().getProductId();
+                if (marketItemIds.contains(currentMarketId)) {
+                    return true;
+                }
+                marketItemIds.add(currentMarketId);
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Checks if given storeAssets is correct IStoreAssets instance
+     *
+     * @param storeAssets
+     * @throws IllegalArgumentException
+     */
+    private static void validateStoreAssets(IStoreAssets storeAssets) throws IllegalArgumentException {
+        if (storeAssets == null) {
+            throw new IllegalArgumentException("The given store assets can't be null!");
+        }
+
+        if (hasMarketIdDuplicates(storeAssets.getGoods())
+                || hasMarketIdDuplicates(storeAssets.getCurrencyPacks())) {
+            throw new IllegalArgumentException("The given store assets has duplicates at marketItem productId!");
+        }
+    }
+
     /**
      * Transforms given jsonObject to StoreInfo
      *
