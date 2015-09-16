@@ -41,13 +41,16 @@ import com.soomla.store.events.UnexpectedStoreErrorEvent;
 import com.soomla.store.exceptions.VirtualItemNotFoundException;
 import com.soomla.store.purchaseTypes.PurchaseType;
 import com.soomla.store.purchaseTypes.PurchaseWithMarket;
+import com.soomla.store.purchaseTypes.PurchaseWithVirtualItem;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.lang.IllegalArgumentException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -73,20 +76,20 @@ public class StoreInfo {
      * in {@link IStoreAssets#getVersion()}.
      */
     public static void setStoreAssets(IStoreAssets storeAssets) {
-        if (storeAssets == null) {
-            SoomlaUtils.LogError(TAG, "The given store assets can't be null!");
-            return;
-        }
+        try {
+            validateStoreAssets(storeAssets);
+            mCurrentAssetsVersion = storeAssets.getVersion();
 
-        mCurrentAssetsVersion = storeAssets.getVersion();
+            //checkAndResetMetadata();
 
-//        checkAndResetMetadata();
-
-        // we always initialize from the database, unless this is the first time the game is
-        // loaded - in that case we initialize with setStoreAssets.
-        // BUT we don't need to load from DB if metadata was reset.
-        if (!loadFromDB()) {
-            initializeWithStoreAssets(storeAssets);
+            // we always initialize from the database, unless this is the first time the game is
+            // loaded - in that case we initialize with setStoreAssets.
+            // BUT we don't need to load from DB if metadata was reset.
+            if (!loadFromDB()) {
+                initializeWithStoreAssets(storeAssets);
+            }
+        } catch (IllegalArgumentException invalidStoreAssetsException) {
+            SoomlaUtils.LogError(TAG, invalidStoreAssetsException.getMessage());
         }
     }
 
@@ -325,6 +328,43 @@ public class StoreInfo {
 
 
     /** Private functions **/
+    /**
+     * Checks if given storeAssets is correct IStoreAssets instance
+     *
+     * @param assetsArray array of successors of PurchasableVirtualItem class.
+     * @return true if <code>marketId</code> duplicates exists and false otherwise.
+     */
+    private static boolean hasMarketIdDuplicates(PurchasableVirtualItem[] assetsArray) {
+        HashSet<String> marketItemIds = new HashSet<String>();
+        for (PurchasableVirtualItem pvi : assetsArray) {
+            if (pvi.getPurchaseType() instanceof PurchaseWithMarket) {
+                String currentMarketId = ((PurchaseWithMarket)pvi.getPurchaseType()).getMarketItem().getProductId();
+                if (marketItemIds.contains(currentMarketId)) {
+                    return true;
+                }
+                marketItemIds.add(currentMarketId);
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Checks if given storeAssets is correct IStoreAssets instance
+     *
+     * @param storeAssets
+     * @throws IllegalArgumentException
+     */
+    private static void validateStoreAssets(IStoreAssets storeAssets) throws IllegalArgumentException {
+        if (storeAssets == null) {
+            throw new IllegalArgumentException("The given store assets can't be null!");
+        }
+
+        if (hasMarketIdDuplicates(storeAssets.getGoods())
+                || hasMarketIdDuplicates(storeAssets.getCurrencyPacks())) {
+            throw new IllegalArgumentException("The given store assets has duplicates at marketItem productId!");
+        }
+    }
+
     /**
      * Transforms given jsonObject to StoreInfo
      *
