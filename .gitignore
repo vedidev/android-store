@@ -36,3 +36,5 @@ SoomlaAndroidExample/SoomlaAndroidExample.apk
 SoomlaAndroidStore/src/META-INF/
 
 build.log
+
+*.meta
