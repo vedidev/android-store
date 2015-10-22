@@ -29,10 +29,10 @@ Check out our [Wiki] (https://github.com/soomla/android-store/wiki) for more inf
 
 #### Pre baked jars:
 
-The latest [android-store](http://library.soom.la/fetch/android-store/latest?cf=github) release
+[android-store v3.6.15](http://library.soom.la/fetch/android-store/3.6.15?cf=github)
 
 #### From sources:
- - Clone this repository;
+ - Clone this repository recursively: `git clone --recursive https://github.com/soomla/android-store.git`;
  - Run `./build_all` from project directory;
  - Take created binaries from `build` directory and use it!
 
