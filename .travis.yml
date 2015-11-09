@@ -2,7 +2,9 @@ language: android
 sudo: false
 install: true
 script:
-    - cd SoomlaAndroidStore
+    - cd submodules/soomla-android-core
+    - ant -buildfile soomla-android-core.xml -Dsoomla.filename="SoomlaAndroidCore" all
+    - cd ../../SoomlaAndroidStore
     - ant -buildfile soomla-android-store.xml -Dsoomla.filename="SoomlaAndroidStore" all
 
 
