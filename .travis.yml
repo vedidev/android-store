@@ -1,11 +1,20 @@
-language: java
-before_install: 
-    - wget http://dl.google.com/android/android-sdk_r18-linux.tgz 
-    - tar -zxf android-sdk_r18-linux.tgz
-    - export ANDROID_HOME=~/builds/Soomla/AndroidStore/android-sdk-linux
-    - export PATH=${PATH}:${ANDROID_HOME}/tools:${ANDROID_HOME}/platform-tools
-    - sudo android update sdk --filter 1,2,9 --no-ui --force
-    - android update project --path ./SoomlaAndroidStore --target "android-15"
+language: android
+sudo: false
+install: true
+script:
+    - cd SoomlaAndroidStore
+    - ant -buildfile soomla-android-store.xml -Dsoomla.filename="SoomlaAndroidStore" all
+
+
+
+# language: java
+# before_install:
+#     - wget http://dl.google.com/android/android-sdk_r18-linux.tgz
+#     - tar -zxf android-sdk_r18-linux.tgz
+#     - export ANDROID_HOME=~/builds/Soomla/AndroidStore/android-sdk-linux
+#     - export PATH=${PATH}:${ANDROID_HOME}/tools:${ANDROID_HOME}/platform-tools
+#     - sudo android update sdk --filter 1,2,9 --no-ui --force
+#     - android update project --path ./SoomlaAndroidStore --target "android-15"
 #script: "sudo ./buildstuff.sh"
 
 
