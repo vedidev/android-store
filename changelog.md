@@ -1,3 +1,8 @@
+### v3.6.16 [view commit logs](https://github.com/soomla/android-store/compare/v3.6.15...v3.6.16)
+
+* New Features
+  * Add new event - VerificationStarted
+
 ### v3.6.15 [view commit logs](https://github.com/soomla/android-store/compare/v3.6.14...v3.6.15)
 
 * Fixes
