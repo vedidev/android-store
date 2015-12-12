@@ -359,13 +359,6 @@ public class StoreInfo {
             throw new IllegalArgumentException("The given store assets can't be null!");
         }
 
-        if (storeAssets.getCurrencies() == null ||
-                storeAssets.getCurrencyPacks() == null ||
-                storeAssets.getGoods() == null ||
-                storeAssets.getCategories() == null) {
-            throw new IllegalArgumentException("All IStoreAssets methods shouldn't return NULL-pointer references!");
-        }
-
         if (hasMarketIdDuplicates(storeAssets.getGoods())
                 || hasMarketIdDuplicates(storeAssets.getCurrencyPacks())) {
             throw new IllegalArgumentException("The given store assets has duplicates at marketItem productId!");
