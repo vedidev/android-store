@@ -6,7 +6,6 @@ script:
     - ./download_deps
     - ant -buildfile soomla-android-core.xml -Dsoomla.filename="SoomlaAndroidCore" all
     - cd ../../SoomlaAndroidStore
-    - ./download_deps
     - ant -buildfile soomla-android-store.xml -Dsoomla.filename="AndroidStore" all
 
 
