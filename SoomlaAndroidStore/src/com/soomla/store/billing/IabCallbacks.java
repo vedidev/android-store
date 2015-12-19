@@ -76,6 +76,14 @@ public class IabCallbacks {
           * @param message reason for failure
           */
         public void fail(String message);
+
+         /**
+          * The purchase verification has started
+          *
+          * @param purchase the purchase being verified
+          */
+         public void verificationStarted(List<IabPurchase> purchases);
+
     }
 
      /**
@@ -96,6 +104,13 @@ public class IabCallbacks {
           * @param message reason for failure
           */
         public void fail(String message);
+
+         /**
+          * The purchase verification has started
+          *
+          * @param purchase the purchase being verified
+          */
+         public void verificationStarted(List<IabPurchase> purchases);
     }
 
      /**

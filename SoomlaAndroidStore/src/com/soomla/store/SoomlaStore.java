@@ -47,6 +47,7 @@ import com.soomla.store.events.RestoreTransactionsFinishedEvent;
 import com.soomla.store.events.RestoreTransactionsStartedEvent;
 import com.soomla.store.events.SoomlaStoreInitializedEvent;
 import com.soomla.store.events.UnexpectedStoreErrorEvent;
+import com.soomla.store.events.VerificationStartedEvent;
 import com.soomla.store.exceptions.VirtualItemNotFoundException;
 import com.soomla.store.purchaseTypes.PurchaseWithMarket;
 
@@ -64,7 +65,7 @@ import java.util.List;
  */
 public class SoomlaStore {
 
-    public static final String VERSION = "3.6.15";
+    public static final String VERSION = "3.6.16";
 
     /**
      * Initializes the SOOMLA SDK.
@@ -205,6 +206,11 @@ public class SoomlaStore {
                             public void fail(String message) {
                                 BusProvider.getInstance().post(new RestoreTransactionsFinishedEvent(false));
                                 handleErrorResult(UnexpectedStoreErrorEvent.ErrorCode.GENERAL, message);
+                            }
+
+                            @Override
+                            public void verificationStarted(List<IabPurchase> purchases) {
+                                handleVerificationStarted(purchases);
                             }
                         };
 
@@ -431,6 +437,11 @@ public class SoomlaStore {
                                     public void fail(String message) {
                                         handleErrorResult(UnexpectedStoreErrorEvent.ErrorCode.PURCHASE_FAIL, message);
                                     }
+
+                                    @Override
+                                    public void verificationStarted(List<IabPurchase> purchases) {
+                                        handleVerificationStarted(purchases);
+                                    }
                                 };
 
                         BusProvider.getInstance().post(new MarketPurchaseStartedEvent(pvi, getInAppBillingService().shouldVerifyPurchases()));
@@ -599,6 +610,27 @@ public class SoomlaStore {
                     + "VirtualCurrencyPack OR MarketItem  with productId: " + sku
                     + ". It's unexpected so an unexpected error is being emitted.");
             BusProvider.getInstance().post(new UnexpectedStoreErrorEvent());
+        }
+    }
+
+    /**
+     * Posts an event about the start of verification for the purchase, or an unexpected
+     * error event if the item was not found.
+     *
+     * @param purchases List of purchases to handle.
+     */
+    private void handleVerificationStarted(List<IabPurchase> purchases) {
+        for (IabPurchase purchase : purchases) {
+            String sku = purchase.getSku();
+            try {
+                PurchasableVirtualItem v = StoreInfo.getPurchasableItem(sku);
+                BusProvider.getInstance().post(new VerificationStartedEvent(v));
+            } catch (VirtualItemNotFoundException e) {
+                SoomlaUtils.LogError(TAG, "(purchaseActionResultCancelled) ERROR : Couldn't find the "
+                        + "VirtualCurrencyPack OR MarketItem  with productId: " + sku
+                        + ". It's unexpected so an unexpected error is being emitted.");
+                BusProvider.getInstance().post(new UnexpectedStoreErrorEvent());
+            }
         }
     }
 

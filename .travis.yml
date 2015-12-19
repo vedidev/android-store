@@ -5,7 +5,7 @@ script:
     - cd submodules/soomla-android-core
     - ant -buildfile soomla-android-core.xml -Dsoomla.filename="SoomlaAndroidCore" all
     - cd ../../SoomlaAndroidStore
-    - ant -buildfile soomla-android-store.xml -Dsoomla.filename="SoomlaAndroidStore" all
+    - ant -buildfile soomla-android-store.xml -Dsoomla.filename="AndroidStore" all
 
 
 
