@@ -1,3 +1,8 @@
+### v3.6.17 [view commit logs](https://github.com/soomla/android-store/compare/v3.6.16...v3.6.17)
+
+* Changes
+  * Added validation - not allowing null pointers in IStoreAssets
+
 ### v3.6.16 [view commit logs](https://github.com/soomla/android-store/compare/v3.6.15...v3.6.16)
 
 * New Features
