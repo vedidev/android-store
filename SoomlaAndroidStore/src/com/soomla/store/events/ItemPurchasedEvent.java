@@ -32,12 +32,20 @@ public class ItemPurchasedEvent extends SoomlaEvent {
         this(itemId, payload, null);
     }
 
-    public ItemPurchasedEvent(String itemId, String payload, Object sender) {
-        super(sender);
-        mItemId = itemId;
-        mPayload = payload;
+    public ItemPurchasedEvent(String itemId, boolean isRestored, String payload) {
+        this(itemId, isRestored, payload, null);
     }
 
+    public ItemPurchasedEvent(String itemId, String payload, Object sender) {
+        this(itemId, false, payload, sender);
+    }
+
+    public ItemPurchasedEvent(String itemId, boolean isRestored, String payload, Object sender) {
+        super(sender);
+        mItemId = itemId;
+        mRestored = isRestored;
+        mPayload = payload;
+    }
 
     /** Setters and Getters */
 
@@ -49,8 +57,13 @@ public class ItemPurchasedEvent extends SoomlaEvent {
         return mPayload;
     }
 
+    public boolean isRestored() {
+        return mRestored;
+    }
+
     /** Private Members */
 
     private String mItemId;
     private String mPayload;
+    private boolean mRestored;
 }

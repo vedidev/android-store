@@ -40,8 +40,14 @@ public class MarketPurchaseEvent extends SoomlaEvent {
 
     public MarketPurchaseEvent(PurchasableVirtualItem purchasableVirtualItem, String payload,
                                HashMap<String, String> extraInfo, Object sender) {
+        this(purchasableVirtualItem, false, payload, extraInfo, sender);
+
+    }
+
+    public MarketPurchaseEvent(PurchasableVirtualItem purchasableVirtualItem, boolean isRestored, String payload, HashMap<String, String> extraInfo, Object sender) {
         super(sender);
         PurchasableVirtualItem = purchasableVirtualItem;
+        IsRestored = isRestored;
         Payload = payload;
         ExtraInfo = extraInfo;
     }
@@ -49,6 +55,8 @@ public class MarketPurchaseEvent extends SoomlaEvent {
     /** Private Members */
 
     public final PurchasableVirtualItem PurchasableVirtualItem;
+
+    public final boolean IsRestored;
 
     public final String Payload;
 
