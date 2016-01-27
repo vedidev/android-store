@@ -185,7 +185,7 @@ public class SoomlaStore {
                                         SoomlaUtils.LogDebug(TAG, "Got owned items: " + ownedSkus);
                                     }
 
-                                    handleSuccessfulPurchases(purchases, new HandleSuccessfulPurchasesFinishedHandler() {
+                                    handleSuccessfulPurchases(purchases, true, new HandleSuccessfulPurchasesFinishedHandler() {
                                         @Override
                                         public void onFinished() {
 
@@ -397,7 +397,7 @@ public class SoomlaStore {
 
                                     @Override
                                     public void success(IabPurchase purchase) {
-                                        handleSuccessfulPurchase(purchase);
+                                        handleSuccessfulPurchase(purchase, false);
                                     }
 
                                     @Override
@@ -535,9 +535,9 @@ public class SoomlaStore {
         void onFinished();
     }
 
-    private void handleSuccessfulPurchases(List<IabPurchase> purchases, HandleSuccessfulPurchasesFinishedHandler handler) {
+    private void handleSuccessfulPurchases(List<IabPurchase> purchases, boolean isRestoring, HandleSuccessfulPurchasesFinishedHandler handler) {
         for (IabPurchase purchase : purchases) {
-            handleSuccessfulPurchase(purchase);
+            handleSuccessfulPurchase(purchase, isRestoring);
         }
 
         if (handler != null) {
@@ -552,7 +552,7 @@ public class SoomlaStore {
      *
      * @param purchase purchase whose state is to be checked.
      */
-    private void handleSuccessfulPurchase(IabPurchase purchase) {
+    private void handleSuccessfulPurchase(IabPurchase purchase, boolean isRestoring) {
         String sku = purchase.getSku();
 
         PurchasableVirtualItem pvi;
@@ -571,7 +571,7 @@ public class SoomlaStore {
         switch (purchase.getPurchaseState()) {
             case 0: {
                 if (purchase.isServerVerified()) {
-                    this.finalizeTransaction(purchase, pvi);
+                    this.finalizeTransaction(purchase, pvi, isRestoring);
                 } else {
                     BusProvider.getInstance().post(
                             new UnexpectedStoreErrorEvent(
@@ -690,7 +690,7 @@ public class SoomlaStore {
         SoomlaUtils.LogError(TAG, "ERROR: SoomlaStore failure: " + message);
     }
 
-    private void finalizeTransaction(IabPurchase purchase, PurchasableVirtualItem pvi) {
+    private void finalizeTransaction(IabPurchase purchase, PurchasableVirtualItem pvi, boolean isRestoring) {
         SoomlaUtils.LogDebug(TAG, "IabPurchase successful. Finalizing transaction");
 
         // if the purchasable item is non-consumable and it already exists then we
@@ -711,7 +711,7 @@ public class SoomlaStore {
         final String signature = purchase.getSignature();
         final String userId = purchase.getUserId();
 
-        BusProvider.getInstance().post(new MarketPurchaseEvent(pvi, developerPayload, new HashMap<String, String>() {{
+        BusProvider.getInstance().post(new MarketPurchaseEvent(pvi, isRestoring, developerPayload, new HashMap<String, String>() {{
                     put("token", token);
                     put("orderId", orderId);
                     put("originalJson", originalJson);
@@ -720,7 +720,7 @@ public class SoomlaStore {
                 }}, null));
 
         pvi.give(1);
-        BusProvider.getInstance().post(new ItemPurchasedEvent(pvi.getItemId(), developerPayload));
+        BusProvider.getInstance().post(new ItemPurchasedEvent(pvi.getItemId(), isRestoring, developerPayload));
 
         consumeIfConsumable(purchase, pvi);
     }
