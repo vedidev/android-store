@@ -32,6 +32,9 @@ import com.soomla.store.data.StoreInfo;
 import com.soomla.store.domain.MarketItem;
 import com.soomla.store.domain.PurchasableVirtualItem;
 import com.soomla.store.domain.VirtualItem;
+import com.soomla.store.domain.virtualGoods.LifetimeVG;
+import com.soomla.store.domain.virtualGoods.SubscriptionVG;
+import com.soomla.store.domain.virtualGoods.VirtualGood;
 import com.soomla.store.events.BillingNotSupportedEvent;
 import com.soomla.store.events.BillingSupportedEvent;
 import com.soomla.store.events.IabServiceStartedEvent;
@@ -217,12 +220,38 @@ public class SoomlaStore {
                         IabCallbacks.OnRestorePurchasesListener restoreSubscriptionsListener = new IabCallbacks.OnRestorePurchasesListener() {
                             @Override
                             public void success(List<IabPurchase> purchases) {
-                                //TODO: handle subscriptions failure case
+
+                                // collect subscription ids list
+                                List<String> subscriptionIds = new ArrayList<String>();
+                                for (IabPurchase purchase : purchases) {
+                                    subscriptionIds.add(purchase.getSku());
+                                }
+
+                                // collect subscriptionVG list
+                                List<SubscriptionVG> subscriptions = new ArrayList<SubscriptionVG>();
+                                for (VirtualGood good : StoreInfo.getGoods()) {
+                                    if (good instanceof SubscriptionVG) {
+                                        subscriptions.add((SubscriptionVG)good);
+                                    }
+                                }
+
+                                // give unset subscriptions and take expired
+                                for (SubscriptionVG subscription : subscriptions) {
+                                    if (subscription.getPurchaseType() instanceof PurchaseWithMarket) {
+                                        String productId = ((PurchaseWithMarket)subscription.getPurchaseType()).getMarketItem().getProductId();
+                                        if (subscriptionIds.contains(productId)) {
+                                            subscription.give(1, false);
+                                        } else {
+                                            subscription.take(1, false);
+                                        }
+                                    }
+                                }
+                                // TODO: Should we notify user about repaired or expired subscriptions?
                             }
 
                             @Override
                             public void fail(String message) {
-                                //TODO: handle subscriptions failure case
+                                SoomlaUtils.LogDebug(TAG, "Subscriptions restoring failed: " + message);
                             }
 
                             @Override
