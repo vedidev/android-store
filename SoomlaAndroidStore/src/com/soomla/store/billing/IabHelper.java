@@ -116,6 +116,21 @@ public abstract class IabHelper {
     }
 
     /**
+     * Initiates the restore subscriptions process. All active subscriptions will be fetched
+     * and returned to the user.
+     * This method is asynchronous and will invoke the listener when the process is finished.
+     *
+     * @param listener The listener to notify when the restore subscription process finishes
+     */
+    public void restoreSubscriptionsAsync(RestorePurchasessFinishedListener listener) {
+        checkSetupDoneAndThrow("restoreSubscriptions");
+        flagStartAsync("restore subscriptions");
+
+        mRestoreSubscriptionsFinishedListener = listener;
+        restoreSubscriptionsAsyncInner();
+    }
+
+    /**
      * Initiates the fetching of items details. This will fetch the price, title, description or
      * any other information associated with your items in the market.
      * This method is asynchronous and will invoke the listener when the process is finished.
@@ -202,7 +217,7 @@ public abstract class IabHelper {
 
     // Item types
     public static final String ITEM_TYPE_INAPP = "inapp";
-//    public static final String ITEM_TYPE_SUBS = "subs"; // Subscriptions are not supported
+    public static final String ITEM_TYPE_SUBS = "subs";
 
 
 
@@ -222,6 +237,11 @@ public abstract class IabHelper {
      * see restorePurchasesAsync
      */
     protected abstract void restorePurchasesAsyncInner();
+
+    /**
+     * see restoreSubscriptionsAsync
+     */
+    protected abstract void restoreSubscriptionsAsyncInner();
 
     /**
      * see fetchSkusDetailsAsync
@@ -512,6 +532,10 @@ public abstract class IabHelper {
     // The listener registered on restore purchases, which we have to call back when
     // the restore process finishes.
     private RestorePurchasessFinishedListener mRestorePurchasessFinishedListener;
+    // The listener registered on restore subscriptions, which we have to call back when
+    // the restore process finishes.
+    private RestorePurchasessFinishedListener mRestoreSubscriptionsFinishedListener;
+
     // The listener registered on restore purchases, which we have to call back when
     // the restore process finishes.
     private FetchSkusDetailsFinishedListener mFetchSkusDetailsFinishedListener;

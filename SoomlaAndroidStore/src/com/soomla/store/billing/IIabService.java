@@ -71,12 +71,20 @@ public interface IIabService {
                             String extraData);
 
     /**
-     * Restores transactions asynchronously. This operation will get all previously purchased
+     * Restores purchases asynchronously. This operation will get all previously purchased
      * non-consumables and invoke the given callback.
      *
      * @param restorePurchasesListener the listener to notify when the query operation completes.
      */
     void restorePurchasesAsync(IabCallbacks.OnRestorePurchasesListener restorePurchasesListener);
+
+    /**
+     * Restores subscriptions asynchronously. This operation will get all active subscriptions
+     * and invoke the given callback.
+     *
+     * @param restoreSubscriptionsListener the listener to notify when the query operation completes.
+     */
+    void restoreSubscriptionsAsync(IabCallbacks.OnRestorePurchasesListener restoreSubscriptionsListener);
 
     /**
      * Fetches all details for the given skus. The details is what the developer provided on

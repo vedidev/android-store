@@ -214,10 +214,28 @@ public class SoomlaStore {
                             }
                         };
 
-                        BusProvider.getInstance().post(new RestoreTransactionsStartedEvent());
+                        IabCallbacks.OnRestorePurchasesListener restoreSubscriptionsListener = new IabCallbacks.OnRestorePurchasesListener() {
+                            @Override
+                            public void success(List<IabPurchase> purchases) {
+                                //TODO: handle subscriptions failure case
+                            }
+
+                            @Override
+                            public void fail(String message) {
+                                //TODO: handle subscriptions failure case
+                            }
+
+                            @Override
+                            public void verificationStarted(List<IabPurchase> purchases) {
+                                // should we do it in subscription restoring? possibly it should be empty
+                            }
+                        };
+
+                        // no events like in restore purchases - keep subscription restoring silent for end-user
 
                         try {
                             mInAppBillingService.restorePurchasesAsync(restorePurchasesListener);
+                            mInAppBillingService.restoreSubscriptionsAsync(restoreSubscriptionsListener);
                         } catch (IllegalStateException ex) {
                             SoomlaUtils.LogError(TAG, "Can't proceed with restorePurchases. error: " + ex.getMessage());
                             restorePurchasesListener.fail("Can't proceed with restorePurchases. error: " + ex.getMessage());
