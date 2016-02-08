@@ -71,6 +71,21 @@ public interface IIabService {
                             String extraData);
 
     /**
+     * Initiates the UI flow for an in-app subscriptions.
+     * Call this method to initiate an in-app subscription which will bring up the Market screen.
+     * The calling activity will be paused while the user interacts with the Market.
+     * This method MUST be called from the UI thread of the Activity.
+     *
+     * @param sku the sku of the item to purchase.
+     * @param purchaseListener the listener to notify when the subscription process finishes
+     * @param extraData extra data (developer payload), which will be returned with the subscription
+     *                  data when the subscriptions completes.
+     */
+    void launchSubscriptionFlow(String sku,
+                                final IabCallbacks.OnPurchaseListener purchaseListener,
+                                String extraData);
+
+    /**
      * Restores purchases asynchronously. This operation will get all previously purchased
      * non-consumables and invoke the given callback.
      *

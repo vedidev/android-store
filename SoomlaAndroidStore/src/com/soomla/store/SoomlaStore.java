@@ -32,8 +32,6 @@ import com.soomla.store.data.StoreInfo;
 import com.soomla.store.domain.MarketItem;
 import com.soomla.store.domain.PurchasableVirtualItem;
 import com.soomla.store.domain.VirtualItem;
-import com.soomla.store.domain.virtualGoods.LifetimeVG;
-import com.soomla.store.domain.virtualGoods.SubscriptionVG;
 import com.soomla.store.domain.virtualGoods.VirtualGood;
 import com.soomla.store.events.BillingNotSupportedEvent;
 import com.soomla.store.events.BillingSupportedEvent;
@@ -228,21 +226,25 @@ public class SoomlaStore {
                                 }
 
                                 // collect subscriptionVG list
-                                List<SubscriptionVG> subscriptions = new ArrayList<SubscriptionVG>();
+                                List<VirtualGood> subscriptions = new ArrayList<VirtualGood>();
                                 for (VirtualGood good : StoreInfo.getGoods()) {
-                                    if (good instanceof SubscriptionVG) {
-                                        subscriptions.add((SubscriptionVG)good);
+                                    if ((good.getPurchaseType() instanceof PurchaseWithMarket) && ((PurchaseWithMarket)good.getPurchaseType()).isSubscription()) {
+                                        subscriptions.add(good);
                                     }
                                 }
 
                                 // give unset subscriptions and take expired
-                                for (SubscriptionVG subscription : subscriptions) {
-                                    if (subscription.getPurchaseType() instanceof PurchaseWithMarket) {
-                                        String productId = ((PurchaseWithMarket)subscription.getPurchaseType()).getMarketItem().getProductId();
-                                        if (subscriptionIds.contains(productId)) {
-                                            subscription.give(1, false);
-                                        } else {
-                                            subscription.take(1, false);
+                                for (VirtualGood subscription : subscriptions) {
+                                    String productId = ((PurchaseWithMarket)subscription.getPurchaseType()).getMarketItem().getProductId();
+                                    if (subscriptionIds.contains(productId)) {
+                                        // TODO: is here should be 1 to give? Maybe current item has not only just 0/1 state
+                                        subscription.give(1, false);
+                                    } else {
+                                        try {
+                                            subscription.take(StoreInventory.getVirtualItemBalance(subscription.getItemId()), false);
+                                        }
+                                        catch (VirtualItemNotFoundException ex) {
+                                            // possibly unreachable block
                                         }
                                     }
                                 }
@@ -416,6 +418,19 @@ public class SoomlaStore {
      * @throws IllegalStateException
      */
     public void buyWithMarket(final MarketItem marketItem, final String payload) throws IllegalStateException {
+        buyWithMarket(marketItem, false, payload);
+    }
+
+    /**
+     * Starts a purchase process in the market.
+     *
+     * @param marketItem The item to purchase - this item has to be defined EXACTLY the same in
+     *                   the market
+     * @param isSubscription determines if subscription is purchasing
+     * @param payload A payload to get back when this purchase is finished.
+     * @throws IllegalStateException
+     */
+    public void buyWithMarket(final MarketItem marketItem, final boolean isSubscription, final String payload) throws IllegalStateException {
         if (mInAppBillingService == null) {
             SoomlaUtils.LogError(TAG, "Billing service is not loaded. Can't invoke buyWithMarket.");
             return;
@@ -494,8 +509,11 @@ public class SoomlaStore {
                         BusProvider.getInstance().post(new MarketPurchaseStartedEvent(pvi, getInAppBillingService().shouldVerifyPurchases()));
 
                         try {
-                            mInAppBillingService.launchPurchaseFlow(marketItem.getProductId(),
-                                    purchaseListener, payload);
+                            if (isSubscription) {
+                                mInAppBillingService.launchSubscriptionFlow(marketItem.getProductId(), purchaseListener, payload);
+                            } else {
+                                mInAppBillingService.launchPurchaseFlow(marketItem.getProductId(), purchaseListener, payload);
+                            }
                         } catch (IllegalStateException ex) {
                             SoomlaUtils.LogError(TAG, "Can't proceed with launchPurchaseFlow. error: " + ex.getMessage());
                             purchaseListener.fail("Can't proceed with launchPurchaseFlow. error: " + ex.getMessage());
