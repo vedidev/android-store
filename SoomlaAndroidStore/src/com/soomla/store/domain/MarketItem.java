@@ -106,9 +106,9 @@ public class MarketItem {
         return mPrice;
     }
 
-	public void setPrice(double price) {
-		mPrice = Math.round(price * 100) / 100.0;
-	}
+    public void setPrice(double price) {
+	mPrice = Math.round(price * 100) / 100.0;
+    }
 
 
     /** Realtime Infomation from the Google Play Store **/
