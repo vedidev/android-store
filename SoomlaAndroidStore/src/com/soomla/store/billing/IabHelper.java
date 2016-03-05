@@ -84,6 +84,32 @@ public abstract class IabHelper {
      * MUST be called from the UI thread of the Activity.
      *
      * @param act The calling activity.
+     * @param itemType ITEM_TYPE_INAPP or ITEM_TYPE_SUBS
+     * @param sku The sku of the item to purchase.
+     * @param listener The listener to notify when the purchase process finishes
+     * @param extraData Extra data (developer payload), which will be returned with the purchase data
+     *     when the purchase completes. This extra data will be permanently bound to that purchase
+     *     and will always be returned when the purchase is queried.
+     */
+    public void launchPurchaseFlow(Activity act, String itemType, String sku,
+                                   OnIabPurchaseFinishedListener listener, String extraData) {
+        checkSetupDoneAndThrow("launchPurchaseFlow");
+        flagStartAsync("launchPurchaseFlow");
+
+        mPurchaseListener = listener;
+        mLastOperationSKU = sku;
+        launchPurchaseFlowInner(act, itemType, sku, extraData);
+    }
+
+    /**
+     * Initiate the UI flow for an in-app purchase. Call this method to initiate an in-app purchase,
+     * which will involve bringing up the Google Play screen. The calling activity will be paused while
+     * the user interacts with Google Play, and the result will be delivered via the activity's
+     * {@link android.app.Activity#onActivityResult} method, at which point you must call
+     * this object's {@link #} method to continue the purchase flow. This method
+     * MUST be called from the UI thread of the Activity.
+     *
+     * @param act The calling activity.
      * @param sku The sku of the item to purchase.
      * @param listener The listener to notify when the purchase process finishes
      * @param extraData Extra data (developer payload), which will be returned with the purchase data
@@ -97,7 +123,7 @@ public abstract class IabHelper {
 
         mPurchaseListener = listener;
         mLastOperationSKU = sku;
-        launchPurchaseFlowInner(act, sku, extraData);
+        launchPurchaseFlowInner(act, ITEM_TYPE_INAPP, sku, extraData);
     }
 
     /**
@@ -113,21 +139,6 @@ public abstract class IabHelper {
 
         mRestorePurchasessFinishedListener = listener;
         restorePurchasesAsyncInner();
-    }
-
-    /**
-     * Initiates the restore subscriptions process. All active subscriptions will be fetched
-     * and returned to the user.
-     * This method is asynchronous and will invoke the listener when the process is finished.
-     *
-     * @param listener The listener to notify when the restore subscription process finishes
-     */
-    public void restoreSubscriptionsAsync(RestorePurchasessFinishedListener listener) {
-        checkSetupDoneAndThrow("restoreSubscriptions");
-        flagStartAsync("restore subscriptions");
-
-        mRestoreSubscriptionsFinishedListener = listener;
-        restoreSubscriptionsAsyncInner();
     }
 
     /**
@@ -231,17 +242,12 @@ public abstract class IabHelper {
     /**
      * see launchPurchaseFlow
      */
-    protected abstract void launchPurchaseFlowInner(Activity act, String sku, String extraData);
+    protected abstract void launchPurchaseFlowInner(Activity act, String itemType, String sku, String extraData);
 
     /**
      * see restorePurchasesAsync
      */
     protected abstract void restorePurchasesAsyncInner();
-
-    /**
-     * see restoreSubscriptionsAsync
-     */
-    protected abstract void restoreSubscriptionsAsyncInner();
 
     /**
      * see fetchSkusDetailsAsync
