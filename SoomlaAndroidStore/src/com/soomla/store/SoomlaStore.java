@@ -266,7 +266,6 @@ public class SoomlaStore {
 
                         try {
                             mInAppBillingService.restorePurchasesAsync(restorePurchasesListener);
-                            mInAppBillingService.restoreSubscriptionsAsync(restoreSubscriptionsListener);
                         } catch (IllegalStateException ex) {
                             SoomlaUtils.LogError(TAG, "Can't proceed with restorePurchases. error: " + ex.getMessage());
                             restorePurchasesListener.fail("Can't proceed with restorePurchases. error: " + ex.getMessage());
@@ -510,9 +509,9 @@ public class SoomlaStore {
 
                         try {
                             if (isSubscription) {
-                                mInAppBillingService.launchSubscriptionFlow(marketItem.getProductId(), purchaseListener, payload);
+                                mInAppBillingService.launchPurchaseFlow(IabHelper.ITEM_TYPE_SUBS, marketItem.getProductId(), purchaseListener, payload);
                             } else {
-                                mInAppBillingService.launchPurchaseFlow(marketItem.getProductId(), purchaseListener, payload);
+                                mInAppBillingService.launchPurchaseFlow(IabHelper.ITEM_TYPE_INAPP, marketItem.getProductId(), purchaseListener, payload);
                             }
                         } catch (IllegalStateException ex) {
                             SoomlaUtils.LogError(TAG, "Can't proceed with launchPurchaseFlow. error: " + ex.getMessage());
