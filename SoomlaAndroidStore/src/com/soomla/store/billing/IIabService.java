@@ -66,12 +66,13 @@ public interface IIabService {
      * @param extraData extra data (developer payload), which will be returned with the purchase
      *                  data when the purchase completes.
      */
-    void launchPurchaseFlow(String sku,
+    void launchPurchaseFlow(String itemType,
+                            String sku,
                             final IabCallbacks.OnPurchaseListener purchaseListener,
                             String extraData);
 
     /**
-     * Restores transactions asynchronously. This operation will get all previously purchased
+     * Restores purchases asynchronously. This operation will get all previously purchased
      * non-consumables and invoke the given callback.
      *
      * @param restorePurchasesListener the listener to notify when the query operation completes.

@@ -38,9 +38,34 @@ public class PurchaseWithMarket extends PurchaseType {
      *
      * @param productId the productId as it appears in the Market.
      * @param price the price in the Market.
+     * @param isSubscription let PurchaseWithMarket know is current purchase is subscription.
+     */
+    public PurchaseWithMarket(String productId, double price, boolean isSubscription) {
+        mMarketItem = new MarketItem(productId, price);
+        mIsSubscription = isSubscription;
+    }
+
+    /**
+     * Constructor.
+     * Constructs a PurchaseWithMarket object by constructing a new <code>MarketItem</code> object
+     * with the given <code>productId</code> and price, and declaring it as UNMANAGED.
+     *
+     * @param productId the productId as it appears in the Market.
+     * @param price the price in the Market.
      */
     public PurchaseWithMarket(String productId, double price) {
-        mMarketItem = new MarketItem(productId, price);
+        this(productId, price, false);
+    }
+
+    /**
+     * Constructor.
+     *
+     * @param marketItem the representation of the item in the market
+     * @param isSubscription let PurchaseWithMarket know is current purchase is subscription.
+     */
+    public PurchaseWithMarket(MarketItem marketItem, boolean isSubscription) {
+        mMarketItem = marketItem;
+        mIsSubscription = isSubscription;
     }
 
     /**
@@ -49,7 +74,7 @@ public class PurchaseWithMarket extends PurchaseType {
      * @param marketItem the representation of the item in the market
      */
     public PurchaseWithMarket(MarketItem marketItem) {
-        mMarketItem = marketItem;
+        this(marketItem, false);
     }
 
     /**
@@ -64,7 +89,7 @@ public class PurchaseWithMarket extends PurchaseType {
         
         BusProvider.getInstance().post(new ItemPurchaseStartedEvent(getAssociatedItem().getItemId()));
         try {
-            SoomlaStore.getInstance().buyWithMarket(mMarketItem, payload);
+            SoomlaStore.getInstance().buyWithMarket(mMarketItem, mIsSubscription, payload);
         } catch (IllegalStateException e) {
             SoomlaUtils.LogError(TAG, "Error when purchasing item");
         }
@@ -77,10 +102,15 @@ public class PurchaseWithMarket extends PurchaseType {
         return mMarketItem;
     }
 
+    public boolean isSubscription() {
+        return mIsSubscription;
+    }
+
 
     /** Private Members */
 
     private static final String TAG = "SOOMLA PurchaseWithMarket"; //used for Log messages
 
     private MarketItem mMarketItem; //the representation of the item in the market
+    private boolean mIsSubscription; //allows SoomlaStore know if this purchase is subscription
 }
