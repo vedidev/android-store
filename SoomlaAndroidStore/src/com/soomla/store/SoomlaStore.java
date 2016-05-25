@@ -67,7 +67,7 @@ import java.util.List;
  */
 public class SoomlaStore {
 
-    public static final String VERSION = "3.6.18";
+    public static final String VERSION = "3.6.20";
 
     /**
      * Initializes the SOOMLA SDK.

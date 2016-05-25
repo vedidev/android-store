@@ -32,12 +32,12 @@ public class MarketItem {
     /**
      * Constructor.
      *
-     * @param mProductId the id of the current item in the market
-     * @param mPrice the actual $$ cost of the current item in the market
+     * @param productId the id of the current item in the market
+     * @param price the actual $$ cost of the current item in the market
      */
-    public MarketItem(String mProductId, double mPrice) {
-        this.mProductId = mProductId;
-        this.mPrice = mPrice;
+    public MarketItem(String productId, double price) {
+        this.mProductId = productId;
+        setPrice(price);
     }
 
     /**
@@ -54,7 +54,7 @@ public class MarketItem {
         } else {
             this.mProductId = jsonObject.getString(StoreJSONConsts.MARKETITEM_PRODUCT_ID);
         }
-        this.mPrice = jsonObject.getDouble(StoreJSONConsts.MARKETITEM_PRICE);
+		setPrice(jsonObject.getDouble(StoreJSONConsts.MARKETITEM_PRICE));
 
         this.mMarketPriceAndCurrency = jsonObject.optString(StoreJSONConsts.MARKETITEM_MARKETPRICE);
         this.mMarketTitle = jsonObject.optString(StoreJSONConsts.MARKETITEM_MARKETTITLE);
@@ -74,7 +74,7 @@ public class MarketItem {
             jsonObject.put(JSONConsts.SOOM_CLASSNAME, SoomlaUtils.getClassName(this));
 
             jsonObject.put(StoreJSONConsts.MARKETITEM_ANDROID_ID, mProductId);
-            jsonObject.put(StoreJSONConsts.MARKETITEM_PRICE, Double.valueOf(mPrice));
+            jsonObject.put(StoreJSONConsts.MARKETITEM_PRICE, Double.valueOf(getPrice()));
 
             jsonObject.put(StoreJSONConsts.MARKETITEM_MARKETPRICE, mMarketPriceAndCurrency);
             jsonObject.put(StoreJSONConsts.MARKETITEM_MARKETTITLE, mMarketTitle);
@@ -104,6 +104,10 @@ public class MarketItem {
 
     public double getPrice() {
         return mPrice;
+    }
+
+    public void setPrice(double price) {
+	mPrice = Math.round(price * 100) / 100.0;
     }
 
 
