@@ -2,8 +2,9 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/SoomlaAndroidStore.iml" filepath="$PROJECT_DIR$/SoomlaAndroidStore.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/android-store.iml" filepath="$PROJECT_DIR$/.idea/modules/android-store.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/android-store_main.iml" filepath="$PROJECT_DIR$/.idea/modules/android-store_main.iml" group="android-store" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/android-store_test.iml" filepath="$PROJECT_DIR$/.idea/modules/android-store_test.iml" group="android-store" />
     </modules>
   </component>
 </project>
-

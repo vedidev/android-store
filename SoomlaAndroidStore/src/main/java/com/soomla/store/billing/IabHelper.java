@@ -79,7 +79,7 @@ public abstract class IabHelper {
      * Initiate the UI flow for an in-app purchase. Call this method to initiate an in-app purchase,
      * which will involve bringing up the Google Play screen. The calling activity will be paused while
      * the user interacts with Google Play, and the result will be delivered via the activity's
-     * {@link android.app.Activity#onActivityResult} method, at which point you must call
+     * {@link Activity#onActivityResult} method, at which point you must call
      * this object's {@link #} method to continue the purchase flow. This method
      * MUST be called from the UI thread of the Activity.
      *
@@ -105,7 +105,7 @@ public abstract class IabHelper {
      * Initiate the UI flow for an in-app purchase. Call this method to initiate an in-app purchase,
      * which will involve bringing up the Google Play screen. The calling activity will be paused while
      * the user interacts with Google Play, and the result will be delivered via the activity's
-     * {@link android.app.Activity#onActivityResult} method, at which point you must call
+     * {@link Activity#onActivityResult} method, at which point you must call
      * this object's {@link #} method to continue the purchase flow. This method
      * MUST be called from the UI thread of the Activity.
      *
