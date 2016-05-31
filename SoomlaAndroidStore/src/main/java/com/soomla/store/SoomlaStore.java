@@ -23,6 +23,7 @@ import com.soomla.SoomlaApp;
 import com.soomla.SoomlaConfig;
 import com.soomla.SoomlaUtils;
 import com.soomla.store.billing.IIabService;
+import com.soomla.store.billing.IabHelper;
 import com.soomla.store.billing.IabCallbacks;
 import com.soomla.store.billing.IabException;
 import com.soomla.store.billing.IabPurchase;
@@ -32,6 +33,7 @@ import com.soomla.store.data.StoreInfo;
 import com.soomla.store.domain.MarketItem;
 import com.soomla.store.domain.PurchasableVirtualItem;
 import com.soomla.store.domain.VirtualItem;
+import com.soomla.store.domain.virtualGoods.VirtualGood;
 import com.soomla.store.events.BillingNotSupportedEvent;
 import com.soomla.store.events.BillingSupportedEvent;
 import com.soomla.store.events.IabServiceStartedEvent;
@@ -65,7 +67,7 @@ import java.util.List;
  */
 public class SoomlaStore {
 
-    public static final String VERSION = "3.6.19";
+    public static final String VERSION = "3.6.20";
 
     /**
      * Initializes the SOOMLA SDK.
@@ -214,7 +216,54 @@ public class SoomlaStore {
                             }
                         };
 
-                        BusProvider.getInstance().post(new RestoreTransactionsStartedEvent());
+                        IabCallbacks.OnRestorePurchasesListener restoreSubscriptionsListener = new IabCallbacks.OnRestorePurchasesListener() {
+                            @Override
+                            public void success(List<IabPurchase> purchases) {
+
+                                // collect subscription ids list
+                                List<String> subscriptionIds = new ArrayList<String>();
+                                for (IabPurchase purchase : purchases) {
+                                    subscriptionIds.add(purchase.getSku());
+                                }
+
+                                // collect subscriptionVG list
+                                List<VirtualGood> subscriptions = new ArrayList<VirtualGood>();
+                                for (VirtualGood good : StoreInfo.getGoods()) {
+                                    if ((good.getPurchaseType() instanceof PurchaseWithMarket) && ((PurchaseWithMarket)good.getPurchaseType()).isSubscription()) {
+                                        subscriptions.add(good);
+                                    }
+                                }
+
+                                // give unset subscriptions and take expired
+                                for (VirtualGood subscription : subscriptions) {
+                                    String productId = ((PurchaseWithMarket)subscription.getPurchaseType()).getMarketItem().getProductId();
+                                    if (subscriptionIds.contains(productId)) {
+                                        // TODO: is here should be 1 to give? Maybe current item has not only just 0/1 state
+                                        subscription.give(1, false);
+                                    } else {
+                                        try {
+                                            subscription.take(StoreInventory.getVirtualItemBalance(subscription.getItemId()), false);
+                                        }
+                                        catch (VirtualItemNotFoundException ex) {
+                                            // possibly unreachable block
+                                        }
+                                    }
+                                }
+                                // TODO: Should we notify user about repaired or expired subscriptions?
+                            }
+
+                            @Override
+                            public void fail(String message) {
+                                SoomlaUtils.LogDebug(TAG, "Subscriptions restoring failed: " + message);
+                            }
+
+                            @Override
+                            public void verificationStarted(List<IabPurchase> purchases) {
+                                // should we do it in subscription restoring? possibly it should be empty
+                            }
+                        };
+
+                        // no events like in restore purchases - keep subscription restoring silent for end-user
 
                         try {
                             mInAppBillingService.restorePurchasesAsync(restorePurchasesListener);
@@ -369,6 +418,19 @@ public class SoomlaStore {
      * @throws IllegalStateException
      */
     public void buyWithMarket(final MarketItem marketItem, final String payload) throws IllegalStateException {
+        buyWithMarket(marketItem, false, payload);
+    }
+
+    /**
+     * Starts a purchase process in the market.
+     *
+     * @param marketItem The item to purchase - this item has to be defined EXACTLY the same in
+     *                   the market
+     * @param isSubscription determines if subscription is purchasing
+     * @param payload A payload to get back when this purchase is finished.
+     * @throws IllegalStateException
+     */
+    public void buyWithMarket(final MarketItem marketItem, final boolean isSubscription, final String payload) throws IllegalStateException {
         if (mInAppBillingService == null) {
             SoomlaUtils.LogError(TAG, "Billing service is not loaded. Can't invoke buyWithMarket.");
             return;
@@ -447,8 +509,11 @@ public class SoomlaStore {
                         BusProvider.getInstance().post(new MarketPurchaseStartedEvent(pvi, getInAppBillingService().shouldVerifyPurchases()));
 
                         try {
-                            mInAppBillingService.launchPurchaseFlow(marketItem.getProductId(),
-                                    purchaseListener, payload);
+                            if (isSubscription) {
+                                mInAppBillingService.launchPurchaseFlow(IabHelper.ITEM_TYPE_SUBS, marketItem.getProductId(), purchaseListener, payload);
+                            } else {
+                                mInAppBillingService.launchPurchaseFlow(IabHelper.ITEM_TYPE_INAPP, marketItem.getProductId(), purchaseListener, payload);
+                            }
                         } catch (IllegalStateException ex) {
                             SoomlaUtils.LogError(TAG, "Can't proceed with launchPurchaseFlow. error: " + ex.getMessage());
                             purchaseListener.fail("Can't proceed with launchPurchaseFlow. error: " + ex.getMessage());
