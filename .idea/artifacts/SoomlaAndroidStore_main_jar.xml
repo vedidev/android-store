@@ -1,8 +1,0 @@
-<component name="ArtifactManager">
-  <artifact type="jar" name="SoomlaAndroidStore_main:jar">
-    <output-path>$PROJECT_DIR$/out/artifacts/SoomlaAndroidStore_main_jar</output-path>
-    <root id="archive" name="android-store.jar">
-      <element id="module-output" name="SoomlaAndroidStore_main" />
-    </root>
-  </artifact>
-</component>
